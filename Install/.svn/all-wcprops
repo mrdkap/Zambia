@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/p/zambia/code/!svn/ver/914/branches/FFF/Install
+END
+EmptyDbase.dump
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/p/zambia/code/!svn/ver/712/branches/FFF/Install/EmptyDbase.dump
+END
+INSTALL
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/zambia/code/!svn/ver/694/branches/FFF/Install/INSTALL
+END
+NewReports.sql
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/zambia/code/!svn/ver/851/branches/FFF/Install/NewReports.sql
+END
+DemoDbase.dump
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/DemoDbase.dump
+END
+UPGRADE
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/UPGRADE
+END
+Initial_Users.sql
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/851/branches/FFF/Install/Initial_Users.sql
+END
+wipe_con_data.sql
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/862/branches/FFF/Install/wipe_con_data.sql
+END
+.htaccess
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/p/zambia/code/!svn/ver/902/branches/FFF/Install/.htaccess
+END

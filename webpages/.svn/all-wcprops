@@ -1,0 +1,929 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/zambia/code/!svn/ver/1082/branches/FFF/webpages
+END
+CreateSession.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/CreateSession.php
+END
+SubmitMySchedConstr.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/972/branches/FFF/webpages/SubmitMySchedConstr.php
+END
+renderVendorWelcome.php
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/p/zambia/code/!svn/ver/1014/branches/FFF/webpages/renderVendorWelcome.php
+END
+logout.php
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/logout.php
+END
+SubmitMyInterests.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/864/branches/FFF/webpages/SubmitMyInterests.php
+END
+TrackScheduleIcal.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/TrackScheduleIcal.php
+END
+StaffSendEmailCompose.php
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/p/zambia/code/!svn/ver/984/branches/FFF/webpages/StaffSendEmailCompose.php
+END
+ViewPrecis.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/ViewPrecis.php
+END
+StaffSendEmailCompose_POST.php
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/p/zambia/code/!svn/ver/896/branches/FFF/webpages/StaffSendEmailCompose_POST.php
+END
+InviteParticipants.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/InviteParticipants.php
+END
+StaffAssignParticipants_FNC.php
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/zambia/code/!svn/ver/771/branches/FFF/webpages/StaffAssignParticipants_FNC.php
+END
+renderMySuggestions.php
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/p/zambia/code/!svn/ver/1089/branches/FFF/webpages/renderMySuggestions.php
+END
+SearchMySessions1.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/SearchMySessions1.php
+END
+StaffEditBios.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/974/branches/FFF/webpages/StaffEditBios.php
+END
+PostingCommonCode.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/1070/branches/FFF/webpages/PostingCommonCode.php
+END
+AutoSendQueuedMail.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/821/branches/FFF/webpages/AutoSendQueuedMail.php
+END
+ClassIntroPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/p/zambia/code/!svn/ver/1076/branches/FFF/webpages/ClassIntroPrint.php
+END
+FeedbackPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/FeedbackPrint.php
+END
+MySchedule.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/p/zambia/code/!svn/ver/1082/branches/FFF/webpages/MySchedule.php
+END
+BadgesPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/1066/branches/FFF/webpages/BadgesPrint.php
+END
+EditPersonalFlows.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/983/branches/FFF/webpages/EditPersonalFlows.php
+END
+genreport.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/zambia/code/!svn/ver/983/branches/FFF/webpages/genreport.php
+END
+index.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/index.php
+END
+google_analytics.php.enabled
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/google_analytics.php.enabled
+END
+BrainstormReport.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/BrainstormReport.php
+END
+LogisticsPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/LogisticsPrint.php
+END
+error_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/969/branches/FFF/webpages/error_functions.php
+END
+VendorSearch.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/1069/branches/FFF/webpages/VendorSearch.php
+END
+StaffEditCreateParticipant.php
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/zambia/code/!svn/ver/1013/branches/FFF/webpages/StaffEditCreateParticipant.php
+END
+Schedule.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/Schedule.php
+END
+StaffTrackScheduleIcal.php
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/StaffTrackScheduleIcal.php
+END
+PreconPrinting.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/1093/branches/FFF/webpages/PreconPrinting.php
+END
+NoteOnParticipant.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/1000/branches/FFF/webpages/NoteOnParticipant.php
+END
+SubmitEditCreateSession.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/1089/branches/FFF/webpages/SubmitEditCreateSession.php
+END
+genindex.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/p/zambia/code/!svn/ver/983/branches/FFF/webpages/genindex.php
+END
+ParticipantSection.css
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/ParticipantSection.css
+END
+StaffCommonCode.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/StaffCommonCode.php
+END
+BrainstormSearchSession.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/BrainstormSearchSession.php
+END
+StaffPrecisScheduleIcal.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/StaffPrecisScheduleIcal.php
+END
+SubmitMySessions1.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/SubmitMySessions1.php
+END
+PartSectSiteSpecific.css
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/p/zambia/code/!svn/ver/667/branches/FFF/webpages/PartSectSiteSpecific.css
+END
+CommentOnSessions.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/CommentOnSessions.php
+END
+.cvsignore
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/p/zambia/code/!svn/ver/694/branches/FFF/webpages/.cvsignore
+END
+StaffManageBios.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/p/zambia/code/!svn/ver/1013/branches/FFF/webpages/StaffManageBios.php
+END
+StaffSection.css
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/StaffSection.css
+END
+VendorCommonCode.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/p/zambia/code/!svn/ver/969/branches/FFF/webpages/VendorCommonCode.php
+END
+TaskListUpdate.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/1062/branches/FFF/webpages/TaskListUpdate.php
+END
+StaffManageSessions.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/931/branches/FFF/webpages/StaffManageSessions.php
+END
+MaintainRoomSched.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/MaintainRoomSched.php
+END
+SubmitMySuggestions.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/SubmitMySuggestions.php
+END
+BrainstormCreateSession.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/1089/branches/FFF/webpages/BrainstormCreateSession.php
+END
+gantt_relative.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/983/branches/FFF/webpages/gantt_relative.php
+END
+VendorWelcome.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/969/branches/FFF/webpages/VendorWelcome.php
+END
+SchedulePrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/1077/branches/FFF/webpages/SchedulePrint.php
+END
+RenderSearchSession.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/RenderSearchSession.php
+END
+TentsPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/p/zambia/code/!svn/ver/984/branches/FFF/webpages/TentsPrint.php
+END
+BrainstormSuggestPresenter.php
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/zambia/code/!svn/ver/1089/branches/FFF/webpages/BrainstormSuggestPresenter.php
+END
+StaffHeader.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/p/zambia/code/!svn/ver/709/branches/FFF/webpages/StaffHeader.php
+END
+db_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/1073/branches/FFF/webpages/db_functions.php
+END
+EditGroupFlows.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/983/branches/FFF/webpages/EditGroupFlows.php
+END
+StaffSectSiteSpecific.css
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/p/zambia/code/!svn/ver/667/branches/FFF/webpages/StaffSectSiteSpecific.css
+END
+RenderSessionReport.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/RenderSessionReport.php
+END
+CommentOnParticipants.php
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/p/zambia/code/!svn/ver/974/branches/FFF/webpages/CommentOnParticipants.php
+END
+CommonIcal.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/p/zambia/code/!svn/ver/1076/branches/FFF/webpages/CommonIcal.php
+END
+VendorLoadIn.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/VendorLoadIn.php
+END
+PresenterCompensation.php
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/p/zambia/code/!svn/ver/1001/branches/FFF/webpages/PresenterCompensation.php
+END
+PartPanelInterests.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/PartPanelInterests.php
+END
+StaffEditCompensation.php
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/p/zambia/code/!svn/ver/1001/branches/FFF/webpages/StaffEditCompensation.php
+END
+StaffAssignParticipants.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/StaffAssignParticipants.php
+END
+renderWelcome.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/1089/branches/FFF/webpages/renderWelcome.php
+END
+BrainstormWelcome.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/1089/branches/FFF/webpages/BrainstormWelcome.php
+END
+ScheduledAndCheckInTimesGraph.php
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/p/zambia/code/!svn/ver/1075/branches/FFF/webpages/ScheduledAndCheckInTimesGraph.php
+END
+SubmitAdminParticipants.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/1013/branches/FFF/webpages/SubmitAdminParticipants.php
+END
+data_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/1073/branches/FFF/webpages/data_functions.php
+END
+MeetingAgendaPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/1076/branches/FFF/webpages/MeetingAgendaPrint.php
+END
+CGICommonCode.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/CGICommonCode.php
+END
+ShowSessions.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/ShowSessions.php
+END
+AdminParticipants.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/1013/branches/FFF/webpages/AdminParticipants.php
+END
+WelcomeLettersPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/p/zambia/code/!svn/ver/1076/branches/FFF/webpages/WelcomeLettersPrint.php
+END
+StaffTracks.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/StaffTracks.php
+END
+PartPanelInterests_FNC.php
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/PartPanelInterests_FNC.php
+END
+PartPanelInterests_POST2.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/PartPanelInterests_POST2.php
+END
+ConStaffBios.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/1081/branches/FFF/webpages/ConStaffBios.php
+END
+StaffBios.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/StaffBios.php
+END
+Postgrid-wide.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/Postgrid-wide.php
+END
+StaffFooter.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/p/zambia/code/!svn/ver/692/branches/FFF/webpages/StaffFooter.php
+END
+google_analytics.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/google_analytics.php
+END
+CommonCode.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/p/zambia/code/!svn/ver/1092/branches/FFF/webpages/CommonCode.php
+END
+BrainstormCommonCode.php
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/p/zambia/code/!svn/ver/897/branches/FFF/webpages/BrainstormCommonCode.php
+END
+my_interests.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/864/branches/FFF/webpages/my_interests.php
+END
+StaffDescriptions.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/StaffDescriptions.php
+END
+Postgrid.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/Postgrid.php
+END
+PrecisScheduleIcal.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/PrecisScheduleIcal.php
+END
+my_contact.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/p/zambia/code/!svn/ver/1013/branches/FFF/webpages/my_contact.php
+END
+BadgeBackPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/984/branches/FFF/webpages/BadgeBackPrint.php
+END
+StaffCommentOnParticipants.php
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/zambia/code/!svn/ver/1000/branches/FFF/webpages/StaffCommentOnParticipants.php
+END
+manualGRIDS.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/p/zambia/code/!svn/ver/930/branches/FFF/webpages/manualGRIDS.php
+END
+VolunteerCheckIn.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/1074/branches/FFF/webpages/VolunteerCheckIn.php
+END
+BrainstormRenderCreateSession.php
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/p/zambia/code/!svn/ver/1089/branches/FFF/webpages/BrainstormRenderCreateSession.php
+END
+StaffFeedback.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/1070/branches/FFF/webpages/StaffFeedback.php
+END
+email_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/798/branches/FFF/webpages/email_functions.php
+END
+LabelsPrint.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/p/zambia/code/!svn/ver/984/branches/FFF/webpages/LabelsPrint.php
+END
+my_suggestions.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/my_suggestions.php
+END
+php_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/php_functions.php
+END
+Vendors.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/p/zambia/code/!svn/ver/1073/branches/FFF/webpages/Vendors.php
+END
+EditReport.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/p/zambia/code/!svn/ver/982/branches/FFF/webpages/EditReport.php
+END
+SubmitMaintainRoom.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/1065/branches/FFF/webpages/SubmitMaintainRoom.php
+END
+validation_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/validation_functions.php
+END
+SearchMySessionsScheduled.php
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/SearchMySessionsScheduled.php
+END
+retrieve.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/retrieve.php
+END
+renderMySchedConstr.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/p/zambia/code/!svn/ver/972/branches/FFF/webpages/renderMySchedConstr.php
+END
+db_name_sample.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/862/branches/FFF/webpages/db_name_sample.php
+END
+renderMyInterests.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/renderMyInterests.php
+END
+PostScheduleIcal.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/1076/branches/FFF/webpages/PostScheduleIcal.php
+END
+javascript_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/p/zambia/code/!svn/ver/1073/branches/FFF/webpages/javascript_functions.php
+END
+StaffPage.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/zambia/code/!svn/ver/743/branches/FFF/webpages/StaffPage.php
+END
+VendorApply.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/VendorApply.php
+END
+BrainstormSection.css
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/BrainstormSection.css
+END
+render_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/p/zambia/code/!svn/ver/745/branches/FFF/webpages/render_functions.php
+END
+login.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/p/zambia/code/!svn/ver/968/branches/FFF/webpages/login.php
+END
+Constants.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/Constants.php
+END
+RenderEditCreateSession.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/RenderEditCreateSession.php
+END
+gantt_back_graph.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/p/zambia/code/!svn/ver/827/branches/FFF/webpages/gantt_back_graph.php
+END
+SubmitWelcome.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/1013/branches/FFF/webpages/SubmitWelcome.php
+END
+StaffEmailToUpdate.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/982/branches/FFF/webpages/StaffEmailToUpdate.php
+END
+StaffEditCreateParticipant_FNC.php
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/p/zambia/code/!svn/ver/1082/branches/FFF/webpages/StaffEditCreateParticipant_FNC.php
+END
+my_sched_constr.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/972/branches/FFF/webpages/my_sched_constr.php
+END
+SubmitCommentOn.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/947/branches/FFF/webpages/SubmitCommentOn.php
+END
+grid.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/grid.php
+END
+PartPanelInterests_Render.php
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/PartPanelInterests_Render.php
+END
+Tracks.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/Tracks.php
+END
+MeetingAgenda.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/984/branches/FFF/webpages/MeetingAgenda.php
+END
+Common.css
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/p/zambia/code/!svn/ver/1073/branches/FFF/webpages/Common.css
+END
+doLogin.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/p/zambia/code/!svn/ver/1090/branches/FFF/webpages/doLogin.php
+END
+RenderSearchSessionResults.php
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/RenderSearchSessionResults.php
+END
+MyScheduleIcal.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/p/zambia/code/!svn/ver/1080/branches/FFF/webpages/MyScheduleIcal.php
+END
+my_sessions1.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/986/branches/FFF/webpages/my_sessions1.php
+END
+Bios.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/Bios.php
+END
+RenderMySessions1.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/p/zambia/code/!svn/ver/745/branches/FFF/webpages/RenderMySessions1.php
+END
+searchreport.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/917/branches/FFF/webpages/searchreport.php
+END
+Descriptions.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/Descriptions.php
+END
+VolunteerCheckOut.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/1074/branches/FFF/webpages/VolunteerCheckOut.php
+END
+PartCommonCode.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/864/branches/FFF/webpages/PartCommonCode.php
+END
+StaffSchedule.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/StaffSchedule.php
+END
+Feedback.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/zambia/code/!svn/ver/1070/branches/FFF/webpages/Feedback.php
+END
+MyProposals.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/1091/branches/FFF/webpages/MyProposals.php
+END
+EditSession.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/p/zambia/code/!svn/ver/1094/branches/FFF/webpages/EditSession.php
+END
+google_analytics.php.disabled
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/google_analytics.php.disabled
+END
+welcome.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/welcome.php
+END
+PartPanelInterests_POST.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/p/zambia/code/!svn/ver/661/branches/FFF/webpages/PartPanelInterests_POST.php
+END
+StaffManageParticipants.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/p/zambia/code/!svn/ver/928/branches/FFF/webpages/StaffManageParticipants.php
+END
+VendorSubmitVendor.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/zambia/code/!svn/ver/984/branches/FFF/webpages/VendorSubmitVendor.php
+END
+ScheduledAndAvailabilityTimesGraph.php
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/p/zambia/code/!svn/ver/1075/branches/FFF/webpages/ScheduledAndAvailabilityTimesGraph.php
+END
+CommentOnProgramming.php
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/p/zambia/code/!svn/ver/947/branches/FFF/webpages/CommentOnProgramming.php
+END

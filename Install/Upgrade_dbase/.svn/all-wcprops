@@ -1,0 +1,191 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/p/zambia/code/!svn/ver/914/branches/FFF/Install/Upgrade_dbase
+END
+33_Task_List_starttime.sql
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/p/zambia/code/!svn/ver/827/branches/FFF/Install/Upgrade_dbase/33_Task_List_starttime.sql
+END
+08_add_brainstorm.sql
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/p/zambia/code/!svn/ver/914/branches/FFF/Install/Upgrade_dbase/08_add_brainstorm.sql
+END
+23_room_colors.sql
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/zambia/code/!svn/ver/712/branches/FFF/Install/Upgrade_dbase/23_room_colors.sql
+END
+30_congodump_address.sql
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/p/zambia/code/!svn/ver/712/branches/FFF/Install/Upgrade_dbase/30_congodump_address.sql
+END
+05_PermissionAtoms_update.sql
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/05_PermissionAtoms_update.sql
+END
+10_types.sql
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/10_types.sql
+END
+16_fix_charset.sql
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/16_fix_charset.sql
+END
+34_Bio_Table_Create.sql
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/p/zambia/code/!svn/ver/914/branches/FFF/Install/Upgrade_dbase/34_Bio_Table_Create.sql
+END
+09_session_history.sql
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/09_session_history.sql
+END
+26_migrate_reports.sql
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/p/zambia/code/!svn/ver/914/branches/FFF/Install/Upgrade_dbase/26_migrate_reports.sql
+END
+17_partavailnull.sql
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/17_partavailnull.sql
+END
+31_participant_notes.sql
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/p/zambia/code/!svn/ver/738/branches/FFF/Install/Upgrade_dbase/31_participant_notes.sql
+END
+19_partavail.sql
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/19_partavail.sql
+END
+18_editbioperms.sql
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/18_editbioperms.sql
+END
+13_part_avail_mon.sql
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/13_part_avail_mon.sql
+END
+22_validate_session.sql
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/22_validate_session.sql
+END
+04_divinfo.sql
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/04_divinfo.sql
+END
+11_perm_bug.sql
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/11_perm_bug.sql
+END
+12_patchlog.sql
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/12_patchlog.sql
+END
+07_participant_write_perms.sql
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/07_participant_write_perms.sql
+END
+29_email_queue.sql
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/29_email_queue.sql
+END
+02_pubstats.sql
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/02_pubstats.sql
+END
+20_bilingual.sql
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/20_bilingual.sql
+END
+01_addpermtables.sql
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/01_addpermtables.sql
+END
+10_brainstorm_search_session.sql
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/10_brainstorm_search_session.sql
+END
+03_pubstat_constraints.sql
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/03_pubstat_constraints.sql
+END
+06_some_participant_perms.sql
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/06_some_participant_perms.sql
+END
+35_Agenda_Table_Create.sql
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/p/zambia/code/!svn/ver/879/branches/FFF/Install/Upgrade_dbase/35_Agenda_Table_Create.sql
+END
+14_interested_table.sql
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/p/zambia/code/!svn/ver/914/branches/FFF/Install/Upgrade_dbase/14_interested_table.sql
+END
+15_public_user.sql
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/zambia/code/!svn/ver/661/branches/FFF/Install/Upgrade_dbase/15_public_user.sql
+END
+24_comments_tables.sql
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/p/zambia/code/!svn/ver/712/branches/FFF/Install/Upgrade_dbase/24_comments_tables.sql
+END

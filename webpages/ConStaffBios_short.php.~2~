@@ -1,5 +1,0 @@
-<?php
-$included='YES';
-require_once('ConStaffBios.php');
-?>
-

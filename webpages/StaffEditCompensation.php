@@ -134,7 +134,7 @@ if ($_POST['update']=="please") {
 }
 
 // Get the pubsname, to make things more readable
-$query="SELECT pubsname from Participants where badgeid=$selpartid";
+$query="SELECT pubsname from $ReportDB.Participants where badgeid=$selpartid";
 if (!$result=mysql_query($query,$link)) {
   $message="Badgeid does not exist in Participants, please try again:".$query;
   RenderError($title,$message);

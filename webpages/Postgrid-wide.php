@@ -1,11 +1,11 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$Grid_Spacer=GRID_SPACER; // make it a variable so it can be substituted
-$logo=CON_LOGO; // make it a variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
+
+$title="Sessions Grid";
+$pagetitle=$title;
 
 // Tests for the substituted variables
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
@@ -18,6 +18,22 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 } else {
   $passon_p="?print_p=y";
 }
+
+$conid=$_GET['conid'];
+
+// Test for conid being passed in
+if ($conid == "") {
+  $conid=$_SESSION['conid'];
+}
+
+// Set the conname from the conid
+$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from $ReportDB.ConInfo where conid=$conid";
+list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
+$conname=$conname_array[1]['conname'];
+$connumdays=$conname_array[1]['connumdays'];
+$Grid_Spacer=$conname_array[1]['congridspacer'];
+$ConStartDatim=$conname_array[1]['constartdate'];
+$logo=$conname_array[1]['conlogo'];
 
 if (isset($_GET['volunteer'])) {
   $pubstatus_check="'Volunteer'";
@@ -37,7 +53,8 @@ if (isset($_GET['volunteer'])) {
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="Postgrid-wide.php";
-$title="Sessions Grid";
+$title="Sessions Grid for $conname";
+$pagetitle=$title;
 $description="<P>Grid of all sessions.</P>\n";
 $additionalinfo="<P>Click on the session title to visit the session's <A HREF=\"Descriptions.php$passon\">description</A>,\n";
 $additionalinfo.="the presenter to visit their <A HREF=\"Bios.php$passon\">bio</A>, the time to visit that section of\n";
@@ -50,38 +67,65 @@ $additionalinfo.="x Times</A> or <A HREF=Postgrid-wide.php$passon_p>Times x Room
  headers, and keys for other arrays.*/
 $query = <<<EOD
 SELECT
-        roomname,
-        roomid
-    FROM
-            $ReportDB.Rooms
-    WHERE
-        roomid in
-        (SELECT DISTINCT roomid FROM Schedule JOIN Sessions USING (sessionid) JOIN $ReportDB.PubStatuses USING (pubstatusid) WHERE pubstatusname in ($pubstatus_check))
-    ORDER BY
-    	  display_order;
+    roomname,
+    roomid
+  FROM
+      $ReportDB.Rooms
+  WHERE
+    roomid in (SELECT
+                   DISTINCT roomid
+                 FROM
 EOD;
+if ($conid==CON_KEY) {
+  $query.=" Schedule JOIN Sessions USING (sessionid) ";
+} else {
+  $query.=" $ReportDB.Schedule JOIN $ReportDB.Sessions USING (sessionid,conid) ";
+}
+$query.= <<<EOD
+                   JOIN $ReportDB.PubStatuses USING (pubstatusid)
+                 WHERE
+                   pubstatusname in ($pubstatus_check)
+EOD;
+if ($conid==CON_KEY) {
+  $query.=") ORDER BY display_order";
+} else {
+  $query.=" AND conid=$conid) ORDER BY display_order";
+}
 
 // Retrieve query
 list($rooms,$unneeded_array_a,$header_array)=queryreport($query,$link,$title,$description,0);
 
 /* This set of queries finds the appropriate presenters for a session element,
  based on sessionid, and produces links for them. */
+
 $query = <<<EOD
 SELECT
-      sessionid,
-      GROUP_CONCAT(concat("<A HREF=\"Bios.php$passon#",pubsname,"\">",pubsname,"</A>",if((moderator=1),'(m)','')) SEPARATOR ", ") as allpubsnames
-    FROM
-      Sessions
-    JOIN ParticipantOnSession USING (sessionid)
+    sessionid,
+    GROUP_CONCAT(concat("<A HREF=\"Bios.php$passon#",pubsname,"\">",pubsname,"</A>",if((moderator=1),'(m)','')) SEPARATOR ", ") as allpubsnames
+  FROM
+EOD;
+if ($conid==CON_KEY) {
+  $query.=" Sessions JOIN ParticipantOnSession USING (sessionid) ";
+} else {
+  $query.=" $ReportDB.Sessions JOIN $ReportDB.ParticipantOnSession USING (sessionid,conid) ";
+}
+$query.= <<<EOD
     JOIN $ReportDB.Participants USING (badgeid)
-    WHERE 
-      volunteer=0 AND
-      introducer=0 AND
-      aidedecamp=0
-    GROUP BY
-      sessionid
-    ORDER BY
-      sessionid;
+  WHERE 
+EOD;
+if ($conid==CON_KEY) {
+  $query.="";
+} else {
+  $query.=" conid=$conid AND  ";
+}
+$query.= <<<EOD
+    volunteer=0 AND
+    introducer=0 AND
+    aidedecamp=0
+  GROUP BY
+    sessionid
+  ORDER BY
+    sessionid;
 EOD;
 
 // Retrieve query
@@ -90,42 +134,8 @@ for ($i=1; $i<=$presenters; $i++) {
   $presenters_array[$presenters_tmp_array[$i]['sessionid']]=$presenters_tmp_array[$i]['allpubsnames'];
  } 
 
-/* This query finds the first second that is actually scheduled
- so we don't waste grid-space and time looping through nothing. */
-$query="SELECT TIME_TO_SEC(starttime) as 'beginschedule' FROM Schedule ORDER BY starttime ASC LIMIT 0,1";
-if (($result=mysql_query($query,$link))===false) {
-  $message="Error retrieving data from database.<BR>";
-  $message.=$query;
-  $message.="<BR>";
-  $message.= mysql_error();
-  RenderError($title,$message);
-  exit ();
- }
-if (0==($earliest=mysql_num_rows($result))) {
-  $message="<P>This report retrieved no results matching the criteria.</P>\n";
-  RenderError($title,$message);
-  exit();
- }
-$grid_start_sec=mysql_result($result,0);
-
-/* This query finds the last second that is actually scheduled
- so we don't waste grid-space and time looping through nothing. */
-$query="SELECT (TIME_TO_SEC(SCH.starttime) + TIME_TO_SEC(S.duration)) as 'endschedule' FROM Schedule SCH JOIN Sessions S USING (sessionid) ORDER BY endschedule DESC LIMIT 0,1";
-if (($result=mysql_query($query,$link))===false) {
-  $message="Error retrieving data from database.<BR>";
-  $message.=$query;
-  $message.="<BR>";
-  $message.= mysql_error();
-  RenderError($title,$message);
-  exit ();
- }
-if (0==($latest=mysql_num_rows($result))) {
-  $message="<P>This report retrieved no results matching the criteria.</P>\n";
-  RenderError($title,$message);
-  exit();
- }
-$grid_end_sec=mysql_result($result,0);
-
+$grid_start_sec=0;
+$grid_end_sec=$connumdays*86400;
 /* This complex query set is generated by stepping along by the time interval,
  and, in each interval, setting up the title, sessionid, duration, and background
  color of each class/grid element. */
@@ -144,10 +154,20 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),S.duration,\"\") SEPARATOR '') as \"%s duration\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,T.htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$x,$y);
   }
-  $query.=" FROM Schedule SCH JOIN Sessions S USING (sessionid)";
+  if ($conid==CON_KEY) {
+    $query.=" FROM Schedule SCH JOIN Sessions S USING (sessionid)";
+  } else {
+    $query.=" FROM $ReportDB.Schedule SCH JOIN $ReportDB.Sessions S USING (sessionid,conid)";
+  }
   $query.=" JOIN $ReportDB.Rooms R USING (roomid) JOIN $ReportDB.Types T USING (typeid) JOIN $ReportDB.PubStatuses PS USING (pubstatusid)";
   $query.=" WHERE PS.pubstatusname in ($pubstatus_check) AND TIME_TO_SEC(SCH.starttime) <= $time";
-  $query.=" AND (TIME_TO_SEC(SCH.starttime) + TIME_TO_SEC(S.duration)) >= ($time + $Grid_Spacer);";
+  $query.=" AND (TIME_TO_SEC(SCH.starttime) + TIME_TO_SEC(S.duration)) >= ($time + $Grid_Spacer)";
+  if ($conid==CON_KEY) {
+    $query.=";";
+  } else {
+    $query.=" AND conid=$conid;";
+  }
+
   if (($result=mysql_query($query,$link))===false) {
     $message="Error retrieving data from database.<BR>";
     $message.=$query;
@@ -256,7 +276,7 @@ if ($_GET["csv"]=="y") {
   $pdf->SetTitle('Grid');
   $pdf->SetSubject('Programming Grid');
   $pdf->SetKeywords('Zambia, Presenters, Volunteers, Programming, Grid');
-  $pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+  $pdf->SetHeaderData($logo, 70, $conname, CON_URL);
   $pdf->setHeaderFont(Array("helvetica", '', 10));
   $pdf->setFooterFont(Array("helvetica", '', 8));
   $pdf->SetDefaultMonospacedFont("courier");
@@ -282,9 +302,9 @@ if ($_GET["csv"]=="y") {
       }
     }
   }
-  $pdf->Output(CON_NAME.'-grid-wide.pdf', 'I');
+  $pdf->Output($conname.'-grid-wide.pdf', 'I');
  } else {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($pagetitle,$description,$additionalinfo);
   for ($i=1; $i<$newtableline; $i++) {
     for ($j=$breakon[$i]; $j<=$breakon[$i+1]; $j = ($j + 11)) {
       if ($breakon[$i+1]-$j >= 11) {

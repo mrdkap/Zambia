@@ -1,6 +1,7 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
+$ConName=CON_NAME;
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
 
@@ -10,10 +11,21 @@ if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="ConStaffBios.php";
-$title="Organizational Chart";
+$conid=$_GET['conid'];
+
+// Test for conid being passed in
+if ($conid == "") {
+  $conid=$_SESSION['conid'];
+}
+
+// Set the conname from the conid
+$query="SELECT conname from $ReportDB.ConInfo where conid=$conid";
+list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
+$conname=$conname_array[1]['conname'];
+
+$title="Organizational Chart for $conname";
 $description="<P>List of all organizers, their roles, who reports to them, and who they report to.</P>\n";
 $additionalinfo="";
-$conid=$_SESSION['conid'];
 
 $query= <<<EOD
 SELECT

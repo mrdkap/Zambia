@@ -182,17 +182,16 @@ function posting_header($title) {
   echo "  <title>Zambia -- $ConName -- $title</title>\n";
   if (file_exists($HeaderTemplateFile)) {
     readfile($HeaderTemplateFile);
-    echo "<H1 class=\"head\" align=\"center\">Return to the <A HREF=\"http://$ConUrl\">$ConName</A> website</H1>\n";
-    echo "<hr>\n\n";
-    echo "<H2 class=\"head\" align=\"center\">$title</H2>\n";
+    echo "<H2 class=\"head\" align=\"center\"><A HREF=\"http://$ConUrl\">Return</A> to the programming website</H2>\n";
+    echo "<HR>\n";
+    echo "<H1 class=\"head\" align=\"center\">$title</H1>\n";
   } else {
     echo "  <link rel=\"stylesheet\" href=\"Common.css\" type=\"text/css\">\n";
     echo "</head>\n";
     echo "<body>\n";
-    echo "<H1 class=\"head\">The information for $ConName</H1>\n";
-    echo "<H1 class=\"head\">Return to the <A HREF=\"http://$ConUrl\">$ConName</A> website</H1>\n";
+    echo "<H2 class=\"head\"><A HREF=\"http://$ConUrl\">Return</A> to the programming website</H2>\n";
     echo "<hr>\n\n";
-    echo "<H2 class=\"head\">$title</H2>\n";
+    echo "<H1 class=\"head\">$title</H1>\n";
   }
 }
 
@@ -1653,12 +1652,11 @@ EOD;
   return ($message);
 }
 
-function generateSvgString($sessionid) {
+function generateSvgString($sessionid,$conid) {
   /* Global Variables */
   global $message_error,$message,$link;
   $ReportDB=REPORTDB; // make it a variable so it can be substituted
   $BioDB=BIODB; // make it a variable so it can be substituted
-  $conid=$_SESSION['conid'];  // make it a variable so it can be substituted
 
   // Tests for the substituted variables
   if ($ReportDB=="REPORTDB") {unset($ReportDB);}
@@ -1708,9 +1706,10 @@ SELECT
     questionid,
     questionvalue
   FROM
-      Feedback
+      $ReportDB.Feedback
   WHERE
-    sessionid=$sessionid
+    sessionid=$sessionid AND
+    conid=$conid
   GROUP BY
     1
 EOD;
@@ -1731,13 +1730,13 @@ SELECT
     count(*) AS tot,
     questiontext
   FROM
-      Feedback
+      $ReportDB.Feedback
     JOIN $ReportDB.QuestionsForSurvey USING (questionid)
   WHERE
-    sessionid=$sessionid
+    sessionid=$sessionid AND
+    conid=$conid
   GROUP BY
     questionid
-
 EOD;
 
   // Retrieve query
@@ -1763,10 +1762,10 @@ EOD;
 SELECT
     concat(title, if(secondtitle,concat(": ",secondtitle),"")) as Title
   FROM
-      Sessions
+      $ReportDB.Sessions
   WHERE
-    sessionid=$sessionid
-    
+    sessionid=$sessionid AND
+    conid=$conid
 EOD;
 
   // Retrieve query
@@ -1856,19 +1855,20 @@ function getFeedbackData($badgeid) {
 
   $query = <<<EOD
 SELECT
-    sessionid,
+    concat(sessionid,"-",conid) AS "Sess-Con",
     comment
   FROM
-      CommentsOnSessions
+      $ReportDB.CommentsOnSessions
 EOD;
 
   if ($badgeid!="") {
     $query.=<<<EOD
   WHERE
-    sessionid in (SELECT
-                      sessionid 
+      (sessionid,conid) in (SELECT
+			    sessionid,
+			    conid
                     FROM
-                        ParticipantOnSession
+                        $ReportDB.ParticipantOnSession
                     WHERE badgeid='$badgeid')
 EOD;
   }
@@ -1880,24 +1880,25 @@ EOD;
   }
 
   while ($row=mysql_fetch_assoc($result)) {
-    $session_array[$row['sessionid']].="    <br>\n    --\n    <br>\n    <PRE>".fix_slashes($row['comment'])."</PRE>";
+    $session_array[$row['Sess-Con']].="    <br>\n    --\n    <br>\n    <PRE>".fix_slashes($row['comment'])."</PRE>";
   }
 
   // Check the existance of feedback in Feedback, and mark it in session_array['graph']['sessionid']
   $query = <<<EOD
 SELECT
-    DISTINCT(sessionid)
+    concat(sessionid,"-",conid) AS "Sess-Con"
   FROM
-      Feedback
+      $ReportDB.Feedback
 EOD;
 
   if ($badgeid!="") {
     $query.=<<<EOD
   WHERE
-    sessionid in (SELECT
-                      sessionid 
+      (sessionid,conid) in (SELECT
+			    sessionid,
+			    conid
                     FROM
-                        ParticipantOnSession
+                        $ReportDB.ParticipantOnSession
                     WHERE badgeid='$badgeid')
 EOD;
   }
@@ -1909,7 +1910,7 @@ EOD;
   }
 
   while ($row=mysql_fetch_assoc($result)) {
-    $session_array['graph'][$row['sessionid']]++;
+    $session_array['graph'][$row['Sess-Con']]++;
   }
 
   return($session_array);

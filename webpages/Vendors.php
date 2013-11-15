@@ -1,9 +1,6 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
-$conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ConNumDays=CON_NUM_DAYS; // make it a variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
 
@@ -11,11 +8,26 @@ $BioDB=BIODB; // make it a variable so it can be substituted
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 if ($BiotDB=="BIODB") {unset($BIODB);}
 
+$conid=$_GET['conid'];
+
+// Test for conid being passed in
+if ($conid == "") {
+  $conid=$_SESSION['conid'];
+}
+
+// Set the conname from the conid
+$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from $ReportDB.ConInfo where conid=$conid";
+list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
+$conname=$conname_array[1]['conname'];
+$connumdays=$conname_array[1]['connumdays'];
+$Grid_Spacer=$conname_array[1]['congridspacer'];
+$ConStartDatim=$conname_array[1]['constartdate'];
+$logo=$conname_array[1]['conlogo'];
+
 // LOCALIZATIONS
 $_SESSION['return_to_page']="Bios.php";
-$title="Vendor List";
+$title="Vendor List for $conname";
 $description="<P>List of all Vendors.</P>\n";
-
 
 /* This complex query grabs the name, and class information.
  Most, if not all of the formatting is done within the query, as opposed to in
@@ -30,15 +42,14 @@ SELECT
       $ReportDB.Participants
     JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
     JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN $ReportDB.Interested I USING (badgeid)
+    JOIN $ReportDB.Interested I USING (badgeid,conid)
     JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
-    LEFT JOIN ParticipantOnSession USING (badgeid)
-    LEFT JOIN Sessions USING (sessionid)
+    LEFT JOIN $ReportDB.ParticipantOnSession USING (badgeid,conid)
+    LEFT JOIN $ReportDB.Sessions USING (sessionid,conid)
   WHERE
     interestedtypename in ('Yes') AND
     permrolename in ('Vendor') AND
-    UHPR.conid=$conid AND
-    I.conid=$conid
+    conid=$conid
   ORDER BY
   pubsname
 EOD;

@@ -9,7 +9,7 @@ global $link;
 $logo=CON_LOGO; // make it a variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
-$conid=$_SESSION['conid'];  // make it a variable so it can be substituted
+//$conid=$_SESSION['conid'];  // make it a variable so it can be substituted
 
 // Tests for the substituted variables
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
@@ -19,7 +19,12 @@ if ($BiotDB=="BIODB") {unset($BIODB);}
 $_SESSION['return_to_page']="FeedbackPrint.php";
 $title="Feedback Printing";
 $print_p=$_GET['print_p'];
-$description="<P>A way to <A HREF=\"FeedbackPrint.php?print_p=T\">print</A> the feedback.</P>\n<hr>\n";
+$conid=$_GET['conid'];
+
+/* Adjust conid */
+if ($conid=="") {$conid=$_SESSION['conid'];}
+
+$description="<P>A way to <A HREF=\"FeedbackPrint.php?print_p=T\">print</A> the feedback for con $conid.</P>\n<hr>\n";
 
 /* Populate feedback array */
 $feedback_array=getFeedbackData("");
@@ -41,28 +46,35 @@ SELECT
     GROUP_CONCAT(DISTINCT roomname SEPARATOR ', ') AS Roomname,
     estatten AS Attended,
     Sessionid,
-    if ((THQT.conid=$conid),if((THQT.questiontypeid IS NULL),"",THQT.questiontypeid),"") AS questiontypeid,
+    Conid,
+    Conname,
+    concat(sessionid,"-",conid) AS "Sess-Con",
+    if((THQT.questiontypeid IS NULL),"",THQT.questiontypeid) AS questiontypeid,
     Title,
     secondtitle AS Subtitle,
     concat(progguiddesc,'</P>') AS 'Web Description',
     concat(pocketprogtext,'</P>') AS 'Book Description'
   FROM
-      Sessions S
-    JOIN Schedule USING (sessionid)
+      $ReportDB.Sessions S
+    JOIN $ReportDB.Schedule USING (sessionid,conid)
     JOIN $ReportDB.Rooms USING (roomid)
     JOIN $ReportDB.Tracks USING (trackid)
-    LEFT JOIN ParticipantOnSession USING (sessionid)
+    LEFT JOIN $ReportDB.ParticipantOnSession USING (sessionid,conid)
     LEFT JOIN $ReportDB.Participants USING (badgeid)
-    LEFT JOIN $ReportDB.TypeHasQuestionType THQT USING (typeid)
+    LEFT JOIN $ReportDB.TypeHasQuestionType THQT USING (typeid,conid)
     JOIN $ReportDB.PubStatuses USING (pubstatusid)
+    JOIN $ReportDB.ConInfo USING (conid)
   WHERE
+    conid=$conid AND
     pubstatusname in ('Public') AND
     (volunteer=0 OR volunteer IS NULL) AND
     (introducer=0 OR introducer IS NULL) AND
     (aidedecamp=0 OR aidedecamp IS NULL)
   GROUP BY
+    conid,
     sessionid
   ORDER BY
+    conid,
     S.title
 EOD;
 
@@ -169,7 +181,7 @@ EOD;
 
 $workstring="<DL>\n";
 for ($i=1; $i<=$elements; $i++) {
-  $workstring.=sprintf("<P><DT><B>%s</B>",$element_array[$i]['Title']);
+  $workstring.=sprintf("<P><DT>%s <B>%s</B>",$element_array[$i]['Conname'],$element_array[$i]['Title']);
   if ($element_array[$i]['Subtitle'] !='') {
     $workstring.=sprintf(": %s",$element_array[$i]['Subtitle']);
   }
@@ -200,9 +212,9 @@ for ($i=1; $i<=$elements; $i++) {
   if ($element_array[$i]['Book Description']) {
     $workstring.=sprintf("  </DD>\n  <DD><P>Book: %s</P>\n",$element_array[$i]['Book Description']);
   }
-  if ($feedback_array[$element_array[$i]['Sessionid']]) {
+  if ($feedback_array[$element_array[$i]['Sess-Con']]) {
     $workstring.="  </DD>\n    <DD>Written feedback from surveys:\n<br>\n";
-    $workstring.=sprintf("%s<br>\n",$feedback_array[$element_array[$i]['Sessionid']]);
+    $workstring.=sprintf("%s<br>\n",$feedback_array[$element_array[$i]['Sess-Con']]);
   }
   // Gather up the info before the graph
   $printstring.=$workstring;
@@ -213,12 +225,12 @@ for ($i=1; $i<=$elements; $i++) {
     $printstring.="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
     $printstring.=sprintf ("<img src=\"%s\">\n<br>\n",$feedback_file);
   }
-  if (isset($feedback_array['graph'][$element_array[$i]['Sessionid']])) {
+  if (isset($feedback_array['graph'][$element_array[$i]['Sess-Con']])) {
     $workstring="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
     $printstring.=$workstring;
     $pdf->writeHTML($workstring, true, false, true, false, "");
     $workstring="";
-    $graphstring=generateSvgString($element_array[$i]['Sessionid']);
+    $graphstring=generateSvgString($element_array[$i]['Sessionid'],$element_array[$i]['Conid']);
     $printstring.=$graphstring;
     $pdf->ImageSVG("@".$graphstring,'','','','','','N','',1,true);
   }

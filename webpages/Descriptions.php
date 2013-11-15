@@ -1,11 +1,8 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ConNumDays=CON_NUM_DAYS; // make it a variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
-$conid=$_SESSION['conid'];
 
 // Tests for the substituted variables
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
@@ -15,6 +12,22 @@ if ($BiotDB=="BIODB") {unset($BIODB);}
 if (!empty($_SERVER['QUERY_STRING'])) {
   $passon="?".$_SERVER['QUERY_STRING'];
 }
+
+$conid=$_GET['conid'];
+
+// Test for conid being passed in
+if ($conid == "") {
+  $conid=$_SESSION['conid'];
+}
+
+// Set the conname from the conid
+$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from $ReportDB.ConInfo where conid=$conid";
+list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
+$conname=$conname_array[1]['conname'];
+$connumdays=$conname_array[1]['connumdays'];
+$Grid_Spacer=$conname_array[1]['congridspacer'];
+$ConStartDatim=$conname_array[1]['constartdate'];
+$logo=$conname_array[1]['conlogo'];
 
 $groupby="progguiddesc";
 $roomname="concat('<A HREF=\"Tracks.php$passon#',roomname,'\">',roomname,'</A>')";
@@ -40,7 +53,7 @@ SELECT
     phasestate
   FROM
       $ReportDB.PhaseTypes
-    JOIN $ReportDB.Phase USING (phaseid)
+    JOIN $ReportDB.Phase USING (phasetypeid)
   WHERE
     phasetypename like '%Feedback Available%' AND
     conid=$conid
@@ -51,12 +64,12 @@ list($phasestatrows,$phaseheader_array,$phase_array)=queryreport($query,$link,$t
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="Descriptions.php";
-$title="Session Descriptions";
+$title="Session Descriptions for $conname";
 $description="<P>Descriptions for all sessions.</P>\n";
 $additionalinfo="<P>Click on the time to visit the session's <A HREF=\"Schedule.php$passon\">timeslot</A>,\n";
 $additionalinfo.="the presenter to visit their <A HREF=\"Bios.php$passon\">bio</A>, the track name to visit the particular\n";
 $additionalinfo.="<A HREF=\"Tracks.php$passon\">track</A>, or visit the <A HREF=\"Postgrid.php$passon\">grid</A>.</P>\n";
-if ((strtotime($ConStartDatim)+(60*60*24*$ConNumDays)) > time()) {
+if ((strtotime($ConStartDatim)+(60*60*24*$connumdays)) > time()) {
   $additionalinfo.="<P>Click on the (iCal) tag to download the iCal calendar for the particular activity you want added to your calendar.</P>\n";
  }
 if ((strtotime($ConStartDatim) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
@@ -85,14 +98,25 @@ SELECT
     concat('<A HREF=Feedback.php?sessionid=',sessionid,'>(Feedback)</A>') AS Feedback,
     concat('<P>',progguiddesc,'</P>') as Description
   FROM
-      Sessions S
-    JOIN Schedule USING (sessionid)
+EOD;
+if ($conid==CON_KEY) {
+  $query.=" Sessions S JOIN Schedule USING (sessionid) LEFT JOIN ParticipantOnSession USING (sessionid)";
+} else {
+  $query.=" $ReportDB.Sessions S JOIN $ReportDB.Schedule USING (sessionid,conid) LEFT JOIN $ReportDB.ParticipantOnSession USING (sessionid,conid)";
+}
+$query.= <<<EOD
     JOIN $ReportDB.Rooms USING (roomid)
     JOIN $ReportDB.Tracks USING (trackid)
-    LEFT JOIN ParticipantOnSession USING (sessionid)
     LEFT JOIN $ReportDB.Participants USING (badgeid)
     JOIN $ReportDB.PubStatuses USING (pubstatusid)
   WHERE
+EOD;
+if ($conid==CON_KEY) {
+  $query.="";
+} else {
+  $query.=" conid=$conid AND  ";
+}
+$query.= <<<EOD
     pubstatusname in ($pubstatus_check) AND
     (volunteer=0 OR volunteer IS NULL) AND
     (introducer=0 OR introducer IS NULL) AND
@@ -126,7 +150,7 @@ for ($i=1; $i<=$elements; $i++) {
   if ($element_array[$i]['Roomname']) {
     echo sprintf("&mdash; <i>%s</i>",$element_array[$i]['Roomname']);
   }
-  if ((strtotime($ConStartDatim)+(60*60*24*$ConNumDays)) > time()) {
+  if ((strtotime($ConStartDatim)+(60*60*24*$connumdays)) > time()) {
     echo sprintf("&mdash; %s",$element_array[$i]['iCal']);
   }
   if ((strtotime($ConStartDatim) < time()) AND ($phase_array[1]['phasestate'] == '0')) {

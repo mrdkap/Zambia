@@ -235,19 +235,17 @@ like), and it's limits, going down in an array.
                     <TD class="txtalbl-last" colspan=2><LABEL class="dense" for="notesforprog">Additional info (including if there is a particular presenter you want to present this) for Programming Committee:</LABEL></TD></TR>
                     <TD></TD><TD class="txta-last"><TEXTAREA class="textlabelarea" cols=80 name="notesforprog"><?php echo htmlspecialchars($session["notesforprog"],ENT_NOQUOTES);?></TEXTAREA></TD>
                     </TR>
-                <?php } ?>
-                <?php if ($action=="propose") { ?>
+                </TABLE>
+            </DIV>
+                <?php } elseif ($action=="propose") { ?>
                 <INPUT type="hidden" name="notesforpart" value="<?php echo "$name $email $badgeid" ?>">
                 <INPUT type="hidden" name="notesforprog" value="">
                 <TR id="trservnotes">
                     <TD class="txtalbl-last" colspan=2><LABEL class="dense" for="servnotes">Additional info, equipment, or services you might want for your class (including if there is a handout or the like):</LABEL></TD></TR>
                     <TD></TD><TD class="txta-last"><TEXTAREA class="textlabelarea" cols=80 name="servnotes"><?php echo htmlspecialchars($session["servnotes"],ENT_NOQUOTES);?></TEXTAREA></TD>
                     </TR>
-                <?php } ?>
                 </TABLE>
             </DIV>
-            <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
-            <INPUT type="hidden" name="servnotes" value="">
             <?php } else { ?>
             <DIV class="thinbox">
             <TABLE><COL width="100"><COL>

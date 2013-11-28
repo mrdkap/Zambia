@@ -20,11 +20,25 @@ $_SESSION['return_to_page']="FeedbackPrint.php";
 $title="Feedback Printing";
 $print_p=$_GET['print_p'];
 $conid=$_GET['conid'];
+$badgeid=$_GET['badgeid'];
 
 /* Adjust conid */
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
-$description="<P>A way to <A HREF=\"FeedbackPrint.php?print_p=T\">print</A> the feedback for con $conid.</P>\n<hr>\n";
+/* Adjust badgeid */
+if ($badgeid=="") {
+  $conid_or_badgeid="conid=$conid";
+  $feedback_string="con $conid";
+  $add_badgeid="";
+  $pdf_title=$conid;
+} else {
+  $conid_or_badgeid="badgeid=$badgeid";
+  $feedback_string="participant $badgeid";
+  $add_badgeid="&badgeid=$badgeid";
+  $pdf_title=$badgeid;
+}
+
+$description="<P>A way to <A HREF=\"FeedbackPrint.php?print_p=T$add_badgeid\">print</A> the feedback for $feedback_string.</P>\n<hr>\n";
 
 /* Populate feedback array */
 $feedback_array=getFeedbackData("");
@@ -65,7 +79,7 @@ SELECT
     JOIN $ReportDB.PubStatuses USING (pubstatusid)
     JOIN $ReportDB.ConInfo USING (conid)
   WHERE
-    conid=$conid AND
+    $conid_or_badgeid AND
     pubstatusname in ('Public') AND
     (volunteer=0 OR volunteer IS NULL) AND
     (introducer=0 OR introducer IS NULL) AND
@@ -247,5 +261,5 @@ if ($print_p =="") {
   } elseif ($print_p =="Template") {
   echo $printstring;
   } else {
-  $pdf->Output('Feedback-'.$conid.'.pdf', 'I');
+  $pdf->Output('Feedback-'.$pdf_title.'.pdf', 'I');
  }

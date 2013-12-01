@@ -61,7 +61,6 @@ for ($i=1; $i<=$comptypecount; $i++) {
 }
 
 // Second walk through: Fetch the compensation per presenter
-//$conid=$_SESSION['conid']; // So it can be substituted
 for ($i=1; $i<=$comptypecount; $i++) {
   $query = <<<EOD
 SELECT 

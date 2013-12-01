@@ -8,11 +8,12 @@ $description="<P>Return to the <A HREF=\"genreport.php?reportname=meetingagendad
 // Submit the task, if there was one, when this was called
 if ((isset($_POST["agendaupdate"])) and ($_POST["agendaupdate"]!="")) {
   if ($_POST["agendaid"] == "-1") {
-    $element_array=array('agendaname','permroleid','agenda','agendanotes','meetingtime');
+    $element_array=array('agendaname','permroleid','agenda','agendanotes','conid','meetingtime');
     $value_array=array(htmlspecialchars_decode($_POST['agendaname']),
 		       htmlspecialchars_decode($_POST['permroleid']),
 		       htmlspecialchars_decode($_POST['agenda']),
 		       htmlspecialchars_decode($_POST['agendanotes']),
+		       $_SESSION['conid'],
 		       htmlspecialchars_decode($_POST['meetingtime']));
     $message.=submit_table_element($link, $title, "$ReportDB.AgendaList", $element_array, $value_array);
    } else {

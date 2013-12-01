@@ -2,7 +2,6 @@
 require_once('StaffCommonCode.php');
 global $link;
 $title="Compensation Update";
-$conid=$_SESSION['conid'];
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
 
@@ -16,6 +15,16 @@ if (!may_I("SuperLiaison") AND !may_I("Treasurer")) {
   $message_error.=" If you think this is in error, please, get in touch with an administrator.";
   RenderError($title,$message_error);
   exit();
+}
+
+$conid=$_GET['conid'];
+
+// Test for conid being passed in
+if ($conid == "") {
+  $conid=$_POST['conid'];
+  if ($conid == "") {
+    $conid=$_SESSION['conid'];
+  }
 }
 
 // Assign the typename and selpartid if it was passed in
@@ -203,6 +212,7 @@ echo "<FORM name=\"updatecomp\" method=POST action=\"StaffEditCompensation.php\"
 echo "<INPUT type=submit name=submit class=SubmitButton value=Update>\n";
 echo "<INPUT type=hidden name=partid value=$selpartid>\n";
 echo "<INPUT type=hidden name=compids value=$compid_string>\n";
+echo "<INPUT type=hidden name=conid value=$conid>\n";
 echo "<INPUT type=hidden name=update value=please>\n";
 echo "<TABLE border=1>\n";
 echo "  <TR>\n    <TH>Type</TH>\n    <TH>";

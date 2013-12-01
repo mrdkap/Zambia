@@ -61,19 +61,21 @@ for ($i=1; $i<=$comptypecount; $i++) {
 }
 
 // Second walk through: Fetch the compensation per presenter
-$conid=$_SESSION['conid']; // So it can be substituted
+
 for ($i=1; $i<=$comptypecount; $i++) {
   $query = <<<EOD
 SELECT 
     pubsname,
     badgeid,
+    conid,
+    conname,
     compamount,
     compdescription
   FROM
       $ReportDB.Compensation
     JOIN $ReportDB.Participants USING (badgeid)
+    JOIN $ReportDB.ConInfo USING (conid)
   WHERE
-    conid=$conid AND
     comptypeid=$i
 EOD;
   
@@ -82,23 +84,32 @@ EOD;
 
   // Set up the comp_array and totals
   for ($j=1; $j<=$tmpcompcount; $j++) {
-    $comp_array[$tmp_comp_array[$j]['pubsname']][$i]["Value"]=$tmp_comp_array[$j]['compamount'];
-    $comp_array[$tmp_comp_array[$j]['pubsname']][$i]["Note"]=$tmp_comp_array[$j]['compdescription'];
-    $badge_array[$tmp_comp_array[$j]['pubsname']]=$tmp_comp_array[$j]['badgeid'];
-    $total_array[$i]=$total_array[$i]+$tmp_comp_array[$j]['compamount'];
+    $comp_array[$tmp_comp_array[$j]['pubsname']][$tmp_comp_array[$j]['conid']][$i]["Value"]=$tmp_comp_array[$j]['compamount'];
+    $comp_array[$tmp_comp_array[$j]['pubsname']][$tmp_comp_array[$j]['conid']][$i]["Note"]=$tmp_comp_array[$j]['compdescription'];
+    $badge_array[$tmp_comp_array[$j]['pubsname']][$tmp_comp_array[$j]['conid']]=$tmp_comp_array[$j]['badgeid'];
+    $total_array[$tmp_comp_array[$j]['conid']][$i]=$total_array[$tmp_comp_array[$j]['conid']][$i]+$tmp_comp_array[$j]['compamount'];
+    $conid_array[$tmp_comp_array[$j]['conid']]=$tmp_comp_array[$j]['conid'];
+    $conname_array[$tmp_comp_array[$j]['conid']]=$tmp_comp_array[$j]['conname'];
+    if ((strpos($comptype_array[$i]['comptypename'],"Expense") !== false) or
+	(strpos($comptype_array[$i]['comptypename'],"Cost") !== false) or
+	(strpos($comptype_array[$i]['comptypename'],"Honorarium") !== false)) {
+      $total_array[$tmp_comp_array[$j]['conid']][0]=$total_array[$tmp_comp_array[$j]['conid']][0]+$tmp_comp_array[$j]['compamount'];
+    }
   }
 }
+
+// get the conids in reverse order.
+rsort($conid_array);
 
 $query = <<<EOD
 SELECT 
     interestedtypename,
+    conid,
     pubsname
   FROM
       $ReportDB.Interested
     JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
     JOIN $ReportDB.Participants USING (badgeid)
-  WHERE
-    conid=$conid
 EOD;
   
 // Retrieve query
@@ -106,37 +117,42 @@ list($interestedcount,$unneded_array_b,$interested_array)=queryreport($query,$li
 
 // Integrate the interested array
 for ($i=1; $i<=$interestedcount; $i++) {
-  $int_array[$interested_array[$i]['pubsname']]=$interested_array[$i]['interestedtypename'];
-  $int_array[$interested_array[$i]['pubsname']]=$interested_array[$i]['interestedtypename'];
+  $int_array[$interested_array[$i]['pubsname']][$interested_array[$i]['conid']]=$interested_array[$i]['interestedtypename'];
 }
 
 $rows=1;
 // Walk the presenters, and make the array of values.
-foreach ($comp_array as $presenter => $comp) {
-  $report_array[$rows]['Presenter']="<A HREF=\"StaffEditCompensation.php?partid=".$badge_array[$presenter]."\">$presenter</A>";
-  $report_array[$rows]['Attending']="<A HREF=\"AdminParticipants.php?partid=".$badge_array[$presenter]."\">";
-  if (isset($int_array[$presenter]) AND ($int_array[$presenter]!='')) {
-    $report_array[$rows]['Attending'].=$int_array[$presenter];
-  } else {
-    $report_array[$rows]['Attending'].="??";
-  }
-  $report_array[$rows]['Attending'].="</A>";
-  for ($i=1; $i<=$comptypecount; $i++) {
-    $report_array[$rows][sprintf("<A HREF=\"#key%s\">%s</A>",$comptype_array[$i]['comptypeid'],$comptype_array[$i]['comptypename'])]=$comp[$i]["Value"];
-    if ($withnotes) {
-      $report_array[$rows][$comptype_array[$i]['comptypename']." Notes"]=$comp[$i]["Note"];
+foreach ($conid_array as $conid) {
+  $report_array[$rows]['Presenter']="";
+  $report_array[$rows]['Attending']="<B>".$conname_array[$conid]."</B>";
+  $rows++;
+  foreach ($comp_array as $presenter => $comp) {
+    if (isset($badge_array[$presenter][$conid])) {
+      $report_array[$rows]['Presenter']="<A HREF=\"StaffEditCompensation.php?partid=".$badge_array[$presenter][$conid]."&conid=$conid\">$presenter</A>";
+      $report_array[$rows]['Attending']="<A HREF=\"AdminParticipants.php?partid=".$badge_array[$presenter][$conid]."\">";
+      if (isset($int_array[$presenter][$conid]) AND ($int_array[$presenter][$conid]!='')) {
+	$report_array[$rows]['Attending'].=$int_array[$presenter][$conid];
+      } else {
+	$report_array[$rows]['Attending'].="??";
+      }
+      $report_array[$rows]['Attending'].="</A>";
+      for ($i=1; $i<=$comptypecount; $i++) {
+	$report_array[$rows][sprintf("<A HREF=\"#key%s\">%s</A>",$comptype_array[$i]['comptypeid'],$comptype_array[$i]['comptypename'])]=$comp[$conid][$i]["Value"];
+	if ($withnotes) {
+	  $report_array[$rows][$comptype_array[$i]['comptypename']." Notes"]=$comp[$conid][$i]["Note"];
+	}
+      }
+      $rows++;
     }
+  }
+  // Totals line
+  $report_array[$rows]['Presenter']="TOTALS ".$conname_array[$conid].":";
+  $report_array[$rows]['Attending']="$".$total_array[$conid][0];
+  for ($i=1; $i<=$comptypecount; $i++) {
+    $report_array[$rows][sprintf("<A HREF=\"#key%s\">%s</A>",$comptype_array[$i]['comptypeid'],$comptype_array[$i]['comptypename'])]=$total_array[$conid][$i];
   }
   $rows++;
 }
-
-// Totals line
-$report_array[$rows]['Presenter']="TOTALS:";
-$report_array[$rows]['Attending']="";
-for ($i=1; $i<=$comptypecount; $i++) {
-  $report_array[$rows][sprintf("<A HREF=\"#key%s\">%s</A>",$comptype_array[$i]['comptypeid'],$comptype_array[$i]['comptypename'])]=$total_array[$i];
-}
-$rows++;
 
 if ($_GET["csv"]=="y") {
   topofpagecsv(CON_NAME."-Presenter_Compensation.csv");

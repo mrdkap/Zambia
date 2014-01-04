@@ -152,6 +152,7 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),S.title,\"\") SEPARATOR '') as \"%s title\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),S.sessionid,\"\") SEPARATOR '') as \"%s sessionid\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),S.duration,\"\") SEPARATOR '') as \"%s duration\"",$x,$y);
+    $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),IF(S.estatten,S.estatten,\"\"),\"\") SEPARATOR '') as \"%s total\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,T.htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$x,$y);
   }
   if ($conid==CON_KEY) {
@@ -240,6 +241,7 @@ for ($j=1; $j<=$rooms; $j++) {
       $title=$grid_array[$i]["$header_roomname title"]; //title
       $duration=substr($grid_array[$i]["$header_roomname duration"],0,-3); // duration; drop ":00" representing seconds off the end
       if (substr($duration,0,1)=="0") {$duration = substr($duration,1,999);} // drop leading "0"
+      $total=$grid_array[$i]["$header_roomname total"]; //total
       $presenters=$presenters_array[$sessionid]; //presenters
       if ($bgcolor!="") {
 	$element_array[$element_row][$element_col] = sprintf("<TD BGCOLOR=\"%s\" CLASS=\"%s\">",$bgcolor,$cellclass);
@@ -248,6 +250,9 @@ for ($j=1; $j<=$rooms; $j++) {
 	}
 	if ($duration!="") {
 	  $element_array[$element_row][$element_col].= sprintf(" (%s)",$duration);
+	}
+	if ($total!="") {
+	  $element_array[$element_row][$element_col].= sprintf("<br>(Count: %s)",$total);
 	}
 	if ($presenters!="") {
 	  $element_array[$element_row][$element_col].= sprintf("<br>\n%s",$presenters);

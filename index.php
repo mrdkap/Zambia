@@ -108,7 +108,7 @@ for ($i=1; $i<=$conrows; $i++) {
     $webstring.="  <LI><A HREF=\"webpages/Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
   }
   if ($nowis < $constart) { 
-    $webstring.="  <LI><A HREF=\"webpages/\">Presenter/Vendor Login</A></LI>\n";
+    $webstring.="  <LI><A HREF=\"webpages/\">Presenter/Volunteer Login</A></LI>\n";
     if ($phase_array[$conid]['Brainstorm'] == '0' ) {
       $webstring.="  <LI>\n";
       $webstring.="  <FORM name=\"brainstormform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";

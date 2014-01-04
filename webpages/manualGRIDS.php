@@ -46,7 +46,8 @@ foreach ($body_array as $y_element) {
     if ($x_element == "Description") {
       $grid_array[$rows]["$x_element"]="<B>".$y_element."</B>";
     } else {
-      $grid_array[$rows]["$x_element"]="<A HREF=grid.php?".$type_array["$y_element"].$how_array["$x_element"].">Color</A> / \n";
+      $grid_array[$rows]["$x_element"]="<A HREF=grid.php?".$type_array["$y_element"].$how_array["$x_element"].">Color</A> \n";
+      $grid_array[$rows]["$x_element"].="<A HREF=grid.php?".$type_array["$y_element"].$how_array["$x_element"]."&track=y>(by track)</A> / \n";
       $grid_array[$rows]["$x_element"].="<A HREF=grid.php?".$type_array["$y_element"].$how_array["$x_element"]."&nocolor=y>No Color</A>\n";
     }
   }

@@ -70,6 +70,7 @@ $watchselect=$_GET['watch'];
 $logselect=$_GET['logistics'];
 $eventselect=$_GET['events'];
 $fasttrackselect=$_GET['fasttrack'];
+$trackselect=$_GET['track'];
 $goh=$_GET['goh'];
 $default=$_GET['default'];
 
@@ -121,6 +122,8 @@ $tsemifill="Time Semi-filled ";
 $gohprint="";
 $tcolorprint="Color ";
 $colorprint=", keyed by color";
+$typeortrackprint=", colored by type";
+$typeortrack="$ReportDB.Types T USING (typeid)";
 
 // Mods
 if ($unpub=="y") {
@@ -159,6 +162,10 @@ if ($eventselect=="y") {
 if ($fasttrackselect=="y") {
   $typeprint.="Fast Track ";
  }
+if ($trackselect=="y") {
+  $typeortrackprint=", colored by track";
+  $typeortrack="$ReportDB.Tracks T USING (trackid)";
+}
 if ($filled=="y") {
   $semifill="";
   $tsemifill="Time Filled ";
@@ -175,6 +182,7 @@ if ($goh=="y") {
 if ($nocolor=="y") {
   $tcolorprint="";
   $colorprint="";
+  $typeortrackprint="";
  }
 if ($typeprint=="") {
   $typeprint="Complete ";
@@ -335,10 +343,11 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,S.title,\"\") SEPARATOR '') as \"%s title\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,S.sessionid,\"\") SEPARATOR '') as \"%s sessionid\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,S.duration,\"\") SEPARATOR '') as \"%s duration\"",$header_roomid,$header_roomname);
+    $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,IF(S.estatten,S.estatten,\"\"),\"\") SEPARATOR '') as \"%s total\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,T.htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$header_roomid,$header_roomname);
   }
   $query.=" FROM Schedule SCH JOIN Sessions S USING (sessionid)";
-  $query.=" JOIN $ReportDB.Rooms R USING (roomid) JOIN $ReportDB.Types T USING (typeid)";
+  $query.=" JOIN $ReportDB.Rooms R USING (roomid) JOIN $typeortrack";
   $query.=" JOIN $ReportDB.PubStatuses USING (pubstatusid)";
   $query.=" WHERE";
   if ($goh=="y") {$query.=" S.sessionid in (SELECT DISTINCT sessionid from ParticipantOnSession WHERE badgeid IN $GohBadgeList) AND";}
@@ -427,6 +436,7 @@ foreach ($printrows_array as $i) {
       $sessionid=$grid_array[$i]["$header_roomname sessionid"]; //sessionid
       $title=$grid_array[$i]["$header_roomname title"]; //title
       $duration = substr($grid_array[$i]["$header_roomname duration"],0,-3); // duration; drop ":00" representing seconds off the end
+      $total=$grid_array[$i]["$header_roomname total"]; //total
       $presenters = substr($presenters_array[$sessionid],0,-2); //presenters, with the final ", " cut off.
       if (substr($duration,0,1)=="0") {$duration = substr($duration,1,999);} // drop leading "0"
       if ($bgcolor!="") {
@@ -448,6 +458,9 @@ foreach ($printrows_array as $i) {
 	if ($duration!="") {
 	  echo sprintf(" (%s)",$duration);
 	}
+	if ($total!="") {
+	  echo sprintf("<br>(Count: %s)",$total);
+	}
 	if ($presenters!="") {
 	  echo sprintf("<br>\n%s",$presenters);
 	}
@@ -461,5 +474,28 @@ foreach ($printrows_array as $i) {
   }
 }
 echo "</TABLE>";
-correct_footer();
+
+// Color key
+$fromtable="$ReportDB.Types";
+$field="typename";
+if ($trackselect == "y") {
+  $fromtable="$ReportDB.Tracks";
+  $field="trackname";
+}
+if ($nocolor == "y") {
+  correct_footer();
+} else {
+  $query = <<<EOD
+SELECT
+    concat("</TD><TD BGCOLOR=\"",htmlcellcolor,"\">",$field) AS "</TH><TH>Key"
+  FROM
+      $fromtable
+  ORDER BY
+    display_order
+EOD;
+
+  list($keyrows,$keyheader_array,$key_array)=queryreport($query,$link,$title,$description,0);
+  echo renderhtmlreport(1,$keyrows,$keyheader_array,$key_array);
+  correct_footer();
+}
 ?>

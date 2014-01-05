@@ -220,41 +220,80 @@ function update_session() {
     if ($ReportDB=="REPORTDB") {unset($ReportDB);}
     if ($BioDB=="BIODB") {unset($BIODB);}
 
-    $query="UPDATE Sessions set ";
-    //$query.="conid=".$_SESSION['conid'].", ";
-    $query.="trackid=".$session["track"].", ";
-    $query.="typeid=".$session["type"].", ";
-    $query.="divisionid=".$session["divisionid"].", ";
-    $query.="pubstatusid=".$session["pubstatusid"].", ";
-    $query.="languagestatusid=".$session["languagestatusid"].", ";
-    $query.="pubsno=\"".mysql_real_escape_string($session["pubno"],$link)."\", ";
-    $query.="title=\"".mysql_real_escape_string($session["title"],$link)."\", ";
-    $query.="secondtitle=\"".mysql_real_escape_string($session["secondtitle"],$link)."\", ";
-    $query.="pocketprogtext=\"".mysql_real_escape_string($session["pocketprogtext"],$link)."\", ";
-    $query.="progguiddesc=\"".mysql_real_escape_string($session["progguiddesc"],$link)."\", ";
-    $query.="persppartinfo=\"".mysql_real_escape_string($session["persppartinfo"],$link)."\", ";
     if (DURATION_IN_MINUTES=="TRUE") {
-            $query.="duration=\"".conv_min2hrsmin($session["duration"],$link)."\", ";
-            }
-        else {
-            $query.="duration=\"".mysql_real_escape_string($session["duration"],$link)."\", ";
-            }
-    $query.="estatten=".($session["atten"]!=""?$session["atten"]:"null").", ";
-    $query.="kidscatid=".$session["kids"].", ";
-    $query.="signupreq=".($session["signup"]?"1":"0").", ";
-    $query.="invitedguest=".($session["invguest"]?"1":"0").", ";
-    $query.="roomsetid=".$session["roomset"].", ";
-    $query.="notesforpart=\"".mysql_real_escape_string($session["notesforpart"],$link)."\", ";
-    $query.="servicenotes=\"".mysql_real_escape_string($session["servnotes"],$link)."\", ";
-    $query.="statusid=".$session["status"].", ";
-    $query.="notesforprog=\"".mysql_real_escape_string($session["notesforprog"],$link)."\" ";
-    $query.=" WHERE sessionid=".$session["sessionid"];
-    $message2=$query;
-    if (!mysql_query($query,$link)) {
-        $message_error.=mysql_error($link);
-        $message_error.=" query=$query";
-        return $message_error;
-        }
+      $duration="duration='".conv_min2hrsmin($session["duration"],$link)."'";
+    } else {
+      $duration="duration='".mysql_real_escape_string($session["duration"],$link)."'";
+    }
+
+    $pairedvalue_array=array("trackid=".$session["track"],
+			     "typeid=".$session["type"],
+			     "divisionid=".$session["divisionid"],
+			     "pubstatusid=".$session["pubstatusid"],
+			     "title='".mysql_real_escape_string($session["title"],$link)."'",
+			     "secondtitle='".mysql_real_escape_string($session["secondtitle"],$link)."'",
+			     "pocketprogtext='".mysql_real_escape_string($session["description_good_book"],$link)."'",
+			     "progguiddesc='".mysql_real_escape_string($session["description_good_web"],$link)."'",
+			     "persppartinfo='".mysql_real_escape_string($session["persppartinfo"],$link)."'",
+			     $duration,
+			     "estatten=".($session["atten"]!=""?$session["atten"]:"null"),
+			     "kidscatid=".$session["kids"],
+			     "signupreq=".($session["signup"]?"1":"0"),
+			     "invitedguest=".($session["invguest"]?"1":"0"),
+			     "roomsetid=".$session["roomset"],
+			     "notesforpart='".mysql_real_escape_string($session["notesforpart"],$link)."'",
+			     "servicenotes='".mysql_real_escape_string($session["servnotes"],$link)."'",
+			     "statusid=".$session["status"],
+			     "notesforprog='".mysql_real_escape_string($session["notesforprog"],$link)."'");
+    $match_string="sessionid=".$session['sessionid'];
+    $message.=update_table_element_extended_match ($link,$title,"Sessions",$pairedvalue_array, $match_string);
+
+    // And get the secondary table as well
+    $match_string="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid'];
+    $message.=update_table_element_extended_match ($link,$title,"$ReportDB.Sessions",$pairedvalue_array, $match_string);
+
+    // Create or update the Descriptions text (descriptiontypeid=3) entries.
+
+    // Web (biodestid=1) (currently locked to biostateid=3 (which is "good") and the en-us language.) 
+    if (isset($session["description_good_web"]) and ($session["description_good_web"] != "")) {
+      $wherestring="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid']." AND descriptiontypeid=3 AND biostateid=3 AND biodestid=1 AND descriptionlang='en-us'";
+      $query="SELECT descriptionid FROM $ReportDB.Descriptions WHERE $wherestring";
+
+      // Retrieve query
+      list($desctestrows,$header_array,$desctest_array)=queryreport($query,$link,$title,$description,0);
+
+      // Test for existance, if it doesn't exist, create it, if it does, update it.
+      if ($desctestrows==0) {
+	$element_array=array('sessionid','conid','descriptiontypeid','biostateid','biodestid','descriptionlang','descriptiontext');
+	$value_array=array($session['sessionid'],$_SESSION['conid'],3,3,1,'en-us',mysql_real_escape_string($session["description_good_web"],$link));
+	$message.=submit_table_element($link,$title,"$ReportDB.Descriptions",$element_array,$value_array);
+      } else {
+	$pairedvalue_array=array("descriptiontext='".mysql_real_escape_string($session["description_good_web"],$link)."'");
+	$match_string=$wherestring;
+	$message.=update_table_element_extended_match ($link,$title,"$ReportDB.Descriptions",$pairedvalue_array, $match_string);
+      }
+    }
+
+    // Book (biodestid=2) (currently locked to biostateid=3 (which is "good") and the en-us language.) 
+    if (isset($session["description_good_book"]) and ($session["description_good_book"] != "")) {
+      $wherestring="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid']." AND descriptiontypeid=3 AND biostateid=3 AND biodestid=2 AND descriptionlang='en-us'";
+      $query="SELECT descriptionid FROM $ReportDB.Descriptions WHERE $wherestring";
+
+      // Retrieve query
+      list($desctestrows,$header_array,$desctest_array)=queryreport($query,$link,$title,$description,0);
+
+      // Test for existance, if it doesn't exist, create it, if it does, update it.
+      if ($desctestrows==0) {
+	$element_array=array('sessionid','conid','descriptiontypeid','biostateid','biodestid','descriptionlang','descriptiontext');
+	$value_array=array($session['sessionid'],$_SESSION['conid'],3,3,2,'en-us',mysql_real_escape_string($session["description_good_book"],$link));
+	$message.=submit_table_element($link,$title,"$ReportDB.Descriptions",$element_array,$value_array);
+      } else {
+	$pairedvalue_array=array("descriptiontext='".mysql_real_escape_string($session["description_good_book"],$link)."'");
+	$match_string=$wherestring;
+	$message.=update_table_element_extended_match ($link,$title,"$ReportDB.Descriptions",$pairedvalue_array, $match_string);
+      }
+    }
+
     $query="DELETE from SessionHasFeature where sessionid=".$session["sessionid"];
     //$query.=" AND conid=".$_SESSION['conid'];
     $message2=$query;
@@ -425,8 +464,8 @@ function insert_session() {
     $query.="pubsno=\"".mysql_real_escape_string($session["pubno"],$link).'",';
     $query.="title=\"".mysql_real_escape_string($session["title"],$link).'",';
     $query.="secondtitle=\"".mysql_real_escape_string($session["secondtitle"],$link).'",';
-    $query.="pocketprogtext=\"".mysql_real_escape_string($session["pocketprogtext"],$link).'",';
-    $query.="progguiddesc=\"".mysql_real_escape_string($session["progguiddesc"],$link).'",';
+    $query.="pocketprogtext=\"".mysql_real_escape_string($session["description_good_book"],$link).'",';
+    $query.="progguiddesc=\"".mysql_real_escape_string($session["description_good_web"],$link).'",';
     $query.="persppartinfo=\"".mysql_real_escape_string($session["persppartinfo"],$link).'",';
     if (DURATION_IN_MINUTES=="TRUE") {
             $query.="duration=\"".conv_min2hrsmin($session["duration"],$link)."\", ";
@@ -453,6 +492,64 @@ function insert_session() {
         return $message_error;
         }
     $id = mysql_insert_id($link);
+
+    $query="INSERT into $ReportDB.Sessions set ";
+    $query.="sessionid=".$id.", ";
+    $query.="conid=".$_SESSION['conid'].", ";
+    $query.="trackid=".$session["track"].',';
+    $temp=$session["type"];
+    $query.="typeid=".(($temp==0)?"null":$temp).", ";
+    $temp=$session["divisionid"]; // Unknown=6
+    $query.="divisionid=".(($temp==0)?6:$temp).", ";
+    $query.="pubstatusid=".$session["pubstatusid"].',';
+    $query.="languagestatusid=".$session["languagestatusid"].',';
+    $query.="pubsno=\"".mysql_real_escape_string($session["pubno"],$link).'",';
+    $query.="title=\"".mysql_real_escape_string($session["title"],$link).'",';
+    $query.="secondtitle=\"".mysql_real_escape_string($session["secondtitle"],$link).'",';
+    $query.="pocketprogtext=\"".mysql_real_escape_string($session["description_good_book"],$link).'",';
+    $query.="progguiddesc=\"".mysql_real_escape_string($session["description_good_web"],$link).'",';
+    $query.="persppartinfo=\"".mysql_real_escape_string($session["persppartinfo"],$link).'",';
+    if (DURATION_IN_MINUTES=="TRUE") {
+            $query.="duration=\"".conv_min2hrsmin($session["duration"],$link)."\", ";
+            }
+        else {
+            $query.="duration=\"".mysql_real_escape_string($session["duration"],$link)."\", ";
+            }
+    $query.="estatten=".($session["atten"]!=""?$session["atten"]:"null").',';
+    $query.="kidscatid=".$session["kids"].',';
+    $query.="signupreq=";
+    if ($session["signup"]) {$query.="1,";} else {$query.="0,";}
+    $temp=$session["roomset"];
+    $query.="roomsetid=".(($temp==0)?"null":$temp).", ";
+    $query.="notesforpart=\"".mysql_real_escape_string($session["notesforpart"],$link).'",';
+    $query.="servicenotes=\"".mysql_real_escape_string($session["servnotes"],$link).'",';
+    $query.="statusid=".$session["status"].',';
+    $query.="notesforprog=\"".mysql_real_escape_string($session["notesforprog"],$link).'",';
+    $query.="warnings=0,invitedguest="; // warnings db field not editable by form
+    if ($session["invguest"]) {$query.="1";} else {$query.="0";}
+    $result = mysql_query($query,$link);
+    if (!$result) {
+        $message_error.=mysql_error($link);
+        $message_error.=" query=$query";
+        return $message_error;
+        }
+
+    // Create the Descriptions text (descriptiontypeid=3) entries.
+
+    // Web (biodestid=1) (currently locked to biostateid=3 (which is "good") and the en-us language.) 
+    if (isset($session["description_good_web"]) and ($session["description_good_web"] != "")) {
+      $element_array=array('sessionid','conid','descriptiontypeid','biostateid','biodestid','descriptionlang','descriptiontext');
+      $value_array=array($id,$_SESSION['conid'],3,3,1,'en-us',mysql_real_escape_string($session["description_good_web"],$link));
+      $message.=submit_table_element($link,$title,"$ReportDB.Descriptions",$element_array,$value_array);
+    }
+
+    // Book (biodestid=2) (currently locked to biostateid=3 (which is "good") and the en-us language.) 
+    if (isset($session["description_good_book"]) and ($session["description_good_book"] != "")) {
+      $element_array=array('sessionid','conid','descriptiontypeid','biostateid','biodestid','descriptionlang','descriptiontext');
+      $value_array=array($id,$_SESSION['conid'],3,3,2,'en-us',mysql_real_escape_string($session["description_good_book"],$link));
+      $message.=submit_table_element($link,$title,"$ReportDB.Descriptions",$element_array,$value_array);
+    }
+
     if ($session["featdest"]!="") {
         for ($i=0 ; $session["featdest"][$i]!="" ; $i++ ) {
             $query="INSERT into SessionHasFeature set sessionid=".$id.", featureid=";
@@ -588,6 +685,8 @@ EOD;
     $session["secondtitle"]=$sessionarray["secondtitle"];
     $session["pocketprogtext"]=$sessionarray["pocketprogtext"];
     $session["progguiddesc"]=$sessionarray["progguiddesc"];
+    $session["description_good_book"]=$sessionarray["pocketprogtext"];
+    $session["description_good_web"]=$sessionarray["progguiddesc"];
     $session["persppartinfo"]=$sessionarray["persppartinfo"];
     $timearray=parse_mysql_time_hours($sessionarray["duration"]);
     if (DURATION_IN_MINUTES=="TRUE") {

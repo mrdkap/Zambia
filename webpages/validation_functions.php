@@ -173,30 +173,34 @@ function validate_session() {
 	$messages.="</B> characters long.<BR>\n";
         $flag=false;
         }
-    $i=strlen($session["pocketprogtext"]);
-    if (((isset($limit_array['min']['book']['desc'])) AND
-	 ($i<$limit_array['min']['book']['desc'])) OR
-	((isset($limit_array['max']['book']['desc'])) AND
-	 ($i>$limit_array['max']['book']['desc']))) {
+    if (isset($session["description_good_book"]) AND ($session["description_good_book"] != "")) {
+      $i=strlen($session["description_good_book"]);
+      if (((isset($limit_array['min']['book']['desc'])) AND
+	   ($i<$limit_array['min']['book']['desc'])) OR
+	  ((isset($limit_array['max']['book']['desc'])) AND
+	   ($i>$limit_array['max']['book']['desc']))) {
         $messages.="Program book description is $i characters long.  Please edit it to between <B>";
 	if (isset($limit_array['min']['book']['desc'])) {$messages.=$limit_array['min']['book']['desc'];} else {$messages.="0";}
         $messages.="</B> and <B>";
 	if (isset($limit_array['max']['book']['desc'])) {$messages.=$limit_array['max']['book']['desc'];} else {$messages.="unlimited";}
 	$messages.="</B> characters long.<BR>\n";
         $flag=false;
-        }
-    $i=strlen($session["progguiddesc"]);
-    if (((isset($limit_array['min']['web']['desc'])) AND
-	 ($i<$limit_array['min']['web']['desc'])) OR
-	((isset($limit_array['max']['web']['desc'])) AND
-	 ($i>$limit_array['max']['web']['desc']))) {
+      }
+    }
+    if (isset($session["description_good_web"]) AND ($session["description_good_web"] != "")) {
+      $i=strlen($session["description_good_web"]);
+      if (((isset($limit_array['min']['web']['desc'])) AND
+	   ($i<$limit_array['min']['web']['desc'])) OR
+	  ((isset($limit_array['max']['web']['desc'])) AND
+	   ($i>$limit_array['max']['web']['desc']))) {
         $messages.="Web description is $i characters long.  Please edit it to between <B>";
 	if (isset($limit_array['min']['web']['desc'])) {$messages.=$limit_array['min']['web']['desc'];} else {$messages.="0";}
         $messages.="</B> and <B>";
 	if (isset($limit_array['max']['web']['desc'])) {$messages.=$limit_array['max']['web']['desc'];} else {$messages.="unlimited";}
 	$messages.="</B> characters long.<BR>\n";
         $flag=false;
-        }
+      }
+    }
     if (!($sstatus[$session["status"]]['may_be_scheduled'])) {
 //don't validate further those not marked with 'may_be_scheduled'.
         return($flag);

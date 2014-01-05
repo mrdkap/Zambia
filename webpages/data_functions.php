@@ -78,6 +78,8 @@ function get_session_from_post() {
             $session["title"]="";
             }
     $session["secondtitle"]=stripslashes($_POST["secondtitle"]);
+    $session["description_good_web"]=stripslashes($_POST["description_good_web"]);
+    $session["description_good_book"]=stripslashes($_POST["description_good_book"]);
     $session["pocketprogtext"]=stripslashes($_POST["pocketprogtext"]);
     $session["progguiddesc"]=stripslashes($_POST["progguiddesc"]);
     $session["persppartinfo"]=stripslashes($_POST["persppartinfo"]);

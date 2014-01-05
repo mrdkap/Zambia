@@ -62,7 +62,7 @@ if ($id!=$session["sessionid"]) {
 } else {
   $message_error="";
 }
-$message_warn="Session record created.  Database updated successfully.";
+$message_warn="Session record created.  Database updated successfully.  Session ID# = $id";
 // 1 is brainstorm; 2 is staff ; 6 is propose
 $editcode=3;
 if ($action=='brainstorm') {

@@ -189,7 +189,11 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
     $y=$header_array[$i]["roomname"];
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),S.title,\"\") SEPARATOR '') as \"%s title\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),S.sessionid,\"\") SEPARATOR '') as \"%s sessionid\"",$x,$y);
-    $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),S.duration,\"\") SEPARATOR '') as \"%s duration\"",$x,$y);
+    $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),",$x);
+    $query.="CASE WHEN HOUR(S.duration) < 1 THEN concat(date_format(S.duration,'%i'),'min')";
+    $query.="     WHEN MINUTE(S.duration)=0 THEN concat(date_format(S.duration,'%k'),'hr')";
+    $query.="     ELSE concat(date_format(S.duration,'%k'),'hr ',date_format(S.duration,'%i'),'min') END";
+    $query.=sprintf(",\"\") SEPARATOR '') as \"%s duration\"",$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(SCH.starttime))),IF(S.estatten,S.estatten,\"\"),\"\") SEPARATOR '') as \"%s total\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,T.htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$x,$y);
   }
@@ -280,8 +284,7 @@ for ($i = $grid_start_sec; $i < $grid_end_sec; $i = ($i + $Grid_Spacer)) {
       if ($cellclass == "") {$cellclass="border1111";}
       $sessionid=$grid_array[$i]["$header_roomname sessionid"]; //sessionid
       $title=$grid_array[$i]["$header_roomname title"]; //title
-      $duration=substr($grid_array[$i]["$header_roomname duration"],0,-3); // duration; drop ":00" representing seconds off the end
-      if (substr($duration,0,1)=="0") {$duration = substr($duration,1,999);} // drop leading "0"
+      $duration=$grid_array[$i]["$header_roomname duration"]; // duration
       $total=$grid_array[$i]["$header_roomname total"]; //total
       $presenters=$presenters_array[$sessionid]; //presenters
       if ($bgcolor!="") {
@@ -290,7 +293,7 @@ for ($i = $grid_start_sec; $i < $grid_end_sec; $i = ($i + $Grid_Spacer)) {
 	  $element_array[$element_row][$element_col].= sprintf("<A HREF=\"Descriptions.php%s#%s\">%s</A>",$passon,$sessionid,$title);
 	}
 	if ($duration!="") {
-	  $element_array[$element_row][$element_col].= sprintf(" (%s)",$duration);
+	  $element_array[$element_row][$element_col].= sprintf(" - %s",$duration);
 	}
 	if ($total!="") {
 	  $element_array[$element_row][$element_col].= sprintf("<br>(Count: %s)",$total);

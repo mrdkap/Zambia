@@ -49,7 +49,7 @@ function set_email_defaults() {
 // $message_warning will be displayed at the top, only if set
 // This function will render the entire page.
 // This page will next go to the StaffSendEmailCompose_POST page
-function render_send_email($email,$message_warning) {
+function render_send_email($email,$substitutions,$message_warning) {
   $title="Send Email to Participants";
   $conid=$_SESSION['conid'];
   require_once('StaffCommonCode.php');
@@ -108,10 +108,18 @@ EOD;
   echo "<BUTTON class=\"ib\" type=\"submit\" value=\"seeit\">See it</BUTTON>\n";
   echo "</FORM><BR>\n";
   echo "<P>Available substitutions:</P>\n";
-  echo "<TABLE><TR><TD>\$BADGEID\$</TD><TD>\$EMAILADDR\$</TD></TR>\n";
-  echo "<TR><TD>\$FIRSTNAME\$</TD><TD>\$PUBNAME\$</TD></TR>\n";
-  echo "<TR><TD>\$LASTNAME\$</TD><TD>\$BADGENAME\$</TD></TR>\n";
-  echo "<TR><TD>\$SCHEDULE\$</TD><TD></TD></TR></TABLE>\n";
+  echo "<TABLE>\n";
+  $i=0;
+  foreach ($substitutions as $substitution) {
+    if ($i==0) {
+      echo "<TR><TD>$substitution</TD>";
+      $i++;
+    } else {
+      echo "<TD>$substitution</TD></TR>\n";
+      $i--;
+    }
+  }
+  echo "</TABLE>\n";
   correct_footer();
 }
 

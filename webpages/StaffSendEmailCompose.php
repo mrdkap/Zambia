@@ -17,18 +17,19 @@ if ($BiotDB=="BIODB") {unset($BIODB);}
 
 if (isset($_POST['sendto'])) { // page has been visited before so restore previous values to form
   $email=get_email_from_post();
-  } else { // page hasn't just been visited
-    $email=set_email_defaults();
-  }
+} else { // page hasn't just been visited
+  $email=set_email_defaults();
+}
+$subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","\$PUBNAME\$","\$BADGENAME\$","\$SCHEDULE\$","\$FULLSCHEDULE\$","\$BIOS\$");
 $message_warning="";
 if ($_POST['navigate']!='send') {
-    render_send_email($email,$message_warning);
-    exit(0);
-    }
+  render_send_email($email,$subst_list,$message_warning);
+  exit(0);
+}
 // Queue email to be sent into db.  Cron job will actually send it at a pace not to trigger outgoing spam filters. 
 $title="Staff Send Email";
-$subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","\$PUBNAME\$","\$BADGENAME\$","\$SCHEDULE\$");
-$email=get_email_from_post();
+// This should be done above?
+//$email=get_email_from_post();
 $query="SELECT emailtoquery FROM $ReportDB.EmailTo where emailtoid=".$email['sendto'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
@@ -70,7 +71,9 @@ SELECT
           END,
         ' in room ',
 	roomname) as Title,
-    P.pubsname
+    P.pubsname,
+    WEB.descriptiontext AS "description_good_web",
+    BOOK.descriptiontext AS "description_good_book"
   FROM
       Sessions S
     JOIN Schedule SCH USING (sessionid)
@@ -79,6 +82,32 @@ SELECT
     JOIN $ReportDB.Participants P USING (badgeid)
     JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
     JOIN $ReportDB.PermissionRoles USING (permroleid)
+    LEFT JOIN (SELECT
+	      descriptiontext,
+	      sessionid
+	    FROM
+                $ReportDB.Descriptions
+	      JOIN $ReportDB.DescriptionTypes USING (descriptiontypeid)
+	      JOIN $ReportDB.BioStates USING (biostateid)
+	      JOIN $ReportDB.BioDests USING (biodestid)
+	    WHERE
+              conid=$conid AND
+              descriptiontypename="description" AND
+	      biostatename="good" AND
+	      biodestname="web") AS WEB USING (sessionid)
+    LEFT JOIN (SELECT
+	      descriptiontext,
+	      sessionid
+	    FROM
+                $ReportDB.Descriptions
+	      JOIN $ReportDB.DescriptionTypes USING (descriptiontypeid)
+	      JOIN $ReportDB.BioStates USING (biostateid)
+	      JOIN $ReportDB.BioDests USING (biodestid)
+	    WHERE
+              conid=$conid AND
+              descriptiontypename="description" AND
+	      biostatename="good" AND
+	      biodestname="book") AS BOOK USING (sessionid)
   WHERE
     permrolename in ('Participant','General','Programming') AND
     UHPR.conid=$conid AND
@@ -90,17 +119,53 @@ EOD;
 
   // Retrieve query
   list($rows,$schedule_header,$schedule_array)=queryreport($query,$link,$title,$description,0);
+  $recipientinfo[$i]['schedule'].="Your schedule:
+";
   for ($j=1; $j<=$rows; $j++) {
     $recipientinfo[$i]['schedule'].=$schedule_array[$j]['Title']."
 ";
+    $recipientinfo[$i]['fullschedule'].=$schedule_array[$j]['Title']."
+Web Description: ".$schedule_array[$j]['description_good_web']."
+Bood Description: ".$schedule_array[$j]['description_good_book']."
+
+";
   }
- }
+
+  /* This pulls the schedule information for an individual, and
+   then collects it, and stuffs it into a single variable, for
+   expansion later. */
+  $bioinfo=getBioData($individual);
+
+  /* Presenting all the type pieces.
+     Currently we are only using en-us as the language,
+     at some point this should expand beyond that.
+     Currently we are using edited as the state, at some
+     point we should move to good. */
+  $biostate='edited'; // for ($l=0; $l<count($bioinfo['biostate_array']); $l++) {
+  $biolang='en-us'; // for ($k=0; $k<count($bioinfo['biolang_array']); $k++) {
+  $recipientinfo[$i]['bios'].="Your bios:
+";
+  for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
+
+    // Setup for keyname, to collapse all three variables into one passed name.
+    $biotype=$bioinfo['biotype_array'][$j];
+    // $biolang=$bioinfo['biolang_array'][$k];
+    // $biostate=$bioinfo['biostate_array'][$l];
+    $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+
+    // Fold the information into the bios variable so it can be substituted below.
+    $recipientinfo[$i]['bios'].=$biotype." bio: ".$bioinfo[$keyname]."
+";
+  }
+}
+
 $query="SELECT email FROM $ReportDB.CongoDump WHERE badgeid=".$email['sendfrom'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
     }
 $emailfrom=mysql_result($result,0);
+
 if ($email['sendcc'] != 0) {
   $query="SELECT email FROM $ReportDB.CongoDump WHERE badgeid=".$email['sendcc'];
   if (!$result=mysql_query($query,$link)) {
@@ -122,9 +187,15 @@ for ($i=0; $i<$recipient_count; $i++) {
   } else {
     $goodCount++;
     $arrayOfGood[]=array('badgeid'=>$recipientinfo[$i]['badgeid'],'name'=>$name,'email'=>$recipientinfo[$i]['email']);
-    $repl_list=array($recipientinfo[$i]['badgeid'],$recipientinfo[$i]['firstname'],$recipientinfo[$i]['lastname']);
-    $repl_list=array_merge($repl_list,array($recipientinfo[$i]['email'],$recipientinfo[$i]['pubsname']));
-    $repl_list=array_merge($repl_list,array($recipientinfo[$i]['badgename'],$recipientinfo[$i]['schedule']));
+    $repl_list=array($recipientinfo[$i]['badgeid'],
+		     $recipientinfo[$i]['firstname'],
+		     $recipientinfo[$i]['lastname'],
+		     $recipientinfo[$i]['email'],
+		     $recipientinfo[$i]['pubsname'],
+		     $recipientinfo[$i]['badgename'],
+		     $recipientinfo[$i]['schedule'],
+                     $recipientinfo[$i]['fullschedule'],
+                     $recipientinfo[$i]['bios']);
     $emailverify['body']=str_replace($subst_list,$repl_list,$email['body']);
     $query="INSERT INTO EmailQueue (emailto, emailfrom, emailcc, emailsubject, body, status) ";
     // to address

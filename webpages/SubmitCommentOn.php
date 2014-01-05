@@ -22,10 +22,10 @@ function SubmitCommentOnParticipants () {
 function SubmitCommentOnSessions () {
     global $link;
 
-    $element_array = array('sessionid','rbadgeid','commentter','comment');
-    $value_array = array($_POST['sessionid'],$_SESSION['badgeid'],mysql_real_escape_string($_POST['commenter']),mysql_real_escape_string($_POST['comment']));
+    $element_array = array('sessionid','conid','rbadgeid','commentter','comment');
+    $value_array = array($_POST['sessionid'],$_SESSION['conid'],$_SESSION['badgeid'],mysql_real_escape_string($_POST['commenter']),mysql_real_escape_string($_POST['comment']));
 
-    $message.=submit_table_element($link,"Comment On Sessions","CommentsOnSessions",$element_array, $value_array);
+    $message.=submit_table_element($link,"Comment On Sessions","$ReportDB.CommentsOnSessions",$element_array, $value_array);
     echo "<P class=\"regmsg\">".$message."\n";
     }
 ?>

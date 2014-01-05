@@ -10,6 +10,19 @@ $BioDB=BIODB; // make it a variable so it can be substituted
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 if ($BiotDB=="BIODB") {unset($BIODB);}
 
+/* If the individual doing the searches is a Programming Volunteer,
+   they get to see all the scheduled classes, otherwise, just the
+   panels set to be searchable.  Also, added the JOIN to Schedule, so
+   only classes already scheduled comes up. */
+
+if (may_I('Programming')) {
+  $invitedguest_p="";
+  $schedule_p="JOIN Schedule USING (sessionid)";
+} else {
+  $invitedguest_p="S2.invitedguest=0 AND";
+  $schedule_p="";
+}
+
 $trackid=$_POST["track"];
 $titlesearch=stripslashes($_POST["title"]);
 // List of sessions that match search criteria 
@@ -43,11 +56,12 @@ SELECT
         SST.may_be_scheduled=1 AND
         S.Sessionid in
             (SELECT S2.Sessionid FROM
-                     Sessions S2 JOIN
-                     $ReportDB.Tracks T USING (trackid) JOIN
-                     $ReportDB.Types Y USING (typeid)
+                     Sessions S2
+                     JOIN $ReportDB.Tracks T USING (trackid)
+                     JOIN $ReportDB.Types Y USING (typeid)
+	             $schedule_p
                  WHERE
-                     S2.invitedguest=0 AND
+                     $invitedguest_p
                      T.selfselect=1 AND
                      Y.selfselect=1
 EOD;

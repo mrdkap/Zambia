@@ -155,6 +155,7 @@ Bood Description: ".$schedule_array[$j]['description_good_book']."
 
     // Fold the information into the bios variable so it can be substituted below.
     $recipientinfo[$i]['bios'].=$biotype." bio: ".$bioinfo[$keyname]."
+
 ";
   }
 }

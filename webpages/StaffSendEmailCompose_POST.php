@@ -151,6 +151,7 @@ for ($j=1; $j<=$rows; $j++) {
 
     // Fold the information into the bios variable so it can be substituted below.
     $recipientinfo[0]['bios'].=$biotype." bio: ".$bioinfo[$keyname]."
+
 ";
   }
 }

@@ -13,7 +13,8 @@ $title="My Profile";
 // initialize db, check login, set $badgeid from session
 require_once('PartCommonCode.php'); 
 
-//Get the reg email
+//Get the reg email (switched to brainstorm coordinator)
+//     conrolename like '%Registration%' AND
 $query = <<<EOD
 SELECT
     email
@@ -22,7 +23,7 @@ SELECT
     JOIN $ReportDB.UserHasConRole USING (conroleid)
     JOIN $ReportDB.CongoDump USING (badgeid)
   WHERE
-    conrolename like '%Registration%' AND
+    conrolename like '%BrainstormCoord%' AND
     conid=$conid
 EOD;
 

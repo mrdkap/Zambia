@@ -53,7 +53,7 @@ EOD;
   $description="<P>Here is a list of all the $gflowname reports that are available to be generated during this phase.</P>\n";
   $query = <<<EOD
 SELECT
-    DISTINCT concat("<A HREF=genreport.php?reportid=",R.reportid,">",R.reporttitle,"</A> (<A HREF=genreport.php?reportid=",R.reportid,"&csv=y>csv</A>)") AS Title,
+    DISTINCT concat("<A HREF=genreport.php?reportid=",R.reportid,">",R.reportid," - ",R.reporttitle,"</A> (<A HREF=genreport.php?reportid=",R.reportid,"&csv=y>csv</A>)") AS Title,
     R.reportdescription AS Description
   FROM
     $ReportDB.GroupFlow GF,

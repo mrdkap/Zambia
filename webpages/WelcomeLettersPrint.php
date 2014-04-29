@@ -115,12 +115,12 @@ $query.="
 // Retrieve query
 list($rows,$participant_header,$participant_array)=queryreport($query,$link,$title,$description,0);
 
-if ($print_p =="") {topofpagereport($title,$description,$additionalinfo);}
+// if ($print_p =="") {topofpagereport($title,$description,$additionalinfo);}
 
 foreach ($participant_array as $participant) {
-  $printstring = "<P>&nbsp;</P><P>Dear ".$participant['pubsname'].",</P>";
+  $workstring = "<P>&nbsp;</P><P>Dear ".$participant['pubsname'].",</P>";
   if (file_exists("../Local/Verbiage/Welcome_Letter_0")) {
-    $printstring .= file_get_contents("../Local/Verbiage/Welcome_Letter_0");
+    $workstring .= file_get_contents("../Local/Verbiage/Welcome_Letter_0");
   }
   foreach ($role_array as $role) {
     foreach ($type_array as $type) {
@@ -128,26 +128,36 @@ foreach ($participant_array as $participant) {
       if ((strpos($participant['Role'],$rolecheck_array[$role]) !== false) AND (strpos($participant['Type'],$typecheck_array[$type]) !== false)) {
 	if (file_exists($filename)) {      
 	  $checkstring = file_get_contents($filename);
-          if (strpos($printstring,$checkstring) === false) { $printstring .= $checkstring; }
+          if (strpos($workstring,$checkstring) === false) { $workstring .= $checkstring; }
 	}
       }
     }
   }
   if (file_exists("../Local/Verbiage/Welcome_Letter_1")) {
-    $printstring .= file_get_contents("../Local/Verbiage/Welcome_Letter_1");
+    $workstring .= file_get_contents("../Local/Verbiage/Welcome_Letter_1");
   }
+
+  // If not on paper, add a <hr>, else a new page.
   if ($print_p == "") {
-    echo "$printstring\n<hr>\n";
-    correct_footer();
-  } else {
-    $pdf->AddPage();
-    $pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $printstring, $border=0, $ln=1, $fill=0, $reseth=true, $align='', $autopadding=false);
+    $printstring.="$workstring<hr>\n";
   }
+  else {
+    $pdf->AddPage();
+    $pdf->writeHTML($workstring, true, false, true, false, '');
+  }
+}
+
+// Display, with the option of printing.
+if ($print_p == "") {
+  topofpagereport($title,$description,$additionalinfo);
+  echo "$printstring";
+  correct_footer();
+} else {
   if ($individual != "") {
     $pdf->Output('WelcomeLetterFor'.$participant_array[1]['pubsname'].'.pdf', 'I');
   } else {
     $pdf->Output('AllWelcomeLetters.pdf', 'I');
   }
- }
+}
 
 ?>

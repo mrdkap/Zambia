@@ -124,22 +124,23 @@ ksort($participant_array);
 
 foreach ($participant_array as $participant) {
   // Generic header info.
-  $printstring.= "<P>&nbsp;</P><P>Greetings ".$participant['name'].",</P>";
+  $workstring= "<P>&nbsp;</P><P>Greetings ".$participant['name'].",</P>";
 
   // Pull in the intro-blurb.
   if (file_exists("../Local/Verbiage/Schedule_Blurb_0")) {
-    $printstring.= file_get_contents("../Local/Verbiage/Schedule_Blurb_0");
+    $workstring.= file_get_contents("../Local/Verbiage/Schedule_Blurb_0");
   }
 
   // Add the schedule.
-  $printstring.= $participant['schedule'];
+  $workstring.= $participant['schedule'];
 
   // If not on paper, add a <hr>, else a new page.
   if ($print_p == "") {
-    echo "$printstring<hr>\n";
+    $printstring.="$workstring<hr>\n";
   }
   else {
     $pdf->AddPage();
+    $pdf->writeHTML($workstring, true, false, true, false, '');
   }
 }
 
@@ -149,8 +150,6 @@ if ($print_p == "") {
   echo "$printstring";
   correct_footer();
 } else {
-  $pdf->AddPage();
-  $pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $printstring, $border=0, $ln=1, $fill=0, $reseth=true, $align='', $autopadding=false);
   if ($individual != "") {
     $pdf->Output('Schedule'.$name.'.pdf', 'I');
   } else {

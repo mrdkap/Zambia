@@ -17,6 +17,12 @@ $_SESSION['return_to_page']="BadgesPrint.php";
 $title="Badge Print";
 $description="<P>Badges for Printing.</P>\n";
 
+// Specific people
+$whichparticipants='';
+if ((isset($_GET['badgeids'])) and ($_GET['badgeids'] != '')) {
+   $whichparticipants="badgeid in (".$_GET['badgeids'].") AND";
+}
+
 // Postscript Header
 $header=<<<EOD
 %!PS-Adobe-3.0
@@ -174,7 +180,8 @@ SELECT
     JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
     JOIN $ReportDB.PermissionRoles USING (permroleid)
   WHERE
-    permrolename in ('Participant','General','Programming') AND
+    permrolename IN ('Participant','General','Programming') AND
+    $whichparticipants
     UHPR.conid=$conid
   ORDER BY
     pubsname,

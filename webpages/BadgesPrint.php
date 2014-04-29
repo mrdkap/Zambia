@@ -2,9 +2,12 @@
 require_once('StaffCommonCode.php');
 /* include "../phpqrcode-master/qrlib.php"; */
 
+/* NOTE: you might need to use the -dNOSAFER flag when doing the ps2pdf conversion */
+
 /* Global Variables */
 global $link;
 $conid=$_SESSION['conid'];
+$ConStartDatim=CON_START_DATIM;
 $ConName=CON_NAME; // make it a variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
@@ -13,6 +16,7 @@ $BioDB=BIODB; // make it a variable so it can be substituted
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 if ($BiotDB=="BIODB") {unset($BIODB);}
 
+// This should probably be generated from the ConInfo.
 $ConLogo="NELA-LOGO.eps";
 /* $ConLogo=QRcode::eps("https://nelaonline.org/FFF-NE-40/webpages/VolunteerCheckIn.php?badgeid=123"); */
 $BoundingBox="0 0 759 222";
@@ -22,11 +26,21 @@ $_SESSION['return_to_page']="BadgesPrint.php";
 $title="Badge Print";
 $description="<P>Badges for Printing.</P>\n";
 
+// Specific people
+$whichparticipants='';
+if ((isset($_GET['badgeids'])) and ($_GET['badgeids'] != '')) {
+   $whichparticipants="badgeid in (".$_GET['badgeids'].") AND";
+}
+
 // Postscript Header
 $header=<<<EOD
 %!PS-Adobe-3.0
 
 /insertlogo ($ConLogo) def
+/deffont {
+  findfont exch scalefont def
+} bind def
+
 /deffont {
   findfont exch scalefont def
 } bind def
@@ -217,6 +231,7 @@ SELECT
     JOIN $ReportDB.PermissionRoles USING (permroleid)
   WHERE
     permrolename IN ('Participant','General','Programming') AND
+    $whichparticipants
     UHPR.conid=$conid
   ORDER BY
     pubsname,

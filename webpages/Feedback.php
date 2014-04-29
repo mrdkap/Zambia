@@ -75,7 +75,7 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
     exit;
   }
   if ((isset($_POST['classcomment'])) && ($_POST['classcomment']!="")) {
-    $query="INSERT INTO CommentsOnSessions (sessionid,rbadgeid,commenter,comment) VALUES (".$_POST['selsess'].",0,'Annonymous','".mysql_real_escape_string(stripslashes($_POST['classcomment']))."')";
+    $query="INSERT INTO $ReportDB.CommentsOnSessions (sessionid,conid,rbadgeid,commenter,comment) VALUES (".$_POST['selsess'].",".$_SESSION['conid'].",100,'Anonymous','".mysql_real_escape_string(stripslashes($_POST['classcomment']))."')";
     if (!mysql_query($query,$link)) {
       $message_error=$query."<BR>Error updating $table.  Database not updated.";
       RenderError($title,$message_error);
@@ -83,7 +83,7 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
     }
   }
   if ((isset($_POST['progcomment'])) && ($_POST['progcomment']!="")) {
-    $query="INSERT INTO $ReportDB.CommentsOnProgramming (rbadgeid,conid,commenter,comment) VALUES (0,".$_SESSION['conid']."'Annonymous','".mysql_real_escape_string(stripslashes($_POST['progcomment']))."')";
+    $query="INSERT INTO $ReportDB.CommentsOnProgramming (rbadgeid,conid,commenter,comment) VALUES (100,".$_SESSION['conid'].",'Anonymous','".mysql_real_escape_string(stripslashes($_POST['progcomment']))."')";
     if (!mysql_query($query,$link)) {
       $message_error=$query."<BR>Error updating $table.  Database not updated.";
       RenderError($title,$message_error);
@@ -171,6 +171,7 @@ SELECT
     $types_string
     Time_TO_SEC(SCH.starttime) > $time_start AND
     Time_TO_SEC(SCH.starttime) < $time_end
+    AND title not in ('Bootblack - Saturday - 11am', 'Bootblack - Saturday - 2pm','Bootblack - Saturday - 4pm','Bootblack - Sunday - 11am','Bootblack - Sunday - 2pm','Photo Lounge Breakdown','Photo Lounge Setup','Photo Lounge Staffing - Sat 11:00am','Photo Lounge Staffing - Sat 1:00pm','Photo Lounge Staffing - Sat 3:00pm','Photo Lounge Staffing - Sat 5:00pm')
 
 EOD;
 
@@ -229,7 +230,7 @@ for ($i=1; $i<=$questioncount; $i++) {
 $formstring.="</TABLE></P>\n";
 $formstring.="<LABEL for=\"classcomment\">Other comments on this class:</LABEL>\n<br>\n";
 $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
-$formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general:</LABEL>\n<br>\n";
+$formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
 $formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
 $formstring.="<BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Send Feedback</BUTTON>\n";
 $formstring.="</FORM>\n";

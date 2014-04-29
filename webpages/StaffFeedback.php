@@ -84,7 +84,7 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
     exit;
   }
   if ((isset($_POST['classcomment'])) && ($_POST['classcomment']!="")) {
-    $query="INSERT INTO CommentsOnSessions (sessionid,rbadgeid,commenter,comment) VALUES (".$_POST['selsess'].",".$_SESSION['badgeid'].",'Annonymous','".mysql_real_escape_string(stripslashes($_POST['classcomment']))."')";
+    $query="INSERT INTO $ReportDB.CommentsOnSessions (sessionid,conid,rbadgeid,commenter,comment) VALUES (".$_POST['selsess'].",".$_SESSION['conid'].",".$_SESSION['badgeid'].",'Anonymous','".mysql_real_escape_string(stripslashes($_POST['classcomment']))."')";
     if (!mysql_query($query,$link)) {
       $message_error=$query."<BR>Error updating $table.  Database not updated.";
       RenderError($title,$message_error);
@@ -92,7 +92,7 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
     }
   }
   if ((isset($_POST['progcomment'])) && ($_POST['progcomment']!="")) {
-    $query="INSERT INTO $ReportDB.CommentsOnProgramming (rbadgeid,conid,commenter,comment) VALUES (".$_SESSION['badgeid'].",".$_SESSION['conid']."'Annonymous','".mysql_real_escape_string(stripslashes($_POST['progcomment']))."')";
+    $query="INSERT INTO $ReportDB.CommentsOnProgramming (rbadgeid,conid,commenter,comment) VALUES (".$_SESSION['badgeid'].",".$_SESSION['conid']."'Anonymous','".mysql_real_escape_string(stripslashes($_POST['progcomment']))."')";
     if (!mysql_query($query,$link)) {
       $message_error=$query."<BR>Error updating $table.  Database not updated.";
       RenderError($title,$message_error);
@@ -213,6 +213,7 @@ SELECT
     $types_string
     Time_TO_SEC(starttime) > $time_start AND
     Time_TO_SEC(starttime) < $time_end
+    AND title not in ('Bootblack - Saturday - 11am', 'Bootblack - Saturday - 2pm','Bootblack - Saturday - 4pm','Bootblack - Sunday - 11am','Bootblack - Sunday - 2pm','Photo Lounge Breakdown','Photo Lounge Setup','Photo Lounge Staffing - Sat 11:00am','Photo Lounge Staffing - Sat 1:00pm','Photo Lounge Staffing - Sat 3:00pm','Photo Lounge Staffing - Sat 5:00pm')
 
 EOD;
 
@@ -306,7 +307,7 @@ if ($print_p =="") {
  } else {
   $pdf->AddPage();
   $pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $printstring, $border=0, $ln=true, $fill=false, $reseth=true, $align='', $autopadding=true);
-  $pdf->writeHTMLCell($w=0, $h=0, $x=PDF_MARGIN_LEFT, $y=144, $printstring, $border=0, $ln=true, $fill=false, $reseth=true, $align='', $autopadding=true);
+  $pdf->writeHTMLCell($w=0, $h=0, $x=PDF_MARGIN_LEFT, $y=137, $printstring, $border=0, $ln=true, $fill=false, $reseth=true, $align='', $autopadding=true);
   $pdf->Output($dayname.'Feedback.pdf', 'I');
  }
 ?>

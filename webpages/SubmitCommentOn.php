@@ -2,7 +2,7 @@
 function SubmitCommentOnProgramming () {
     global $link;
 
-    $element_array = array('rbadgid','conid','commenter','comment');
+    $element_array = array('rbadgeid','conid','commenter','comment');
     $value_array = array($_SESSION['badgeid'],$_SESSION['conid'],mysql_real_escape_string($_POST['commenter']),mysql_real_escape_string($_POST['comment']));
 
     $message.=submit_table_element($link,"Comment On Programming","$ReportDB.CommentsOnProgramming",$element_array, $value_array);
@@ -22,7 +22,7 @@ function SubmitCommentOnParticipants () {
 function SubmitCommentOnSessions () {
     global $link;
 
-    $element_array = array('sessionid','conid','rbadgeid','commentter','comment');
+    $element_array = array('sessionid','conid','rbadgeid','commenter','comment');
     $value_array = array($_POST['sessionid'],$_SESSION['conid'],$_SESSION['badgeid'],mysql_real_escape_string($_POST['commenter']),mysql_real_escape_string($_POST['comment']));
 
     $message.=submit_table_element($link,"Comment On Sessions","$ReportDB.CommentsOnSessions",$element_array, $value_array);

@@ -84,7 +84,7 @@ SELECT
     JOIN $ReportDB.PermissionRoles PR USING (permroleid)
     JOIN $ReportDB.Types T USING (typeid)
   WHERE
-    permrolename in ('Programming') and
+    permrolename in ('Programming','SuperProgramming') and
     introducer=1 and
     UHPR.conid=$conid and
     typename in ('Panel','Class')
@@ -132,6 +132,23 @@ EOD;
 // Retrieve query
 list($presentercount,$presentercount_header,$presenter_array)=queryreport($query1,$link,$title,$description,0);
 
+/* Get the Sponsorship information, if a class is sponsored */
+$query2 = <<<EOD
+SELECT
+    sessionid,
+    pubsname
+  FROM
+      $ReportDB.SessionHasSponsor
+    JOIN $ReportDB.Participants USING (badgeid)
+EOD;
+
+// Retrieve query
+list($sponsorcount,$sponsor_header,$sponsortmp_array)=queryreport($query2,$link,$title,$description,0);
+
+for ($i=1; $i<=$sponsorcount; $i++) {
+  $sponsor_array[$sponsortmp_array[$i]['sessionid']]=$sponsortmp_array[$i]['pubsname'];
+ }
+
 // Grab the intro blurb, assign it to $intro
 if (file_exists("../Local/Verbiage/Introduction_Blurb_0")) {
   $intro= file_get_contents("../Local/Verbiage/Introduction_Blurb_0");
@@ -163,6 +180,14 @@ for ($i=1; $i<=$classcount; $i++) {
   $printstring.= "<TR><TD>30 minute<br>headcount</TD><TD></TD><TD>60 minute<br>headcount</TD><TD></TD></TR></TABLE></P>";
   $printstring.= "<P>Introduction:</P>";
   $printstring.= "<P>Hi and welcome!  How is everybody doing?</P>";
+
+  // Add sponsor info.
+  if (isset($sponsor_array[$sessionid])) {
+    $printstring.= "<P>This class is being sponsored by ";
+    $printstring.=$sponsor_array[$sessionid];
+    $printstring.=".</P>";
+  }
+
   $printstring.= "<P>I'm $name ";
 
   // Pull in the intro-blurb.

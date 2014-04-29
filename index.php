@@ -132,9 +132,9 @@ for ($i=1; $i<=$conrows; $i++) {
       $webstring.="  <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";
     }
     // Percy, we need to make a hard link to Zambia or run this through Pyro,  right now, the link breaks
-    if ($onetime < 1) {
+    // if ($onetime < 1) {
     $webstring.="  <LI><A HREF=\"webpages/\">Presenter Login</A></LI>\n";
-    }
+    // }
   }
   $webstring.="</UL>\n";
 }

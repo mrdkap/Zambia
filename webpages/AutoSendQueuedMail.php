@@ -31,6 +31,9 @@ for ($i=1; $i<=$rows; $i++) {
   $email_array[$i]=mysql_fetch_assoc($result);
  }
 
+// Limit it to 10 sent at a time.
+if ($rows > 10) {$rows=10;}
+
 for ($i=1; $i<=$rows; $i++) {
   $emailqueueid=$email_array[$i]['emailqueueid'];
   $subject=$email_array[$i]['emailsubject'];
@@ -81,7 +84,7 @@ for ($i=1; $i<=$rows; $i++) {
     $badList.=sprintf("%d,",$email_array[$i]['emailqueueid']);
     $numBad++;
   }
-  sleep(15);
+  sleep(25);
 }
 
 $goodList=substr($goodList,0,-1); //remove final trailing comma

@@ -2,13 +2,23 @@
 $title="Login";
 $description="";
 $additionalinfo="";
-require_once(dirname(__FILE__) . '/PartCommonCode.php');
 global $link, $message;
+
+/* Adjust conid */
+$newconid=$_POST['newconid'];
+if ($newconid=="") {$newconid=$_GET['newconid'];}
+if ($newconid!="") {define("CON_KEY",$newconid);}
+
+require_once('PartCommonCode.php');
+
 $webstring="";
+
+/* For passed in login ids */
 $badgeid=$_GET['login'];
 
+$message_error=$message;
 if (isset($message)) {
-  $webstring.= "<P class=\"errmsg\">".$message."</P>\n";
+  $webstring.= "<P class=\"errmsg\">".$message_error."</P>\n";
 }
 
 $webstring.= <<<EOD
@@ -44,6 +54,6 @@ if (file_exists("../Local/Verbiage/login_0")) {
 if ($included!="YES") {
   participant_header($title);
   echo $webstring;
-  correct_footer(); 
+  correct_footer();
 }
 ?>

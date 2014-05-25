@@ -10,23 +10,27 @@ require_once('../../tcpdf/tcpdf.php');
 
 /* Global Variables */
 global $link;
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$logo=CON_LOGO; // make it a variable so it can be substituted
+$ConStartDatim=$_SESSION['constartdate']; // make it a variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
+$badgename=$_SESSION['badgename']; // make it a variable so it can be substituted
+$badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
-$conend=CON_NUM_DAYS*86400; // make it a variable so it can be substituted
 
 // Tests for the substituted variables
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 if ($BiotDB=="BIODB") {unset($BIODB);}
+if ($badgename=="") {$badgename='Anonymous';}
+if ($badgeid=="") {$badgeid='100';}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="StaffFeedback.php";
 $print_p=$_GET['print_p'];
 $formstring="";
 
-/* This query pulls the questions, to be surveyed */
+/* This query pulls all the questions, to be surveyed 
+   questionid and questiontext are the key and text of the questions
+   questiontypeid differentiates between the target of the questions*/
 $query=<<<EOD
 SELECT
     questiontext,
@@ -42,7 +46,13 @@ EOD;
 // Retrive query
 list($questioncount,$header_array1,$question_array)=queryreport($query,$link,$title,$description,0);
 
-/* This query pulls the page description information for presentation */
+/* This query pulls the page description information for presentation 
+   fpageid is the unique page number for this con and set of feedback
+   fppagedesc is the short description of the page contents
+   fpagestart and fpageend is the range of time that this page covers
+   fpagecols is the number of columns at the top of the printed page
+   questiontypeid differentiates between the target of the questions
+*/
 $query=<<<EOD
 SELECT
     fpageid,
@@ -69,39 +79,47 @@ for ($i=1; $i<=$fpagecount; $i++) {
   $selday_array[$fpage_array[$i]['fpageid']]=$i;
 }
 
+// Zero the counter for the actual feedback elements
+$questiontotal=0;
+
 // Insert the passed values.
 if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
-  $query= "INSERT INTO Feedback (sessionid,questionid,questionvalue) VALUES ";
+  $query= "INSERT INTO $ReportDB.Feedback (sessionid,conid,questionid,questionvalue) VALUES ";
   for ($i=1; $i<=$questioncount; $i++) {
     if ((isset($_POST["$i"])) && ($_POST["$i"]!="")) {
-      $query.="(".$_POST['selsess'].",".$i.",".$_POST["$i"]."),";
+      $questiontotal++;
+      $query.="(".$_POST['selsess'].",".$conid.",".$i.",".$_POST["$i"]."),";
     }
   }
   $query=substr($query,0,-1);
-  if (!mysql_query($query,$link)) {
-    $message_error=$query."<BR>Error updating $table.  Database not updated.";
-    RenderError($title,$message_error);
-    exit;
+  // Only do if there are actual feedback question elements
+  if ($questiontotal > 0) {
+    if (!mysql_query($query,$link)) {
+      $message_error=$query."<BR>Error updating $table.  Database not updated.";
+      RenderError($title,$message_error);
+      exit;
+    }
   }
+  $message.="Response database updated successfully.<BR>";
+
+  // Only do if there are comments on the Session
   if ((isset($_POST['classcomment'])) && ($_POST['classcomment']!="")) {
-    $query="INSERT INTO $ReportDB.CommentsOnSessions (sessionid,conid,rbadgeid,commenter,comment) VALUES (".$_POST['selsess'].",".$_SESSION['conid'].",".$_SESSION['badgeid'].",'Anonymous','".mysql_real_escape_string(stripslashes($_POST['classcomment']))."')";
-    if (!mysql_query($query,$link)) {
-      $message_error=$query."<BR>Error updating $table.  Database not updated.";
-      RenderError($title,$message_error);
-      exit;
-    }
+    $element_array = array('sessionid','conid','rbadgeid','commenter','comment');
+    $value_array = array($_POST['selsess'],$conid,$badgeid,$badgename,
+			 htmlspecialchars_decode($_POST['classcomment']));
+    $message.=submit_table_element($link,$title,"$ReportDB.CommentsOnSessions",$element_array, $value_array);
   }
+
+  // Only do if there are comments for Programming
   if ((isset($_POST['progcomment'])) && ($_POST['progcomment']!="")) {
-    $query="INSERT INTO $ReportDB.CommentsOnProgramming (rbadgeid,conid,commenter,comment) VALUES (".$_SESSION['badgeid'].",".$_SESSION['conid']."'Anonymous','".mysql_real_escape_string(stripslashes($_POST['progcomment']))."')";
-    if (!mysql_query($query,$link)) {
-      $message_error=$query."<BR>Error updating $table.  Database not updated.";
-      RenderError($title,$message_error);
-      exit;
-    }
+    $element_array = array('rbadgeid','conid','commenter','comment');
+    $value_array = array($badgeid,$conid,$badgename,htmlspecialchars_decode($_POST['progcomment']));
+    $message.=submit_table_element($link,$title,"$ReportDB.CommentsOnProgramming",$element_array, $value_array);
   }
-  $message="Database updated successfully.<BR>";
+
+  // Collect up the responses for printing.
   $formstring.="<P class=\"regmsg\">".$message."\n";
- }
+}
 
 $sessionid=$_GET['sessionid'];
 $selday=$_GET['selday'];
@@ -133,7 +151,7 @@ if (isset($selday) and ($selday!="")) {
 }
 
 // Set standard headers across the pages.
-$title=CON_NAME." $dayname Feedback";
+$title=$_SESSION['conname']." $dayname Feedback";
 $description="<P>Not sure which class?  Check the <A HREF=StaffDescriptions.php>descriptions</A>, <A HREF=StaffBios.php>bios</A>, <A HREF=StaffSchedule.php>timeslots</A>, or <A HREF=StaffTracks.php>tracks</A> pages.</P>";
 $additionalinfo="<P><A HREF=\"StaffFeedback.php?selday=$selday&print_p=y\">Printable</A> version.</P>\n";
 $additionalinfo.="<P>Done with this time block?  Pick a different one:</P>\n<UL>\n";
@@ -156,10 +174,10 @@ class MYPDF extends TCPDF {
 $pdf = new MYPDF('p', 'mm', 'letter', true, 'UTF-8', false);
 $pdf->SetCreator('Zambia');
 $pdf->SetAuthor('Programming Team');
-$pdf->SetTitle('Volunteer Introduction Sheets');
-$pdf->SetSubject('Introductions for the Classes and Panels');
-$pdf->SetKeywords('Zambia, Presenters, Volunteers, Introductions, Intros');
-$pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+$pdf->SetTitle('Feedback for '.$_SESSION['conname']);
+$pdf->SetSubject('Gathering Feedback on this event');
+$pdf->SetKeywords('Zambia, Presenters, Volunteers, Sessions, Feedback');
+$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
 $pdf->setHeaderFont(Array("helvetica", '', 10));
 $pdf->setFooterFont(Array("helvetica", '', 8));
 $pdf->SetDefaultMonospacedFont("courier");
@@ -206,15 +224,16 @@ SELECT
     sessionid,
     questiontypeid
   FROM
-      Sessions
-    JOIN Schedule USING (sessionid)
-    JOIN $ReportDB.TypeHasQuestionType USING (typeid)
+      $ReportDB.Sessions
+    JOIN $ReportDB.Schedule USING (sessionid,conid)
+    JOIN $ReportDB.TypeHasQuestionType USING (typeid,conid)
+    JOIN $ReportDB.PubStatuses USING (pubstatusid)
   WHERE
     $types_string
     Time_TO_SEC(starttime) > $time_start AND
-    Time_TO_SEC(starttime) < $time_end
-    AND title not in ('Bootblack - Saturday - 11am', 'Bootblack - Saturday - 2pm','Bootblack - Saturday - 4pm','Bootblack - Sunday - 11am','Bootblack - Sunday - 2pm','Photo Lounge Breakdown','Photo Lounge Setup','Photo Lounge Staffing - Sat 11:00am','Photo Lounge Staffing - Sat 1:00pm','Photo Lounge Staffing - Sat 3:00pm','Photo Lounge Staffing - Sat 5:00pm')
-
+    Time_TO_SEC(starttime) < $time_end AND
+    conid=$conid AND
+    pubstatusname in ('Public')
 EOD;
 
 if ($sessionid!="") {
@@ -294,11 +313,11 @@ $printstring.="</TABLE></P><hr>";
 $formstring.="</TABLE></P>\n";
 $formstring.="<LABEL for=\"classcomment\">Other comments on this class:</LABEL>\n<br>\n";
 $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
-$formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general:</LABEL>\n<br>\n";
+$formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
 $formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
 $formstring.="<BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Send Feedback</BUTTON>\n";
 $formstring.="</FORM>\n";
-$printstring.="<P>Other comments/ideas/questions/feedback about the class or the flea:";
+$printstring.="<P>Other comments/ideas/questions/feedback about the class or the flea (feel free to use the back):";
 
 if ($print_p =="") {
   topofpagereport($title,$description,$additionalinfo);

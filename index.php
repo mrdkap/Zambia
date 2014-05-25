@@ -108,7 +108,7 @@ for ($i=1; $i<=$conrows; $i++) {
     $webstring.="  <LI><A HREF=\"webpages/Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
   }
   if ($nowis < $constart) { 
-    $webstring.="  <LI><A HREF=\"webpages/\">Presenter/Volunteer Login</A></LI>\n";
+    $webstring.="  <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
     if ($phase_array[$conid]['Brainstorm'] == '0' ) {
       $webstring.="  <LI>\n";
       $webstring.="  <FORM name=\"brainstormform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
@@ -133,7 +133,7 @@ for ($i=1; $i<=$conrows; $i++) {
     }
     // Percy, we need to make a hard link to Zambia or run this through Pyro,  right now, the link breaks
     // if ($onetime < 1) {
-    $webstring.="  <LI><A HREF=\"webpages/\">Presenter Login</A></LI>\n";
+    $webstring.="  <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A></LI>\n";
     // }
   }
   $webstring.="</UL>\n";

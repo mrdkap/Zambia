@@ -24,6 +24,7 @@ function record_session_history($sessionid, $badgeid, $name, $email, $editcode, 
     $query='';
     $query.="INSERT INTO SessionEditHistory SET ";
     $query.="sessionid=$sessionid, ";
+    $query.="conid=".$_SESSION['conid'].", ";
     $query.="badgeid='$badgeid', ";
     $query.="name='$name', ";
     $query.="email_address='$email', ";
@@ -206,21 +207,14 @@ function populate_multidest_from_table($table_name, $skipset) {
             }
         }
     }
-// Function update_session()
-// Takes data from global $session array and updates
-// the tables Sessions, SessionHasFeature, SessionHasPubChar, 
-// SessionHasService, SessionHasVendorFeature, SessionHasVendorSpace
-//
+/* Function update_session()
+   Takes data from global $session array and updates the
+   tables Sessions, Descriptions, SessionHasFeature, SessionHasPubChar, 
+   SessionHasService, SessionHasVendorFeature, SessionHasVendorSpace */
 function update_session() {
     global $link, $session, $message2;
-    $ReportDB=REPORTDB; // make it a variable so it can be substituted
-    $BioDB=BIODB; // make it a variable so it can be substituted
 
-    // Tests for the substituted variables
-    if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-    if ($BioDB=="BIODB") {unset($BIODB);}
-
-    if (DURATION_IN_MINUTES=="TRUE") {
+    if ($_SESSION['condurationminutes']=="TRUE") {
       $duration="duration='".conv_min2hrsmin($session["duration"],$link)."'";
     } else {
       $duration="duration='".mysql_real_escape_string($session["duration"],$link)."'";
@@ -245,167 +239,112 @@ function update_session() {
 			     "servicenotes='".mysql_real_escape_string($session["servnotes"],$link)."'",
 			     "statusid=".$session["status"],
 			     "notesforprog='".mysql_real_escape_string($session["notesforprog"],$link)."'");
-    $match_string="sessionid=".$session['sessionid'];
+
+    $match_string="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid'];
+
     $message.=update_table_element_extended_match ($link,$title,"Sessions",$pairedvalue_array, $match_string);
 
-    // And get the secondary table as well
-    $match_string="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid'];
-    $message.=update_table_element_extended_match ($link,$title,"$ReportDB.Sessions",$pairedvalue_array, $match_string);
 
-    // Create or update the Descriptions text (descriptiontypeid=3) entries.
+    /* There should be a more dignified way of doing this,
+       but for the meantime, while we are in transition...
 
-    // Web (biodestid=1) (currently locked to biostateid=3 (which is "good") and the en-us language.) 
-    if (isset($session["description_good_web"]) and ($session["description_good_web"] != "")) {
-      $wherestring="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid']." AND descriptiontypeid=3 AND biostateid=3 AND biodestid=1 AND descriptionlang='en-us'";
-      $query="SELECT descriptionid FROM $ReportDB.Descriptions WHERE $wherestring";
+       + descriptiontype (i) is title, subtitle and description, and
+       should probably be harvested from the descrioptiontype so if
+       more are added, at any point in time, they can be used.
 
-      // Retrieve query
-      list($desctestrows,$header_array,$desctest_array)=queryreport($query,$link,$title,$description,0);
+       + biostateid (j) is currently locked to 3, since we aren't
+         actually editing these yet, and here should be locked to 1,
+         otherwise, since this is the raw creation.
 
-      // Test for existance, if it doesn't exist, create it, if it does, update it.
-      if ($desctestrows==0) {
-	$element_array=array('sessionid','conid','descriptiontypeid','biostateid','biodestid','descriptionlang','descriptiontext');
-	$value_array=array($session['sessionid'],$_SESSION['conid'],3,3,1,'en-us',mysql_real_escape_string($session["description_good_web"],$link));
-	$message.=submit_table_element($link,$title,"$ReportDB.Descriptions",$element_array,$value_array);
-      } else {
-	$pairedvalue_array=array("descriptiontext='".mysql_real_escape_string($session["description_good_web"],$link)."'");
-	$match_string=$wherestring;
-	$message.=update_table_element_extended_match ($link,$title,"$ReportDB.Descriptions",$pairedvalue_array, $match_string);
+       + biodestid (k) is web and book destinations, and should be
+         actually harvested from BioDests, so if more are added, at
+         any point in time, they can be used.
+
+       + descriptionlang (l) is currently fixed to en-us, if we ever
+       actually go multi-lingual this will need to be fixed. */
+
+    // Create the Descriptions array entries.
+    
+    $desc_array[1][3][1]['en-us']=$session["title"];
+    $desc_array[1][3][2]['en-us']=$session["title"];
+    $desc_array[2][3][1]['en-us']=$session["subtitle"];
+    $desc_array[2][3][2]['en-us']=$session["subtitle"];
+    $desc_array[3][3][1]['en-us']=$session["description_good_web"];
+    $desc_array[3][3][2]['en-us']=$session["description_good_book"];
+
+    // Run the loops.
+    $j=3;
+    $l="en-us";
+    for ($i=1; $i<=3; $i++) {
+      for ($k=1; $k<=2; $k++) {
+
+	// Check to see if it exists.
+        if (isset($desc_array[$i][$j][$k][$l]) and ($desc_array[$i][$j][$k][$l] != "")) {
+	  $wherestring="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid'];
+          $wherestring.="AND descriptiontypeid=$i AND biostateid=$j AND biodestid=$k AND descriptionlang=$l";
+	  $query="SELECT descriptionid FROM Descriptions WHERE $wherestring";
+
+	  // Retrieve query
+	  list($desctestrows,$header_array,$desctest_array)=queryreport($query,$link,$title,$description,0);
+
+	  // If it doesn't exist, create it, if it does, update it.
+	  if ($desctestrows==0) {
+	    $element_array=array('sessionid','conid','descriptiontypeid','biostateid',
+				 'biodestid','descriptionlang','descriptiontext');
+	    $value_array=array($session['sessionid'],$_SESSION['conid'],$i,$j,$k,$l,
+			       htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
+	    $message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
+	  } else {
+	    $pairedvalue_array=array("descriptiontext='".htmlspecialchars_decode($desc_array[$i][$j][$k][$l])."'");
+	    $match_string=$wherestring;
+	    $message.=update_table_element_extended_match ($link,$title,"Descriptions",$pairedvalue_array, $match_string);
+	  }
+	}
       }
     }
 
-    // Book (biodestid=2) (currently locked to biostateid=3 (which is "good") and the en-us language.) 
-    if (isset($session["description_good_book"]) and ($session["description_good_book"] != "")) {
-      $wherestring="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid']." AND descriptiontypeid=3 AND biostateid=3 AND biodestid=2 AND descriptionlang='en-us'";
-      $query="SELECT descriptionid FROM $ReportDB.Descriptions WHERE $wherestring";
 
-      // Retrieve query
-      list($desctestrows,$header_array,$desctest_array)=queryreport($query,$link,$title,$description,0);
+    /* Set up the various feature tables, so we can loop across all of them. */
+    $tn_array["featdest"]="SessionHasFeature";
+    $te_array["featdest"]="featureid";
+    $tn_array["servdest"]="SessionHasService";
+    $te_array["servdest"]="serviceid";
+    $tn_array["pubchardest"]="SessionHasPubChar";
+    $te_array["pubchardest"]="pubcharid";
+    $tn_array["vendfeatdest"]="SessionHasVendorFeature";
+    $te_array["vendfeatdest"]="vendorfeatureid";
+    $tn_array["spacedest"]="SessionHasVendorSpace";
+    $te_array["spacedest"]="vendorspaceid";
 
-      // Test for existance, if it doesn't exist, create it, if it does, update it.
-      if ($desctestrows==0) {
-	$element_array=array('sessionid','conid','descriptiontypeid','biostateid','biodestid','descriptionlang','descriptiontext');
-	$value_array=array($session['sessionid'],$_SESSION['conid'],3,3,2,'en-us',mysql_real_escape_string($session["description_good_book"],$link));
-	$message.=submit_table_element($link,$title,"$ReportDB.Descriptions",$element_array,$value_array);
-      } else {
-	$pairedvalue_array=array("descriptiontext='".mysql_real_escape_string($session["description_good_book"],$link)."'");
-	$match_string=$wherestring;
-	$message.=update_table_element_extended_match ($link,$title,"$ReportDB.Descriptions",$pairedvalue_array, $match_string);
+    // Loop across the keys of the array created above.
+    foreach (array_keys($tn_array) as $j) {
+
+      // First, delete all old entries.
+      $query="DELETE from ".$tn_array[$j]." where sessionid=".$session["sessionid"];
+      $query.=" AND conid=".$_SESSION['conid'];
+      $message2=$query;
+      if (!mysql_query($query,$link)) {
+        $message_error.=mysql_error($link);
+	$message_error.=" query=$query";
+	return $message_error;
+      }
+
+      // Then, if any entries exist, create them, possibly anew.
+      if ($session[$j]!="") {
+        for ($i=0 ; $session[$j][$i]!="" ; $i++ ) {
+	  $element_array=array('sessionid','conid',$te_array[$j]);
+	  $value_array=array($session["sessionid"],$_SESSION['conid'],$session[$j][$i]);
+	  $message.=submit_table_element($link,$title,$tn_array[$j],$element_array,$value_array);
+	}
       }
     }
 
-    $query="DELETE from SessionHasFeature where sessionid=".$session["sessionid"];
-    //$query.=" AND conid=".$_SESSION['conid'];
-    $message2=$query;
-    if (!mysql_query($query,$link)) {
-        $message_error.=mysql_error($link);
-	$message_error.=" query=$query";
-	return $message_error;
-        }
-    $id=$session["sessionid"];
-    if ($session["featdest"]!="") {
-        for ($i=0 ; $session["featdest"][$i]!="" ; $i++ ) {
-            $query="INSERT into SessionHasFeature set sessionid=".$id.", featureid=";
-            $query.=$session["featdest"][$i];
-	    //$query.=", conid=".$_SESSION['conid'];
-            $message2=$query;
-            if (!mysql_query($query,$link)) {
-	        $message_error.=mysql_error($link);
-	        $message_error.=" query=$query";
-	        return $message_error;
-                }
-            }
-        }
-    $query="DELETE from SessionHasService where sessionid=".$session["sessionid"];
-    //$query.=" AND conid=".$_SESSION['conid'];
-    $message2=$query;
-    if (!mysql_query($query,$link)) {
-        $message_error.=mysql_error($link);
-	$message_error.=" query=$query";
-	return $message_error;
-        }
-    if ($session["servdest"]!="") {
-        for ($i=0 ; $session["servdest"][$i]!="" ; $i++ ) {
-            $query="INSERT into SessionHasService set sessionid=".$id.", serviceid=";
-            $query.=$session["servdest"][$i];
-	    //$query.=", conid=".$_SESSION['conid'];
-            $message2=$query;
-            if (!mysql_query($query,$link)) {
-	        $message_error.=mysql_error($link);
-	        $message_error.=" query=$query";
-	        return $message_error;
-                }
-            }
-        }
-    $query="DELETE from SessionHasPubChar where sessionid=".$session["sessionid"];
-    //$query.=" AND conid=".$_SESSION['conid'];
-    $message2=$query;
-    if (!mysql_query($query,$link)) {
-        $message_error.=mysql_error($link);
-	$message_error.=" query=$query";
-	return $message_error;
-        }
-    if ($session["pubchardest"]!="") {
-        //error_log("Zamiba->update_session->\$session[\"pubchardest\"]: ".print_r($session["pubchardest"],TRUE)); // for debugging only
-        for ($i=0 ; $session["pubchardest"][$i]!="" ; $i++ ) {
-            $query="INSERT into SessionHasPubChar set sessionid=".$id.", pubcharid=";
-            $query.=$session["pubchardest"][$i];
-	    //$query.=", conid=".$_SESSION['conid'];
-            $message2=$query;
-            if (!mysql_query($query,$link)) {
-	        $message_error.=mysql_error($link);
-	        $message_error.=" query=$query";
-	        return $message_error;
-                }
-            }
-        }
-    $query="DELETE from $ReportDB.SessionHasVendorFeature where sessionid=".$session["sessionid"];
-    $query.=" AND conid=".$_SESSION['conid'];
-    $message2=$query;
-    if (!mysql_query($query,$link)) {
-        $message_error.=mysql_error($link);
-	$message_error.=" query=$query";
-	return $message_error;
-        }
-    if ($session["vendfeatdest"]!="") {
-        for ($i=0 ; $session["vendfeatdest"][$i]!="" ; $i++ ) {
-            $query="INSERT into $ReportDB.SessionHasVendorFeature set sessionid=".$id.", vendorfeatureid=";
-            $query.=$session["vendfeatdest"][$i];
-	    $query.=", conid=".$_SESSION['conid'];
-            $message2=$query;
-            if (!mysql_query($query,$link)) {
-	        $message_error.=mysql_error($link);
-	        $message_error.=" query=$query";
-	        return $message_error;
-                }
-            }
-        }
-    $query="DELETE from $ReportDB.SessionHasVendorSpace where sessionid=".$session["sessionid"];
-    $query.=" AND conid=".$_SESSION['conid'];
-    $message2=$query;
-    if (!mysql_query($query,$link)) {
-        $message_error.=mysql_error($link);
-	$message_error.=" query=$query";
-	return $message_error;
-        }
-    if ($session["spacedest"]!="") {
-        for ($i=0 ; $session["spacedest"][$i]!="" ; $i++ ) {
-	    $query="INSERT into $ReportDB.SessionHasVendorSpace set sessionid=".$id.", vendorspaceid=";
-	    $query.=$session["spacedest"][$i];
-	    $query.=", conid=".$_SESSION['conid'];
-	    $message2=$query;
-	    if (!mysql_query($query,$link)) {
-	        $message_error.=mysql_error($link);
-	        $message_error.=" query=$query";
-	        return $message_error;
-                }
-	    }
-        }
-    $query="DELETE from $ReportDB.SessionHasVendorAdjust where sessionid=".$session["sessionid"];
+    /* Set up the Vendor Adjustment Value, in case it every gets used.*/
+    $query="DELETE from SessionHasVendorAdjust where sessionid=".$session["sessionid"];
     $query.=" AND conid=".$_SESSION['conid'];
     $message2=$query;
     if (($session["vendoradjustvalue"]!="") or ($session["vendoradjustnote"]!="")) {
-        $query="INSERT into $ReportDB.SessionHasVendorAdjust set sessionid=".$id." ";
+        $query="INSERT into SessionHasVendorAdjust set sessionid=".$id." ";
         if ($session["vendoradjustvalue"]!="") {
 	    $query.=", vendoradjustvalue=";
 	    $query.=$session["vendoradjustvalue"]." ";
@@ -431,7 +370,7 @@ function update_session() {
 //
 function get_next_session_id() {
     global $link;
-    $result=mysql_query("SELECT MAX(sessionid) FROM Sessions",$link);
+    $result=mysql_query("SELECT MAX(sessionid) FROM Sessions where conid=".$_SESSION['conid'],$link);
     if (!$result) {return "";}
     list($maxid)=mysql_fetch_array($result, MYSQL_NUM);
     if (!$maxid) {return "1";}
@@ -445,15 +384,10 @@ function get_next_session_id() {
 //
 function insert_session() {
     global $session, $link, $query, $message_error;
-    $ReportDB=REPORTDB; // make it a variable so it can be substituted
-    $BioDB=BIODB; // make it a variable so it can be substituted
-
-    // Tests for the substituted variables
-    if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-    if ($BioDB=="BIODB") {unset($BIODB);}
 
     $query="INSERT into Sessions set ";
-    //$query.="conid=".$_SESSION['conid'].", ";
+    $query.="sessionid=".$session['sessionid'].',';
+    $query.="conid=".$_SESSION['conid'].", ";
     $query.="trackid=".$session["track"].',';
     $temp=$session["type"];
     $query.="typeid=".(($temp==0)?"null":$temp).", ";
@@ -466,7 +400,7 @@ function insert_session() {
     $query.="pocketprogtext=\"".mysql_real_escape_string($session["description_good_book"],$link).'",';
     $query.="progguiddesc=\"".mysql_real_escape_string($session["description_good_web"],$link).'",';
     $query.="persppartinfo=\"".mysql_real_escape_string($session["persppartinfo"],$link).'",';
-    if (DURATION_IN_MINUTES=="TRUE") {
+    if ($_SESSION['condurationminutes']=="TRUE") {
             $query.="duration=\"".conv_min2hrsmin($session["duration"],$link)."\", ";
             }
         else {
@@ -492,129 +426,82 @@ function insert_session() {
         }
     $id = mysql_insert_id($link);
 
-    $query="INSERT into $ReportDB.Sessions set ";
-    $query.="sessionid=".$id.", ";
-    $query.="conid=".$_SESSION['conid'].", ";
-    $query.="trackid=".$session["track"].',';
-    $temp=$session["type"];
-    $query.="typeid=".(($temp==0)?"null":$temp).", ";
-    $temp=$session["divisionid"]; // Unknown=6
-    $query.="divisionid=".(($temp==0)?6:$temp).", ";
-    $query.="pubstatusid=".$session["pubstatusid"].',';
-    $query.="languagestatusid=".$session["languagestatusid"].',';
-    $query.="title=\"".mysql_real_escape_string($session["title"],$link).'",';
-    $query.="secondtitle=\"".mysql_real_escape_string($session["secondtitle"],$link).'",';
-    $query.="pocketprogtext=\"".mysql_real_escape_string($session["description_good_book"],$link).'",';
-    $query.="progguiddesc=\"".mysql_real_escape_string($session["description_good_web"],$link).'",';
-    $query.="persppartinfo=\"".mysql_real_escape_string($session["persppartinfo"],$link).'",';
-    if (DURATION_IN_MINUTES=="TRUE") {
-            $query.="duration=\"".conv_min2hrsmin($session["duration"],$link)."\", ";
-            }
-        else {
-            $query.="duration=\"".mysql_real_escape_string($session["duration"],$link)."\", ";
-            }
-    $query.="estatten=".($session["atten"]!=""?$session["atten"]:"null").',';
-    $query.="kidscatid=".$session["kids"].',';
-    $query.="signupreq=";
-    if ($session["signup"]) {$query.="1,";} else {$query.="0,";}
-    $temp=$session["roomset"];
-    $query.="roomsetid=".(($temp==0)?"null":$temp).", ";
-    $query.="notesforpart=\"".mysql_real_escape_string($session["notesforpart"],$link).'",';
-    $query.="servicenotes=\"".mysql_real_escape_string($session["servnotes"],$link).'",';
-    $query.="statusid=".$session["status"].',';
-    $query.="notesforprog=\"".mysql_real_escape_string($session["notesforprog"],$link).'",';
-    $query.="warnings=0,invitedguest="; // warnings db field not editable by form
-    if ($session["invguest"]) {$query.="1";} else {$query.="0";}
-    $result = mysql_query($query,$link);
-    if (!$result) {
-        $message_error.=mysql_error($link);
-        $message_error.=" query=$query";
-        return $message_error;
-        }
+    /* There should be a more dignified way of doing this,
+       but for the meantime, while we are in transition...
 
-    // Create the Descriptions text (descriptiontypeid=3) entries.
+       + descriptiontype (i) is title, subtitle and description, and
+       should probably be harvested from the descrioptiontype so if
+       more are added, at any point in time, they can be used.
 
-    // Web (biodestid=1) (currently locked to biostateid=3 (which is "good") and the en-us language.) 
-    if (isset($session["description_good_web"]) and ($session["description_good_web"] != "")) {
-      $element_array=array('sessionid','conid','descriptiontypeid','biostateid','biodestid','descriptionlang','descriptiontext');
-      $value_array=array($id,$_SESSION['conid'],3,3,1,'en-us',mysql_real_escape_string($session["description_good_web"],$link));
-      $message.=submit_table_element($link,$title,"$ReportDB.Descriptions",$element_array,$value_array);
+       + biostateid (j) is currently locked to 3, since we aren't
+         actually editing these yet, and here should be locked to 1,
+         otherwise, since this is the raw creation.
+
+       + biodestid (k) is web and book destinations, and should be
+         actually harvested from BioDests, so if more are added, at
+         any point in time, they can be used.
+
+       + descriptionlang (l) is currently fixed to en-us, if we ever
+       actually go multi-lingual this will need to be fixed. */
+
+    // Create the Descriptions array entries.
+    
+    $desc_array[1][3][1]['en-us']=$session["title"];
+    $desc_array[1][3][2]['en-us']=$session["title"];
+    $desc_array[2][3][1]['en-us']=$session["subtitle"];
+    $desc_array[2][3][2]['en-us']=$session["subtitle"];
+    $desc_array[3][3][1]['en-us']=$session["description_good_web"];
+    $desc_array[3][3][2]['en-us']=$session["description_good_book"];
+
+    // Run the loops.
+    $j=3;
+    $l="en-us";
+    for ($i=1; $i<=3; $i++) {
+      for ($k=1; $k<=2; $k++) {
+
+	// Check to see if it exists.
+        if (isset($desc_array[$i][$j][$k][$l]) and ($desc_array[$i][$j][$k][$l] != "")) {
+
+	  // Limit check should go here.
+
+	  // Create and submit the arrays.
+	  $element_array=array('sessionid','conid','descriptiontypeid','biostateid',
+			       'biodestid','descriptionlang','descriptiontext');
+	  $value_array=array($id,$_SESSION['conid'],$i,$j,$k,$l,
+			     htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
+	  $message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
+	}
+      }
+    }
+    
+    /* Set up the various feature tables, so we can loop across all of them. */
+    $tn_array["featdest"]="SessionHasFeature";
+    $te_array["featdest"]="featureid";
+    $tn_array["servdest"]="SessionHasService";
+    $te_array["servdest"]="serviceid";
+    $tn_array["pubchardest"]="SessionHasPubChar";
+    $te_array["pubchardest"]="pubcharid";
+    $tn_array["vendfeatdest"]="SessionHasVendorFeature";
+    $te_array["vendfeatdest"]="vendorfeatureid";
+    $tn_array["spacedest"]="SessionHasVendorSpace";
+    $te_array["spacedest"]="vendorspaceid";
+
+    // Loop across the keys of the array created above.
+    foreach (array_keys($tn_array) as $j) {
+
+      // If any entries exist, create them.
+      if ($session[$j]!="") {
+        for ($i=0 ; $session[$j][$i]!="" ; $i++ ) {
+	  $element_array=array('sessionid','conid',$te_array[$j]);
+	  $value_array=array($id,$_SESSION['conid'],$session[$j][$i]);
+	  $message.=submit_table_element($link,$title,$tn_array[$j],$element_array,$value_array);
+	}
+      }
     }
 
-    // Book (biodestid=2) (currently locked to biostateid=3 (which is "good") and the en-us language.) 
-    if (isset($session["description_good_book"]) and ($session["description_good_book"] != "")) {
-      $element_array=array('sessionid','conid','descriptiontypeid','biostateid','biodestid','descriptionlang','descriptiontext');
-      $value_array=array($id,$_SESSION['conid'],3,3,2,'en-us',mysql_real_escape_string($session["description_good_book"],$link));
-      $message.=submit_table_element($link,$title,"$ReportDB.Descriptions",$element_array,$value_array);
-    }
-
-    if ($session["featdest"]!="") {
-        for ($i=0 ; $session["featdest"][$i]!="" ; $i++ ) {
-            $query="INSERT into SessionHasFeature set sessionid=".$id.", featureid=";
-            $query.=$session["featdest"][$i];
-	    //$query.=", conid=".$_SESSION['conid'];
-            $result = mysql_query($query,$link);
-	    if (!$result) {
-	        $message_error.=mysql_error($link);
-		$message_error.=" query=$query";
-	        return $message_error;
-	        }
-            }
-        }
-    if ($session["servdest"]!="") {
-        for ($i=0 ; $session["servdest"][$i]!="" ; $i++ ) {
-            $query="INSERT into SessionHasService sessionid=".$id.", serviceid=";
-            $query.=$session["servdest"][$i];
-	    //$query.=", conid=".$_SESSION['conid'];
-            $result = mysql_query($query,$link);
-	    if (!$result) {
-	        $message_error.=mysql_error($link);
-		$message_error.=" query=$query";
-	        return $message_error;
-	        }
-            }
-        }
-    if ($session["pubchardest"]!="") {
-        for ($i=0 ; $session["pubchardest"][$i]!="" ; $i++ ) {
-            $query="INSERT into SessionHasPubChar sessionid=".$id.", pubcharid=";
-            $query.=$session["pubchardest"][$i];
-	    //$query.=", conid=".$_SESSION['conid'];
-            $result = mysql_query($query,$link);
-	    if (!$result) {
-	        $message_error.=mysql_error($link);
-		$message_error.=" query=$query";
-	        return $message_error;
-	        }
-            }
-        }
-    if ($session["vendfeatdest"]!="") {
-        for ($i=0 ; $session["vendfeatdest"][$i]!="" ; $i++ ) {
-            $query="INSERT into $ReportDB.SessionHasVendorFeature set sessionid=".$id.", vendorfeatureid=";
-            $query.=$session["vendfeatdest"][$i];
-	    $query.=", conid=".$_SESSION['conid'];
-            $result = mysql_query($query,$link);
-	    if (!$result) {
-	        $message_error.=mysql_error($link);
-		$message_error.=" query=$query";
-	        return $message_error;
-	        }
-            }
-        }
-    if ($session["spacedest"]!="") {
-        for ($i=0 ; $session["spacedest"][$i]!="" ; $i++ ) {
-	  $query="INSERT into $ReportDB.SessionHasVendorSpace set sessionid=".$id.", vendorspaceid=";
-	  $query.=$session["spacedest"];
-	  $query.=", conid=".$_SESSION['conid'];
-	  $result = mysql_query($query,$link);
-	  if (!$result) {
-	      $message_error.=mysql_error($link);
-	      $message_error.=" query=$query";
-	      return $message_error;
-	      }
-	  }
-        }
+    /* Set up the Vendor Adjustment Value, in case it every gets used.*/
     if (($session["vendoradjustvalue"]!="") or ($session["vendoradjustnote"]!="")) {
-        $query="INSERT into $ReportDB.SessionHasVendorAdjust set sessionid=".$id." ";
+        $query="INSERT into SessionHasVendorAdjust set sessionid=".$id." ";
         if ($session["vendoradjustvalue"]!="") {
 	    $query.=", vendoradjustvalue=";
 	    $query.=$session["vendoradjustvalue"]." ";
@@ -686,7 +573,7 @@ EOD;
     $session["description_good_web"]=$sessionarray["progguiddesc"];
     $session["persppartinfo"]=$sessionarray["persppartinfo"];
     $timearray=parse_mysql_time_hours($sessionarray["duration"]);
-    if (DURATION_IN_MINUTES=="TRUE") {
+    if ($_SESSION['condurationminutes']=="TRUE") {
             $session["duration"]=" ".strval(60*$timearray["hours"]+$timearray["minutes"]);
             }
         else {

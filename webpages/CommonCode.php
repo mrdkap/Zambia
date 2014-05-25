@@ -1916,16 +1916,15 @@ EOD;
   return($session_array);
 }
 
-/* This function should populate the various limits from the LIMITDB
- database, once that is implimented, but in the meantime it pulls all
- the limits from the db_name.php file. */
-/* Tentatively the LIMITDB database should be something like:
- limitid INT,
- conid varchar,
- minmax (0/1?),
- biotypeid INT (reference BioTypes),
- limitfield varchar, 
- limitval INT
+/* This function populates the various limits from the PublicationLimits table.
+Tentatively the table should be something like:
+ publimid int(11), // key
+ conid int(11), // which con
+ publimtype enum('min','max'), // top or bottom limit  
+ publimdest enum('web','book'), // what medium - future 'mobile'
+ publimname varchar(15), // bio, desc, name, title, picture, uri - future biotypeid/descriptiontype + name?
+ publimval int(11), // what the limit is
+ publimnote text // What it replaced, probably should become more useful, or go away.
  */
 function getLimitArray() {
   global $message_error,$message2,$link;

@@ -78,8 +78,6 @@ define("CON_START_DATIM",$ConInfo_array['constartdate']);
 define("CON_NUM_DAYS",$ConInfo_array['connumdays']);
 define("CON_URL",$ConInfo_array['conurl']);
 define("CON_LOGO",$ConInfo_array['conlogo']);
-define("DEFAULT_DURATION",$ConInfo_array['condefaultduration']);
-define("DURATION_IN_MINUTES",$ConInfo_array['condurationminutes']);
 define("GRID_SPACER",$ConInfo_array['congridspacer']);
 define("MY_AVAIL_KIDS",$ConInfo_array['conallowkids']);
 define("PREF_TTL_SESNS_LMT",$ConInfo_array['contotalsess']);

@@ -124,7 +124,7 @@ function set_session_defaults() {
     $session["featdest"]="";
     $session["servdest"]="";
     $session["pubchardest"]="";
-    $session["duration"]=DEFAULT_DURATION;
+    $session["duration"]=$_SESSION['condefaultduration'];
     $session["atten"]="";
     $session["kids"]=1; // "Kids Not Allowed"
     $session["signup"]=false; // leave checkbox blank initially

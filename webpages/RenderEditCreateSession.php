@@ -64,6 +64,7 @@ function RenderEditCreateSession ($action, $session, $message1, $message2) {
         <FORM name="sessform" class="bb"  method=POST action="SubmitEditCreateSession.php">
             <INPUT type="hidden" name="name" value="<?php echo htmlspecialchars($name,ENT_COMPAT);?>">
             <INPUT type="hidden" name="email" value="<?php echo htmlspecialchars($email,ENT_COMPAT);?>">
+            <INPUT type="hidden" name="conid" value="<?php echo $_SESSION['conid'];?>">
             <DIV style="margin: 0.5em; padding: 0em"><TABLE style="margin: 0em; padding: 0em" ><COL width=600><COL>
               <TR style="margin: 0em; padding: 0em">
                 <TD style="margin: 0em; padding: 0em">&nbsp;</TD>

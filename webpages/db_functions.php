@@ -461,7 +461,6 @@ function insert_session() {
     $query.="divisionid=".(($temp==0)?6:$temp).", ";
     $query.="pubstatusid=".$session["pubstatusid"].',';
     $query.="languagestatusid=".$session["languagestatusid"].',';
-    $query.="pubsno=\"".mysql_real_escape_string($session["pubno"],$link).'",';
     $query.="title=\"".mysql_real_escape_string($session["title"],$link).'",';
     $query.="secondtitle=\"".mysql_real_escape_string($session["secondtitle"],$link).'",';
     $query.="pocketprogtext=\"".mysql_real_escape_string($session["description_good_book"],$link).'",';
@@ -503,7 +502,6 @@ function insert_session() {
     $query.="divisionid=".(($temp==0)?6:$temp).", ";
     $query.="pubstatusid=".$session["pubstatusid"].',';
     $query.="languagestatusid=".$session["languagestatusid"].',';
-    $query.="pubsno=\"".mysql_real_escape_string($session["pubno"],$link).'",';
     $query.="title=\"".mysql_real_escape_string($session["title"],$link).'",';
     $query.="secondtitle=\"".mysql_real_escape_string($session["secondtitle"],$link).'",';
     $query.="pocketprogtext=\"".mysql_real_escape_string($session["description_good_book"],$link).'",';
@@ -653,7 +651,7 @@ function retrieve_session_from_db($sessionid) {
 
     $query= <<<EOD
 select
-        sessionid, trackid, typeid, divisionid, pubstatusid, languagestatusid, pubsno,
+        sessionid, trackid, typeid, divisionid, pubstatusid, languagestatusid,
         title, secondtitle, pocketprogtext, progguiddesc, persppartinfo, duration,
         estatten, kidscatid, signupreq, roomsetid, notesforpart, servicenotes,
         statusid, notesforprog, warnings, invitedguest, ts
@@ -680,7 +678,6 @@ EOD;
     $session["divisionid"]=$sessionarray["divisionid"];
     $session["pubstatusid"]=$sessionarray["pubstatusid"];
     $session["languagestatusid"]=$sessionarray["languagestatusid"];
-    $session["pubno"]=$sessionarray["pubsno"];
     $session["title"]=$sessionarray["title"];
     $session["secondtitle"]=$sessionarray["secondtitle"];
     $session["pocketprogtext"]=$sessionarray["pocketprogtext"];

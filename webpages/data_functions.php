@@ -70,7 +70,6 @@ function get_session_from_post() {
     $session["divisionid"]=$_POST["divisionid"];
     $session["pubstatusid"]=$_POST["pubstatusid"];
     $session["languagestatusid"]=$_POST["languagestatusid"];
-    $session["pubno"]=stripslashes($_POST["pubno"]);
     if (isset($_POST["title"])) {
             $session["title"]=stripslashes($_POST["title"]);
             }
@@ -117,7 +116,6 @@ function set_session_defaults() {
     $session["divisionid"]=2; // default to "Programming"
     $session["pubstatusid"]=2; // default to "Public"
     $session["languagestatusid"]=1; // default to "English"
-    $session["pubno"]="";
     $session["title"]="";
     $session["secondtitle"]="";
     $session["pocketprogtext"]="";

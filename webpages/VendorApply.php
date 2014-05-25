@@ -85,7 +85,6 @@ SELECT
     vendfeaturename,
     vendfeatureid,
     servicenotes AS servnotes,
-    pubsno AS pubno,
     languagestatusid,
     pocketprogtext,
     persppartinfo,
@@ -145,7 +144,6 @@ if ($rows==0) {
   $session['update']="New"; // New entry.
 
   // These can probably just be ignored.
-  $session['pubno']='';
   $session['languagestatusid']=1;
   $session['pocketprogtext']='';
   $session['persppartinfo']='';

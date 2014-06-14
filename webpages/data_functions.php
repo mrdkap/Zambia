@@ -43,10 +43,10 @@ function get_participant_availability_from_post() {
     global $partAvail;
     // for numeric fields in ParticipantAvailability--convert to 0 if blank
     $partAvail["maxprog"]=($_POST["maxprog"]=="")?0:$_POST["maxprog"];
-    for ($i=1; $i<=CON_NUM_DAYS; $i++) {
+    for ($i=1; $i<=$_SESSION['connumdays']; $i++) {
         $partAvail["maxprogday$i"]=($_POST["maxprogday$i"]!="")?$_POST["maxprogday$i"]:0;
         }
-    for ($i=1; $i<=AVAILABILITY_ROWS; $i++) {
+    for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
         $x1=$partAvail["availstartday_$i"]=$_POST["availstartday_$i"];
         $x2=$partAvail["availstarttime_$i"]=$_POST["availstarttime_$i"];
         $x3=$partAvail["availendday_$i"]=$_POST["availendday_$i"];

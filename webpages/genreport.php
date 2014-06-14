@@ -2,12 +2,13 @@
 require_once('StaffCommonCode.php');
 global $link;
 
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ConNumDays=CON_NUM_DAYS; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
+$ConStartDatim=$_SESSION['constartdate']; // make it a variable so it can be substituted
+$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
+$ConNumDays=$_SESSION['connumdays']; // make it a variable so it can be substituted
 $mybadgeid=$_SESSION['badgeid']; // make it a simple variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a simple variable so it can be substituted
+$BioDB=BIODB; // make it a variable so it can be substituted
+$ReportDB=REPORTDB; // make it a variable so it can be substituted
 
 // Get the various length limits for substitution
 $limit_array=getLimitArray();
@@ -29,8 +30,8 @@ $query = <<<EOD
 SELECT
     badgeid
   FROM
-      $ReportDB.UserHasConRole
-    JOIN $ReportDB.ConRoles USING (conroleid)
+      UserHasConRole
+    JOIN ConRoles USING (conroleid)
   WHERE
     conid=$conid AND
     conrolename like '%GOH%'
@@ -45,7 +46,7 @@ $GohBadgeList.="')";
 
 // Check for addtion
 if (isset($_POST['addto'])) {
-  add_flow_report($_POST['addto'],$_POST['addphase'],"$ReportDB.Personal","",$title,$description);
+  add_flow_report($_POST['addto'],$_POST['addphase'],"Personal","",$title,$description);
  }
 
 // Switch on which way this is called
@@ -69,7 +70,7 @@ SELECT
     concat("<A HREF=genreport.php?reportid=",reportid,">",reporttitle,"</A> (<A HREF=genreport.php?reportid=",reportid,"&csv=y>csv</A>)") AS Title,
     reportdescription AS Description
   FROM
-      $ReportDB.Reports
+      Reports
   ORDER BY
     reportname
 EOD;
@@ -92,30 +93,27 @@ SELECT
     reportadditionalinfo,
     reportquery
   FROM
-      $ReportDB.Reports
+      Reports
   WHERE
 EOD;
 
   if (!$reportid) {
     $query.="\n    reportname = '$reportname'";
   } else {
-    $query.="\n    reportid = '$reportid'";
+    $query.="\n    reportid in ($reportid)";
   }
 
   // Retrieve query
   list($returned_reports,$reportnumber_array,$report_array)=queryreport($query,$link,$title,$description,0);
 
-  $basereportid=$report_array[1]['reportid'];
-  $mybadgeid=$_SESSION['badgeid'];
-
-  // Get the personal flow previous and next
+  // Get the full personal flow for previous and next
   $query = <<<EOD
 SELECT
     reportid,
     pflownote
   FROM
-      $ReportDB.PersonalFlow
-      LEFT JOIN $ReportDB.Phase USING (phasetypeid)
+      PersonalFlow
+      LEFT JOIN Phase USING (phasetypeid)
   WHERE
     badgeid='$mybadgeid' AND
     (phasetypeid is null OR
@@ -136,49 +134,54 @@ EOD;
     $pflow_array[]=$row['reportid'];
     $pflow_notes[]=$row['pflownote'];
   }
-  // Start with a blank $personal, walk the array, set the previous and next
-  $personal="Personal Flow: ";
-  for ($i=0; $i<count($pflow_array); $i++) {
-    if ($pflow_array[$i]==$basereportid) {
-      if ($i > 0) {
-	$personal.="<A HREF=genreport.php?reportid=".$pflow_array[$i-1].">Prev</A> ";
-      }
-      if ($i < count($pflow_array)-1) {
-	$personal.="<A HREF=genreport.php?reportid=".$pflow_array[$i+1].">Next</A>";
-      }
-      if ($pflow_notes[$i]!="") {
-	$personal.=" (Note: ".$pflow_notes[$i].")";
+
+  // Begin the per-report cycle.
+  for ($i=1; $i<=$returned_reports; $i++) {
+    $basereportid=$report_array[$i]['reportid'];
+
+    // Start with a blank $personal, walk the array, set the previous and next for this reportid
+    $personal="Personal Flow: ";
+    for ($j=0; $j<count($pflow_array); $j++) {
+      if ($pflow_array[$j]==$basereportid) {
+	if ($j > 0) {
+	  $personal.="<A HREF=genreport.php?reportid=".$pflow_array[$j-1].">Prev</A> ";
+	}
+	if ($j < count($pflow_array)-1) {
+	  $personal.="<A HREF=genreport.php?reportid=".$pflow_array[$j+1].">Next</A>";
+	}
+	if ($pflow_notes[$j]!="") {
+	  $personal.=" (Note: ".$pflow_notes[$j].")";
+	}
       }
     }
-  }
-  if ($personal=="Personal Flow: ") {$personal="";}
+    if ($personal=="Personal Flow: ") {$personal="";}
 
-  // Get the Groups that this report is part of
-  $query = <<<EOD
+    // Get the Groups that this report is part of
+    $query = <<<EOD
 SELECT
     GF.gflowname
   FROM
-      $ReportDB.Reports R,
-      $ReportDB.GroupFlow GF
+      Reports R,
+      GroupFlow GF
   WHERE
     R.reportid=GF.reportid AND
     R.reportid=$basereportid
 EOD;
 
-  // Retrieve query
-  list($grouplistrows,$grouplistheader_array,$grouplistreport_array)=queryreport($query,$link,$title,$description,0);
+    // Retrieve query
+    list($grouplistrows,$grouplistheader_array,$grouplistreport_array)=queryreport($query,$link,$title,$description,0);
 
-  $groups="";
+    $groups="";
 
-  // Iterate accross the Groups getting the previous and next
-  for ($i=1; $i<=$grouplistrows; $i++) {
-    $cgroup=$grouplistreport_array[$i]['gflowname'];
-    $query = <<<EOD
+    // Iterate accross the Groups getting the previous and next
+    for ($j=1; $j<=$grouplistrows; $j++) {
+      $cgroup=$grouplistreport_array[$j]['gflowname'];
+      $query = <<<EOD
 SELECT
     DISTINCT reportid
   FROM
-      $ReportDB.GroupFlow
-      LEFT JOIN $ReportDB.Phase USING (phasetypeid)
+      GroupFlow
+      LEFT JOIN Phase USING (phasetypeid)
   WHERE
     gflowname='$cgroup' AND
       (phasetypeid is null OR (phasestate = TRUE and conid=$conid))
@@ -186,26 +189,24 @@ SELECT
     gfloworder
 EOD;
 
-    // Retrieve query
-    list($gflowrows,$gflowheader_array,$gflow_array)=queryreport($query,$link,$title,$description,0);
+      // Retrieve query
+      list($gflowrows,$gflowheader_array,$gflow_array)=queryreport($query,$link,$title,$description,0);
 
-    // Start with a blank $personal, walk the array, set the previous and next
-    $cgroups=" $cgroup Flow: ";
-    for ($j=1; $j<=$gflowrows; $j++) {
-      if ($gflow_array[$j]['reportid']==$basereportid) {
-	if ($j > 1) {
-	  $cgroups.="<A HREF=genreport.php?reportid=".$gflow_array[$j-1]['reportid'].">Prev</A> ";
-	}
-	if ($j < $gflowrows) {
-	  $cgroups.="<A HREF=genreport.php?reportid=".$gflow_array[$j+1]['reportid'].">Next</A>";
+      // Start with a blank $cgroups, walk the array, set the previous and next
+      $cgroups=" $cgroup Flow: ";
+      for ($k=1; $k<=$gflowrows; $k++) {
+	if ($gflow_array[$k]['reportid']==$basereportid) {
+	  if ($k > 1) {
+	    $cgroups.="<A HREF=genreport.php?reportid=".$gflow_array[$k-1]['reportid'].">Prev</A> ";
+	  }
+	  if ($k < $gflowrows) {
+	    $cgroups.="<A HREF=genreport.php?reportid=".$gflow_array[$k+1]['reportid'].">Next</A>";
+	  }
 	}
       }
+      if ($cgroups==" $cgroup Flow: ") {$cgroups="";}
+      $groups.=$cgroups;
     }
-    if ($cgroups==" $cgroup Flow: ") {$cgroups="";}
-    $groups.=$cgroups;
-  }
-
-  for ($i=1; $i<=$returned_reports; $i++) {
 
     // Fix references in the string so variables can be substituted in.
     $report_array[$i]['reportquery']=eval("return<<<EOF\n".$report_array[$i]['reportquery']."\nEOF;\n");
@@ -231,14 +232,14 @@ EOD;
     } elseif ($_GET["print_p"]=="y") {
         require_once('../../tcpdf/config/lang/eng.php');
         require_once('../../tcpdf/tcpdf.php');
-	$logo=CON_LOGO;
+	$logo=$_SESSION['conlogo'];
 	$pdf = new TCPDF('p', 'mm', 'letter', true, 'UTF-8', false);
 	$pdf->SetCreator('Zambia');
 	$pdf->SetAuthor('Programming Team');
-	$pdf->SetTitle('Logistics Grid');
-	$pdf->SetSubject('Logistics Grid');
-	$pdf->SetKeywords('Zambia, Rooms, Logistics, Services, Features, Tech Notes, Grid');
-	$pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+	$pdf->SetTitle($report_array[$i]['reporttitle']);
+	$pdf->SetSubject($report_array[$i]['reporttitle']);
+	$pdf->SetKeywords('Zambia, Report, '.$report_array[$i]['reportname']);
+	$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
 	$pdf->setHeaderFont(Array("helvetica", '', 10));
 	$pdf->setFooterFont(Array("helvetica", '', 8));
 	$pdf->SetDefaultMonospacedFont("courier");
@@ -253,7 +254,7 @@ EOD;
 	$htmlstring=renderhtmlreport(1,$rows,$header_array,$class_array);
 	$pdf->AddPage();
 	$pdf->writeHTML($htmlstring, true, false, true, false, '');
-	$pdf->Output(CON_NAME.'-grid.pdf', 'I');
+	$pdf->Output($_SESSION['conname'].'-'.$report_array[$i]['reportname'].'-grid.pdf', 'I');
     } else {
       topofpagereport($report_array[$i]['reporttitle'],$report_array[$i]['reportdescription'],$report_array[$i]['reportadditionalinfo']);
       echo renderhtmlreport(1,$rows,$header_array,$class_array);

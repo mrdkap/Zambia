@@ -18,18 +18,19 @@ if (!isset($daymap)) {
     <H2>Number of program items I'm willing to participate in:</H2>
 <p> Please indicate the maximum number of panels you are willing to be on.  
 You may indicate a total for each day as well as an overall maximum for 
-the whole con.  Please note that the tool limits you to <?php echo PREF_TTL_SESNS_LMT;?> or fewer 
-total sessions and <?php echo PREF_DLY_SESNS_LMT;?> each day.  There is no need for the numbers to add up.  We'll use this 
+the whole con.  Please note that the tool limits you to <?php echo $_SESSION['contotalsess'];?> or fewer 
+total sessions and <?php echo $_SESSION['condailysess'];?> each day.
+There is no need for the numbers to add up.  We'll use this 
 for guidance when assigning and scheduling panels. </p>
             <DIV class="regform">
                 <SPAN><LABEL for="maxprog">Preferred Total Number of Panels &nbsp;</LABEL><INPUT type="text" size=3 name="maxprog" 
                      value="<?php echo $partAvail["maxprog"];?>">&nbsp;&nbsp;</SPAN></DIV>
 <?php
 // Don't ask about day limits at all if only 1 day con
-          if (CON_NUM_DAYS>1) {
+          if ($_SESSION['connumdays']>1) {
 // 1st row on page contains up to 4 days of inputs
               echo "<DIV class=\"regform\">\n";
-              for ($i=1; $i<=min(4,CON_NUM_DAYS); $i++) {
+              for ($i=1; $i<=min(4,$_SESSION['connumdays']); $i++) {
                   $D=$daymap["long"][$i];
                   echo "<SPAN><LABEL for=\"maxprogday$i\">$D maximum &nbsp;</LABEL>\n";
                   $N=$partAvail["maxprogday$i"];
@@ -38,9 +39,9 @@ for guidance when assigning and scheduling panels. </p>
               echo "</DIV>\n";
               }
 // 2nd row on page contains up to 4 more if needed
-          if (CON_NUM_DAYS>4) {
+          if ($_SESSION['connumdays']>4) {
               echo "<DIV class=\"regform\">\n";
-              for ($i=5; $i<=CON_NUM_DAYS; $i++) {
+              for ($i=5; $i<=$_SESSION['connumdays']; $i++) {
                   $D=$daymap["long"][$i];
                   echo "<SPAN><LABEL for=\"maxprogday$i\">$D maximum &nbsp;</LABEL>\n";
                   $N=$partAvail["maxprogday$i"];
@@ -54,8 +55,8 @@ for guidance when assigning and scheduling panels. </p>
 <!-- SCHEDULE availability times -->
 <H2>Times I Am Available</H2>
 
-<p> For <?php if (CON_NUM_DAYS>1) {echo "each ";} else {echo "the ";} ?>
-day you will be attending <?php echo CON_NAME; ?>, please indicate
+<p> For <?php if ($_SESSION['connumdays']>1) {echo "each ";} else {echo "the ";} ?>
+day you will be attending <?php echo $_SESSION['conname']; ?>, please indicate
 the times when you will be available.  Entering a single time for
 the whole con is fine.  Splitting a day into multiple time slots
 also is fine.  Keep in mind we will be using this as guidance when
@@ -63,23 +64,23 @@ scheduling you.</p>
 
 <table>
   <tr> <!-- row one -->
-<?php if (CON_NUM_DAYS>1) { echo "<td> Start Day </td>\n";} ?> 
+<?php if ($_SESSION['connumdays']>1) { echo "<td> Start Day </td>\n";} ?> 
     <td> Start Time </td>
     <td> &nbsp; </td>
-<?php if (CON_NUM_DAYS>1) { echo "<td> End Day </td>\n";} ?> 
+<?php if ($_SESSION['connumdays']>1) { echo "<td> End Day </td>\n";} ?> 
     <td> End Time </td> 
   </tr> <!-- header row  -->
 <?php
 //  Notes on variables:
 //  $partAvail["availstarttime_$i"], $partAvail["availendtime_$i"] are measured in GRID_SPACER increments
 //     0 is unset, 1 is midnight beginning of day
-    for ($i=1; $i<=AVAILABILITY_ROWS; $i++) {
+    for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
         echo "  <TR> <!-- Row $i -->\n";
-        if (CON_NUM_DAYS>1) {
+        if ($_SESSION['connumdays']>1) {
             echo "    <TD><SELECT name=\"availstartday_$i\">\n";
             $sel = isset($partAvail["availstartday_$i"])?"":" selected";
             echo "        <OPTION value=0$sel>&nbsp;</OPTION>\n";
-            for ($j=1; $j<=CON_NUM_DAYS; $j++) {
+            for ($j=1; $j<=$_SESSION['connumdays']; $j++) {
                 $sel = ($partAvail["availstartday_$i"]==$j)?" selected":"";
                 $day = $daymap["long"][$j];
                 echo "        <OPTION value=$j $sel>$day</OPTION>\n";
@@ -110,11 +111,11 @@ scheduling you.</p>
 	}
         echo "        </SELECT></TD>\n";
         echo "    <TD> Until </TD>\n";
-        if (CON_NUM_DAYS>1) {
+        if ($_SESSION['connumdays']>1) {
             echo "    <TD><SELECT name=\"availendday_$i\">\n";
              $sel = isset($partAvail["availendday_$i"])?"":" selected";
             echo "        <OPTION value=0$sel>&nbsp;</OPTION>\n";
-            for ($j=1; $j<=CON_NUM_DAYS; $j++) {
+            for ($j=1; $j<=$_SESSION['connumdays']; $j++) {
                 $sel = ($partAvail["availendday_$i"]==$j)?" selected":"";
                 $day = $daymap["long"][$j];
                 echo "        <OPTION value=$j $sel>$day</OPTION>\n";

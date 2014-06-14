@@ -232,86 +232,82 @@ function validate_session() {
         }
     return ($flag);
     }
+
 // Function validate_participant_availability()
 // Reads global $partAvail and performs tests.
 // If a test fails, then the global $message is populated
 // with the HTML of an error message.
 //
 function validate_participant_availability() {
-    global $partAvail, $messages;
-    $flag=true;
-    $messages="";
-    if (!($partAvail["maxprog"]>=0 and $partAvail["maxprog"]<=PREF_TTL_SESNS_LMT)) {
-        $x=PREF_TTL_SESNS_LMT;
-        $messages="For the overall maximum number of panels, enter a number between 0 and $x.<BR>\n";
-        $flag=false;
-        }
-    if (CON_NUM_DAYS>1) {
-        for ($i=1; $i<=CON_NUM_DAYS; $i++) {
-            if (!($partAvail["maxprogday$i"]>=0 and $partAvail["maxprogday$i"]<=10)) {
-                $x=PREF_DLY_SESNS_LMT;
-                $messages.="For each daily maximum number of panels, enter a number between 0 and $x.<BR>\n";
-                $flag=false;
-                break;
-                }
-            }
-        } 
-    if (!($partAvail["numkidsfasttrack"]>=0 and $partAvail["numkidsfasttrack"]<=8)) {
-        $messages.="For the number of kids for fastrack, enter a number between 0 and 8.<BR>\n";
-        $flag=false;
-        }
-    for ($i=1; $i<= AVAILABILITY_ROWS; $i++) {
-        if (CON_NUM_DAYS>1) {
-                // Day fields will be populated
-                $x1=$partAvail["availstartday_$i"];
-                $x2=$partAvail["availstarttime_$i"];
-                $x3=$partAvail["availendday_$i"];
-                $x4=$partAvail["availendtime_$i"];
-                //error_log("zambia: $i, $x1, $x2, $x3, $x4"); //for debugging only
-		// if any of them are in the "unset" state, and if any of them are not, throw an error
-                if (($x1==0 || $x2=='' || $x3==0 || $x4=='') && ($x1!=0 || $x2!='' || $x3!=0 || $x4!='')) {
-                    $messages.="To define an available slot, set all 4 items.  To delete a slot, clear all 4 items. Line $i $x1, $x2, $x3, $x4<BR>\n";
-                    $flag=false;
-                    break;
-                    }
-                }
-            else {
-                // Day fields will not be populated.
-                $x2=$partAvail["availstarttime_$i"];
-                $x4=$partAvail["availendtime_$i"];
-		// if any of them are in the "unset" state, and if any of them are not, throw an error
-                if (($x2=='' || $x4=='') && ($x2!='' || $x4!='')) {
-                    $messages.="To define an available slot, set both items.  To delete a slot, clear both items. Line: $i $x2 $x4<BR>\n";
-                    $flag=false;
-                    break;
-                    }
-                }
-        }
-    for ($i=1; $i<= AVAILABILITY_ROWS; $i++) {
-        if (CON_NUM_DAYS>1) {
-                // Day fields will be populated
-                $x1=$partAvail["availstartday_$i"];
-                $x2=$partAvail["availstarttime_$i"];
-                $x3=$partAvail["availendday_$i"];
-                $x4=$partAvail["availendtime_$i"];
-                if ($x1!=0 && (($x3<$x1) || ($x1==$x3 && $x4<=$x2))) {
-                    $messages.="End time and day must be after start time and day.<BR>\n";
-                    $flag=false;
-                    break;
-                    }
-                }
-            else {
-                // Day fields will not be populated.
-                $x2=$partAvail["availstarttime_$i"];
-                $x4=$partAvail["availendtime_$i"];
-                if (($x4<=$x2) && ($x2!=0)) {
-                    $messages.="End time must be after start time.<BR>\n";
-                    $flag=false;
-                    break;
-                    }
-                }
-
-        }
-    return ($flag);
+  global $partAvail, $messages;
+  $flag=true;
+  $messages="";
+  if (!($partAvail["maxprog"]>=0 and $partAvail["maxprog"]<=$_SESSION['contotalsess'])) {
+    $messages="For the overall maximum number of panels, enter a number between 0 and ".$_SESSION['contotalsess'].".<BR>\n";
+    $flag=false;
+  }
+  if ($_SESSION['connumdays']>1) {
+    for ($i=1; $i<=$_SESSION['connumdays']; $i++) {
+      if (!($partAvail["maxprogday$i"]>=0 and $partAvail["maxprogday$i"]<=10)) {
+	$messages.="For each daily maximum number of panels, enter a number between 0 and ".$_SESSION['condailysess']."<BR>\n";
+	$flag=false;
+	break;
+      }
     }
+  } 
+  if (!($partAvail["numkidsfasttrack"]>=0 and $partAvail["numkidsfasttrack"]<=8)) {
+    $messages.="For the number of kids for fastrack, enter a number between 0 and 8.<BR>\n";
+    $flag=false;
+  }
+  for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
+    if ($_SESSION['connumdays']>1) {
+      // Day fields will be populated
+      $x1=$partAvail["availstartday_$i"];
+      $x2=$partAvail["availstarttime_$i"];
+      $x3=$partAvail["availendday_$i"];
+      $x4=$partAvail["availendtime_$i"];
+      //error_log("zambia: $i, $x1, $x2, $x3, $x4"); //for debugging only
+      // if any of them are in the "unset" state, and if any of them are not, throw an error
+      if (($x1==0 || $x2=='' || $x3==0 || $x4=='') && ($x1!=0 || $x2!='' || $x3!=0 || $x4!='')) {
+	$messages.="To define an available slot, set all 4 items.  To delete a slot, clear all 4 items. Line $i $x1, $x2, $x3, $x4<BR>\n";
+	$flag=false;
+	break;
+      }
+    } else {
+      // Day fields will not be populated.
+      $x2=$partAvail["availstarttime_$i"];
+      $x4=$partAvail["availendtime_$i"];
+      // if any of them are in the "unset" state, and if any of them are not, throw an error
+      if (($x2=='' || $x4=='') && ($x2!='' || $x4!='')) {
+	$messages.="To define an available slot, set both items.  To delete a slot, clear both items. Line: $i $x2 $x4<BR>\n";
+	$flag=false;
+	break;
+      }
+    }
+  }
+  for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
+    if ($_SESSION['connumdays']>1) {
+      // Day fields will be populated
+      $x1=$partAvail["availstartday_$i"];
+      $x2=$partAvail["availstarttime_$i"];
+      $x3=$partAvail["availendday_$i"];
+      $x4=$partAvail["availendtime_$i"];
+      if ($x1!=0 && (($x3<$x1) || ($x1==$x3 && $x4<=$x2))) {
+	$messages.="End time and day must be after start time and day.<BR>\n";
+	$flag=false;
+	break;
+      }
+    } else {
+      // Day fields will not be populated.
+      $x2=$partAvail["availstarttime_$i"];
+      $x4=$partAvail["availendtime_$i"];
+      if (($x4<=$x2) && ($x2!=0)) {
+	$messages.="End time must be after start time.<BR>\n";
+	$flag=false;
+	break;
+      }
+    }
+  }
+  return ($flag);
+}
 ?>

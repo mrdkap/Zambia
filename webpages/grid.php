@@ -6,23 +6,17 @@ if (may_I("Staff")) {
   require_once('PartCommonCode.php');
  }
 global $link;
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
+$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
 $mybadgeid=$_SESSION['badgeid']; // make it a simple variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a simple variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // Get the GOH list
 $query = <<<EOD
 SELECT
     badgeid
   FROM
-      $ReportDB.UserHasConRole
-    JOIN $ReportDB.ConRoles USING (conroleid)
+      UserHasConRole
+    JOIN ConRoles USING (conroleid)
   WHERE
     conid=$conid AND
     conrolename like '%GOH%'
@@ -123,7 +117,7 @@ $gohprint="";
 $tcolorprint="Color ";
 $colorprint=", keyed by color";
 $typeortrackprint=", colored by type";
-$typeortrack="$ReportDB.Types T USING (typeid)";
+$typeortrack="Types T USING (typeid)";
 
 // Mods
 if ($unpub=="y") {
@@ -164,7 +158,7 @@ if ($fasttrackselect=="y") {
  }
 if ($trackselect=="y") {
   $typeortrackprint=", colored by track";
-  $typeortrack="$ReportDB.Tracks T USING (trackid)";
+  $typeortrack="Tracks T USING (trackid)";
 }
 if ($filled=="y") {
   $semifill="";
@@ -198,7 +192,7 @@ $additionalinfo="<P>Click on the session title to visit the session's <A HREF=\"
 $additionalinfo.="the presenter to visit their <A HREF=\"StaffBios.php\">bio</A>, the time to visit that section of";
 $additionalinfo.=" the <A HREF=\"StaffSchedule.php\">schedule</A>, or the track name to see all the classes\n";
 $additionalinfo.="by <A HREF=\"StaffTracks.php\">track</A>.  <A HREF=\"manualGRIDS.php\">Pick</A> another grid.</P>\n";
-$Grid_Spacer=GRID_SPACER;
+$Grid_Spacer=$_SESSION['congridspacer'];
 if (!is_numeric($Grid_Spacer)) {$Grid_Spacer=1800;}
 
 /* This query returns the room names for an array.  The "unpub" still
@@ -247,10 +241,10 @@ if ($standard=="y") {
   
 
 $query ="SELECT roomname, roomid";
-$query.=" FROM $ReportDB.Rooms";
+$query.=" FROM Rooms";
 $query.=" WHERE";
-$query.=" roomid in (SELECT DISTINCT roomid FROM Schedule JOIN Sessions USING (sessionid) JOIN $ReportDB.PubStatuses USING (pubstatusid)";
-if ($goh=="y") {$query.=" JOIN ParticipantOnSession USING (sessionid) WHERE badgeid in $GohBadgeList AND";} else {$query.=" WHERE";}
+$query.=" roomid in (SELECT DISTINCT roomid FROM Schedule JOIN Sessions USING (sessionid,conid) JOIN PubStatuses USING (pubstatusid)";
+if ($goh=="y") {$query.=" JOIN ParticipantOnSession USING (sessionid,conid) WHERE conid=$conid AND badgeid in $GohBadgeList AND";} else {$query.=" WHERE conid=$conid AND";}
 $query.=$pubstatus_check;
 $query.=") ORDER BY display_order";
 
@@ -283,8 +277,10 @@ SELECT
       GROUP_CONCAT(IF((aidedecamp=1),concat(pubsname,"(a), "),"") SEPARATOR "") as aidpubsnames
     FROM
       Sessions
-    JOIN ParticipantOnSession USING (sessionid)
-    JOIN $ReportDB.Participants USING (badgeid)
+    JOIN ParticipantOnSession USING (sessionid,conid)
+    JOIN Participants USING (badgeid)
+    WHERE
+      conid=$conid
     GROUP BY
       sessionid
     ORDER BY
@@ -300,11 +296,26 @@ for ($i=1; $i<=$presenters; $i++) {
 
 /* These queries finds the first and last second that is actually
  scheduled so we don't waste grid-space. */
-$query="SELECT TIME_TO_SEC(starttime) as 'beginschedule' FROM Schedule ORDER BY starttime ASC LIMIT 0,1";
+$query="SELECT TIME_TO_SEC(starttime) as 'beginschedule' FROM Schedule WHERE conid=$conid ORDER BY starttime ASC LIMIT 0,1";
 list($earliest,$unneeded_array_c,$grid_start_sec_array)=queryreport($query,$link,$title,$description,0);
 $grid_start_sec=$grid_start_sec_array[1]['beginschedule'];
 
-$query="SELECT (TIME_TO_SEC(SCH.starttime) + TIME_TO_SEC(S.duration)) as 'endschedule' FROM Schedule SCH JOIN Sessions S USING (sessionid) JOIN $ReportDB.PubStatuses USING (pubstatusid) where $pubstatus_check ORDER BY endschedule DESC LIMIT 0,1";
+$query = <<<EOD
+SELECT 
+    (TIME_TO_SEC(starttime) + TIME_TO_SEC(duration)) as 'endschedule'
+  FROM
+      Schedule
+    JOIN Sessions USING (sessionid,conid)
+    JOIN PubStatuses USING (pubstatusid)
+  WHERE
+    conid=$conid AND
+    $pubstatus_check
+  ORDER BY
+    endschedule DESC
+  LIMIT
+    0,1
+EOD;
+
 list($latest,$unneeded_array_d,$grid_end_sec_array)=queryreport($query,$link,$title,$description,0);
 $grid_end_sec=$grid_end_sec_array[1]['endschedule'];
 
@@ -328,9 +339,9 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
   $printrowscount++;
   $printrows_array[$printrowscount]=$time;
   if ($beginonly=="y") {
-    $query="SELECT DATE_FORMAT(ADDTIME('$ConStartDatim',SCH.starttime),'%a %l:%i %p') as 'blocktime'";
+    $query="SELECT DATE_FORMAT(ADDTIME('$ConStart',SCH.starttime),'%a %l:%i %p') as 'blocktime'";
   } else {
-    $query="SELECT DATE_FORMAT(ADDTIME('$ConStartDatim',SEC_TO_TIME('$time')),'%a %l:%i %p') as 'blocktime'";
+    $query="SELECT DATE_FORMAT(ADDTIME('$ConStart',SEC_TO_TIME('$time')),'%a %l:%i %p') as 'blocktime'";
   }
   if ($filled=="y") {
     $filled_cull="roomid=%s";
@@ -346,11 +357,11 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,IF(S.estatten,S.estatten,\"\"),\"\") SEPARATOR '') as \"%s total\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,T.htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$header_roomid,$header_roomname);
   }
-  $query.=" FROM Schedule SCH JOIN Sessions S USING (sessionid)";
-  $query.=" JOIN $ReportDB.Rooms R USING (roomid) JOIN $typeortrack";
-  $query.=" JOIN $ReportDB.PubStatuses USING (pubstatusid)";
-  $query.=" WHERE";
-  if ($goh=="y") {$query.=" S.sessionid in (SELECT DISTINCT sessionid from ParticipantOnSession WHERE badgeid IN $GohBadgeList) AND";}
+  $query.=" FROM Schedule SCH JOIN Sessions S USING (sessionid,conid)";
+  $query.=" JOIN Rooms R USING (roomid) JOIN $typeortrack";
+  $query.=" JOIN PubStatuses USING (pubstatusid)";
+  $query.=" WHERE conid=$conid AND";
+  if ($goh=="y") {$query.=" S.sessionid in (SELECT DISTINCT sessionid from ParticipantOnSession WHERE badgeid IN $GohBadgeList and conid=$conid) AND";}
   $query.=$pubstatus_check." AND";
   if ($beginonly=="y") {
     $query.=" SCH.sessionid = S.sessionid GROUP BY SCH.starttime ORDER BY SCH.starttime";
@@ -476,10 +487,10 @@ foreach ($printrows_array as $i) {
 echo "</TABLE>";
 
 // Color key
-$fromtable="$ReportDB.Types";
+$fromtable="Types";
 $field="typename";
 if ($trackselect == "y") {
-  $fromtable="$ReportDB.Tracks";
+  $fromtable="Tracks";
   $field="trackname";
 }
 if ($nocolor == "y") {

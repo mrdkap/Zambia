@@ -1,15 +1,9 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ConNumDays=CON_NUM_DAYS; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
+$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
+$ConNumDays=$_SESSION['connumdays']; // make it a variable so it can be substituted
 
 $title="Volunteer Check Out";
 $description="<P align=\"center\">Check out the Volunteer's <A HREF=\"VolunteerCheckIn.php\">Check In</A> instance.</P>";
@@ -20,7 +14,7 @@ SELECT
     permrolename,
     notes
   FROM
-      $ReportDB.PermissionRoles
+      PermissionRoles
   WHERE
     permroleid > 1
 EOD;
@@ -43,13 +37,12 @@ SELECT
     voltimeid,
     concat(pubsname, " in at: ",DATE_FORMAT(voltimein,'%a %l:%i %p (%k:%i)')) as 'Who'
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN $ReportDB.TimeCard TC USING (badgeid)
+      Participants
+    JOIN UserHasPermissionRole USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN TimeCard USING (badgeid,conid)
   WHERE
-    UHPR.conid=$conid AND
-    TC.conid=$conid AND
+    conid=$conid AND
     permrolename in ($permrolecheck_string) AND
     voltimeout IS NULL
   ORDER BY
@@ -77,7 +70,7 @@ if (isset($_POST['voltimeid'])) {
 
 if (isset($_POST['voltimeout'])) {
   $pairedvalue_array=array("voltimeout='".$_POST['voltimeout']."'","voloutbadgeid='".$_SESSION['badgeid']."'");
-  $message.=update_table_element($link, $title, "$ReportDB.TimeCard", $pairedvalue_array, "voltimeid", $_POST['voltimeid']);
+  $message.=update_table_element($link, $title, "TimeCard", $pairedvalue_array, "voltimeid", $_POST['voltimeid']);
   if (isset($_POST['onepageprog'])) {
     header("Location: genreport.php?reportname=progvolexpected"); // Redirect back to the progvolexpected report
   } elseif (isset($_POST['onepagegen'])) {
@@ -93,14 +86,15 @@ if (isset($_POST['voltimeout'])) {
 $query=<<<EOD
 SELECT
     pubsname,
-    if (((voltimein > '$ConStartDatim') AND
-	 (voltimein < ADDTIME('$ConStartDatim',SEC_TO_TIME('$ConNumDays'*86400)))),
+    if (((voltimein > '$ConStart') AND
+	 (voltimein < ADDTIME('$ConStart',SEC_TO_TIME('$ConNumDays'*86400)))),
         DATE_FORMAT(voltimein,'%a %l:%i %p (%k:%i)'),
         DATE_FORMAT(voltimein,'%c/%e %l:%i %p (%k:%i)')) AS "inat"
   FROM
-      $ReportDB.TimeCard
-    JOIN $ReportDB.Participants USING (badgeid)
+      TimeCard
+    JOIN Participants USING (badgeid)
   WHERE
+    conid=$conid AND
     voltimeid='$voltimeid'
 EOD;
 

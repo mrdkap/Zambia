@@ -73,19 +73,21 @@ foreach ($ConInfo_array_keys as $element) {
 }
 
 // Find the instances of the below, and, if few enough, call there, instead of here.
+// Somewhere DOUBLE_SCHEDULE dissapeared.  Find it, and fix it.
 define("CON_NAME",$ConInfo_array['conname']);
 define("CON_START_DATIM",$ConInfo_array['constartdate']);
-define("CON_NUM_DAYS",$ConInfo_array['connumdays']);
 define("CON_URL",$ConInfo_array['conurl']);
 define("CON_LOGO",$ConInfo_array['conlogo']);
 define("GRID_SPACER",$ConInfo_array['congridspacer']);
 define("MY_AVAIL_KIDS",$ConInfo_array['conallowkids']);
-define("PREF_TTL_SESNS_LMT",$ConInfo_array['contotalsess']);
-define("PREF_DLY_SESNS_LMT",$ConInfo_array['condailysess']);
-define("AVAILABILITY_ROWS",$ConInfo_array['conavailabilityrows']);
+
+// ADD newroomslots to coninfo
+define("newroomslots",5); // number of rows at bottom of page for new schedule entries
+$_SESSION['newroomslots']=5;
+
 global $daymap;
-for ($i=0;$i<CON_NUM_DAYS;$i++) {
-  $today=strtotime(CON_START_DATIM)+(86400 * $i); // 86400 seconds in a day
+for ($i=0;$i<$_SESSION['connumdays'];$i++) {
+  $today=strtotime($_SESSION['constartdate'])+(86400 * $i); // 86400 seconds in a day
   $daymap['long'][$i+1]=strftime("%A",$today);
   $daymap['short'][$i+1]=strftime("%a",$today);
  }
@@ -147,7 +149,7 @@ if (isLoggedIn()==false and !isset($logging_in)) {
 //
 // if the tab is not usable, the tab will use class 'unusabletab'
 
-Function maketab($text,$usable,$url) {
+function maketab($text,$usable,$url) {
   if ($usable) {
     echo '<SPAN class="usabletab" onmouseover="mouseovertab(this)" onmouseout="mouseouttab(this)">';
     echo '<IMG class="tabborder" SRC="images/leftCorner.gif" alt="&nbsp;">';
@@ -793,6 +795,98 @@ EOD;
   echo "</FORM>\n";
 }
 
+/* This takes the trackidlist, statusidlist, typeidlist, and
+   sessionidlist, and returns information for RenderPrecis by producing:
+   $sessionid,$trackname,$typename,$title,$duration,$estatten,$pocketprogtext,$progguiddesc,$persppartinfo
+   IN THAT ORDER.*/
+function retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid) {
+  require_once('db_functions.php');
+  global $result;
+  global $link, $title, $message2;
+  $conid=$_SESSION['conid'];
+
+  $query=<<<EOD
+SELECT
+    sessionid,
+    trackname,
+    typename,
+    title,
+    CASE 
+      WHEN HOUR(duration) < 1 THEN
+        concat(date_format(duration,'%i'),'min')
+      WHEN MINUTE(duration)=0 THEN
+        concat(date_format(duration,'%k'),'hr')
+      ELSE
+        concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
+      END AS duration,
+    estatten,
+    pocketprogtext,
+    progguiddesc,
+    persppartinfo
+  FROM
+      Sessions
+    JOIN Tracks USING (trackid)
+    JOIN Types USING (typeid)
+    JOIN SessionStatuses USING (statusid)
+  WHERE
+    conid=$conid 
+EOD;
+
+// The following three lines are for debugging only
+//    error_log("zambia - retrieve: trackidlist: $tracklist");
+//    error_log("retrieve: statusid: $status");
+//    error_log("retrieve: typeid: $type");
+
+  if (($trackidlist!=0) and ($trackidlist!="")) {$query.=" AND trackid in ($trackidlist)";}
+  if (($statusidlist!=0) and ($statusidlist!='')) {$query.=" AND statusid in ($statusidlist)";}
+  if (($typeidlist!=0) and ($typeidlist!='')) {$query.=" AND typeid in ($typeidlist)";}
+  if (($sessionid!=0) and ($sessionid!='')) {$query.=" AND sessionid = $sessionid";}
+
+  //Retrieve query and fail if query fails.
+  if (($result=mysql_query($query,$link))==false) {
+    $message2.="Error retrieving data from the database<BR>\n";
+    $message2.="$query -- ".mysql_error($link);
+    RenderError($title,$message2);
+    return (-3);
+  }
+}
+
+/* RenderPrecis display requires:  a populated dataarray containing rows with 
+   $sessionid,$trackname,$typename,$title,$duration,$estatten,$pocketprogtext,$progguiddesc,$persppartinfo
+   IN THAT ORDER
+   it displays the precis view of the data. This goes hand in hand with the retrieve_select_from_db above.*/
+function RenderPrecis($result,$showlinks) {
+    
+    echo "<hr>\n";
+    echo "<TABLE>\n";
+    echo "   <COL><COL><COL><COL><COL>\n";
+    while (list($sessionid,$trackname,$typename,$title,$duration,$estatten,$pocketprogtext,$progguiddesc,$persppartinfo)
+	     =mysql_fetch_array($result, MYSQL_NUM)) {
+        echo "<TR>\n";
+        echo "  <TD rowspan=3 class=\"border0000\" id=\"sessidtcell\"><b>";
+        if ($showlinks){
+		echo "<A HREF=\"StaffAssignParticipants.php?selsess=".$sessionid."\">".$sessionid."</A>";
+	    }
+        echo "&nbsp;&nbsp;</TD>\n";
+	echo "  <TD class=\"border0000\"><b>".$trackname."</TD>\n";
+	echo "  <TD class=\"border0000\"><b>".$typename."</TD>\n";
+        echo "  <TD class=\"border0000\"><b>";
+           if ($showlinks){
+                   echo "<A HREF=\"EditSession.php?id=".$sessionid."\">".htmlspecialchars($title,ENT_NOQUOTES)."</A>";
+	       } else {
+                   echo htmlspecialchars($title,ENT_NOQUOTES);
+               }
+        echo "&nbsp;&nbsp;</TD>\n";
+	echo "  <TD class=\"border0000\"><b>".$duration."</TD>\n";
+	echo "</TR>\n";
+	echo "<TR><TD colspan=5 class=\"border0010\">Web: ".htmlspecialchars($progguiddesc,ENT_NOQUOTES)."</TD></TR>\n";
+	echo "<TR><TD colspan=5 class=\"border0010\">Book: ".htmlspecialchars($pocketprogtext,ENT_NOQUOTES)."</TD></TR>\n";
+	echo "<TR><TD colspan=5 class=\"border0000\">".htmlspecialchars($persppartinfo,ENT_NOQUOTES)."</TD></TR>\n";
+	echo "<TR><TD colspan=5 class=\"border0020\">&nbsp;</TD></TR>\n";
+	echo "<TR><TD colspan=5 class=\"border0000\">&nbsp;</TD></TR>\n";
+    }
+    echo "</TABLE>\n";
+}
 /* Generic insert takes five variables: link, title, Table, array of elements, array of values */
 function submit_table_element ($link, $title, $table, $element_array, $value_array) {
   foreach ($element_array as $element) {$element_string.=mysql_real_escape_string(stripslashes($element)).",";}

@@ -1,6 +1,11 @@
 <?php 
+/* This should be folded either into StaffAssignParticipants, or
+   CommonCode if it is ever referenced otherwise.  Also the
+   StaffAssignParticipantsVariable set should probably go away. */
 function SubmitAssignParticipants() {
-  global $link;
+  global $link, $title;
+  $conid=$_SESSION['conid'];
+
   //    print_r($_POST);
   $asgnpart=$_POST["asgnpart"];
   $numrows=$_POST["numrows"];
@@ -27,56 +32,41 @@ function SubmitAssignParticipants() {
     //echo "i: $i | isasgn: $isasgn | wasasgn: $wasasgn | ismod: $ismod | wasmod: $wasmod | isaid $isaid | wasaid $wasaid <BR>\n";        
     if ($isunlist) {
       $query="DELETE FROM ParticipantSessionInterest where badgeid=\"$badgeid\" ";
-      $query.="and sessionid=$selsessionid";
+      $query.="and sessionid=$selsessionid and conid=$conid";
     } elseif (!$isasgn and $wasasgn) {
       $query="DELETE FROM ParticipantOnSession where badgeid=\"$badgeid\" ";
-      $query.="and sessionid=$selsessionid";
+      $query.="and sessionid=$selsessionid and conid=$conid";
     } elseif (!$wasasgn and $isasgn) {
-      $query="INSERT INTO ParticipantOnSession set badgeid=\"$badgeid\", "; 
-      $query.="sessionid=$selsessionid, moderator=".($ismod?1:0);
-      $query.=", volunteer=".($isvol?1:0);
-      $query.=", introducer=".($isint?1:0);
-      $query.=", aidedecamp=".($isaid?1:0);
+      $query="INSERT INTO ParticipantOnSession (badgeid, sessionid, conid,";
+      $query.=" moderator, volunteer, introducer, aidedecamp) VALUES ";
+      $query.="(\"$badgeid\", $selsessionid, $conid, \"".($ismod?1:0)."\", \"";
+      $query.=($isvol?1:0)."\", \"".($isint?1:0)."\", \"".($isaid?1:0)."\")";
     } elseif (($ismod and !$wasmod) or (!$ismod and $wasmod) or
 	      ($isvol and !$wasvol) or (!$isvol and $wasvol) or
 	      ($isint and !$wasint) or (!$isint and $wasint) or
 	      ($isaid and !$wasaid) or (!$isaid and $wasaid)) {
-      $query="UPDATE ParticipantOnSession set moderator=".($ismod?1:0);
-      $query.=", volunteer=".($isvol?1:0);
-      $query.=", introducer=".($isint?1:0);
-      $query.=", aidedecamp=".($isaid?1:0);
-      $query.=" WHERE badgeid=\"$badgeid\" and sessionid=\"$selsessionid\"";
+      $query="UPDATE ParticipantOnSession set moderator=\"".($ismod?1:0);
+      $query.="\", volunteer=\"".($isvol?1:0);
+      $query.="\", introducer=\"".($isint?1:0);
+      $query.="\", aidedecamp=\"".($isaid?1:0);
+      $query.="\" WHERE badgeid=\"$badgeid\" and sessionid=\"$selsessionid\" and conid=$conid";
     } else {
       continue;
     }
     // echo "<P>Query: $query</P>\n";
     if (!mysql_query($query,$link)) {
       $message=$query."<BR>Error updating database.<BR>";
-      echo "<P class=\"errmsg\">".$message."\n";
-      staff_footer();
+      RenderError($title,$message);
       exit();
     }
   }
   if ($asgnpart!=0) {
-    $query="INSERT INTO ParticipantSessionInterest SET badgeid=\"".$asgnpart."\", ";
-    $query.="sessionid=".$selsessionid;
-    $result=mysql_query($query,$link);
-    if (!$result) {
-      $message=$query."<BR>Error updating database.<BR>";
-      echo "<P class=\"errmsg\">".$message."\n";
-      staff_footer();
-      exit();
-    }
-    $query="INSERT INTO ParticipantOnSession set badgeid=\"$asgnpart\", ";
-    $query.="sessionid=$selsessionid, moderator=0, volunteer=0, introducer=0, aidedecamp=0;";
-    $result=mysql_query($query,$link);
-    //        error_log("Zambia query: $query\n");
-    if (!$result) {
-      $message=$query."<BR>Error updating database.<BR>";
-      echo "<P class=\"errmsg\">".$message."\n";
-      staff_footer();
-      exit();
-    }
+    $element_array = array('badgeid', 'sessionid', 'conid');
+    $value_array = array($asgnpart, $selsessionid, $conid);
+    $message.=submit_table_element($link, $title, "ParticipantSessionInterest", $element_array, $value_array);
+    $element_array = array('badgeid','sessionid','conid','moderator','volunteer','introducer','aidedecamp');
+    $value_array = array($asgnpart, $selsessionid, $conid, "0", "0", "0", "0");
+    $message.=submit_table_element($link, $title, "ParticipantOnSession", $element_array, $value_array);
   }
 }
 ?>    

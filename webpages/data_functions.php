@@ -218,7 +218,7 @@ function isStaff($badgeid) {
 // returns TRUE if user has this permission in the current phase(s)
 //
 function may_I($permatomtag) {
-  if (isset($_SESSION['permission_set'])) {
+  if ((isset($_SESSION['permission_set'])) and ($_SESSION['permission_set']==true)) {
     $test=in_array($permatomtag,$_SESSION['permission_set']);
     }
     return ($test);

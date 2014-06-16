@@ -5,11 +5,9 @@ $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 if (isset($_GET['action'])) {
   $action=$_GET['action'];
- }
-elseif (isset($_POST['action'])) {
+} elseif (isset($_POST['action'])) {
   $action=$_POST['action'];
-}
- else {
+} else {
    $title="Edit or Add Participant";
    $message_error="Required parameter 'action' not found.  Can't continue.<BR>\n";
    RenderError($title,$message_error);
@@ -73,44 +71,43 @@ if ($action=="create") { //initialize participant array
   $participant_arr['postzip']="";
   RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);
   correct_footer();
- }
+ } else {
+  // get participant array from database
+  $title="Edit Participant";
+  staff_header($title);
 
- else { // get participant array from database
-   $title="Edit Participant";
-   staff_header($title);
+  // Collapse the three choices into one
+  if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
+  if ($_POST["partidf"]!=0) {$_POST["partid"]=$_POST["partidf"];}
+  if ($_POST["partidp"]!=0) {$_POST["partid"]=$_POST["partidp"];}
 
-   // Collaps the three choices into one
-   if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
-   if ($_POST["partidf"]!=0) {$_POST["partid"]=$_POST["partidf"];}
-   if ($_POST["partidp"]!=0) {$_POST["partid"]=$_POST["partidp"];}
+  if (isset($_POST["partid"])) {
+    $selpartid=$_POST["partid"];
+  } elseif (isset($_GET["partid"])) {
+    $selpartid=$_GET["partid"];
+  } else {
+    $selpartid=0;
+  }
 
-   if (isset($_POST["partid"])) {
-     $selpartid=$_POST["partid"];
-   } elseif (isset($_GET["partid"])) {
-     $selpartid=$_GET["partid"];
-   } else {
-     $selpartid=0;
-   }
-   
-   //Choose the individual from the database
-   select_participant($selpartid, "'Yes'", "StaffEditCreateParticipant.php?action=edit");
-   
-   //Stop page here if and individual has not yet been selected
-   if ($selpartid==0) {
-     correct_footer();
-     exit();
-   }
-   
-   //If we are on the loop with an update, update the database
-   // with the current version of the information
-   if ((isset ($_POST['update'])) and ($_POST['update'] == "Yes")) {
-     edit_participant ($_POST);
-   }
+  //Choose the individual from the database
+  select_participant($selpartid, "'Yes'", "StaffEditCreateParticipant.php?action=edit");
 
-   //Get Participant information for updating
-   $participant_arr['badgeid']=$selpartid;
-   $partid=mysql_real_escape_string($selpartid,$link);
-   $query= <<<EOD
+  //Stop page here if and individual has not yet been selected
+  if ($selpartid==0) {
+    correct_footer();
+    exit();
+  }
+
+  //If we are on the loop with an update, update the database
+  // with the current version of the information
+  if ((isset ($_POST['update'])) and ($_POST['update'] == "Yes")) {
+    edit_participant ($_POST);
+  }
+
+  //Get Participant information for updating
+  $participant_arr['badgeid']=$selpartid;
+  $partid=mysql_real_escape_string($selpartid,$link);
+  $query= <<<EOD
 SELECT
     badgeid,
     firstname,
@@ -130,11 +127,11 @@ SELECT
     prognotes,
     permroleid_list,
     group_concat(conroleid) as 'conroleid_list'
-  FROM 
+  FROM
       CongoDump
     JOIN Participants USING (badgeid)
     LEFT JOIN (
-      SELECT 
+      SELECT
           badgeid,
           group_concat(permroleid) AS permroleid_list
         FROM
@@ -147,63 +144,63 @@ SELECT
     conid=$conid AND
     badgeid='$selpartid'
 EOD;
-   if (($result=mysql_query($query,$link))===false) {
-     $message_error="Error retrieving data from database<BR>\n";
-     $message_error.=$query;
-     RenderError($title,$message_error);
-     exit();
-   }
-   if (mysql_num_rows($result)!=1) {
-     $message_error="Database query did not return expected number of rows (1).<BR>\n";
-     $message_error.=$query;
-     RenderError($title,$message_error);
-     exit();
-   }
-   $participant_arr=mysql_fetch_array($result,MYSQL_ASSOC);
+  if (($result=mysql_query($query,$link))===false) {
+    $message_error="Error retrieving data from database<BR>\n";
+    $message_error.=$query;
+    RenderError($title,$message_error);
+    exit();
+  }
+  if (mysql_num_rows($result)!=1) {
+    $message_error="Database query did not return expected number of rows (1).<BR>\n";
+    $message_error.=$query;
+    RenderError($title,$message_error);
+    exit();
+  }
+  $participant_arr=mysql_fetch_array($result,MYSQL_ASSOC);
 
-   // Get interested as in participating in current con
-   $query="SELECT interestedtypeid FROM Interested WHERE badgeid=$selpartid AND conid=$conid";
-   if (($result=mysql_query($query,$link))===false) {
-     $message_error="Error retrieving data from database<BR>\n";
-     $message_error.=$query;
-     RenderError($title,$message_error);
-     exit();
-   }
-   list($participant_arr['interested'])=mysql_fetch_array($result,MYSQL_NUM); 
+  // Get interested as in participating in current con
+  $query="SELECT interestedtypeid FROM Interested WHERE badgeid=$selpartid AND conid=$conid";
+  if (($result=mysql_query($query,$link))===false) {
+    $message_error="Error retrieving data from database<BR>\n";
+    $message_error.=$query;
+    RenderError($title,$message_error);
+    exit();
+  }
+  list($participant_arr['interested'])=mysql_fetch_array($result,MYSQL_NUM);
 
-   // Get a set of bioinfo, and map it to the appropriate $participant_arr.
-   $bioinfo=getBioData($selpartid);
+  // Get a set of bioinfo, and map it to the appropriate $participant_arr.
+  $bioinfo=getBioData($selpartid);
 
-   /* We are only updating the raw bios here, so only a 2-depth
-    search happens on biolang and biotypename. */
-   $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
-   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
-     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
-       
-       // Setup for keyname, to collapse all three variables into one passed name.
-       $biotype=$bioinfo['biotype_array'][$i];
-       $biolang=$bioinfo['biolang_array'][$j];
-       // $biostate=$bioinfo['biostate_array'][$k];
-       $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+  /* We are only updating the raw bios here, so only a 2-depth
+     search happens on biolang and biotypename. */
+  $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
+  for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
+    for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
 
-       // Clear the values.
-       $participant_arr[$keyname]=$bioinfo[$keyname];
-     }
-   }
-   RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);
-   echo "<DIV class=\"sectionheader\">\n";
-   $printname=htmlspecialchars($participant_arr['pubsname']);
-   echo "<A HREF=AdminParticipants.php?partid=$selpartid>Edit password for $printname</A> ::\n";
-   if (may_I(SuperLiaison)) {
-     echo "<A HREF=StaffEditCompensation.php?partid=$selpartid>Set Compensation for $printname</A> ::\n";
-   }
-   if (may_I(Participant)) {
-     echo "<A HREF=ClassIntroPrint.php?individual=$selpartid>Print Intros for $printname</A> ::\n";
-     echo "<A HREF=WelcomeLettersPrint.php?individual=$selpartid>Print Welcome Letter for $printname</A> ::\n";
-   }
-   echo "<A HREF=SchedulePrint.php?individual=$selpartid>Print Schedule for $printname</A>\n";
-   echo "</DIV>\n";
-   // Show previous notes added, for references, and end page
-   show_participant_notes ($selpartid);
- }
+      // Setup for keyname, to collapse all three variables into one passed name.
+      $biotype=$bioinfo['biotype_array'][$i];
+      $biolang=$bioinfo['biolang_array'][$j];
+      // $biostate=$bioinfo['biostate_array'][$k];
+      $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+
+      // Clear the values.
+      $participant_arr[$keyname]=$bioinfo[$keyname];
+    }
+  }
+  RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);
+  echo "<DIV class=\"sectionheader\">\n";
+  $printname=htmlspecialchars($participant_arr['pubsname']);
+  echo "<A HREF=AdminParticipants.php?partid=$selpartid>Edit password for $printname</A> ::\n";
+  if (may_I(SuperLiaison)) {
+    echo "<A HREF=StaffEditCompensation.php?partid=$selpartid>Set Compensation for $printname</A> ::\n";
+  }
+  if (may_I(Participant)) {
+    echo "<A HREF=ClassIntroPrint.php?individual=$selpartid>Print Intros for $printname</A> ::\n";
+    echo "<A HREF=WelcomeLettersPrint.php?individual=$selpartid>Print Welcome Letter for $printname</A> ::\n";
+  }
+  echo "<A HREF=SchedulePrint.php?individual=$selpartid>Print Schedule for $printname</A>\n";
+  echo "</DIV>\n";
+  // Show previous notes added, for references, and end page
+  show_participant_notes ($selpartid);
+}
 ?>

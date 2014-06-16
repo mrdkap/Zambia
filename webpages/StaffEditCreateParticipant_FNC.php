@@ -1,17 +1,57 @@
 <?php
-    // This function will output the page with the form to add or create a participant
-    // Variables
-    //     action: "create" or "edit"
-    //     participant_arr: array with all data of record to edit or defaults for create
-    //     message1: a string to display before the form
-    //     message2: an urgent string to display before the form and after m1
-function RenderEditCreateParticipant ($action, $participant_arr, $permrole_arr, $message1, $message2) {
-    $ReportDB=REPORTDB; // make it a variable so it can be substituted
-    $BioDB=BIODB; // make it a variable so it can be substituted
+/* This function will output the page with the form to add or create a participant
+   Variables
+     action: "create" or "edit"
+     participant_arr: array with all data of record to edit or defaults for create
+     permrole_arr: array with possible permission roles
+     conrole_arr: array with possilbe con roles
+     message1: a string to display before the form
+     message2: an urgent string to display before the form and after m1 */
+function RenderEditCreateParticipant ($title, $action, $participant_arr, $message1, $message2) {
+  global $link;
+  $conid=$_SESSION['conid']; // make it a variable so it can be substituted
+  $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
+  $perms="'".implode("','",$_SESSION['permission_set'])."'"; // make it a variable so it can be substituted
 
-    // Tests for the substituted variables
-    if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-    if ($BiotDB=="BIODB") {unset($BIODB);}
+  /* All of the permission roles, their name (for may_I match), and
+     their "notes" for Human Readable match. */
+  $query= <<<EOD
+SELECT
+    permroleid,
+    notes AS permrolenotes
+  FROM
+      PermissionRoles
+  WHERE
+    permrolename in ($perms)
+EOD;
+
+  list($permrolerows,$permroleheader_array,$permrole_arr)=queryreport($query,$link,$title,$description,0);
+  if (in_array("This report retrieved no results matching the criteria.",array_keys($permrole_arr))) {
+    $permrole_arr=array();
+  }
+
+  /* This is the con roles for the reports for the person logged in and
+     their "notes" for Human Readable match.
+     This might want to become recursive for ConChair? */
+  $query= <<<EOD
+SELECT
+    hasreport,
+    conrolenotes
+  FROM
+      UserHasConRole
+    JOIN HasReports USING (conroleid,conid)
+    JOIN ConRoles CR ON (hasreport = CR.conroleid)
+  WHERE
+    badgeid='$badgeid' AND
+    conid=$conid
+  ORDER BY
+    display_order
+EOD;
+
+  list($conrolerows,$conroleheader_array,$conrole_arr)=queryreport($query,$link,$title,$description,0);
+  if (in_array("This report retrieved no results matching the criteria.",array_keys($conrole_arr))) {
+    $conrole_arr=array();
+  }
 
     // Get the various length limits
     $limit_array=getLimitArray();
@@ -39,7 +79,6 @@ function RenderEditCreateParticipant ($action, $participant_arr, $permrole_arr, 
               <TR style="margin: 0em; padding: 0em">
                 <TD style="margin: 0em; padding: 0em">&nbsp;</TD>
                 <TD style="margin: 0em; padding: 0em">
-<?php /*                    <BUTTON class="ib" type=reset value="reset">Reset</BUTTON>  trimmed for sanity purposes */ ?>
                     <BUTTON class="ib" type=submit value="save">Save</BUTTON>
                     </TD></TR></TABLE>
                 </DIV>
@@ -57,7 +96,7 @@ function RenderEditCreateParticipant ($action, $participant_arr, $permrole_arr, 
                 <SPAN><LABEL for="badgename">Badge Name: </LABEL><INPUT type="text" size=20 name="badgename" id="badgename"
                      value="<?php echo htmlspecialchars($participant_arr["badgename"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
                 <SPAN><LABEL for="interested">Will participate and attend: </LABEL><SELECT name="interested">
-                    <?php populate_select_from_table("$ReportDB.InterestedTypes", $participant_arr['interested'], " ", FALSE); ?>
+                    <?php populate_select_from_table("InterestedTypes", $participant_arr['interested'], " ", FALSE); ?>
                     </SELECT>
                 </DIV>
             <DIV class="denseform">
@@ -79,25 +118,14 @@ function RenderEditCreateParticipant ($action, $participant_arr, $permrole_arr, 
                 </DIV>
 	    <DIV class="denseform">
 		<SPAN><LABEL for="permroleid">Level of participation (At least one must be selected):</LABEL>
-                    <?php 
-			for ($i=2; $i<=count($permrole_arr); $i++) {
-			  $pos = strpos($participant_arr['permroleid_list'],"$i");
-			  if (may_I($permrole_arr[$i]["permrolename"])) {
-			    if ((($permrole_arr[$i]["permrolename"]=="Participant") and ((may_I("Liaison")) or (may_I("SuperLiaison")))) or ($permrole_arr[$i]["permrolename"]!="Participant")) {
-			      if($pos === false) {
-			        echo "<INPUT type=\"hidden\" name=\"waspermroleid".$i."\" value=\"not\">\n";
-                                echo "<INPUT type=\"checkbox\" name=\"permroleid".$i."\" value=\"checked\">".$permrole_arr[$i]["permrolenotes"]."\n";
-			      } else {
-			        echo "<INPUT type=\"hidden\" name=\"waspermroleid".$i."\" value=\"indeed\">\n";
-                                echo "<INPUT type=\"checkbox\" name=\"permroleid".$i."\" value=\"checked\" checked>".$permrole_arr[$i]["permrolenotes"]."\n";
-			      }
-			    }
-			  }
-			} 
-                    ?>
-		    <INPUT type="hidden" name="permroleid_list" value="<?php echo $participant_arr['permroleid_list']; ?>">
-		    </SPAN>
-                </DIV>
+		    <?php populate_checkbox_block_from_array("permroleid",$participant_arr['permroleid_list'],"permroleid","permrolenotes",$permrole_arr); ?>
+		</SPAN>
+            </DIV>
+	    <DIV class="denseform">
+		<SPAN><LABEL for="conroleid">Con Role (If they have one):</LABEL>
+		    <?php populate_checkbox_block_from_array("conroleid",$participant_arr['conroleid_list'],"hasreport","conrolenotes",$conrole_arr); ?>
+		</SPAN
+            </DIV>
             <DIV class="denseform">
                 <SPAN><LABEL for="postaddress1">Postal Address line 1: </LABEL><INPUT type="text" size=80 name="postaddress1"
                      value="<?php echo htmlspecialchars($participant_arr["postaddress1"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
@@ -115,10 +143,9 @@ function RenderEditCreateParticipant ($action, $participant_arr, $permrole_arr, 
                      value="<?php echo htmlspecialchars($participant_arr["postzip"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
                 </DIV>
 <?php
-              if ((may_I("Programming")) or
-		  (may_I("SuperProgramming")) or
-		  (may_I("Liaison")) or
+              if ((may_I("SuperProgramming")) or
 		  (may_I("SuperVendor")) or
+		  (may_I("Liaison")) or
 		  (may_I("SuperLiaison"))) {
 		/* We are only updating the raw bios here, so only a 2-depth
 		   search happens on biolang and biotypename. */
@@ -171,7 +198,7 @@ function RenderEditCreateParticipant ($action, $participant_arr, $permrole_arr, 
                 <SPAN><LABEL for="phone">Phone: </LABEL><INPUT type="text" size=14 name="phone"
                      value="<?php echo htmlspecialchars($participant_arr["phone"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
                 <SPAN><LABEL for="regtype">Registration Type: </LABEL><SELECT name="regtype">
-                    <?php populate_select_from_query("SELECT regtype, regtype FROM $ReportDB.RegTypes", $participant_arr['regtype'], "SELECT", FALSE); ?>
+                    <?php populate_select_from_query("SELECT regtype, regtype FROM RegTypes", $participant_arr['regtype'], "SELECT", FALSE); ?>
                     </SELECT>
                 </DIV>
             <DIV style="margin: 0.5em; padding: 0em"><TABLE style="margin: 0em; padding: 0em" ><COL width=600><COL>

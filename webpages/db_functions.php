@@ -139,6 +139,28 @@ function populate_select_from_query($query, $default_value, $option_0_text, $def
   }
 }
 
+/* Function populate_checkbox_block_from_array($label, $element_list, $key, $value, $box_array)
+   Reads parameters (see below) and an array to work from, and
+   produces a series of checkboxes that can be selected.
+   label: The label for the table output
+   element_list: The list of already selected items
+   key: The part of the array to key off of.
+   value: The part of the array to get the value out of.
+   array: The array of possible items. */
+function populate_checkbox_block_from_array($label, $element_list, $key, $value, $box_array) {
+  $list_array=explode(",",$element_list);
+  for ($i=1; $i<=count($box_array); $i++) {
+    if(in_array($box_array[$i][$key],$list_array)) {
+      echo "<INPUT type=\"hidden\" name=\"was".$label."[".$box_array[$i][$key]."]\" value=\"indeed\">\n";
+      echo "<INPUT type=\"checkbox\" name=\"".$label."[".$box_array[$i][$key]."]\" value=\"checked\" checked>".$box_array[$i][$value]."\n";
+    } else {
+      echo "<INPUT type=\"hidden\" name=\"was".$label."[".$box_array[$i][$key]."]\" value=\"not\">\n";
+      echo "<INPUT type=\"checkbox\" name=\"".$label."[".$box_array[$i][$key]."]\" value=\"checked\">".$box_array[$i][$value]."\n";
+    }
+  } 
+  echo "<INPUT type=\"hidden\" name=\"".$label."_list\" value=\"".$element_list."\">\n";
+}
+
 /* Function populate_multiselect_from_table(...)
    Reads parameters (see below) and a specified table from the db.
    Outputs HTML of the "<OPTION>" values for a Select control with
@@ -308,14 +330,8 @@ function update_session() {
   foreach (array_keys($tn_array) as $j) {
 
     // First, delete all old entries.
-    $query="DELETE from ".$tn_array[$j]." where sessionid=".$session["sessionid"];
-    $query.=" AND conid=".$_SESSION['conid'];
-    $message2=$query;
-    if (!mysql_query($query,$link)) {
-      $message_error.=mysql_error($link);
-      $message_error.=" query=$query";
-      return $message_error;
-    }
+    $match_string="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid'];
+    $message.=delete_table_element($link, $title, $tn_array[$j],$match_string);
 
     // Then, if any entries exist, create them, possibly anew.
     if ($session[$j]!="") {

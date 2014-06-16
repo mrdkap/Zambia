@@ -1017,14 +1017,7 @@ EOD;
 }
 
 /* create_participant and edit_participant functions.  Need more doc. */
-function create_participant ($participant_arr,$permrole_arr) {
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
-
+function create_participant ($participant_arr) {
   global $link;
 
   // Get the various length limits
@@ -1065,8 +1058,8 @@ function create_participant ($participant_arr,$permrole_arr) {
   }
 
   // Get next possible badgeid.
-  // WAS: "SELECT MAX(badgeid) FROM $ReportDB.Participants WHERE badgeid>='1'";
-  $query = "SELECT badgeid FROM $ReportDB.Participants ORDER BY ABS(badgeid) DESC LIMIT 1";
+  // WAS: "SELECT MAX(badgeid) FROM Participants WHERE badgeid>='1'";
+  $query = "SELECT badgeid FROM Participants ORDER BY ABS(badgeid) DESC LIMIT 1";
   $result=mysql_query($query,$link);
   if (!$result) {
     $message_error="Unrecoverable error updating database.  Database not updated.<BR>\n";
@@ -1093,11 +1086,11 @@ function create_participant ($participant_arr,$permrole_arr) {
                      htmlspecialchars_decode($participant_arr['altcontact']),
                      htmlspecialchars_decode($participant_arr['prognotes']),
 		     htmlspecialchars_decode($participant_arr['pubsname']));
-  $message.=submit_table_element($link, $title, "$ReportDB.Participants", $element_array, $value_array);
+  $message.=submit_table_element($link, $title, "Participants", $element_array, $value_array);
 
   // Add "Interested" if exists
   if (isset($participant_arr['interested']) AND ($participant_arr['interested']!='')) {
-    $query ="UPDATE $ReportDB.Interested SET ";
+    $query ="UPDATE Interested SET ";
     $query.="interestedtypeid=".$participant_arr['interested']." ";
     $query.="WHERE badgeid=\"".$newbadgeid."\" AND conid=".$_SESSION['conid'];
     if (!mysql_query($query,$link)) {
@@ -1109,7 +1102,7 @@ function create_participant ($participant_arr,$permrole_arr) {
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
       $value_array=array($_SESSION['conid'], $newbadgeid, mysql_real_escape_string(stripslashes($participant_arr['interested'])));
-      $message.=submit_table_element($link,$title,"$ReportDB.Interested", $element_array, $value_array);
+      $message.=submit_table_element($link,$title,"Interested", $element_array, $value_array);
     } elseif ($r_matched[1]>1) {
       $message.="There might be something wrong with the table, there are multiple interested elements for this year.";
     }
@@ -1156,20 +1149,30 @@ function create_participant ($participant_arr,$permrole_arr) {
 		     htmlspecialchars_decode($participant_arr['poststate']),
 		     htmlspecialchars_decode($participant_arr['postzip']),
 		     htmlspecialchars_decode($participant_arr['regtype']));
-  $message.=submit_table_element($link, $title, "$ReportDB.CongoDump", $element_array, $value_array);
+  $message.=submit_table_element($link, $title, "CongoDump", $element_array, $value_array);
 
   // Assign permissions.
-  $query = "INSERT INTO $ReportDB.UserHasPermissionRole (badgeid, permroleid, conid) VALUES ";
-  for ($i=2; $i<=count($permrole_arr); $i++) {
-    $perm="permroleid".$i;
-    if ($participant_arr[$perm]=="checked") {
-      $query.="('".$newbadgeid."','".$i."','".$_SESSION['conid']."'),";
-    }
+  $query = "INSERT INTO UserHasPermissionRole (badgeid, permroleid, conid) VALUES ";
+  foreach ($participant_arr['permroleid'] as $key => $value) {
+    $query.="('".$newbadgeid."','".$key."','".$_SESSION['conid']."'),";
   }
 
   $query=rtrim($query,',');
   if (!mysql_query($query,$link)) {
-    $message_error=$query."<BR>Error updating $ReportDB.UserHasPermissionRole database.  Database not updated.";
+    $message_error=$query."<BR>Error updating UserHasPermissionRole database.  Database not updated.";
+    RenderError($title,$message_error);
+    exit();
+  }
+
+  // Assign con roles
+  $query = "INSERT INTO UserHasConRole (badgeid, conroleid, conid) VALUES ";
+  foreach ($participant_arr['conroleid'] as $key => $value) {
+    $query.="('".$newbadgeid."','".$key."','".$_SESSION['conid']."'),";
+  }
+
+  $query=rtrim($query,',');
+  if (!mysql_query($query,$link)) {
+    $message_error=$query."<BR>Error updating UserHasConRole database.  Database not updated.";
     RenderError($title,$message_error);
     exit();
   }
@@ -1180,22 +1183,14 @@ function create_participant ($participant_arr,$permrole_arr) {
                      $_SESSION['badgeid'],
                      mysql_real_escape_string(htmlspecialchars_decode($participant_arr['note'])),
 		     $_SESSION['conid']);
-  $message.=submit_table_element($link, $title, "$ReportDB.NotesOnParticipants", $element_array, $value_array);
+  $message.=submit_table_element($link, $title, "NotesOnParticipants", $element_array, $value_array);
 
   // Make $message additive (.=) to get all the information
   $message="Database updated successfully with ".$participant_arr["badgename"].".<BR>";
   return array ($message,$message_error);
 }
 
-function edit_participant ($participant_arr,$permrole_arr) {
-  $conid=$_SESSION['conid'];
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
-
+function edit_participant ($participant_arr) {
   global $link;
 
   // Get the various length limits
@@ -1240,7 +1235,7 @@ function edit_participant ($participant_arr,$permrole_arr) {
 			   "altcontact='".mysql_real_escape_string($participant_arr['altcontact'])."'",
 			   "prognotes='".mysql_real_escape_string(stripslashes($participant_arr['prognotes']))."'",
 			   "pubsname='".mysql_real_escape_string(stripslashes($participant_arr['pubsname']))."'");
-  $message.=update_table_element($link, $title, "$ReportDB.Participants", $pairedvalue_array, "badgeid", $participant_arr['partid']);
+  $message.=update_table_element($link, $title, "Participants", $pairedvalue_array, "badgeid", $participant_arr['partid']);
 
   // Update CongoDump entry.
   $pairedvalue_array=array("firstname='".mysql_real_escape_string(stripslashes($participant_arr['firstname']))."'",
@@ -1254,11 +1249,11 @@ function edit_participant ($participant_arr,$permrole_arr) {
 			   "poststate='".mysql_real_escape_string($participant_arr['poststate'])."'",
 			   "postzip='".mysql_real_escape_string($participant_arr['postzip'])."'",
 			   "regtype='".mysql_real_escape_string(stripslashes($participant_arr['regtype']))."'");
-  $message.=update_table_element($link, $title, "$ReportDB.CongoDump", $pairedvalue_array, "badgeid", $participant_arr['partid']);
+  $message.=update_table_element($link, $title, "CongoDump", $pairedvalue_array, "badgeid", $participant_arr['partid']);
 
   // Update Interested entry.
   if (isset($participant_arr['interested']) AND ($participant_arr['interested']!='') AND ($participant_arr['interested']!=0)) {
-    $query ="UPDATE $ReportDB.Interested SET ";
+    $query ="UPDATE Interested SET ";
     $query.="interestedtypeid=".$participant_arr['interested']." ";
     $query.="WHERE badgeid=\"".$participant_arr['partid']."\" AND conid=".$_SESSION['conid'];
     if (!mysql_query($query,$link)) {
@@ -1268,7 +1263,7 @@ function edit_participant ($participant_arr,$permrole_arr) {
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
       $value_array=array($_SESSION['conid'], $participant_arr['partid'], mysql_real_escape_string(stripslashes($participant_arr['interested'])));
-      $message.=submit_table_element($link,"Admin Participants","$ReportDB.Interested", $element_array, $value_array);
+      $message.=submit_table_element($link,"Admin Participants","Interested", $element_array, $value_array);
     } elseif ($r_matched[1]>1) {
       $message.="There might be something wrong with the table, there are multiple interested elements for this year.";
     }
@@ -1311,30 +1306,35 @@ function edit_participant ($participant_arr,$permrole_arr) {
                      $_SESSION['badgeid'],
                      mysql_real_escape_string(htmlspecialchars_decode($participant_arr['note'])),
 		     $_SESSION['conid']);
-  $message.=submit_table_element($link, $title, "$ReportDB.NotesOnParticipants", $element_array, $value_array);
+  $message.=submit_table_element($link, $title, "NotesOnParticipants", $element_array, $value_array);
 
   // Update permissions
-  for ($i=2; $i<=count($permrole_arr); $i++) {
-    $perm="permroleid".$i;
-    $wperm="waspermroleid".$i;
-    if (isset ($participant_arr[$perm])) {
-      if ($participant_arr[$wperm] == "not") {
-	$queryl ="INSERT INTO $ReportDB.UserHasPermissionRole (badgeid, permroleid, conid) VALUES ";
-        $queryl.="('".$participant_arr['partid']."','".$i."','".$conid."');";
-        if (!mysql_query($queryl,$link)) {
-	  $message.=$queryl."<BR>Error updating $ReportDB.UserHasPermissionRole database.  Database not updated.";
-	  echo "<P class=\"errmsg\">".$message."\n";
-	  return;
-	}
-      }
-    } elseif ($participant_arr[$wperm] == "indeed") {
-      $queryl ="DELETE FROM $ReportDB.UserHasPermissionRole where ";
-      $queryl.="badgeid=".$participant_arr['partid']." AND permroleid=".$i." AND conid=".$conid.";";
-      if (!mysql_query($queryl,$link)) {
-	$message.=$queryl."<BR>Error updating $ReportDB.UserHasPermissionRole database.  Database not updated.";
-	echo "<P class=\"errmsg\">".$message."\n";
-	return;
-      }
+  foreach ($participant_arr['waspermroleid'] as $key => $value) {
+    if (($participant_arr['waspermroleid'][$key]=="not") and
+	($participant_arr['permroleid'][$key]=="checked")) {
+      $element_array = array('badgeid', 'permroleid', 'conid');
+      $value_array = array($participant_arr['partid'], $key, $_SESSION['conid']);
+      $message.=submit_table_element($link, $title, "UserHasPermissionRole", $element_array, $value_array);
+    }
+    if (($participant_arr['waspermroleid'][$key]=="indeed") and
+	($participant_arr['permroleid'][$key]!="checked")) {
+      $match_string="badgeid=".$participant_arr['partid']." AND permroleid=".$key." AND conid=".$_SESSION['conid'];
+      $message.=delete_table_element($link, $title, "UserHasPermissionRole",$match_string);
+    }
+  }
+
+  // Update con roles
+  foreach ($participant_arr['wasconroleid'] as $key => $value) {
+    if (($participant_arr['wasconroleid'][$key]=="not") and
+	($participant_arr['conroleid'][$key]=="checked")) {
+      $element_array = array('badgeid', 'conroleid', 'conid');
+      $value_array = array($participant_arr['partid'], $key, $_SESSION['conid']);
+      $message.=submit_table_element($link, $title, "UserHasConRole", $element_array, $value_array);
+    }
+    if (($participant_arr['wasconroleid'][$key]=="indeed") and
+	($participant_arr['conroleid'][$key]!="checked")) {
+      $match_string="badgeid=".$participant_arr['partid']." AND conroleid=".$key." AND conid=".$_SESSION['conid'];
+      $message.=delete_table_element($link, $title, "UserHasConRole",$match_string);
     }
   }
 
@@ -1352,7 +1352,7 @@ function get_emailto_from_permrole($permrolename,$link,$title,$description) {
 SELECT
     emailtoquery
   FROM
-    $ReportDB.EmailTo
+    EmailTo
   WHERE
     emailtodescription='$permrolename'
 EOD;

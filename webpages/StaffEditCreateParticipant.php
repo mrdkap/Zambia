@@ -1,13 +1,7 @@
 <?php
 require_once ('StaffCommonCode.php');
 require ('StaffEditCreateParticipant_FNC.php');
-$conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 if (isset($_GET['action'])) {
   $action=$_GET['action'];
@@ -28,30 +22,6 @@ if (!($action=="edit"||$action=="create")) {
   exit();
  }
 
-$query= <<<EOD
-SELECT
-    permroleid,
-    permrolename,
-    notes AS permrolenotes
-  FROM
-      $ReportDB.PermissionRoles
-EOD;
-if (($result=mysql_query($query,$link))===false) {
-  $message_error="Error retrieving data from database<BR>\n";
-  $message_error.=$query;
-  RenderError($title,$message_error);
-  exit();
-}
-if (0==($rows=mysql_num_rows($result))) {
-  $message_error="Database query did not return any rows.<BR>\n";
-  $message_error.=$query;
-  RenderError($title,$message_error);
-  exit();
-}
-for ($i=1; $i<=$rows; $i++) {
-  $permrole_arr[$i]=mysql_fetch_array($result,MYSQL_ASSOC);
-}
-
 if ($action=="create") { //initialize participant array
   $title="Add Participant";
   staff_header($title);
@@ -59,7 +29,7 @@ if ($action=="create") { //initialize participant array
   // If the information has already been added, and we are
   // on the return loop, add the Participant to the database.
   if ((isset ($_POST['update'])) and ($_POST['update']=="Yes")) {
-    list($message,$message_error)=create_participant ($_POST,$permrole_arr);
+    list($message,$message_error)=create_participant ($_POST);
   }
 
   // Get a set of bioinfo, not for the info, but for the arrays.
@@ -101,7 +71,7 @@ if ($action=="create") { //initialize participant array
   $participant_arr['postcity']="";
   $participant_arr['poststate']="";
   $participant_arr['postzip']="";
-  RenderEditCreateParticipant($action,$participant_arr,$permrole_arr,$message,$message_error);
+  RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);
   correct_footer();
  }
 
@@ -134,7 +104,7 @@ if ($action=="create") { //initialize participant array
    //If we are on the loop with an update, update the database
    // with the current version of the information
    if ((isset ($_POST['update'])) and ($_POST['update'] == "Yes")) {
-     edit_participant ($_POST,$permrole_arr);
+     edit_participant ($_POST);
    }
 
    //Get Participant information for updating
@@ -142,30 +112,40 @@ if ($action=="create") { //initialize participant array
    $partid=mysql_real_escape_string($selpartid,$link);
    $query= <<<EOD
 SELECT
-    CD.badgeid,
-    CD.firstname,
-    CD.lastname,
-    CD.badgename,
-    CD.phone,
-    CD.email,
-    CD.postaddress1,
-    CD.postaddress2,
-    CD.postcity,
-    CD.poststate,
-    CD.postzip,
-    CD.regtype,
-    P.bestway,
-    P.pubsname,
-    P.altcontact,
-    P.prognotes,
-    group_concat(UHPR.permroleid) as 'permroleid_list'
+    badgeid,
+    firstname,
+    lastname,
+    badgename,
+    phone,
+    email,
+    postaddress1,
+    postaddress2,
+    postcity,
+    poststate,
+    postzip,
+    regtype,
+    bestway,
+    pubsname,
+    altcontact,
+    prognotes,
+    permroleid_list,
+    group_concat(conroleid) as 'conroleid_list'
   FROM 
-      $ReportDB.CongoDump CD
-    JOIN $ReportDB.Participants P USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
+      CongoDump
+    JOIN Participants USING (badgeid)
+    LEFT JOIN (
+      SELECT 
+          badgeid,
+          group_concat(permroleid) AS permroleid_list
+        FROM
+            UserHasPermissionRole
+        WHERE
+            badgeid="$selpartid" AND
+            conid=$conid) AS X USING (badgeid)
+    JOIN UserHasConRole USING (badgeid)
   WHERE
-    UHPR.conid=$conid AND
-    CD.badgeid='$selpartid'
+    conid=$conid AND
+    badgeid='$selpartid'
 EOD;
    if (($result=mysql_query($query,$link))===false) {
      $message_error="Error retrieving data from database<BR>\n";
@@ -182,7 +162,7 @@ EOD;
    $participant_arr=mysql_fetch_array($result,MYSQL_ASSOC);
 
    // Get interested as in participating in current con
-   $query="SELECT interestedtypeid FROM $ReportDB.Interested WHERE badgeid=$selpartid AND conid=$conid";
+   $query="SELECT interestedtypeid FROM Interested WHERE badgeid=$selpartid AND conid=$conid";
    if (($result=mysql_query($query,$link))===false) {
      $message_error="Error retrieving data from database<BR>\n";
      $message_error.=$query;
@@ -210,7 +190,7 @@ EOD;
        $participant_arr[$keyname]=$bioinfo[$keyname];
      }
    }
-   RenderEditCreateParticipant($action,$participant_arr,$permrole_arr,$message,$message_error);
+   RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);
    echo "<DIV class=\"sectionheader\">\n";
    $printname=htmlspecialchars($participant_arr['pubsname']);
    echo "<A HREF=AdminParticipants.php?partid=$selpartid>Edit password for $printname</A> ::\n";

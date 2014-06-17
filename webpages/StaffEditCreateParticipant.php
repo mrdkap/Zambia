@@ -80,6 +80,7 @@ if ($action=="create") { //initialize participant array
   if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
   if ($_POST["partidf"]!=0) {$_POST["partid"]=$_POST["partidf"];}
   if ($_POST["partidp"]!=0) {$_POST["partid"]=$_POST["partidp"];}
+  if ($_POST["partide"]!=0) {$_POST["partid"]=$_POST["partide"];}
 
   if (isset($_POST["partid"])) {
     $selpartid=$_POST["partid"];

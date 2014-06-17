@@ -1,65 +1,62 @@
 <?php
-    // This function will output the page with the form to add or create a session
-    // Variables
-    //     action: "create"/"edit"/"brainstorm"/"propose"
-    //     session: array with all data of record to edit or defaults for create
-    //     message1: a string to display before the form
-    //     message2: an urgent string to display before the form and after m1
+/* This function will output the page with the form to add or create a session
+   Variables
+   action: "create"/"edit"/"brainstorm"/"propose"
+   session: array with all data of record to edit or defaults for create
+   message1: a string to display before the form
+   message2: an urgent string to display before the form and after m1 */
 function RenderEditCreateSession ($action, $session, $message1, $message2) {
-    global $name, $email, $debug;
-    require_once("CommonCode.php");
-    require_once("javascript_functions.php");
-    $ReportDB=REPORTDB; // make it a variable so it can be substituted
-    $BioDB=BIODB; // make it a variable so it can be substituted
+  global $name, $email, $debug;
+  require_once("CommonCode.php");
+  require_once("javascript_functions.php");
 
-    // Tests for the substituted variables
-    if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-    if ($BiotDB=="BIODB") {unset($BIODB);}
+  // This switched on, the specific action, and ends if one of the
+  // specified ones don't exist.
+  if ($action=="create") {
+    $title="Add New Session";
+    $description="<P>Saving an added session presumes you are going to add another new session next.</P>";
+  } elseif ($action=="edit") {
+    $title="Edit Session";
+    $description="<P>Hit either the top or the bottom \"Save\" button when you are done with your changes.</P>\n";
+    $additionalinfo ="<P>Clicking on the session number will allow you to assign participants to your session.";
+    $additionalinfo.=" A specific person's class should have their Invited Guests Only box checked so other";
+    $additionalinfo.=" presenters won't be presented with the option of that class.</P>\n";
+  } elseif ($action=="propose") {
+    $title="Propose Session";
+    $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
+    $additionalinfo.="  <FORM name=\"brainstormform\" method=\"POST\" action=\"doLogin.php\">\n";
+    $additionalinfo.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+    $additionalinfo.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+    $additionalinfo.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+    $additionalinfo.="    <INPUT type=\"submit\" name=\"submit\" value=\"Log out and look at what has already been submitted.\">\n";
+    $additionalinfo.="  </FORM>\n";
+    //$additionalinfo ="<P>Here are the sessions you previously proposed:</P>\n";
+  } elseif ($action=="brainstorm") {
+    $title="Proposed Session";
+    $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
+  } else {
+    exit();
+  }
 
-    if ($action=="create") {
-      $title="Add New Session";
-      $description="<P>Saving an added session presumes you are going to add another new session next.</P>";
-    } elseif ($action=="edit") {
-      $title="Edit Session";
-      $description="<P>Hit either the top or the bottom \"Save\" button when you are done with your changes.</P>\n";
-      $additionalinfo ="<P>Clicking on the session number will allow you to assign participants to your session.";
-      $additionalinfo.=" A specific person's class should have their Invited Guests Only box checked so other";
-      $additionalinfo.=" presenters won't be presented with the option of that class.</P>\n";
-    } elseif ($action=="propose") {
-      $title="Propose Session";
-      $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
-      $additionalinfo.="  <FORM name=\"brainstormform\" method=\"POST\" action=\"doLogin.php\">\n";
-      $additionalinfo.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
-      $additionalinfo.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
-      $additionalinfo.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
-      $additionalinfo.="    <INPUT type=\"submit\" name=\"submit\" value=\"Log out and look at what has already been submitted.\">\n";
-      $additionalinfo.="  </FORM>\n";
-      //$additionalinfo ="<P>Here are the sessions you previously proposed:</P>\n";
-    } elseif ($action=="brainstorm") {
-      $title="Proposed Session";
-      $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
-    } else {
-      exit();
-    }
+  // Get the various length limits
+  $limit_array=getLimitArray();
 
-    // Get the various length limits
-    $limit_array=getLimitArray();
+  // Begin the output
+  topofpagereport($title,$description,$additionalinfo);
 
-    topofpagereport($title,$description,$additionalinfo);
-    
-    // still inside function RenderEditCreateSession
-    if (strlen($message1)>0) {
-      echo "<P id=\"message1\"><font color=red>".$message1."</font></P>\n";
-    }
-    if (strlen($message2)>0) {
-      echo "<P id=\"message2\"><font color=red>".$message2."</font></P>\n";
-      exit(); // If there is a message2, then there is a fatal error.
-    }
-    //error_log("Zambia: ".print_r($session,TRUE));
-    if (isset($debug)) {
-        echo $debug."<BR>\n";
-        }  
-  ?>
+  // Any passed messages
+  if (strlen($message1)>0) {
+    echo "<P id=\"message1\"><font color=red>".$message1."</font></P>\n";
+  }
+  if (strlen($message2)>0) {
+    echo "<P id=\"message2\"><font color=red>".$message2."</font></P>\n";
+    exit(); // If there is a message2, then there is a fatal error.
+  }
+  //error_log("Zambia: ".print_r($session,TRUE));
+  if (isset($debug)) {
+    echo $debug."<BR>\n";
+  }
+?>
     <DIV class="formbox">
         <FORM name="sessform" class="bb"  method=POST action="SubmitEditCreateSession.php">
             <INPUT type="hidden" name="name" value="<?php echo htmlspecialchars($name,ENT_COMPAT);?>">
@@ -91,20 +88,20 @@ function RenderEditCreateSession ($action, $session, $message1, $message2) {
                       <?php echo $session["sessionid"];?></A>
                       <INPUT type="hidden" name="sessionid" value="<?php echo $session["sessionid"];?>"></SPAN>
                 <SPAN><LABEL for="divisionid">Division: </LABEL><SELECT name="divisionid">
-                     <?php populate_select_from_table("$ReportDB.Divisions", $session["divisionid"], "SELECT", FALSE); ?>
+                     <?php populate_select_from_table("Divisions", $session["divisionid"], "SELECT", FALSE); ?>
                      </SELECT>&nbsp;&nbsp;</SPAN>
                 <?php } ?>
                 <SPAN><LABEL for="track">Track: </LABEL><SELECT name="track">
-                    <?php populate_select_from_table("$ReportDB.Tracks", $session["track"], "SELECT", FALSE); ?>
+                    <?php populate_select_from_table("Tracks", $session["track"], "SELECT", FALSE); ?>
                     </SELECT>&nbsp;&nbsp;</SPAN>
                 <SPAN><LABEL for="type">Type: </LABEL><SELECT name="type">
-                    <?php populate_select_from_table("$ReportDB.Types", $session["type"], "SELECT", FALSE); ?>
+                    <?php populate_select_from_table("Types", $session["type"], "SELECT", FALSE); ?>
                     </SELECT>&nbsp;&nbsp;</SPAN>
 	        <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
                 <INPUT type="hidden" name="pubstatusid" value="<?php echo $session["pubstatusid"];?>">
                 <?php } else { ?>
                 <SPAN><LABEL for="pubstatusid">Pub. Status: </LABEL><SELECT name="pubstatusid">
-                    <?php populate_select_from_table("$ReportDB.PubStatuses", $session["pubstatusid"], "SELECT", FALSE); ?>
+                    <?php populate_select_from_table("PubStatuses", $session["pubstatusid"], "SELECT", FALSE); ?>
                     </SELECT></SPAN>
                 <?php } ?>
                 </DIV>
@@ -137,18 +134,18 @@ place.
                     <INPUT type="checkbox" value="signup" id="signup" <?php if ($session["signup"]) {echo " checked ";} ?>
                     name="signup">&nbsp;&nbsp;</SPAN>
 		<?php } ?>
-                <?php if (strtoupper(MY_AVAIL_KIDS)=="FALSE") { ?>
+                <?php if (strtoupper($_SESSION['conallowkids'])=="FALSE") { ?>
 	        <SPAN><INPUT type="hidden" name="kids" value="<?php echo $session["kids"];?>"></SPAN>
 		<?php } else { ?>
                 <SPAN><LABEL for="kids">Kid ?:</LABEL>
-                    <SELECT name="kids"><?php populate_select_from_table("$ReportDB.KidsCategories", $session["kids"], "SELECT", FALSE); ?></SELECT>
+                    <SELECT name="kids"><?php populate_select_from_table("KidsCategories", $session["kids"], "SELECT", FALSE); ?></SELECT>
                     </SPAN>
 		<?php } ?>
                 </DIV>
             <DIV class="denseform">
-                <SPAN><LABEL for="secondtitle">Subtitle: </LABEL><INPUT type=text size="50" name="secondtitle" 
+                <SPAN><LABEL for="secondtitle">Subtitle: </LABEL><INPUT type=text size="50" name="secondtitle"
                     value="<?php echo htmlspecialchars($session["secondtitle"],ENT_COMPAT) ?>">&nbsp;&nbsp;</SPAN>
-                <INPUT type="hidden" name="languagestatusid" 
+                <INPUT type="hidden" name="languagestatusid"
                     value="<?php echo htmlspecialchars($session["languagestatusid"],ENT_COMPAT); ?>">
                 </DIV>
 <?php // Modifiy this in a loop "for each language in LANGUAGE_LIST".
@@ -178,18 +175,18 @@ place.
                     <INPUT type=text size="5" name="duration" value="<?php
                     echo htmlspecialchars($session["duration"],ENT_COMPAT) ?>">&nbsp;&nbsp;</SPAN>
 		<?php } ?>
-                <?php if ($action=="brainstorm") { 
+                <?php if ($action=="brainstorm") {
 		    echo "<INPUT type=\"hidden\" name=\"roomset\" value=\"".$session["roomset"]."\">";
                       } else { ?>
                 <SPAN><LABEL for="roomset">Room Set: </LABEL>
-                    <SELECT name="roomset"><?php populate_select_from_table("$ReportDB.RoomSets", $session["roomset"], "SELECT", FALSE); ?>
+                    <SELECT name="roomset"><?php populate_select_from_table("RoomSets", $session["roomset"], "SELECT", FALSE); ?>
                     </SELECT>&nbsp;&nbsp;</SPAN>
 		<?php } ?>
 	        <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
                 <INPUT type="hidden" name="status" value="<?php echo $session["status"];?>">
                 <?php } else { ?>
                 <SPAN><LABEL for="status">Status:</LABEL>
-                    <SELECT name="status"><?php populate_select_from_table("$ReportDB.SessionStatuses", $session["status"], "", FALSE); ?></SELECT>
+                    <SELECT name="status"><?php populate_select_from_table("SessionStatuses", $session["status"], "", FALSE); ?></SELECT>
                     </SPAN>
 		<?php } ?>
                 </DIV>
@@ -198,13 +195,13 @@ place.
             <TABLE><COL width="100"><COL>
                 <TR>
 		    <TD class="txtalbl"><LABEL class="dense" for="description_good_web">Web Description (<?php echo $limit_array['min']['web']['desc']."-".$limit_array['max']['web']['desc'] ?>):</LABEL></TD>
-                    <TD class="txta"><TEXTAREA class="textlabelarea" cols=80 rows=5 name="description_good_web" 
+                    <TD class="txta"><TEXTAREA class="textlabelarea" cols=80 rows=5 name="description_good_web"
                             ><?php echo htmlspecialchars($session["description_good_web"],ENT_NOQUOTES);?></TEXTAREA></TD>
                     </TR>
                 <?php if ($action!="brainstorm") { ?>
                 <TR>
                     <TD class="txtalbl"><LABEL class="dense" for="description_good_book">Program Book Description (<?php echo $limit_array['min']['book']['desc']."-".$limit_array['max']['book']['desc'] ?>):</LABEL></TD>
-                    <TD class="txta"><TEXTAREA class="textlabelarea" cols=80 name="description_good_book" 
+                    <TD class="txta"><TEXTAREA class="textlabelarea" cols=80 name="description_good_book"
                             ><?php echo htmlspecialchars($session["description_good_book"],ENT_NOQUOTES);?></TEXTAREA></TD>
                     </TR>
 		<?php } ?>
@@ -269,7 +266,8 @@ like), and it's limits, going down in an array.
 	    <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
             <INPUT type="hidden" name="servdest[]" value="">
             <INPUT type="hidden" name="featdest[]" value="">
-            <?php } else { ?> 
+            <?php } else { ?>
+        <!-- Replace the below with checkbox-lists -->
         <HR class="withspace"><DIV class="thinbox">
         <TABLE><COL><COL><COL>
         <TR>
@@ -285,7 +283,7 @@ like), and it's limits, going down in an array.
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                              <SELECT class="selectfwidth" id="featsrc" name="featsrc" size=6 multiple>
-                                <?php populate_multisource_from_table("$ReportDB.Features", $session["featdest"]); ?></SELECT>
+                                <?php populate_multisource_from_table("Features", $session["featdest"]); ?></SELECT>
                              </SPAN>
                         <SPAN class="thickobject">
                             <BUTTON onclick="fadditems(document.sessform.featsrc,document.sessform.featdest)"
@@ -296,7 +294,7 @@ like), and it's limits, going down in an array.
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                             <SELECT class="selectfwidth" id="featdest" name="featdest[]" size=6 multiple >
-                                <?php populate_multidest_from_table("$ReportDB.Features", $session["featdest"]); ?></SELECT>
+                                <?php populate_multidest_from_table("Features", $session["featdest"]); ?></SELECT>
                             </SPAN>
                         </DIV>
                 </DIV> <!-- Features -->
@@ -311,7 +309,7 @@ like), and it's limits, going down in an array.
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                              <SELECT class="selectfwidth" id="servsrc" name="servsrc" size=6 multiple>
-                                <?php populate_multisource_from_table("$ReportDB.Services", $session["servdest"]); ?></SELECT>
+                                <?php populate_multisource_from_table("Services", $session["servdest"]); ?></SELECT>
                              </SPAN>
                         <SPAN class="thickobject">
                             <BUTTON onclick="fadditems(document.sessform.servsrc,document.sessform.servdest)"
@@ -322,7 +320,7 @@ like), and it's limits, going down in an array.
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                             <SELECT class="selectfwidth" id="servdest" name="servdest[]" size=6 multiple >
-                                <?php populate_multidest_from_table("$ReportDB.Services", $session["servdest"]); ?></SELECT>
+                                <?php populate_multidest_from_table("Services", $session["servdest"]); ?></SELECT>
                             </SPAN>
                         </DIV>
                 </DIV> <!-- Services -->
@@ -339,7 +337,7 @@ like), and it's limits, going down in an array.
         <LABEL class="dense" for="pubchardest">Publication<BR>Characteristics</LABEL>
         </DIV>
     <DIV style="font-size: 85%">
-        <SELECT id="pubchardest" name="pubchardest[]" multiple><?php populate_multiselect_from_table("$ReportDB.PubCharacteristics",
+        <SELECT id="pubchardest" name="pubchardest[]" multiple><?php populate_multiselect_from_table("PubCharacteristics",
             $session["pubchardest"]); ?></SELECT>&nbsp;</TD>
 
         <TD class="nospace">
@@ -354,7 +352,7 @@ like), and it's limits, going down in an array.
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                              <SELECT class="selectffwidth" id="vendfeatsrc" name="vendfeatsrc" size=6 multiple>
-                                <?php populate_multisource_from_table("$ReportDB.VendorFeatures", $session["vendfeatdest"]); ?></SELECT>
+                                <?php populate_multisource_from_table("VendorFeatures", $session["vendfeatdest"]); ?></SELECT>
                              </SPAN>
                         <SPAN class="thickobject">
                             <BUTTON onclick="fadditems(document.sessform.vendfeatsrc,document.sessform.vendfeatdest)"
@@ -365,7 +363,7 @@ like), and it's limits, going down in an array.
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                             <SELECT class="selectffwidth" id="vendfeatdest" name="vendfeatdest[]" size=6 multiple >
-                                <?php populate_multidest_from_table("$ReportDB.VendorFeatures", $session["vendfeatdest"]); ?></SELECT>
+                                <?php populate_multidest_from_table("VendorFeatures", $session["vendfeatdest"]); ?></SELECT>
                             </SPAN>
                         </DIV>
                 </DIV> <!-- VendorFeatures -->
@@ -380,7 +378,7 @@ like), and it's limits, going down in an array.
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                              <SELECT class="selectffwidth" id="spacesrc" name="spacesrc" size=6 multiple>
-                                <?php populate_multisource_from_table("$ReportDB.VendorSpaces", $session["spacedest"]); ?></SELECT>
+                                <?php populate_multisource_from_table("VendorSpaces", $session["spacedest"]); ?></SELECT>
                              </SPAN>
                         <SPAN class="thickobject">
                             <BUTTON onclick="fadditems(document.sessform.spacesrc,document.sessform.spacedest)"
@@ -391,7 +389,7 @@ like), and it's limits, going down in an array.
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                             <SELECT class="selectffwidth" id="spacedest" name="spacedest[]" size=6 multiple >
-                                <?php populate_multidest_from_table("$ReportDB.VendorSpaces", $session["spacedest"]); ?></SELECT>
+                                <?php populate_multidest_from_table("VendorSpaces", $session["spacedest"]); ?></SELECT>
                             </SPAN>
                         </DIV>
                 </DIV> <!-- Spaces -->

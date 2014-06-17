@@ -95,8 +95,6 @@ foreach ($ConInfo_array_keys as $element) {
 define("CON_NAME",$ConInfo_array['conname']);
 define("CON_START_DATIM",$ConInfo_array['constartdate']);
 define("CON_URL",$ConInfo_array['conurl']);
-define("GRID_SPACER",$ConInfo_array['congridspacer']);
-define("MY_AVAIL_KIDS",$ConInfo_array['conallowkids']);
 define("VENDOR_EMAIL",$ConInfo_array['vendoremail']);
 define("PROGRAM_EMAIL",$ConInfo_array['programemail']);
 

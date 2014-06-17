@@ -15,15 +15,15 @@ if (!isset($daymap)) {
 <//?php print_r($partAvail);?>
 <FORM name="constrform" method=POST action="SubmitMySchedConstr.php">
 
-    <H2>Number of program items I'm willing to participate in:</H2>
-<p> Please indicate the maximum number of panels you are willing to be on.  
-You may indicate a total for each day as well as an overall maximum for 
-the whole con.  Please note that the tool limits you to <?php echo $_SESSION['contotalsess'];?> or fewer 
+    <H2>Number of program items I am willing to participate in:</H2>
+<p> Please indicate the maximum number of panels you are willing to be on.
+You may indicate a total for each day as well as an overall maximum for
+the whole con.  Please note that the tool limits you to <?php echo $_SESSION['contotalsess'];?> or fewer
 total sessions and <?php echo $_SESSION['condailysess'];?> each day.
-There is no need for the numbers to add up.  We'll use this 
+There is no need for the numbers to add up.  We will use this
 for guidance when assigning and scheduling panels. </p>
             <DIV class="regform">
-                <SPAN><LABEL for="maxprog">Preferred Total Number of Panels &nbsp;</LABEL><INPUT type="text" size=3 name="maxprog" 
+                <SPAN><LABEL for="maxprog">Preferred Total Number of Panels &nbsp;</LABEL><INPUT type="text" size=3 name="maxprog"
                      value="<?php echo $partAvail["maxprog"];?>">&nbsp;&nbsp;</SPAN></DIV>
 <?php
 // Don't ask about day limits at all if only 1 day con
@@ -53,7 +53,7 @@ for guidance when assigning and scheduling panels. </p>
 <hr>
 
 <!-- SCHEDULE availability times -->
-<H2>Times I Am Available</H2>
+<H2>Times I Am Available:</H2>
 
 <p> For <?php if ($_SESSION['connumdays']>1) {echo "each ";} else {echo "the ";} ?>
 day you will be attending <?php echo $_SESSION['conname']; ?>, please indicate
@@ -64,15 +64,15 @@ scheduling you.</p>
 
 <table>
   <tr> <!-- row one -->
-<?php if ($_SESSION['connumdays']>1) { echo "<td> Start Day </td>\n";} ?> 
+<?php if ($_SESSION['connumdays']>1) { echo "<td> Start Day </td>\n";} ?>
     <td> Start Time </td>
     <td> &nbsp; </td>
-<?php if ($_SESSION['connumdays']>1) { echo "<td> End Day </td>\n";} ?> 
-    <td> End Time </td> 
+<?php if ($_SESSION['connumdays']>1) { echo "<td> End Day </td>\n";} ?>
+    <td> End Time </td>
   </tr> <!-- header row  -->
 <?php
 //  Notes on variables:
-//  $partAvail["availstarttime_$i"], $partAvail["availendtime_$i"] are measured in GRID_SPACER increments
+//  $partAvail["availstarttime_$i"], $partAvail["availendtime_$i"] are measured in congridspacer increments
 //     0 is unset, 1 is midnight beginning of day
     for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
         echo "  <TR> <!-- Row $i -->\n";
@@ -95,8 +95,8 @@ scheduling you.</p>
         // for midnight anything was coming out as '0'.
         echo "    <TD><SELECT name=\"availstarttime_$i\">\n";
 	echo "          <OPTION value=''></OPTION>\n";
-	//Iterate across one day in GRID_SPACER increments
-	for ($starttime=0; $starttime < 86400; $starttime = $starttime + GRID_SPACER) {
+	//Iterate across one day in congridspacer increments
+	for ($starttime=0; $starttime < 86400; $starttime = $starttime + $_SESSION['congridspacer']) {
 	  //produces HH:MM:SS
 	  $indextime=gmdate('H:i:s',$starttime);
 	  //produces ?H:MM[ap]m
@@ -130,8 +130,8 @@ scheduling you.</p>
         // for midnight anything was coming out as '0'.
         echo "    <TD><SELECT name=\"availendtime_$i\">\n";
 	echo "          <OPTION value=''></OPTION>\n";
-	//Iterate across one day in GRID_SPACER increments
-	for ($endtime=0; $endtime < 86400; $endtime = $endtime + GRID_SPACER) {
+	//Iterate across one day in congridspacer increments
+	for ($endtime=0; $endtime < 86400; $endtime = $endtime + $_SESSION['congridspacer']) {
 	  //produces HH:MM:SS
 	  $indextime=gmdate('H:i:s',$endtime);
 	  //produces ?H:MM[ap]m
@@ -153,7 +153,7 @@ scheduling you.</p>
 <hr>
 
 <DIV id="conflict">
-    <DIV class="sectionheader">Please don't schedule me for a time that conflicts with:</DIV>
+    <DIV class="sectionheader">Please do not schedule me for a time that conflicts with:</DIV>
 
     <DIV class="entries">
     <TEXTAREA name="preventconflict" rows=3 cols=72><?php
@@ -162,7 +162,7 @@ scheduling you.</p>
     </DIV>
 
 <?php
-    if (MY_AVAIL_KIDS===TRUE) {
+    if ($_SESSION['conallowkids']===TRUE) {
         echo "<P>We are looking for a rough count of children attending FastTrack (programming for children";
         echo " ages 6-13).  Please indicate how many children will be attending with you:\n";
         $x=$partAvail["numkidsfasttrack"];

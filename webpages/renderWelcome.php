@@ -26,12 +26,12 @@ $query = <<<EOD
 SELECT
     interestedtypename
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.Interested I USING (badgeid)
-    JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
+      Participants
+    JOIN Interested USING (badgeid)
+    JOIN InterestedTypes USING (interestedtypeid)
   WHERE
     badgeid=$badgeid AND
-    I.conid=$conid
+    conid=$conid
 EOD;
 
 if (!$result=mysql_query($query,$link)) {
@@ -53,12 +53,12 @@ if ($interested=="") {
 	echo file_get_contents("../Local/Verbiage/Welcome_0");
       } else {
 ?>
-<P>Thank you for your participation in the <?php echo CON_NAME; ?> event.  With your help it was a great con.  We look forward 
+<P>Thank you for your participation in the <?php echo $_SESSION['conname']; ?> event.  With your help it was a great con.  We look forward 
 to your participation again next year.</P>
 <P>We will post instructions for participating in brainstorming for the next event soon.</P>
 <P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--Program and Events Committees</P>
 <?php
-    participant_footer();
+    correct_footer();
     exit();
       }
     }
@@ -74,12 +74,12 @@ to your participation again next year.</P>
 <P> Dear
 <?php echo $congoinfo["firstname"]; echo " "; echo $congoinfo["lastname"]; ?>,
 
-<P> Welcome to the <?php echo CON_NAME; ?> website.</P>
+<P> Welcome to the <?php echo $_SESSION['conname']; ?> website.</P>
 
 <?php /*
-<P> First, please take a moment to indicate your ability and interest in partipating in <?php echo CON_NAME; ?>.
+<P> First, please take a moment to indicate your ability and interest in partipating in <?php echo $_SESSION['conname']; ?>.
       <TABLE><TR><TD>&nbsp;&nbsp;&nbsp;</TD>
-      <TD><LABEL for="interested" class="padbot0p5">I am interested and able to participate in <?php echo CON_NAME; ?>. &nbsp;</LABEL>
+      <TD><LABEL for="interested" class="padbot0p5">I am interested and able to participate in <?php echo $_SESSION['conname']; ?>. &nbsp;</LABEL>
       <SELECT name=interested class="yesno">
 				   <OPTION value=0 <?php if (($interested==0) OR ($interested>2)) {echo "selected";} ?> >&nbsp;</OPTION>
             <OPTION value=1 <?php if ($interested==1) {echo "selected";} ?> >Yes</OPTION>
@@ -88,7 +88,7 @@ to your participation again next year.</P>
       </TD></TR></TABLE>
       */ ?>
 
-<P> You're attendence is currently listed as: <?php echo $interested; ?>.</P>
+<P> Your attendence is currently listed as: <?php echo $interested; ?>.</P>
 
 <P> If this does not match with your expectations please, get in touch with
 your liaison person, as soon as possible.</P>
@@ -135,9 +135,9 @@ if (may_I('my_availability')) {
 ?>
   <P> We need to know your availability for scheduling. Please complete the questions in our <A HREF="my_sched_constr.php">"My Availability"</A> form so we can best accomodate your scheduling preferences.
     <UL>
-      <LI> Set the total number of times you would be willing to commit to, for all of <?php echo CON_NAME; ?>.</LI>
+      <LI> Set the total number of times you would be willing to commit to, for all of <?php echo $_SESSION['conname']; ?>.</LI>
       <LI> Set the per day number of times you would be willing to commit to. </LI>
-      <LI> Indicate the times you are able to commit to <?php echo CON_NAME; ?>. </LI>
+      <LI> Indicate the times you are able to commit to <?php echo $_SESSION['conname']; ?>. </LI>
       <LI> Indicate any conflicts or other constraints. </LI>
     </UL></P>
 <?php
@@ -149,13 +149,13 @@ if (file_exists("../Local/Verbiage/Welcome_4")) {
 ?>
  <P>Please check the contact information we have on file for you under <A HREF="my_contact.php">"My Profile"</A>. Here you can change your password<?php
 if (may_I('EditBio')) { ?>, edit your name as wish for it to appear in our publications and edit your bio<?php } ?>.
-If you are a new presenter or vendor, we will need a short and long bio for <?php echo CON_NAME; ?> web and program book publications.
+If you are a new presenter or vendor, we will need a short and long bio for <?php echo $_SESSION['conname']; ?> web and program book publications.
     <UL>
       <LI>Check your contact information.</LI>
       <LI>Change your passowrd.</LI>
 <?php  if (may_I('EditBio')) { ?>
       <LI>Edit your name as you want to appear in our publications.</LI>
-      <LI>Enter a short and long bio for <?php echo CON_NAME; ?> web and program book publications.</LI>
+      <LI>Enter a short and long bio for <?php echo $_SESSION['conname']; ?> web and program book publications.</LI>
 <?php } ?>
     </UL></P>
 <?php
@@ -166,7 +166,7 @@ if (may_I('my_schedule')) {
     } else {
 ?>
   <P>We offer a personalized view of your schedule. To see what you have been scheduled to do at the con, see <A HREF="MySchedule.php">"My Schedule"</A>. If there are issues, conflict or questions please email us at 
-<a href="mailto: <?php echo PROGRAM_EMAIL; ?>"><?php echo PROGRAM_EMAIL; ?></a> As a courtesy to you, any previous schedules are listed on this page.</P>
+<a href="mailto: <?php echo $_SESSION['programemail']; ?>"><?php echo $_SESSION['programemail']; ?></a> As a courtesy to you, any previous schedules are listed on this page.</P>
 <?php
   }
 }
@@ -176,7 +176,7 @@ if (may_I('search_panels')) {
   } else {
 ?>
 <HR>
-  <P>We offer panel discussions.  To see what has been suggested for <?php echo CON_NAME; ?>, <A HREF="my_sessions1.php">"Search Panels"</A> and select the ones you are interest in. (Please save your selections often.)</P>
+  <P>We offer panel discussions.  To see what has been suggested for <?php echo $_SESSION['conname']; ?>, <A HREF="my_sessions1.php">"Search Panels"</A> and select the ones you are interest in. (Please save your selections often.)</P>
 <?php 
   }
 }
@@ -199,6 +199,6 @@ if (may_I('my_gen_int_write')) {
   }
 } ?>
 
-<P>Thank you for your time, and we look forward to seeing you at <?php echo CON_NAME; ?>.</P>
-<P>- <a href="mailto: <?php echo PROGRAM_EMAIL; ?>"><?php echo PROGRAM_EMAIL; ?> </a> </P>
+<P>Thank you for your time, and we look forward to seeing you at <?php echo $_SESSION['conname']; ?>.</P>
+<P>- <a href="mailto: <?php echo $_SESSION['programemail']; ?>"><?php echo $_SESSION['programemail']; ?> </a> </P>
 <?php correct_footer(); ?>

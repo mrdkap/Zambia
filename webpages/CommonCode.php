@@ -8,13 +8,7 @@ require_once('php_functions.php');
 require_once('error_functions.php');
 
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 $ConKey=CON_KEY; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BioDB=="BIODB") {unset($BIODB);}
 
 //set_session_timeout();
 session_start();
@@ -39,9 +33,33 @@ SELECT
     conallowkids,
     contotalsess,
     condailysess,
-    conavailabilityrows
+    conavailabilityrows,
+    vendoremail,
+    programemail
   FROM
-      $ReportDB.ConInfo
+      ConInfo
+   LEFT JOIN (
+      SELECT
+          conid,
+          group_concat(email) AS vendoremail
+        FROM
+            ConRoles
+          JOIN UserHasConRole USING (conroleid)
+          JOIN CongoDump USING (badgeid)
+        WHERE
+          conrolename like '%Vending%' AND
+          conid=$ConKey) AS X USING (conid)
+    LEFT JOIN (
+      SELECT
+          conid,
+          group_concat(email) AS programemail
+        FROM
+            ConRoles
+          JOIN UserHasConRole USING (conroleid)
+          JOIN CongoDump USING (badgeid)
+        WHERE
+          conrolename like '%BrainstormCoord%' AND
+          conid=$ConKey) AS Y USING (conid)
   WHERE
       conid=$ConKey
 EOF;
@@ -80,6 +98,8 @@ define("CON_URL",$ConInfo_array['conurl']);
 define("CON_LOGO",$ConInfo_array['conlogo']);
 define("GRID_SPACER",$ConInfo_array['congridspacer']);
 define("MY_AVAIL_KIDS",$ConInfo_array['conallowkids']);
+define("VENDOR_EMAIL",$ConInfo_array['vendoremail']);
+define("PROGRAM_EMAIL",$ConInfo_array['programemail']);
 
 // ADD newroomslots to coninfo
 define("newroomslots",5); // number of rows at bottom of page for new schedule entries
@@ -91,46 +111,6 @@ for ($i=0;$i<$_SESSION['connumdays'];$i++) {
   $daymap['long'][$i+1]=strftime("%A",$today);
   $daymap['short'][$i+1]=strftime("%a",$today);
  }
-
-// Get the email addresses that are used frequently and set them as defines.
-$conid=$_SESSION['conid'];
-$query = <<<EOD
-SELECT
-    email
-  FROM
-      $ReportDB.ConRoles
-    JOIN $ReportDB.UserHasConRole USING (conroleid)
-    JOIN $ReportDB.CongoDump USING (badgeid)
-  WHERE
-    conrolename like '%Vending%' AND
-    conid=$conid
-EOD;
-
-list($rows,$header_array,$vendoremail_array)=queryreport($query,$link,$title,$description,0);
-for ($i=1; $i<=$rows; $i++) {
-  $VendorEmailLong.=$vendoremail_array[$i]['email'].",";
-}
-$VendorEmail=rtrim($VendorEmailLong,",");
-define("VENDOR_EMAIL",$VendorEmail);
-
-$query = <<<EOD
-SELECT
-    email
-  FROM
-      $ReportDB.ConRoles
-    JOIN $ReportDB.UserHasConRole USING (conroleid)
-    JOIN $ReportDB.CongoDump USING (badgeid)
-  WHERE
-    conrolename like '%BrainstormCoord%' AND
-    conid=$conid
-EOD;
-
-list($rows,$header_array,$programemail_array)=queryreport($query,$link,$title,$description,0);
-for ($i=1; $i<=$rows; $i++) {
-  $ProgramEmailLong.=$programemail_array[$i]['email'].",";
-}
-$ProgramEmail=rtrim($ProgramEmailLong,",");
-define("PROGRAM_EMAIL",$ProgramEmail);
 
 if (isLoggedIn()==false and !isset($logging_in)) {
   $message="Session expired. Please log in again.";
@@ -439,7 +419,7 @@ function posting_footer() {
     readfile($FooterTemplateFile);
   } else {
     echo "<hr>\n<P>If you have questions or wish to communicate an idea, please contact ";
-    echo "<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A>.\n</P>";
+    echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
   }
   include ('google_analytics.php');
   echo "\n\n</body>\n</html>\n";
@@ -448,14 +428,14 @@ function posting_footer() {
 function staff_footer() {
   echo "<hr>\n<P>If you would like assistance using this tool or you would like to communicate an";
   echo " idea that you cannot fit into this form, please contact ";
-  echo "<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A>.\n</P>";
+  echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
   include ('google_analytics.php');
   echo "\n\n</body>\n</html>\n";
 }
 
 function participant_footer() {
   echo "<hr>\n<P>If you need help or to tell us something that doesn't fit here, please email ";
-  echo "<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A>.\n</P>"; 
+  echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>"; 
   include('google_analytics.php');
   echo "\n\n</body>\n</html>\n";
 }
@@ -463,14 +443,14 @@ function participant_footer() {
 function brainstorm_footer() {
   echo "<hr>\n<P>If you would like assistance using this tool, or ";
   echo "if you would like to communicate an idea that you cannot fit into this form, please contact ";
-  echo "<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A>.</P>";
+  echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.</P>";
   include('google_analytics.php');
   echo "\n\n</body>\n</html>\n";
 }
 
 function vendor_footer() {
   echo "<hr>\n<P>If you would like assistance using this tool, please contact ";
-  echo "<A HREF=\"mailto:".VENDOR_EMAIL."\">".VENDOR_EMAIL."</A>.  ";
+  echo "<A HREF=\"mailto:".$_SESSION['vendoremail']."\">".$_SESSION['vendoremail']."</A>.  ";
   include('google_analytics.php');
   echo "\n\n</body>\n</html>\n";
 }

@@ -1,17 +1,7 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
 $conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$Grid_Spacer=GRID_SPACER; // make it a variable so it can be substituted
-$logo=CON_LOGO; // make it a variable so it can be substituted
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="LogisticsPrint.php";
@@ -28,54 +18,54 @@ $additionalinfo.="(<A HREF=\"LogisticsPrint.php?order=time&csv=y\">CSV</A>).</P>
  services, features, and any other tech notes for printing */
 $query = <<<EOD
 SELECT
-    concat('<A HREF="MaintainRoomSched.php?selroom=',R.roomid,'">',R.roomname,'</A>') AS Room,
-    DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a&nbsp;%l:%i&nbsp;%p') as 'Start Time', 
-    concat('<A HREF=StaffAssignParticipants.php?selsess=',SCH.sessionid,'>',SCH.sessionid,'</A>') AS Sessionid,
-    concat('<a href=EditSession.php?id=',SCH.sessionid,'>',S.title,'</a>') Title,
-    Z.roomsetname as 'Room Set',
-    if((X.servicelist!=''),X.servicelist,'') as 'Services',
-    if((Y.featurelist!=''),Y.featurelist,'') as 'Features',
+    concat('<A HREF="MaintainRoomSched.php?selroom=',roomid,'">',roomname,'</A>') AS Room,
+    DATE_FORMAT(ADDTIME(constartdate,starttime),'%a&nbsp;%l:%i&nbsp;%p') as 'Start Time',
+    concat('<A HREF=StaffAssignParticipants.php?selsess=',sessionid,'>',sessionid,'</A>') AS Sessionid,
+    concat('<a href=EditSession.php?id=',sessionid,'>',title,'</a>') Title,
+    roomsetname as 'Room Set',
+    if((servicelist!=''),servicelist,'') as 'Services',
+    if((featurelist!=''),featurelist,'') as 'Features',
     if((servicenotes!=''),servicenotes,'') as 'Hotel and Tech Notes'
   FROM
-      Schedule SCH
-    JOIN Sessions S USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
+      Schedule
+    JOIN Sessions USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN Divisions USING (divisionid)
+    JOIN ConInfo USING (conid)
     LEFT JOIN  (SELECT
-           S.sessionid, 
-           GROUP_CONCAT(DISTINCT servicename SEPARATOR ', ') as 'servicelist' 
+           sessionid,
+           GROUP_CONCAT(DISTINCT servicename SEPARATOR ', ') as 'servicelist'
         FROM
-            Sessions S, 
-            SessionHasService SS, 
-            $ReportDB.Services SE
+            Sessions
+	  JOIN SessionHasService USING (sessionid,conid)
+          JOIN Services USING (serviceid,conid)
         WHERE
-          S.sessionid=SS.sessionid and
-          SE.serviceid=SS.serviceid and
-	  SE.conid=$conid
+	  conid=$conid
         GROUP BY
-           S.sessionid) X USING (sessionid)
+           sessionid) X USING (sessionid)
     LEFT JOIN (SELECT
-           S.sessionid, 
+           sessionid,
            GROUP_CONCAT(DISTINCT featurename SEPARATOR ', ') as 'featurelist'
         FROM
-            Sessions S, 
-            SessionHasFeature SF, 
-            Features F
+            Sessions
+	  JOIN SessionHasFeature USING (sessionid,conid)
+          JOIN Features USING (featureid,conid)
         WHERE
-          S.sessionid=SF.sessionid and
-          F.featureid=SF.featureid
+          conid=$conid
         GROUP BY
-          S.sessionid) Y USING (sessionid)
+          sessionid) Y USING (sessionid)
     LEFT JOIN (SELECT
-	  S.sessionid,
-	  RS.roomsetname
+	  sessionid,
+	  roomsetname
         FROM
-	    Sessions S,
-	    $ReportDB.RoomSets RS
+	    Sessions
+	  JOIN RoomSets USING (roomsetid)
         WHERE
-	  S.roomsetid=RS.roomsetid) Z USING (sessionid)
+	  conid=$conid) Z USING (sessionid)
   WHERE
-    R.display_order < 10
-  ORDER BY
+    divisionname in ('Programming') AND
+    conid=$conid
+ ORDER BY
 
 EOD;
 
@@ -104,7 +94,6 @@ for ($i=1; $i<=$rows; $i++) {
   }
  }
 $breakon[$newtableline]=$i;
-    
 
 // Page Rendering
 /* Check for the csv variable, to see if we should be dropping a table,
@@ -124,7 +113,7 @@ if ($_GET["csv"]=="y") {
   $pdf->SetTitle('Logistics Grid');
   $pdf->SetSubject('Logistics Grid');
   $pdf->SetKeywords('Zambia, Rooms, Logistics, Services, Features, Tech Notes, Grid');
-  $pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+  $pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
   $pdf->setHeaderFont(Array("helvetica", '', 10));
   $pdf->setFooterFont(Array("helvetica", '', 8));
   $pdf->SetDefaultMonospacedFont("courier");
@@ -141,7 +130,7 @@ if ($_GET["csv"]=="y") {
     $pdf->AddPage();
     $pdf->writeHTML($htmlstring, true, false, true, false, '');
   }
-  $pdf->Output(CON_NAME.'-grid.pdf', 'I');
+  $pdf->Output($_SESSION['conname'].'-grid.pdf', 'I');
  } else {
   topofpagereport($title,$description,$additionalinfo);
   for ($i=0; $i<$newtableline; $i++) {

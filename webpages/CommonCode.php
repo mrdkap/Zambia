@@ -95,7 +95,6 @@ foreach ($ConInfo_array_keys as $element) {
 define("CON_NAME",$ConInfo_array['conname']);
 define("CON_START_DATIM",$ConInfo_array['constartdate']);
 define("CON_URL",$ConInfo_array['conurl']);
-define("CON_LOGO",$ConInfo_array['conlogo']);
 define("GRID_SPACER",$ConInfo_array['congridspacer']);
 define("MY_AVAIL_KIDS",$ConInfo_array['conallowkids']);
 define("VENDOR_EMAIL",$ConInfo_array['vendoremail']);
@@ -262,8 +261,8 @@ function participant_header($title) {
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     maketab("My General Interests",may_I('my_gen_int_write'),"my_interests.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    if (may_I('Staff')) { 
-      maketab("Staff View",may_I('Staff'),"StaffPage.php"); 
+    if (may_I('Staff')) {
+      maketab("Staff View",may_I('Staff'),"StaffPage.php");
     }
     echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
@@ -324,11 +323,11 @@ function brainstorm_header($title) {
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     maketab("Suggest a Presenter",may_I('BrainstormSubmit'),"BrainstormSuggestPresenter.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    if(may_I('Participant')) { 
-      maketab("Participants View",may_I('Participant'),"welcome.php"); 
+    if(may_I('Participant')) {
+      maketab("Participants View",may_I('Participant'),"welcome.php");
     }
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    if(may_I('Staff')) { 
+    if(may_I('Staff')) {
       maketab("Staff View",may_I('Staff'),"StaffPage.php");
     }
     echo"  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020\" colspan=12>\n         View sessions proposed to date:</td>\n  </tr>";
@@ -386,8 +385,8 @@ function vendor_header($title) {
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     maketab("List",1,"VendorSearch.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    if (may_I('Vendor')) { 
-      maketab("Update",may_I('Vendor'),"VendorSubmitVendor.php"); 
+    if (may_I('Vendor')) {
+      maketab("Update",may_I('Vendor'),"VendorSubmitVendor.php");
     } else {
       maketab("New Vendor",may_I('BrainstormSubmit'),"VendorSubmitVendor.php");
     }
@@ -395,7 +394,7 @@ function vendor_header($title) {
     maketab("Apply",may_I('vendor_apply'),"VendorApply.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    if (may_I('Staff')) { 
+    if (may_I('Staff')) {
       maketab("Staff View",may_I('Staff'),"StaffPage.php");
     }
     echo "</td>\n  </tr>\n</table>\n";
@@ -435,7 +434,7 @@ function staff_footer() {
 
 function participant_footer() {
   echo "<hr>\n<P>If you need help or to tell us something that doesn't fit here, please email ";
-  echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>"; 
+  echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
   include('google_analytics.php');
   echo "\n\n</body>\n</html>\n";
 }
@@ -684,7 +683,7 @@ SELECT
 EOD;
 
     list($interested_rows,$interested_header_array,$interested_array)=queryreport($query,$link,"Broken Query - select_participant - InterestedTypes",$query,0);
-  
+
     // should only return one thing
     $interestedtypeid=$interested_array[1]['interestedtypeid'];
     if ($interestedtypeid=='') {
@@ -704,8 +703,8 @@ EOD;
 SELECT
     DISTINCT badgeid,
     concat(lastname,', ',firstname,' (',badgename,'/',pubsname,') - ',badgeid) AS pname
-  FROM 
-      $ReportDB.Participants 
+  FROM
+      $ReportDB.Participants
     JOIN $ReportDB.CongoDump USING (badgeid)
     JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
     JOIN $ReportDB.PermissionRoles USING (permroleid)
@@ -791,7 +790,7 @@ SELECT
     trackname,
     typename,
     title,
-    CASE 
+    CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
       WHEN MINUTE(duration)=0 THEN
@@ -809,7 +808,7 @@ SELECT
     JOIN Types USING (typeid)
     JOIN SessionStatuses USING (statusid)
   WHERE
-    conid=$conid 
+    conid=$conid
 EOD;
 
 // The following three lines are for debugging only
@@ -831,12 +830,11 @@ EOD;
   }
 }
 
-/* RenderPrecis display requires:  a populated dataarray containing rows with 
+/* RenderPrecis display requires:  a populated dataarray containing rows with
    $sessionid,$trackname,$typename,$title,$duration,$estatten,$pocketprogtext,$progguiddesc,$persppartinfo
    IN THAT ORDER
    it displays the precis view of the data. This goes hand in hand with the retrieve_select_from_db above.*/
 function RenderPrecis($result,$showlinks) {
-    
     echo "<hr>\n";
     echo "<TABLE>\n";
     echo "   <COL><COL><COL><COL><COL>\n";
@@ -1109,7 +1107,7 @@ function create_participant ($participant_arr) {
        } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($biotext)<$limit_array['min'][$biotype]['bio'])) {
 	$message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
 	$message.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
-       } else { 
+       } else {
 	$message.=update_bio_element($link,$title,$biotext,$newbadgeid,$biotype,$biolang,$biostate);
       }
     }
@@ -1265,7 +1263,7 @@ function edit_participant ($participant_arr) {
       // Clean up the posted string
       $teststring=stripslashes(htmlspecialchars_decode($participant_arr[$keyname]));
       $biostring=stripslashes(htmlspecialchars_decode($bioinfo[$keyname]));
-      
+
       if ($teststring != $biostring) {
 	if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($teststring)>$limit_array['max'][$biotype]['bio'])) {
 	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
@@ -1273,7 +1271,7 @@ function edit_participant ($participant_arr) {
 	} elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($teststring)<$limit_array['min'][$biotype]['bio'])) {
 	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
 	  $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
-	} else { 
+	} else {
 	  $message.=update_bio_element($link,$title,$teststring,$participant_arr['partid'],$biotype,$biolang,$biostate);
 	}
       }
@@ -1321,7 +1319,7 @@ function edit_participant ($participant_arr) {
   // Make $message additive (.=) to get all the information
   $message="Database updated successfully.<BR>";
   echo "<P class=\"regmsg\">".$message."\n";
-}    
+}
 
 function get_emailto_from_permrole($permrolename,$link,$title,$description) {
   /* Takes the permrolename and link, (and title and description, in
@@ -1347,7 +1345,7 @@ function send_fixed_email_info($emailto,$subject,$body,$link,$title,$description
   /* Takes the emailto (which might be a permrolename), subject, body,
      link (and title, and description in case of failure), resolve the
      emailto, if it is a permrolename, use the default from, and no
-     cc, and add an entry to the email queue. */ 
+     cc, and add an entry to the email queue. */
   global $link;
   $ReportDB=REPORTDB; // make it a variable so it can be substituted
   $BioDB=BIODB; // make it a variable so it can be substituted
@@ -1504,7 +1502,7 @@ function add_flow_report ($addreport,$addphase,$table,$group,$title,$description
 
 function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
   global $link;
- 
+
   // Establish the table name;
   $tablename=$table."Flow";
 
@@ -1597,8 +1595,7 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
  Reads Bios tables from db to populate returned array $bioinfo with the
  key of biotypename_biolang_biostatename_bio and the value of biotext eg:
  $bioinfo['web_en-us_raw_bio']='This bio is short and meaningless.'
- Returns bioinfo;
-*/ 
+ Returns bioinfo; */
 function getBioData($badgeid) {
   global $message_error,$message2,$link;
   $BioDB=BIODB; // make it a variable so it can be substituted
@@ -1682,7 +1679,7 @@ function update_bio_element ($link, $title, $newbio, $badgeid, $biotypename, $bi
   $biotext=mysql_real_escape_string($newbio,$link);
 
   $query=<<<EOD
-UPDATE 
+UPDATE
     $BioDB.Bios
     INNER JOIN $BioDB.BioTypes using (biotypeid)
     INNER JOIN $BioDB.BioStates using (biostateid)
@@ -1703,9 +1700,9 @@ EOD;
 
   if (mysql_affected_rows($link) == 0) {
 $query=<<<EOD
-INSERT INTO 
-    $BioDB.Bios (badgeid, biotypeid, biostateid, biolang, biotext) 
-  VALUES 
+INSERT INTO
+    $BioDB.Bios (badgeid, biotypeid, biostateid, biolang, biotext)
+  VALUES
     ('$badgeid',
      (SELECT biotypeid FROM $BioDB.BioTypes WHERE biotypename IN ('$biotypename')),
      (SELECT biostateid FROM $BioDB.BioStates WHERE biostatename IN ('$biostatename')),
@@ -1874,7 +1871,7 @@ EOD;
     $svgstring.='<text x="'.((($bar_width+$spacer)*$k)+$left_offset+($bar_width/2)).'" ';
     $svgstring.='y="'.($top_offset+$height+(($textyoffset+$fontsize)*2)).'" ';
     $svgstring.='text-anchor="middle">Out of '.$graph_count[$i].'</text>'."\n";
-    $k++;			      
+    $k++;
   }
 
   // Right-side percentage counts
@@ -1903,7 +1900,7 @@ EOD;
     $svgstring.='<text x="'.$left_offset.'" ';
     $svgstring.='y="'.($top_offset+$height+(($textyoffset+$fontsize)*$l)).'" ';
     $svgstring.='text-anchor="start">Q '.$i.': '.$qdesc[$i].'</text>'."\n";
-  } 
+  }
 
   // Close the group, and the SVG
   $svgstring.="</g>\n";
@@ -1992,7 +1989,7 @@ EOD;
 Tentatively the table should be something like:
  publimid int(11), // key
  conid int(11), // which con
- publimtype enum('min','max'), // top or bottom limit  
+ publimtype enum('min','max'), // top or bottom limit
  publimdest enum('web','book'), // what medium - future 'mobile'
  publimname varchar(15), // bio, desc, name, title, picture, uri - future biotypeid/descriptiontype + name?
  publimval int(11), // what the limit is

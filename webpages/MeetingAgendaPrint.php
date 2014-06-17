@@ -3,7 +3,6 @@ require_once('StaffCommonCode.php');
 require_once('../../tcpdf/config/lang/eng.php');
 require_once('../../tcpdf/tcpdf.php');
 global $link;
-$logo=CON_LOGO; // make it a variable so it can be substituted
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="genreport.php?reportname=meetingagendadisplay";
@@ -23,9 +22,9 @@ SELECT
     agendaid,
     concat(permrolename, ": ", agendaname, " at ", meetingtime, " for ", conname)
   FROM
-      $ReportDB.AgendaList
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN $ReportDB.ConInfo USING (conid)
+      AgendaList
+    JOIN PermissionRoles USING (permroleid)
+    JOIN ConInfo USING (conid)
   ORDER BY
     permrolename,
     conid,
@@ -65,7 +64,7 @@ $pdf->SetAuthor('Programming Team');
 $pdf->SetTitle('Personal Schedule Information');
 $pdf->SetSubject('Schedules for each individual.');
 $pdf->SetKeywords('Zambia, Presenters, Volunteers, Schedules');
-$pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
 $pdf->setHeaderFont(Array("helvetica", '', 10));
 $pdf->setFooterFont(Array("helvetica", '', 8));
 $pdf->SetDefaultMonospacedFont("courier");
@@ -88,9 +87,9 @@ SELECT
     meetingtime,
     conname
   FROM
-      $ReportDB.AgendaList
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN $ReportDB.ConInfo USING (conid)
+      AgendaList
+    JOIN PermissionRoles USING (permroleid)
+    JOIN ConInfo USING (conid)
   WHERE
     agendaid='$agendaid'
 

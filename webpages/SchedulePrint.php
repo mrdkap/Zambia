@@ -9,14 +9,6 @@ require_once('../../tcpdf/config/lang/eng.php');
 require_once('../../tcpdf/tcpdf.php');
 global $link;
 $conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$logo=CON_LOGO; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="SchedulePrint.php";
@@ -55,7 +47,7 @@ $pdf->SetAuthor('Programming Team');
 $pdf->SetTitle('Personal Schedule Information');
 $pdf->SetSubject('Schedules for each individual.');
 $pdf->SetKeywords('Zambia, Presenters, Volunteers, Schedules');
-$pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
 $pdf->setHeaderFont(Array("helvetica", '', 10));
 $pdf->setFooterFont(Array("helvetica", '', 8));
 $pdf->SetDefaultMonospacedFont("courier");
@@ -75,14 +67,14 @@ $pdf->SetFont('times', '', 12, '', true);
  lets us work from the premise of printing just one person's
  information. */
 $query = <<<EOD
-SELECT 
-    DISTINCT CONCAT(S.title, 
-        if((moderator=1),' (moderating)',''), 
-        if ((aidedecamp=1),' (assisting)',''), 
-        if((volunteer=1),' (outside wristband checker)',''), 
-        if((introducer=1),' (announcer/inside room attendant)',''),
+SELECT
+    DISTINCT CONCAT(title,
+	if((moderator in ("0","1","Yes")),' (moderating)',''),
+	if ((aidedecamp in ("0","1","Yes")),' (assisting)',''),
+	if((volunteer in ("0","1","Yes")),' (outside wristband checker)',''),
+	if((introducer in ("0","1","Yes")),' (announcer/inside room attendant)',''),
         ' - ',
-        DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p'),
+        DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p'),
         ' - ',
         CASE
           WHEN HOUR(duration) < 1 THEN concat(date_format(duration,'%i'),'min')
@@ -91,18 +83,19 @@ SELECT
           END,
         ' in room ',
 	roomname) as Title,
-    P.pubsname
+    pubsname
   FROM
-      Sessions S
-    JOIN Schedule SCH USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN ParticipantOnSession POS USING (sessionid)
-    JOIN $ReportDB.Participants P USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles PR USING (permroleid)
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN ParticipantOnSession USING (sessionid,conid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid, conid)
+    JOIN PermissionRoles PR USING (permroleid)
+    JOIN ConInfo USING (conid)
   WHERE
     permrolename in ('$group') AND
-    UHPR.conid=$conid
+    conid=$conid
 EOD;
 if ($individual) {$query.=" and
     badgeid='$individual'";}

@@ -6,14 +6,6 @@ require_once('../../tcpdf/tcpdf.php');
 
 /* Global Variables */
 global $link;
-$logo=CON_LOGO; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-//$conid=$_SESSION['conid'];  // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 /* Localizations */
 $_SESSION['return_to_page']="FeedbackPrint.php";
@@ -47,7 +39,7 @@ $feedback_array=getFeedbackData("");
 $query=<<<EOD
 SELECT
     if ((pubsname is NULL), '', GROUP_CONCAT(DISTINCT concat(pubsname,if((moderator=1),'(m)','')) SEPARATOR ', ')) AS 'Participants',
-    GROUP_CONCAT(DISTINCT DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p') SEPARATOR ', ') AS 'Start Time',
+    GROUP_CONCAT(DISTINCT DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p') SEPARATOR ', ') AS 'Start Time',
     GROUP_CONCAT(DISTINCT trackname SEPARATOR ', ') as 'Track',
     CASE
       WHEN HOUR(duration) < 1 THEN
@@ -63,21 +55,21 @@ SELECT
     Conid,
     Conname,
     concat(sessionid,"-",conid) AS "Sess-Con",
-    if((THQT.questiontypeid IS NULL),"",THQT.questiontypeid) AS questiontypeid,
+    if((questiontypeid IS NULL),"",questiontypeid) AS questiontypeid,
     Title,
     secondtitle AS Subtitle,
     concat(progguiddesc,'</P>') AS 'Web Description',
     concat(pocketprogtext,'</P>') AS 'Book Description'
   FROM
-      $ReportDB.Sessions S
-    JOIN $ReportDB.Schedule USING (sessionid,conid)
-    JOIN $ReportDB.Rooms USING (roomid)
-    JOIN $ReportDB.Tracks USING (trackid)
-    LEFT JOIN $ReportDB.ParticipantOnSession USING (sessionid,conid)
-    LEFT JOIN $ReportDB.Participants USING (badgeid)
-    LEFT JOIN $ReportDB.TypeHasQuestionType THQT USING (typeid,conid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
-    JOIN $ReportDB.ConInfo USING (conid)
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN Tracks USING (trackid)
+    LEFT JOIN ParticipantOnSession USING (sessionid,conid)
+    LEFT JOIN Participants USING (badgeid)
+    LEFT JOIN TypeHasQuestionType USING (typeid,conid)
+    JOIN PubStatuses USING (pubstatusid)
+    JOIN ConInfo USING (conid)
   WHERE
     $conid_or_badgeid AND
     pubstatusname in ('Public') AND
@@ -89,7 +81,7 @@ SELECT
     sessionid
   ORDER BY
     conid,
-    S.title
+    title
 EOD;
 
 // Retrieve query
@@ -107,10 +99,10 @@ class MYPDF extends TCPDF {
 $pdf = new MYPDF('p', 'mm', 'letter', true, 'UTF-8', false);
 $pdf->SetCreator('Zambia');
 $pdf->SetAuthor('Programming Team');
-$pdf->SetTitle('Feedback' . CON_NAME);
+$pdf->SetTitle('Feedback' . $_SESSION['conname']);
 $pdf->SetSubject('Feedback for the Classes and Panels');
 $pdf->SetKeywords('Zambia, Presenters, Feedback');
-$pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
 $pdf->setHeaderFont(Array("helvetica", '', 10));
 $pdf->setFooterFont(Array("helvetica", '', 8));
 $pdf->SetDefaultMonospacedFont("courier");
@@ -213,9 +205,6 @@ for ($i=1; $i<=$elements; $i++) {
   }
   if ($element_array[$i]['Roomname']) {
     $workstring.=sprintf("&mdash; <i>%s</i>",$element_array[$i]['Roomname']);
-  }
-  if ((strtotime($ConStartDatim)+(60*60*24*$ConNumDays)) > time()) {
-    $workstring.=sprintf("&mdash; %s",$element_array[$i]['iCal']);
   }
   if ($element_array[$i]['Attended']) {
     $workstring.=sprintf("&mdash; About %s Attended",$element_array[$i]['Attended']);

@@ -8,15 +8,7 @@ if (may_I("Staff")) {
 require_once('../../tcpdf/config/lang/eng.php');
 require_once('../../tcpdf/tcpdf.php');
 global $link;
-$conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$logo=CON_LOGO; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="WelcomeLettersPrint.php";
@@ -68,7 +60,7 @@ $pdf->SetAuthor('Programming Team');
 $pdf->SetTitle('Welcome Letters');
 $pdf->SetSubject('Welcome Letters for our Participants');
 $pdf->SetKeywords('Zambia, Presenters, Volunteers, Welcome Letters');
-$pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
 $pdf->setHeaderFont(Array("helvetica", '', 10));
 $pdf->setFooterFont(Array("helvetica", '', 8));
 $pdf->SetDefaultMonospacedFont("courier");
@@ -93,13 +85,13 @@ SELECT
     GROUP_CONCAT(DISTINCT typename) as Type
   FROM
       ParticipantOnSession
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN Sessions USING (sessionid)
-    JOIN $ReportDB.Types USING (typeid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN Sessions USING (sessionid,conid)
+    JOIN Types USING (typeid)
   WHERE
-    UHPR.conid=$conid AND
+    conid=$conid AND
     permrolename IN ($role_string) AND
     typename IN ($type_string)
 

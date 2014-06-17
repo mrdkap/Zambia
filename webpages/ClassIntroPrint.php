@@ -9,14 +9,6 @@ require_once('../../tcpdf/config/lang/eng.php');
 require_once('../../tcpdf/tcpdf.php');
 global $link;
 $conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$logo=CON_LOGO; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="ClassIntroPrint.php";
@@ -47,7 +39,7 @@ $pdf->SetAuthor('Programming Team');
 $pdf->SetTitle('Volunteer Introduction Sheets');
 $pdf->SetSubject('Introductions for the Classes and Panels');
 $pdf->SetKeywords('Zambia, Presenters, Volunteers, Introductions, Intros');
-$pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
 $pdf->setHeaderFont(Array("helvetica", '', 10));
 $pdf->setFooterFont(Array("helvetica", '', 8));
 $pdf->SetDefaultMonospacedFont("courier");
@@ -68,25 +60,26 @@ $pdf->SetFont('helvetica', '', 10, '', true);
  us to print one person's information, as well. */
 $query = <<<EOD
 SELECT
-    pubsname, 
+    pubsname,
     title,
-    DATE_FORMAT(ADDTIME("$ConStartDatim",starttime), '%a %l:%i %p') as StartTime,
+    DATE_FORMAT(ADDTIME(constartdate,starttime), '%a %l:%i %p') as StartTime,
     roomname,
     sessionid,
     typename
   FROM
-      Sessions S
-    JOIN Schedule SCH USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN ParticipantOnSession POS USING (sessionid)
-    JOIN $ReportDB.Participants P USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles PR USING (permroleid)
-    JOIN $ReportDB.Types T USING (typeid)
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN ParticipantOnSession USING (sessionid,conid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN Types USING (typeid)
+    JOIN ConInfo USING (conid)
   WHERE
-    permrolename in ('Programming','SuperProgramming') and
-    introducer=1 and
-    UHPR.conid=$conid and
+    permrolename in ('Programming','SuperProgramming') AND
+    introducer in ('1', 'Yes') AND
+    conid=$conid AND
     typename in ('Panel','Class')
 EOD;
 
@@ -94,7 +87,7 @@ if ($individual) {$query.=" and
     POS.badgeid='$individual'";}
 $query.="
   ORDER BY
-    pubsname, SCH.starttime";
+    pubsname, starttime";
 
 // Retrieve query
 list($classcount,$classcount_header,$classlist_array)=queryreport($query,$link,$title,$description,0);
@@ -102,31 +95,32 @@ list($classcount,$classcount_header,$classlist_array)=queryreport($query,$link,$
 /* Get the Bio(s) of the presenter(s). This is currently skipped
  if it is a panel, and let them introduce themselves. */
 $query1 = <<<EOD
-SELECT 
-    P.pubsname,
-    BWE.biotext,
-    S.sessionid,
-    POS.moderator
+SELECT
+    pubsname,
+    biotext,
+    sessionid,
+    moderator
   FROM
-      Sessions S
-    LEFT JOIN ParticipantOnSession POS ON S.sessionid=POS.sessionid
-    LEFT JOIN $ReportDB.Participants P ON POS.badgeid=P.badgeid
-    LEFT JOIN (SELECT 
+      Sessions
+    LEFT JOIN ParticipantOnSession USING (sessionid,conid)
+    LEFT JOIN Participants USING (badgeid)
+    LEFT JOIN (SELECT
                    badgeid,
                    biotext
                  FROM
-                     $BioDB.Bios
-                   JOIN $BioDB.BioTypes USING (biotypeid)
-                   JOIN $BioDB.BioStates USING (biostateid)
+                     Bios
+                   JOIN BioTypes USING (biotypeid)
+                   JOIN BioStates USING (biostateid)
                  WHERE
-                   biotypename in ('web') AND
-	           biostatename in ('edited')) BWE on P.badgeid=BWE.badgeid
+                   biotypename in ('book') AND
+	           biostatename in ('edited')) BWE USING (badgeid)
   WHERE
-    POS.aidedecamp=0 AND
-    POS.volunteer=0 AND
-    POS.introducer=0
+    conid=$conid AND
+    aidedecamp not in ("1", "Yes") AND
+    volunteer not in ("1", "Yes")  AND
+    introducer not in ("1", "Yes")
   ORDER BY
-    POS.moderator DESC
+    moderator DESC
 EOD;
 
 // Retrieve query
@@ -138,8 +132,8 @@ SELECT
     sessionid,
     pubsname
   FROM
-      $ReportDB.SessionHasSponsor
-    JOIN $ReportDB.Participants USING (badgeid)
+      SessionHasSponsor
+    JOIN Participants USING (badgeid)
 EOD;
 
 // Retrieve query

@@ -3,12 +3,6 @@ require_once('StaffCommonCode.php');
 $title="Compensation Information";
 $description="<P>Here is all the compensation entered for all the people.</P>\n";
 $additionalinfo="<P>To <A HREF=\"StaffEditCompensation.php\">change</A> someone's compensation, click on their name.</P>\n";
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // Check to see if page can be displayed
 if (!may_I("SuperLiaison") AND !may_I("Treasurer")) {
@@ -39,7 +33,7 @@ SELECT
     comptypename,
     comptypedescription
   FROM
-      $ReportDB.CompensationTypes
+      CompensationTypes
   ORDER BY
     comptypeid;
 EOD;
@@ -71,9 +65,9 @@ SELECT
     compamount,
     compdescription
   FROM
-      $ReportDB.Compensation
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN $ReportDB.ConInfo USING (conid)
+      Compensation
+    JOIN Participants USING (badgeid)
+    JOIN ConInfo USING (conid)
   WHERE
     comptypeid=$i
 EOD;
@@ -106,9 +100,9 @@ SELECT
     conid,
     pubsname
   FROM
-      $ReportDB.Interested
-    JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
-    JOIN $ReportDB.Participants USING (badgeid)
+      Interested
+    JOIN InterestedTypes USING (interestedtypeid)
+    JOIN Participants USING (badgeid)
 EOD;
   
 // Retrieve query
@@ -154,7 +148,7 @@ foreach ($conid_array as $conid) {
 }
 
 if ($_GET["csv"]=="y") {
-  topofpagecsv(CON_NAME."-Presenter_Compensation.csv");
+  topofpagecsv($_SESSION['conname']."-Presenter_Compensation.csv");
   echo rendercsvreport(1,$rows,$header_array,$report_array);
  } elseif ($_GET["print_p"]=="y") {
   require_once('../../tcpdf/config/lang/eng.php');
@@ -165,7 +159,7 @@ if ($_GET["csv"]=="y") {
   $pdf->SetTitle('Presenter Compensation');
   $pdf->SetSubject('Presenter Compensation');
   $pdf->SetKeywords('Zambia, Presenter Compensation');
-  $pdf->SetHeaderData($logo, 70, CON_NAME, CON_URL);
+  $pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
   $pdf->setHeaderFont(Array("helvetica", '', 10));
   $pdf->setFooterFont(Array("helvetica", '', 8));
   $pdf->SetDefaultMonospacedFont("courier");
@@ -183,7 +177,7 @@ if ($_GET["csv"]=="y") {
   $htmlstring=renderhtmlreport(1,$comptypecount,$key_header_array,$key_array);
   $pdf->AddPage();
   $pdf->writeHTML($htmlstring, true, false, true, false, '');
-  $pdf->Output(CON_NAME.'-Presenter_Compensation.pdf', 'I');
+  $pdf->Output($_SESSION['conname'].'-Presenter_Compensation.pdf', 'I');
 } else {
   topofpagereport($title,$description,$additionalinfo);
   echo renderhtmlreport(1,$rows,$header_array,$report_array);

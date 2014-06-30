@@ -3,14 +3,7 @@ require_once('StaffCommonCode.php');
 
 /* Global Variables */
 global $link;
-$conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="BadgesPrint.php";
@@ -153,15 +146,15 @@ $positional_array[2]['col']=252;
 
 /* This query grabs all the schedule elements to be rated, for the selected time period. */
 $query=<<<EOD
-SELECT 
+SELECT
     DISTINCT badgeid,
     pubsname,
-    CONCAT(title, 
-        if((moderator=1),' (moderating)',''), 
-        if ((aidedecamp=1),' (assisting)',''), 
-        if((volunteer=1),' (outside wristband checker)',''), 
-	    if((introducer=1),' (announcer/inside room attendant)','')) AS Title,
-     CONCAT(DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p'),
+    CONCAT(title,
+      if((moderator in ("0","1","YES")),' (moderating)',''),
+      if((aidedecamp in ("0","1","YES")),' (assisting)',''),
+      if((volunteer in ("0","1","YES")),' (outside wristband checker)',''),
+      if((introducer in ("0","1","YES")),' (announcer/inside room attendant)','')) AS Title,
+     CONCAT(DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p'),
 	' - ',
         CASE
           WHEN HOUR(duration) < 1 THEN concat(date_format(duration,'%i'),'min')
@@ -173,16 +166,17 @@ SELECT
      sessionid
   FROM
       Sessions
-    JOIN Schedule USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN ParticipantOnSession USING (sessionid)
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN ParticipantOnSession USING (sessionid,conid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole UHPR USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN ConInfo USING (conid)
   WHERE
     permrolename IN ('Participant','General','Programming') AND
     $whichparticipants
-    UHPR.conid=$conid
+    conid=$conid
   ORDER BY
     pubsname,
     starttime

@@ -4,17 +4,8 @@ require_once ("CommonIcal.php");
 global $link;
 
 // Fixed, or setup variables
-$ConStartDatim=CON_START_DATIM;
-$ConName=CON_NAME;
-$ProgramEmail=PROGRAM_EMAIL;
 $DBHostname=DBHOSTNAME;
-$url=CON_URL;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 $dtstamp=date('Ymd').'T'.date('His');
 $title="Track iCal generation page";
@@ -25,13 +16,15 @@ $trackid="";
 // Header query, to list the tracks
 $query= <<<EOD
 SELECT
-    DISTINCT concat("<A HREF=TrackScheduleIcal.php?trackid=",T.trackid,">",T.trackname,"</A>") AS "Tracks"
+    DISTINCT concat("<A HREF=TrackScheduleIcal.php?trackid=",trackid,">",trackname,"</A>") AS "Tracks"
   FROM
-      $ReportDB.Tracks T,
-      Schedule SCH,
-      Sessions S
+      Tracks
+    JOIN Sessions USING (trackid)
+    JOIN Schedule USING (sessionid,conid)
+    JOIN PubStatuses USING (pubstatusid)
   WHERE
-    S.trackid=T.trackid
+    pubstatusname in ('Public') AND
+    conid=$conid
   ORDER BY
     trackname
 EOD;
@@ -52,85 +45,66 @@ if (isset($_GET['trackid'])) {
 // First query, to establish the schedarray for the schedule elements to put into the calendar
 $query= <<<EOD
 SELECT
-    S.sessionid,
+    sessionid,
     trackname,
     title,
     roomname,
     progguiddesc,
-    DATE_FORMAT(ADDTIME('$ConStartDatim', starttime),'%Y%m%dT%H%i%s') AS dtstart,
-    DATE_FORMAT(ADDTIME(ADDTIME('$ConStartDatim', starttime), duration), '%Y%m%dT%H%i%s') AS dtend
+    DATE_FORMAT(ADDTIME(constartdate, starttime),'%Y%m%dT%H%i%s') AS dtstart,
+    DATE_FORMAT(ADDTIME(ADDTIME(constartdate, starttime), duration), '%Y%m%dT%H%i%s') AS dtend
   FROM
-      Sessions S,
-      $ReportDB.Rooms R,
-      Schedule SCH,
-      $ReportDB.Tracks T
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN Tracks USING (trackid)
+    JOIN ConInfo USING (conid)
   WHERE
-    T.trackid="$trackid" and
-    R.roomid = SCH.roomid and
-    S.sessionid = SCH.sessionid and
-    S.trackid = T.trackid
+    trackid="$trackid" AND
+    conid=$conid
   ORDER BY
     starttime
 EOD;
-if (($result=mysql_query($query,$link))===false) {
-  staff_header($title);
-  echo "<P>An Error occured:\n";
-  echo "$result\n$link\n$query\n Error retrieving data from database.</P>\n";
-  staff_footer();
-  exit();
- }
-if (0==($schdrows=mysql_num_rows($result))) {
+
+list($schdrows,$schdheader_array,$schdarray)=queryreport($query,$link,$title,$description,0);
+
+if ($schdrows==0) {
   topofpagereport($title,$description,$additionalinfo);
   echo renderhtmlreport(1,$rows,$header_array,$report_array);
   correct_footer();
   exit();
  }
-for ($i=1; $i<=$schdrows; $i++) {
-  list($schdarray[$i]["sessionid"],$schdarray[$i]["trackname"],
-       $schdarray[$i]["title"],$schdarray[$i]["roomname"],$schdarray[$i]["progguiddesc"],
-       $schdarray[$i]["dtstart"],$schdarray[$i]["dtend"])=mysql_fetch_array($result, MYSQL_NUM);
- }
-$filename=str_replace(" ","_",$schdarray[$i-1]["trackname"]);
-//  $filename=$schedarray;
-//  $filename="2";
+
+$filename=str_replace(" ","_",$schdarray[1]["trackname"]);
 
 // Second query establishes the people in a particular schedule element.
 $query= <<<EOD
 SELECT
-    POS.sessionid,
-    CD.badgename,
-    P.pubsname,
-    POS.moderator,
-    POS.volunteer,
-    POS.introducer,
-    POS.aidedecamp
+    sessionid,
+    badgename,
+    pubsname,
+    moderator,
+    volunteer,
+    introducer,
+    aidedecamp
   FROM
-      ParticipantOnSession POS
-    JOIN $ReportDB.CongoDump CD USING(badgeid)
-    JOIN $ReportDB.Participants P USING(badgeid)
+      ParticipantOnSession
+    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
   WHERE
-    POS.sessionid in (SELECT
-                          sessionid 
-                        FROM
-                            Sessions
-                        WHERE trackid='$trackid')
+    sessionid in (SELECT
+          sessionid 
+        FROM
+            Sessions
+        WHERE
+          trackid='$trackid' AND
+          conid=$conid) AND
+    conid=$conid
   ORDER BY
     sessionid,
     moderator DESC
 EOD;
-if (!$result=mysql_query($query,$link)) {
-  staff_header($title);
-  echo "An Error occured:\n";
-  echo "$result\n$link\n$query\n Error retrieving data from database.\n";
-  staff_footer();
-  exit();
- }
-$partrows=mysql_num_rows($result);
-for ($i=1; $i<=$partrows; $i++) {
-  list($partarray[$i]["sessionid"],$partarray[$i]["badgename"],$partarray[$i]["pubsname"],
-       $partarray[$i]["moderator"],$partarray[$i]["volunteer"],$partarray[$i]["introducer"],
-       $partarray[$i]["aidedecamp"])=mysql_fetch_array($result, MYSQL_NUM);
- }
+
+list($partrows,$partheader_array,$partarray)=queryreport($query,$link,$title,$description,0);
 
 header("Content-Type: text/Calendar");
 header("Content-Disposition: inline; filename=$filename-calendar.ics");
@@ -146,15 +120,15 @@ for ($i=1; $i<=$schdrows; $i++) {
   // CREATED should be DTSTAMP
   // SEQUENCE should be the loop counter
   // PRIORITY is set to 5, arbitrarily
-  // CATEGORY should be "$ConName Event Calendar"
+  // CATEGORY should be "conname Event Calendar"
   // SUMMARY should be title -- trackname, possibly add sessionid?
   // LOCATION should be roomname
-  // DTSTART should be garnered from the $ConStartDatim + starttime
+  // DTSTART should be garnered from the constartdate + starttime
   // DTSTART:YYYYMMDDTHHmmSS Y=year M=month D=day T=marker H=hour m=minute S=second
-  // DTEND is chosen over DURATION because it's easier to just do $ConStartDatim + starttime + duration
+  // DTEND is chosen over DURATION because it's easier to just do constartdate + starttime + duration
   // DTEND:YYYYMMDDTHHmmSS Y=year M=month D=day T=marker H=hour m=minute S=second
   // DESCRIPTION should include the progguiddesc, and all the presneter information ... this needs to be tweaked
-  // ORGANIZER should be set to the $ConName and the MAILTO: set to the $ProgramEmail
+  // ORGANIZER should be set to the conname and the MAILTO: set to the programemail
   // TRANSP is set to OPAQUE
   // CLASS is set to PUBLIC
 
@@ -165,7 +139,7 @@ for ($i=1; $i<=$schdrows; $i++) {
   echo "CREATED:$dtstamp\n";
   echo "SEQUENCE:$i\n";
   echo "PRIORITY:5\n";
-  echo "CATEGORY:$ConName Event Calendar\n";
+  echo "CATEGORY:".$_SESSION['conname']." Event Calendar\n";
   echo "SUMMARY:".$schdarray[$i]["title"]." -- ".$schdarray[$i]["trackname"]."\n";
   echo "LOCATION:".$schdarray[$i]["roomname"]."\n";
   echo "DTSTART;TZID=America/New_York:".$schdarray[$i]["dtstart"]."\n"; 
@@ -194,7 +168,7 @@ for ($i=1; $i<=$schdrows; $i++) {
     echo "\\n\\n ";
   }
   echo "\n";
-  echo "ORGANIZER;CN=$ConName:MAILTO:$ProgramEmail\n";
+  echo "ORGANIZER;CN=".$_SESSION['conname'].":MAILTO:".$_SESSION['programemail']."\n";
   echo "TRANSP:OPAQUE\n";
   echo "CLASS:PUBLIC\n";
   echo "END:VEVENT\n";

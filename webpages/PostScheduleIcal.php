@@ -5,17 +5,7 @@ require_once ("CommonIcal.php");
 global $link;
 
 // Fixed, or setup variables
-$ConStartDatim=CON_START_DATIM;
-$ConName=CON_NAME;
-$ProgramEmail=PROGRAM_EMAIL;
 $DBHostname=DBHOSTNAME;
-$url=CON_URL;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 $dtstamp=date('Ymd').'T'.date('His');
 if (isset($_GET['pubsname'])) {
@@ -26,85 +16,71 @@ if (isset($_GET['pubsname'])) {
   $pubsname="Not Attending This Con";
 }
 
+$conid=$_GET['conid'];
+
+// Test for conid being passed in
+if ($conid == "") {
+  $conid=$_SESSION['conid'];
+}
+
 // Establish the schedual array
 $query= <<<EOD
 SELECT
-    POS.sessionid,
+    sessionid,
     trackname,
     title,
     roomname,
     progguiddesc,
-    DATE_FORMAT(ADDTIME('$ConStartDatim', starttime),'%Y%m%dT%H%i%s') AS dtstart,
-    DATE_FORMAT(ADDTIME(ADDTIME('$ConStartDatim', starttime), duration), '%Y%m%dT%H%i%s') AS dtend
+    DATE_FORMAT(ADDTIME(constartdate, starttime),'%Y%m%dT%H%i%s') AS dtstart,
+    DATE_FORMAT(ADDTIME(ADDTIME(constartdate, starttime), duration), '%Y%m%dT%H%i%s') AS dtend
   FROM
-      ParticipantOnSession POS,
-      Sessions S,
-      $ReportDB.Rooms R,
-      Schedule SCH,
-      $ReportDB.Tracks T,
-      $ReportDB.Participants P
+      ParticipantOnSession
+    JOIN Sessions USING (sessionid,conid)
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN Tracks USING (trackid)
+    JOIN Participants USING (badgeid)
+    JOIN ConInfo USING (conid)
   WHERE
-    P.pubsname='$pubsname' and
-    POS.badgeid=P.badgeid and
-    POS.sessionid = S.sessionid and
-    R.roomid = SCH.roomid and
-    S.sessionid = SCH.sessionid and
-    S.trackid = T.trackid
+    pubsname='$pubsname' AND
+    conid=$conid
   ORDER BY
     starttime
 EOD;
 
-if (($result=mysql_query($query,$link))===false) {
-  echo "An Error occured:\n";
-  echo "$result\n$link\n$query\n Error retrieving data from database.\n";
-  exit();
-}
-$schdrows=mysql_num_rows($result);
-for ($i=1; $i<=$schdrows; $i++) {
-  list($schdarray[$i]["sessionid"],$schdarray[$i]["trackname"],
-       $schdarray[$i]["title"],$schdarray[$i]["roomname"],$schdarray[$i]["progguiddesc"],
-       $schdarray[$i]["dtstart"],$schdarray[$i]["dtend"])=mysql_fetch_array($result, MYSQL_NUM);
-}
+list($schdrows,$schdheader_array,$schdarray)=queryreport($query,$link,"PostScheduleIcal",$query,0);
 
 // Establish the participant array
 $query= <<<EOD
 SELECT
-    POS.sessionid,
-    CD.badgename,
-    P.pubsname,
-    POS.moderator,
-    POS.volunteer,
-    POS.introducer,
-    POS.aidedecamp
+    sessionid,
+    badgename,
+    pubsname,
+    moderator,
+    volunteer,
+    introducer,
+    aidedecamp
   FROM
-      ParticipantOnSession POS
-    JOIN $ReportDB.CongoDump CD USING(badgeid)
-    JOIN $ReportDB.Participants P USING(badgeid)
+      ParticipantOnSession
+    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
   WHERE
-    POS.sessionid in (SELECT
-                          sessionid 
-                        FROM
-                            ParticipantOnSession POS1
-                            JOIN $ReportDB.Participants P1 USING (badgeid)
-                        WHERE pubsname='$pubsname')
+    sessionid IN (
+      SELECT
+          sessionid 
+        FROM
+            ParticipantOnSession
+          JOIN Participants USING (badgeid)
+        WHERE 
+          pubsname='$pubsname' AND
+          conid=$conid) AND
+    conid=$conid
   ORDER BY
     sessionid,
     moderator DESC
 EOD;
 
-if (!$result=mysql_query($query,$link)) {
-  echo "An Error occured:\n";
-  echo "$result\n$link\n$query\n Error retrieving data from database.\n";
-  exit();
-}
-
-$partrows=mysql_num_rows($result);
-
-for ($i=1; $i<=$partrows; $i++) {
-  list($partarray[$i]["sessionid"],$partarray[$i]["badgename"],$partarray[$i]["pubsname"],
-       $partarray[$i]["moderator"],$partarray[$i]["volunteer"],$partarray[$i]["introducer"],
-       $partarray[$i]["aidedecamp"])=mysql_fetch_array($result, MYSQL_NUM);
-}
+list($partrows,$partheader_array,$partarray)=queryreport($query,$link,"PostScheduleIcal",$query,0);
 
 $filename=str_replace(" ","_",$pubsname);
 header("Content-Disposition: inline; filename=$filename-calendar.ics");
@@ -120,15 +96,15 @@ for ($i=1; $i<=$schdrows; $i++) {
     CREATED should be DTSTAMP
     SEQUENCE should be the loop counter
     PRIORITY is set to 5, arbitrarily
-    CATEGORY should be "$ConName Event Calendar"
+    CATEGORY should be "conname Event Calendar"
     SUMMARY should be title -- trackname, possibly add sessionid?
     LOCATION should be roomname
-    DTSTART should be garnered from the $ConStartDatim + starttime
+    DTSTART should be garnered from the constartdate + starttime
     DTSTART:YYYYMMDDTHHmmSS Y=year M=month D=day T=marker H=hour m=minute S=second
-    DTEND is chosen over DURATION because it's easier to just do $ConStartDatim + starttime + duration
+    DTEND is chosen over DURATION because it's easier to just do constartdate + starttime + duration
     DTEND:YYYYMMDDTHHmmSS Y=year M=month D=day T=marker H=hour m=minute S=second
     DESCRIPTION should include the progguiddesc, and all the presneter information ... this needs to be tweaked
-    ORGANIZER should be set to the $ConName and the MAILTO: set to the $ProgramEmail
+    ORGANIZER should be set to the conname and the MAILTO: set to the programemail
     TRANSP is set to OPAQUE
     CLASS is set to PUBLIC
   */  
@@ -139,7 +115,7 @@ for ($i=1; $i<=$schdrows; $i++) {
   echo "CREATED:$dtstamp\n";
   echo "SEQUENCE:$i\n";
   echo "PRIORITY:5\n";
-  echo "CATEGORY:$ConName Event Calendar\n";
+  echo "CATEGORY:".$_SESSION['conname']." Event Calendar\n";
   echo "SUMMARY:".$schdarray[$i]["title"]." -- ".$schdarray[$i]["trackname"]."\n";
   echo "LOCATION:".$schdarray[$i]["roomname"]."\n";
   echo "DTSTART;TZID=America/New_York:".$schdarray[$i]["dtstart"]."\n"; 
@@ -168,7 +144,7 @@ for ($i=1; $i<=$schdrows; $i++) {
     echo "\\n\\n ";
   }
   echo "\n";
-  echo "ORGANIZER;CN=$ConName:MAILTO:$ProgramEmail\n";
+  echo "ORGANIZER;CN=".$_SESSION['conname'].":MAILTO:".$_SESSION['programemail']."\n";
   echo "TRANSP:OPAQUE\n";
   echo "CLASS:PUBLIC\n";
   echo "END:VEVENT\n";

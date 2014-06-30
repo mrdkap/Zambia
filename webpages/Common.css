@@ -454,6 +454,18 @@ LABEL.dense {
     border-bottom: none;
     border-left: none
     }
+.border1010d {
+    border-top: solid black 1px;
+    border-right: dashed black 1px;
+    border-bottom: solid black 1px;
+    border-left: dashed black 1px
+    }
+.border1011d {
+    border-top: solid black 1px;
+    border-right: dashed black 1px;
+    border-bottom: solid black 1px;
+    border-left: solid black 1px
+    }
 .border1101 {
     border-top: solid black 1px;
     border-right: solid black 1px;

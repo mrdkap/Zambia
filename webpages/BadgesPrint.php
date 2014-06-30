@@ -7,14 +7,6 @@ require_once('StaffCommonCode.php');
 /* Global Variables */
 global $link;
 $conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM;
-$ConName=CON_NAME; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // This should probably be generated from the ConInfo.
 $ConLogo="NELA-LOGO.eps";
@@ -224,15 +216,15 @@ SELECT
   if ((permrolename='Participant'),concat("Presenter"),concat("Volunteer")) AS Role
   FROM
       Sessions
-    JOIN Schedule USING (sessionid)
-    JOIN ParticipantOnSession USING (sessionid)
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+    JOIN Schedule USING (sessionid,conid)
+    JOIN ParticipantOnSession USING (sessionid,conid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
   WHERE
     permrolename IN ('Participant','General','Programming') AND
     $whichparticipants
-    UHPR.conid=$conid
+    conid=$conid
   ORDER BY
     pubsname,
     permroleid
@@ -261,7 +253,7 @@ while ($k <= $rows) {
 	echo $participant_array[$k]['Role'];
 	echo ") show\n";
 	echo "ISOArial 16 scalefont setfont\n3.000000 55.000000 moveto\n( ";
-	echo $ConName;
+	echo $_SESSION['conname'];
 	echo ") show\n";
 	echo "ISOArial-Bold 24 scalefont setfont\n3.000000 95.000000 moveto\n( ";
 	echo $participant_array[$k++]['pubsname'];

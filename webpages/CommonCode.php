@@ -94,7 +94,6 @@ foreach ($ConInfo_array_keys as $element) {
 // Somewhere DOUBLE_SCHEDULE dissapeared.  Find it, and fix it.
 define("CON_NAME",$ConInfo_array['conname']);
 define("CON_START_DATIM",$ConInfo_array['constartdate']);
-define("CON_URL",$ConInfo_array['conurl']);
 define("VENDOR_EMAIL",$ConInfo_array['vendoremail']);
 define("PROGRAM_EMAIL",$ConInfo_array['programemail']);
 
@@ -157,6 +156,7 @@ function posting_header($title) {
   echo "<head>\n";
   echo "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=latin-1\">\n";
   echo "  <title>Zambia -- $ConName -- $title</title>\n";
+  echo "  <link rel=\"stylesheet\" href=\"Common.css\" type=\"text/css\">\n";
   if (file_exists($HeaderTemplateFile)) {
     readfile($HeaderTemplateFile);
     echo "<H2 class=\"head\" align=\"center\"><A HREF=\"http://$ConUrl\">Return</A> to the programming website</H2>\n";

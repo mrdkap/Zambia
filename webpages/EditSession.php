@@ -2,12 +2,7 @@
 require_once('StaffCommonCode.php');
 require ('RenderEditCreateSession.php');
 global $name, $email, $message2;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 get_name_and_email($name,$email);
 $error=false;
@@ -61,11 +56,12 @@ SELECT
     concat(trackname,' - ',sessionid,' - ',title) as sname
   FROM
       Sessions
-    JOIN $ReportDB.Tracks USING (trackid)
-    JOIN $ReportDB.SessionStatuses USING (statusid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
+    JOIN PubStatuses USING (pubstatusid)
   WHERE
     may_be_scheduled=1 AND
+    conid=$conid AND
     pubstatusname in ($pubstatus_string)
   ORDER BY
     trackname,

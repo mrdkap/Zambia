@@ -6,17 +6,8 @@ if (may_I("Staff")) {
   require_once('PartCommonCode.php');
  }
 global $link;
-
 $conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ConNumDays=CON_NUM_DAYS; // make it a variable so it can be substituted
-$GridSpacer=GRID_SPACER; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$GridSpacer=$_SESSION['congridspacer']; // make it a variable so it can be substituted
 
 // LOCALIZATIONS
 $title="Availability and Scheduled times for Programming";
@@ -28,11 +19,11 @@ $description="<P>If you are seeing this, as opposed to the picture, something fa
    con, added to ConStartSeconds which indicates where the grid is to
    stop. */
 
-$ConStartSeconds=strtotime($ConStartDatim);
-$ConEndSeconds=$ConStartSeconds+($ConNumDays*86400);
+$ConStartSeconds=strtotime($_SESSION['constartdate']);
+$ConEndSeconds=$ConStartSeconds+($_SESSION['connumdays']*86400);
 
 /* Build the dtime array.  This basically jumps the number of seconds
-   in the GRID_SPACER variable and uses that to generate the lables.
+   in the congridspacer variable and uses that to generate the lables.
    At midnight switch to the dayname, and at noon, use noon. */
 
 $tmp_sec=$ConStartSeconds;
@@ -60,9 +51,9 @@ $pubsname_array=array();
 /* Pull the badgeid, pubsname, Starttime, and Endtime from the
    participant's availability table in the database.  The Starttime is
    figured from the count of seconds for the starttime from the start
-   of the con, divided by the GRID_SPACER variable, so it matches the
+   of the con, divided by the congridspacer variable, so it matches the
    grids.  The Endtime is figured from the count of seconds for the
-   endtime from the start of the con, divided by the GRID_SPACER
+   endtime from the start of the con, divided by the congridspacer
    variable, so it matches the grids. */
 
 $query = <<<EOD
@@ -72,14 +63,13 @@ SELECT
     TIME_TO_SEC(starttime) DIV $GridSpacer AS Starttime,
     TIME_TO_SEC(endtime) DIV $GridSpacer AS Endtime
   FROM
-      $ReportDB.ParticipantAvailabilityTimes PAT
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      ParticipantAvailabilityTimes
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
   WHERE
     permrolename in ('Programming') AND
-    UHPR.conid=$conid AND
-    PAT.conid=$conid
+    conid=$conid
   ORDER BY
     pubsname
 EOD;
@@ -100,11 +90,11 @@ for ($i=1; $i<=$avail_rows; $i++) {
 /* Pull the badgeid, pubsname, sessionid, Starttime, and Endtime from
    the participant being on a session in the database.  The Starttime
    is figured from the count of seconds for the starttime from the
-   start of the con, divided by the GRID_SPACER variable, so it
+   start of the con, divided by the congridspacer variable, so it
    matches the grids.  The Endtime is figured from the count of
    seconds for the starttime from the start of the con, divided by the
-   GRID_SPACER variable, added to the count of seconds for the
-   duration, divided by the GRID_SPACER variable, so it matches the
+   congridspacer variable, added to the count of seconds for the
+   duration, divided by the congridspacer variable, so it matches the
    grids. */
 
 $query = <<<EOD
@@ -117,12 +107,13 @@ SELECT
     (TIME_TO_SEC(starttime) DIV $GridSpacer )+(TIME_TO_SEC(duration) DIV $GridSpacer) AS Endtime
   FROM
       ParticipantOnSession
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN Sessions USING (sessionid)
-    JOIN Schedule USING (sessionid)
+    JOIN Participants USING (badgeid)
+    JOIN Sessions USING (sessionid,conid)
+    JOIN Schedule USING (sessionid,conid)
   WHERE
-    introducer=1 OR
-    volunteer=1
+    conid=$conid AND
+    (introducer in ('0','1','Yes') OR
+     volunteer in ('0','1','Yes')
 EOD;
 
 list($sched_rows,$sched_header_array,$sched_array)=queryreport($query,$link,$title,$description,0);

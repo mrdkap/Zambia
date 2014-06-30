@@ -7,16 +7,9 @@ if (may_I("Staff")) {
  }
 global $link;
 $conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ConNumDays=CON_NUM_DAYS; // make it a variable so it can be substituted
-$GridSpacer=GRID_SPACER; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
+$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
+$ConNumDays=$_SESSION['connumdays']; // make it a variable so it can be substituted
+$GridSpacer=$_SESSION['congridspacer']; // make it a variable so it can be substituted
 
 /* Notes:
 25 per graph, if more than one graph is needed, go to second or third, et al
@@ -30,7 +23,7 @@ SELECT
     permrolename,
     notes
   FROM
-      $ReportDB.PermissionRoles
+      PermissionRoles
   WHERE
     permroleid > 1
 EOD;
@@ -62,16 +55,16 @@ $title="Checked In and Scheduled times for $TitleSwitch";
 $description="<P>If you are seeing this, as opposed to the picture, something failed.  Probably a lack of anything in the TimeCard, or ParticipantOnSession table.  Please fix it.</P>";
 
 /* ConStartSeconds is the seconds from the epoch that the con started
-   from CON_START_DATIM, for figuring out the times across the bottom
+   from constartdate, for figuring out the times across the bottom
    of the grid.  ConEndSeconds is the total seconds across the entire
    con, added to ConStartSeconds which indicates where the grid is to
    stop. */
 
-$ConStartSeconds=strtotime($ConStartDatim);
+$ConStartSeconds=strtotime($ConStart);
 $ConEndSeconds=$ConStartSeconds+($ConNumDays*86400);
 
 /* Build the dtime array.  This basically jumps the number of seconds
-   in the GRID_SPACER variable and uses that to generate the lables.
+   in the congridspacer variable and uses that to generate the lables.
    At midnight switch to the dayname, and at noon, use noon. */
 
 $tmp_sec=$ConStartSeconds;
@@ -98,11 +91,11 @@ $pubsname_array=array();
 /* Pull the badgeid, pubsname, Starttime, and Endtime from the
    TimeCard database.  The Starttime is first limited to time at con,
    by looking at the difference of the voltimein and the
-   CON_START_DATIM, and seeing if it's value is less than the CON_NUM_DAYS
+   constartdate, and seeing if it's value is less than the connumdays
    then, if it is at-con, the day of the con is given a second-count,
    and added to the time of the volunteering.  This jiggering is
    necessary, because TIME_TO_SEC ignores the date.  Then, all of that
-   is divided by the GRID_SPACER variable, so it matches the
+   is divided by the congridspacer variable, so it matches the
    grids.  The Endtime is figured similarly. There will be a few
    Endtime blanks that have starttimes, those will have to be
    indicated somehow.*/
@@ -111,21 +104,20 @@ $query = <<<EOD
 SELECT
     badgeid,
     pubsname,
-    if (((DATEDIFF(voltimein, '$ConStartDatim') >= 0) AND (DATEDIFF(voltimein, '$ConStartDatim') < $ConNumDays)),
-        (TIME_TO_SEC(voltimein)+(DATEDIFF(voltimein,'$ConStartDatim')*86400)) DIV $GridSpacer,
+    if (((DATEDIFF(voltimein, '$ConStart') >= 0) AND (DATEDIFF(voltimein, '$ConStart') < $ConNumDays)),
+        (TIME_TO_SEC(voltimein)+(DATEDIFF(voltimein,'$ConStart')*86400)) DIV $GridSpacer,
         '') AS Starttime,
-    if (((DATEDIFF(voltimeout, '$ConStartDatim') >= 0) AND (DATEDIFF(voltimeout, '$ConStartDatim') < $ConNumDays)),
-        (TIME_TO_SEC(voltimeout)+(DATEDIFF(voltimeout,'$ConStartDatim')*86400)) DIV $GridSpacer,
+    if (((DATEDIFF(voltimeout, '$ConStart') >= 0) AND (DATEDIFF(voltimeout, '$ConStart') < $ConNumDays)),
+        (TIME_TO_SEC(voltimeout)+(DATEDIFF(voltimeout,'$ConStart')*86400)) DIV $GridSpacer,
         '') AS Endtime
   FROM
-      $ReportDB.TimeCard TC
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      TimeCard
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
   WHERE
     $wherestring AND
-    UHPR.conid=$conid AND
-    TC.conid=$conid
+    conid=$conid
   ORDER BY
     pubsname
 EOD;
@@ -152,11 +144,11 @@ for ($i=1; $i<=$timecard_rows; $i++) {
 /* Pull the badgeid, pubsname, sessionid, Starttime, and Endtime from
    the participant being on a session in the database.  The Starttime
    is figured from the count of seconds for the starttime from the
-   start of the con, divided by the GRID_SPACER variable, so it
+   start of the con, divided by the congridspacer variable, so it
    matches the grids.  The Endtime is figured from the count of
    seconds for the starttime from the start of the con, divided by the
-   GRID_SPACER variable, added to the count of seconds for the
-   duration, divided by the GRID_SPACER variable, so it matches the
+   congridspacer variable, added to the count of seconds for the
+   duration, divided by the congridspacer variable, so it matches the
    grids. */
 
 $query = <<<EOD
@@ -169,14 +161,14 @@ SELECT
     (TIME_TO_SEC(starttime) DIV $GridSpacer )+(TIME_TO_SEC(duration) DIV $GridSpacer) AS Endtime
   FROM
       ParticipantOnSession
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN Sessions USING (sessionid)
-    JOIN Schedule USING (sessionid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+    JOIN Participants USING (badgeid)
+    JOIN Sessions USING (sessionid,conid)
+    JOIN Schedule USING (sessionid,conid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
   WHERE
    $wherestring AND
-   UHPR.conid=$conid
+   conid=$conid
 EOD;
 
 list($sched_rows,$sched_header_array,$sched_array)=queryreport($query,$link,$title,$description,0);

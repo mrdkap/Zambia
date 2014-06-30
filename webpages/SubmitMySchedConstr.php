@@ -8,7 +8,7 @@
     $status=validate_participant_availability(); /* return true if OK.  Store error messages in
         global $messages */
     // Day null is '0', time null is '';
-    for ($i = 1; $i <= AVAILABILITY_ROWS; $i++) {
+    for ($i = 1; $i <=$_SESSION['conavailabilityrows']; $i++) {
       if ($partAvail["availstartday_$i"]==0) {
 	unset($partAvail["availstartday_$i"]);
       }
@@ -27,7 +27,7 @@
             unset($messages);
             }
         else {  /* Update DB */
-            $query = "REPLACE $ReportDB.ParticipantAvailability set ";
+            $query = "REPLACE ParticipantAvailability set ";
             $query .="badgeid=\"".$badgeid."\", ";
 	    $query .="conid=\"".$_SESSION['conid']."\", ";
             $query .="maxprog=".$partAvail["maxprog"].", ";
@@ -39,12 +39,12 @@
                 RenderError($title,$message);
                 exit();
                 }
-            for ($i=1; $i<=AVAILABILITY_ROWS; $i++) {
+            for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
 	      // if savailstarttime_$i exists, as opposed to being not set ('')
 	      if ($partAvail["availstarttime_$i"]!='') {
 		// for 1 day con didn't collect or validate day info; just set day=1
 		// no change needed to the formats for the start and end times
-		if (CON_NUM_DAYS==1) {
+		if ($_SESSION['connumdays']==1) {
 		  $starttime=$partAvail["availstarttime_$i"];
 		  $endtime=$partAvail["availendtime_$i"];
 		} else {
@@ -67,7 +67,7 @@
 		  $endtime=$hours.$minsec;
 		}
 
-		$query = "REPLACE $ReportDB.ParticipantAvailabilityTimes set conid=$conid,";
+		$query = "REPLACE ParticipantAvailabilityTimes set conid=$conid,";
 		$query .="badgeid=\"$badgeid\",availabilitynum=$i,starttime=\"$starttime\",endtime=\"$endtime\"";
 		if (!mysql_query($query,$link)) {
 		  $message=$query."<BR>Error updating database.  Database not updated.";
@@ -76,9 +76,9 @@
 		}
 	      }
 	    }
-            if (CON_NUM_DAYS>=1) {
-                $query = "REPLACE $ReportDB.ParticipantAvailabilityDays (conid,badgeid,day,maxprog) values";
-                for ($i=1; $i<=CON_NUM_DAYS; $i++) {
+            if ($_SESSION['connumdays']>=1) {
+                $query = "REPLACE ParticipantAvailabilityDays (conid,badgeid,day,maxprog) values";
+                for ($i=1; $i<=$_SESSION['connumdays']; $i++) {
                     $x=$partAvail["maxprogday$i"];
                     $query.="($conid,\"$badgeid\",$i,$x),";
                     }
@@ -88,11 +88,11 @@
                     RenderError($title,$message);
                     exit();
                     }
-                }     
-            $query = "DELETE FROM $ReportDB.ParticipantAvailabilityTimes WHERE conid=$conid ";
+                }
+            $query = "DELETE FROM ParticipantAvailabilityTimes WHERE conid=$conid ";
             $query .="AND badgeid=\"$badgeid\" AND availabilitynum in (";
             $deleteany=false;
-            for ($i=1; $i<=AVAILABILITY_ROWS; $i++) {
+            for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
 	         // if is set to the null (or erase) field
                  if ($partAvail["availstarttime_$i"]=='') {
                      $query.=$i.", ";

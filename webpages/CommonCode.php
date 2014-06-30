@@ -1421,17 +1421,11 @@ function remove_flow_report ($flowid,$table,$title,$description) {
 
 function add_flow_report ($addreport,$addphase,$table,$group,$title,$description) {
   global $link;
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
 
   $mybadgeid=$_SESSION['badgeid'];
 
   // Get phasetypeid list
-  $query="SELECT phasetypeid FROM $ReportDB.PhaseTypes ORDER BY phasetypeid";
+  $query="SELECT phasetypeid FROM PhaseTypes ORDER BY phasetypeid";
 
   // Retrieve query
   list($phasecount,$unneeded_array_a,$phase_array)=queryreport($query,$link,$title,$description,0);
@@ -1452,12 +1446,12 @@ function add_flow_report ($addreport,$addphase,$table,$group,$title,$description
   $tablename=$table."Flow";
 
   // Establish the table element or fail
-  if (strpos($table,"Group")) {
+  if ($table=="Group") {
     $torder="gfloworder";
     $tname="gflowname";
     $cname=$group;
     $tid="gflowid";
-  } elseif (strpos($table,"Personal")) {
+  } elseif ($table=="Personal") {
     $torder="pfloworder";
     $tname="badgeid";
     $cname=$mybadgeid;

@@ -1,15 +1,7 @@
 <?php
 require_once('StaffCommonCode.php');
 require_once('StaffAssignParticipants_FNC.php');
-
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
 $title="Staff - Assign Participants";
 $description="<P>Assign a participant to a Session Element.  Click on the element name to modify the element.</P>\n";
 
@@ -52,12 +44,13 @@ SELECT
     concat(trackname,' - ',sessionid,' - ',title) as sname
   FROM
       Sessions
-    JOIN $ReportDB.Tracks USING (trackid)
-    JOIN $ReportDB.SessionStatuses USING (statusid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
+    JOIN PubStatuses USING (pubstatusid)
   WHERE
     may_be_scheduled=1 AND
-    pubstatusname in ($pubstatus_string)
+    pubstatusname in ($pubstatus_string) AND
+    conid=$conid
   ORDER BY
     trackname,
     sessionid,
@@ -83,8 +76,18 @@ if ($selsessionid==0) {
     }
 
 $query = <<<EOD
-SELECT title, pocketprogtext, progguiddesc, persppartinfo, notesforpart, notesforprog FROM Sessions
-WHERE sessionid=$selsessionid
+SELECT 
+    title,
+    pocketprogtext,
+    progguiddesc,
+    persppartinfo,
+    notesforpart,
+    notesforprog
+  FROM
+      Sessions
+  WHERE
+    sessionid=$selsessionid AND
+    conid=$conid
 EOD;
 if (!$result=mysql_query($query,$link)) {
     $message_error=$query."Error querying database. Unable to continue.";
@@ -125,42 +128,47 @@ echo "\n";
 echo "<HR>\n";
 $query = <<<EOD
 SELECT
-    POS.badgeid AS posbadgeid,
-    POS.moderator,
-    POS.volunteer,
-    POS.introducer,
-    POS.aidedecamp,
-    P.badgeid,
-    P.pubsname,
-    PSI.rank,
-    PSI.willmoderate,
-    PSI.comments
+    badgeid AS posbadgeid,
+    moderator,
+    volunteer,
+    introducer,
+    aidedecamp,
+    badgeid,
+    pubsname,
+    rank,
+    willmoderate,
+    comments
   FROM
-      $ReportDB.Participants AS P
+      Participants
       JOIN (SELECT
                 distinct badgeid,
-                sessionid
+	        sessionid,
+	        conid
               FROM
                   (SELECT
                        badgeid,
-                       sessionid
+		       sessionid,
+		       conid
                      FROM
                          ParticipantOnSession
                      WHERE
-                       sessionid=$selsessionid
+                       sessionid=$selsessionid AND
+                       conid=$conid
                    UNION
                    SELECT
                        badgeid,
-                       sessionid 
+		       sessionid,
+		       conid
                      FROM
                          ParticipantSessionInterest
                      WHERE
-                       sessionid=$selsessionid) as R2) as R using (badgeid)
-    LEFT JOIN ParticipantSessionInterest AS PSI on R.badgeid = PSI.badgeid and R.sessionid = PSI.sessionid
-    LEFT JOIN ParticipantOnSession AS POS on R.badgeid = POS.badgeid and R.sessionid = POS.sessionid
+                       sessionid=$selsessionid AND
+                       conid=$conid) AS R2) AS R USING (badgeid)
+    LEFT JOIN ParticipantSessionInterest USING (badgeid,sessionid,conid)
+    LEFT JOIN ParticipantOnSession USING (badgeid,sessionid,conid)
   WHERE
-    POS.sessionid=$selsessionid OR
-    POS.sessionid is null;
+    sessionid=$selsessionid OR
+    sessionid is null
 EOD;
 if (!$result=mysql_query($query,$link)) {
     $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
@@ -174,7 +182,7 @@ SELECT
     permrolename,
     notes
   FROM
-      $ReportDB.PermissionRoles
+      PermissionRoles
   WHERE
     permroleid > 1
 EOD;
@@ -209,12 +217,12 @@ SELECT
     concat(pubsname, ' - ', badgeid) AS Pubsname,
     lastname
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.CongoDump USING(badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN $ReportDB.Interested I USING (badgeid)
-    JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
+      Participants
+    JOIN CongoDump USING(badgeid)
+    JOIN UserHasPermissionRole UHPR USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN Interested I USING (badgeid)
+    JOIN InterestedTypes USING (interestedtypeid)
   WHERE
     interestedtypename in ('Yes') AND
     UHPR.conid=$conid AND
@@ -225,7 +233,8 @@ SELECT
                         FROM
                             ParticipantSessionInterest
                         WHERE
-                          sessionid=$selsessionid)
+                          sessionid=$selsessionid AND
+		          conid=$conid)
   ORDER BY
     IF(instr(pubsname,lastname)>0,lastname,substring_index(pubsname,' ',-1)),firstname
 EOD;

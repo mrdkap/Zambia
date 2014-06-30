@@ -1,103 +1,86 @@
 <?php
-define ("newroomslots",5); // number of rows at bottom of page for new schedule entries
-$title="Maintain Room Schedule";
-require_once('db_functions.php');
-require_once('data_functions.php');
-require_once('StaffHeader.php');
-require_once('StaffFooter.php');
 require_once('StaffCommonCode.php');
 require_once('SubmitMaintainRoom.php');
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
 global $daymap;
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
+$newroomslots=$_SESSION['newroomslots']; // make it a variable so it can be substituted
 
-staff_header($title);
+$title="Maintain Room Schedule";
+
+topofpagereport($title,$description,$additionalinfo);
+
+echo "<P>newroomslots=$newroomslots</P>\n";
 $topsectiononly=true; // no room selected -- flag indicates to display only the top section of the page
 
 if (isset($_POST["numrows"])) {
-	$ignore_conflicts=(isset($_POST['override']))?true:false;
-	if(!SubmitMaintainRoom($ignore_conflicts)) $conflict=true;
-    }
+  $ignore_conflicts=(isset($_POST['override']))?true:false;
+  if(!SubmitMaintainRoom($ignore_conflicts)) $conflict=true;
+}
 
 if (isset($_POST["selroom"])) { // room was selected by this form
-        $selroomid=$_POST["selroom"];
-        $topsectiononly=false;
-        //unset($_SESSION['return_to_page']); // since edit originated with this page, do not return to another.
-        }
-    elseif (isset($_GET["selroom"])) { // room was select by external page such as a report
-        $selroomid=$_GET["selroom"];
-        $topsectiononly=false;
-        }
-    else {
-        $selroomid=0; // room was not yet selected.
-        unset($_SESSION['return_to_page']); // since edit originated with this page, do not return to another.
-        }
+  $selroomid=$_POST["selroom"];
+  $topsectiononly=false;
+  //unset($_SESSION['return_to_page']); // since edit originated with this page, do not return to another.
+} elseif (isset($_GET["selroom"])) { // room was select by external page such as a report
+  $selroomid=$_GET["selroom"];
+  $topsectiononly=false;
+} else {
+  $selroomid=0; // room was not yet selected.
+  unset($_SESSION['return_to_page']); // since edit originated with this page, do not return to another.
+}
 
 if ($conflict!=true) {
-		$query="SELECT roomid, roomname, function FROM $ReportDB.Rooms ORDER BY display_order";
-		if (!$Rresult=mysql_query($query,$link)) {
-		    $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-		    echo "<P class\"errmsg\">".$message."\n";
-		    staff_footer();
-		    exit();
-		    }
-		echo "<FORM name=\"selroomform\" method=POST action=\"MaintainRoomSched.php\">\n";
-		echo "<DIV><LABEL for=\"selroom\">Select Room</LABEL>\n";
-		echo "<SELECT name=\"selroom\">\n";
-		echo "     <OPTION value=0 ".(($selroomid==0)?"selected":"").">Select Room</OPTION>\n";
-		while (list($roomid,$roomname, $rmfunct)= mysql_fetch_array($Rresult, MYSQL_NUM)) {
-		    echo "     <OPTION value=\"".$roomid."\" ".(($selroomid==$roomid)?"selected":"");
-		    echo ">".htmlspecialchars($roomname);
-		    if (strlen($rmfunct)>0) echo " (".htmlspecialchars($rmfunct).")";
-		    echo "</OPTION>\n";
-		    }
-		echo "</SELECT></DIV>\n";
-		echo "<br><P>For any session where you are rescheduling, please read the Notes for Programming Committee. \n";
-		echo "<DIV class=\"SubmitDiv\">";
-		if (isset($_SESSION['return_to_page'])) {
-		    echo "<A HREF=\"".$_SESSION['return_to_page']."\">Return to report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</A>";
-		    }
-		echo "<BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Submit</BUTTON></DIV>\n";
-		echo "</FORM>\n";
-		echo "<HR>\n";
-		// unset all stuff from posts so input fields get reset to blank
-		for ($i=1;$i<=newroomslots;$i++) {
-			unset($_POST["day$i"]);
-			unset($_POST["hour$i"]);
-			unset($_POST["min$i"]);
-			unset($_POST["ampm$i"]);
-			unset($_POST["sess$i"]);
-			}
-		}
-	else {
-		//
-		}
+  $query="SELECT roomid, concat(roomname,'(',function,')') as Room FROM Rooms ORDER BY display_order";
+?>
+<FORM name="selroomform" method=POST action="MaintainRoomSched.php">
+  <DIV>
+    <LABEL for="selroom">Select Room</LABEL>
+    <SELECT name="selroom">
+      <?php populate_select_from_query($query, $selroomid, "Select Room", true); ?>
+    </SELECT>
+  </DIV>
+<BR><P>For any session where you are rescheduling, please read the Notes for Programming Committee.</P>
+  <DIV class="SubmitDiv">
+    <?php if (isset($_SESSION['return_to_page'])) { ?>
+    <A HREF="<?php echo $_SESSION['return_to_page'];?>">Return to report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</A>
+    <?php } ?>
+    <BUTTON type="submit" name="submit" class="SubmitButton">Submit</BUTTON>
+  </DIV>
+</FORM>
+<HR>
+<?php
+  // unset all stuff from posts so input fields get reset to blank
+  for ($i=1;$i<=$newroomslots;$i++) {
+    unset($_POST["day$i"]);
+    unset($_POST["hour$i"]);
+    unset($_POST["min$i"]);
+    unset($_POST["ampm$i"]);
+    unset($_POST["sess$i"]);
+  }
+}
 if ($topsectiononly) {
-    staff_footer();
-    exit();
-    }
+  correct_footer();
+  exit();
+}
 echo "<FORM name=\"rmschdform\" method=POST action=\"MaintainRoomSched.php\">\n";
+
+// Override button
 if ($conflict==true) {
 	echo "<DIV class=\"SubmitDiv\"><BUTTON type=\"submit\" name=\"override\" class=\"SubmitButton\">Save Anyway!</BUTTON></DIV>\n";
 	echo "<BR><HR>\n";
 	}
+
+// Get the room's physicial characteristics, if they exist, including open and close times.
 $query = <<<EOD
 SELECT roomid, roomname, opentime1, closetime1, opentime2, closetime2, opentime3, closetime3,
-function, floor, height, dimensions, area, notes FROM $ReportDB.Rooms WHERE roomid=$selroomid
+function, floor, height, dimensions, area, notes FROM Rooms WHERE roomid=$selroomid
 EOD;
 if (!$result=mysql_query($query,$link)) {
-    $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-    echo "<P class\"errmsg\">".$message."\n";
-    staff_footer();
-    exit();
-    }
+  $message=$query."<BR>Error querying database. Unable to continue.<BR>";
+  RenderError($title,$message);
+  exit();
+}
 echo "<H2>$selroomid - ".htmlspecialchars(mysql_result($result,0,"roomname"))."</H2>";
-//echo "|".mysql_result($result,0,"opentime1")."|<BR>\n";
 echo "<H4>Open Times</H4>\n";
 echo "<DIV class=\"border1111 lrpad lrmargin\"><P class=\"lrmargin\">";
 if (mysql_result($result,0,"opentime1")!="") {
@@ -131,16 +114,17 @@ echo "         <TD colspan=5 class=\"lrpad border1111\">".htmlspecialchars(mysql
 echo "         </TR>\n";
 echo "      </TABLE>\n";
 echo "<H4>Room Sets</H4>\n";
+
+// Get the Room Sets possible and the Capacity.
 $query = <<<EOD
-SELECT RS.roomsetname, RHS.capacity FROM $ReportDB.RoomSets RS, $ReportDB.RoomHasSet RHS WHERE
-RS.roomsetid=RHS.roomsetid AND RHS.roomid=$selroomid
+SELECT roomsetname, capacity FROM RoomSets JOIN RoomHasSet USING (roomsetid) WHERE roomid=$selroomid
 EOD;
 if (!$result=mysql_query($query,$link)) {
-    $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-    echo "<P class\"errmsg\">".$message."\n";
-    staff_footer();
-    exit();
-    }
+  $message=$query."<BR>Error querying database. Unable to continue.<BR>";
+  RenderError($title,$message);
+  exit();
+}
+
 $i=1;
 while ($bigarray[$i] = mysql_fetch_array($result, MYSQL_ASSOC)) {
     $i++;
@@ -158,41 +142,32 @@ for ($i=1;$i<=$numrows;$i++) {
     echo "      </TR>\n";
     }
 echo "      </TABLE>\n";
+
+// Get the scheduled elements.
 $query = <<<EOD
 SELECT 
-    SC.scheduleid,
-    SC.starttime,
-    S.duration,
-    SC.sessionid,
-    T.trackname,
-    S.title,
-    ST.roomsetname 
+    scheduleid,
+    starttime,
+    duration,
+    trackname,
+    sessionid,
+    title,
+    roomsetname 
   FROM
-      Schedule SC,
-      Sessions S,
-      $ReportDB.Tracks T,
-      $ReportDB.RoomSets ST
+      Schedule
+    JOIN Sessions USING (sessionid,conid)
+    JOIN Tracks USING (trackid)
+    JOIN RoomSets USING (roomsetid)
   WHERE
-    SC.sessionid = S.sessionid AND
-    S.trackid = T.trackid AND
-    S.roomsetid=ST.roomsetid AND
-    SC.roomid=$selroomid
+    roomid=$selroomid AND
+    conid=$conid
   ORDER BY
-    SC.starttime
+    starttime
 EOD;
 
-if (!$result=mysql_query($query,$link)) {
-    $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-    echo "<P class\"errmsg\">".$message."\n";
-    staff_footer();
-    exit();
-    }
-$i=1;
-while ($bigarray[$i] = mysql_fetch_array($result, MYSQL_ASSOC)) {
-    $i++;
-    }
-$numrows=--$i;
+list($numrows,$bigheader_array,$bigarray)=queryreport($query,$link,$title,$description,0);
 
+// Build the table for the scheduled classes.
 echo "<HR>\n";
 echo "<H4>Current Room Schedule</H4>\n";
 echo "<TABLE>\n";
@@ -206,72 +181,58 @@ echo "      <TH>Title</TH>\n";
 echo "      <TH>Room Set</TH>\n";
 echo "      </TR>\n";
 for ($i=1;$i<=$numrows;$i++) {
-    echo "   <TR>\n";
-    echo "      <TD class=\"border0010\"><INPUT type=\"checkbox\" name=\"del$i\" value=\"1\"></TD>\n";
-    echo "<INPUT type=\"hidden\" name=\"row$i\" value=\"".$bigarray[$i]["scheduleid"]."\">";
-    echo "<INPUT type=\"hidden\" name=\"rowsession$i\" value=\"{$bigarray[$i]["sessionid"]}\"></TD>\n";
-    echo "      <TD class=\"vatop lrpad border0010\">".time_description($bigarray[$i]["starttime"])."</TD>\n";
-    echo "      <TD class=\"vatop lrpad border0010\">".$bigarray[$i]["duration"]."</TD>\n";
-    echo "      <TD class=\"vatop lrpad border0010\">".$bigarray[$i]["trackname"]."</TD>\n";
-    echo "      <TD class=\"vatop lrpad border0010\"> <A HREF=StaffAssignParticipants.php?selsess=".$bigarray[$i]["sessionid"].">".$bigarray[$i]["sessionid"]."</A></TD>\n";
-    echo "      <TD class=\"vatop lrpad border0010\"> <A HREF=EditSession.php?id=".$bigarray[$i]["sessionid"].">",$bigarray[$i]["title"]."</A></TD>\n";
-    echo "      <TD class=\"vatop lrpad border0010\">".$bigarray[$i]["roomsetname"]."</TD>\n";
-    echo "      </TR>\n";
-    }
+  echo "   <TR>\n";
+  echo "      <TD class=\"border0010\"><INPUT type=\"checkbox\" name=\"del$i\" value=\"1\"></TD>\n";
+  echo "<INPUT type=\"hidden\" name=\"row$i\" value=\"".$bigarray[$i]["scheduleid"]."\">";
+  echo "<INPUT type=\"hidden\" name=\"rowsession$i\" value=\"{$bigarray[$i]["sessionid"]}\"></TD>\n";
+  echo "      <TD class=\"vatop lrpad border0010\">".time_description($bigarray[$i]["starttime"])."</TD>\n";
+  echo "      <TD class=\"vatop lrpad border0010\">".$bigarray[$i]["duration"]."</TD>\n";
+  echo "      <TD class=\"vatop lrpad border0010\">".$bigarray[$i]["trackname"]."</TD>\n";
+  echo "      <TD class=\"vatop lrpad border0010\"> <A HREF=StaffAssignParticipants.php?selsess=".$bigarray[$i]["sessionid"].">".$bigarray[$i]["sessionid"]."</A></TD>\n";
+  echo "      <TD class=\"vatop lrpad border0010\"> <A HREF=EditSession.php?id=".$bigarray[$i]["sessionid"].">",$bigarray[$i]["title"]."</A></TD>\n";
+  echo "      <TD class=\"vatop lrpad border0010\">".$bigarray[$i]["roomsetname"]."</TD>\n";
+  echo "      </TR>\n";
+}
 echo "   </TABLE>\n";
+
+// Add to Room Schedule
 echo "<H4>Add To Room Schedule</H4>\n";
 echo "<TABLE>\n";
-if (strtoupper(DOUBLE_SCHEDULE)=="TRUE") {
-    $query = <<<EOD
+
+$query = <<<EOD
 SELECT
-        S.sessionid, T.trackname, S.title, SCH.roomid
-    FROM
-        Sessions S JOIN
-        $ReportDB.Tracks T USING (trackid) JOIN
-        $ReportDB.SessionStatuses SS USING (statusid) LEFT JOIN
-        Schedule SCH USING (sessionid)
-    WHERE
-        SS.may_be_scheduled=1
-    ORDER BY
-        T.trackname, S.sessionid
+    sessionid,
+    trackname,
+    title,
+    roomid
+  FROM
+      Sessions 
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
+    LEFT JOIN Schedule USING (sessionid,conid)
+  WHERE
+    may_be_scheduled=1 AND
+    conid=$conid
 EOD;
- } else {
-    $query = <<<EOD
-SELECT
-        S.sessionid, T.trackname, S.title, SCH.roomid
-    FROM
-        Sessions S JOIN
-        $ReportDB.Tracks T USING (trackid) JOIN
-        $ReportDB.SessionStatuses SS USING (statusid) LEFT JOIN
-        Schedule SCH USING (sessionid)
-    WHERE
-        SS.may_be_scheduled=1
-    HAVING
-        SCH.roomid is null
-    ORDER BY
-        T.trackname, S.sessionid
+if (strtoupper(DOUBLE_SCHEDULE)!="TRUE") {$query.= " HAVING roomid is null ";}
+$query.= <<<EOD
+  ORDER BY
+    trackname,
+    sessionid
 EOD;
- }
-if (!$result=mysql_query($query,$link)) {
-    $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-    echo "<P class\"errmsg\">".$message."\n";
-    staff_footer();
-    exit();
-    }
-$i=1;
-while ($bigarray[$i] = mysql_fetch_array($result, MYSQL_ASSOC)) {
-    $i++;
-    }
-$numsessions=--$i;
-for ($i=1;$i<=newroomslots;$i++) {
+
+list($numsessions,$bigheader_array,$bigarray)=queryreport($query,$link,$title,$description,0);
+
+// Build the selects for filling the slots.
+for ($i=1;$i<=$newroomslots;$i++) {
     echo "   <TR>\n";
     echo "      <TD>";
     // ****DAY****
-    if (CON_NUM_DAYS>1) {
+    if ($_SESSION['connumdays']>1) {
         echo "<Select name=day$i><Option value=0 ";
         if ((!isset($_POST["day$i"])) or $_POST["day$i"]==0) echo "selected";
         echo ">Day&nbsp;</Option>";
-        for ($j=1; $j<=CON_NUM_DAYS; $j++) {
+        for ($j=1; $j<=$_SESSION['connumdays']; $j++) {
             $x=$daymap["long"]["$j"];
             echo"         <OPTION value=$j ";
             if ($_POST["day$i"]==$j) echo "selected";
@@ -329,7 +290,7 @@ echo "<INPUT type=\"hidden\" name=\"selroom\" value=\"$selroomid\">\n";
 echo "<INPUT type=\"hidden\" name=\"numrows\" value=\"$numrows\">\n";
 echo "<DIV class=\"SubmitDiv\"><BUTTON type=\"submit\" name=\"update\" class=\"SubmitButton\">Update</BUTTON></DIV>\n";
 echo "</FORM>\n";
-staff_footer();
+correct_footer();
 ?>
 
 

@@ -1,15 +1,7 @@
 <?php
 require_once('PartCommonCode.php'); // initialize db; check login;
-$conid=$_SESSION['conid'];
-$ConStartDatim=CON_START_DATIM; //make it a variable so it will be substituted
-$ProgramEmail=PROGRAM_EMAIL; //Use it a variable locally
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 $conid=$_SESSION['conid'];  // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BioDB=="BIODB") {unset($BIODB);}
+$badgeid=$_SESSION['badgeid'];  // make it a variable so it can be substituted
 
 $title="My Schedule";
 $description="";
@@ -20,7 +12,6 @@ if (!may_I('my_schedule')) {
   RenderError($title,$message_error);
   exit();
  }
-// set $badgeid from session
 
 // General presenter information
 // Gather the comments offered on this presenter into pcommentarray, if any
@@ -28,8 +19,8 @@ $query = <<<EOD
 SELECT
     concat(conname,": ",comment) AS Comment
   FROM
-      $ReportDB.CommentsOnParticipants
-    JOIN $ReportDB.ConInfo USING (conid)
+      CommentsOnParticipants
+    JOIN ConInfo USING (conid)
   WHERE
     badgeid="$badgeid"
 EOD;
@@ -48,8 +39,8 @@ $query = <<<EOD
 SELECT
     message
   FROM
-      $ReportDB.CongoDump
-    LEFT JOIN $ReportDB.RegTypes USING (regtype)
+      CongoDump
+    LEFT JOIN RegTypes USING (regtype)
   WHERE
     badgeid="$badgeid"
 EOD;
@@ -64,41 +55,22 @@ $regmessage=$row[0];
 // Get the number of pannels the participant is introducing
 $query = <<<EOD
 SELECT
-    count(*) 
+    count(*) AS poscount,
+    SUM(if(introducer IN ('0','1','Yes'),1,0)) AS intro_p
   FROM
-      ParticipantOnSession POS,
-      Schedule SCH
+      ParticipantOnSession
+    JOIN Schedule USING (sessionid,conid)
   WHERE
-    POS.sessionid=SCH.sessionid and
-    POS.introducer=1 and
-    badgeid=$badgeid 
+    badgeid=$badgeid AND
+    conid=$conid
 EOD;
-if (!$result=mysql_query($query,$link)) {
-  $message.=$query."<BR>Error querying database.<BR>";
-  RenderError($title,$message);
-  exit();
- }
-$row=mysql_fetch_array($result, MYSQL_NUM);
-$intro_p=$row[0];
 
-    // Get the number of pannels the participant is on
-$query = <<<EOD
-SELECT
-    count(*) 
-  FROM
-      ParticipantOnSession POS,
-      Schedule SCH
-  WHERE
-    POS.sessionid=SCH.sessionid and
-    badgeid=$badgeid
-EOD;
 if (!$result=mysql_query($query,$link)) {
   $message.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message);
   exit();
  }
-$row=mysql_fetch_array($result, MYSQL_NUM);
-$poscount=$row[0];
+list($poscount,$intro_p)=mysql_fetch_array($result, MYSQL_NUM);
 
 // Message about state of registration, (on more than 3 pannels programming will ask for a comp).
 if (!$regmessage) {
@@ -113,99 +85,7 @@ if (!$regmessage) {
 // Get all the written feedback on the sessions, and the graph of the questions.
 $feedback_array=getFeedbackData($badgeid);
 
-// Build the current schedule of classes into schdarray
-$query = <<<EOD
-SELECT
-    POS.sessionid,
-    trackname,
-    concat(S.title, if(estatten,concat(" (estimated attendance: ",estatten,")"),'')) as title,
-    roomname,
-    pocketprogtext,
-    progguiddesc,
-    if ((THQT.conid=$conid),if((THQT.questiontypeid IS NULL),"",THQT.questiontypeid),"") AS questiontypeid,
-    DATE_FORMAT(ADDTIME('$ConStartDatim', starttime),'%a %l:%i %p') as 'Start Time',
-    CASE
-      WHEN HOUR(duration) < 1 THEN
-        concat(date_format(duration,'%i'),'min')
-      WHEN MINUTE(duration)=0 THEN
-        concat(date_format(duration,'%k'),'hr')
-      ELSE
-        concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
-      END
-      AS Duration,
-    persppartinfo,
-    notesforpart,
-    concat(if((servicenotes!=''),servicenotes,""),
-           if(((servicenotes!='') AND (servicelist!='')),", ",""),
-           if((servicelist!=''),servicelist,''),
-           if((((servicenotes!='') OR (servicelist!='')) AND (featurelist!='')),", ",""),
-           if((featurelist!=''),featurelist,'')) AS Needed
-  FROM
-      Schedule SCH
-    JOIN Sessions S USING (sessionid)
-    JOIN ParticipantOnSession POS USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN $ReportDB.Tracks T USING (trackid)
-    LEFT JOIN $ReportDB.TypeHasQuestionType THQT USING (typeid)
-    LEFT JOIN (SELECT
-           S.sessionid, 
-           title,
-           GROUP_CONCAT(DISTINCT servicename SEPARATOR ', ') as 'servicelist'
-         FROM
-             Sessions S, 
-             SessionHasService SS, 
-             $ReportDB.Services SE
-         WHERE
-           S.sessionid=SS.sessionid and
-           SE.serviceid=SS.serviceid and
-	   SE.conid=$conid
-         GROUP BY
-           S.sessionid) X USING (sessionid)
-    LEFT JOIN (SELECT
-           S.sessionid, 
-           title,
-           GROUP_CONCAT(DISTINCT featurename SEPARATOR ', ') as 'featurelist'
-         FROM
-             Sessions S, 
-             SessionHasFeature SF, 
-             $ReportDB.Features F
-         WHERE
-           S.sessionid=SF.sessionid and
-           F.featureid=SF.featureid
-         GROUP BY
-           S.sessionid) Y USING (sessionid)
-  WHERE
-    badgeid="$badgeid"
-  ORDER BY
-    starttime
-EOD;
-// error_log("Zambia: $query");
-if (!$result=mysql_query($query,$link)) {
-  $message.=$query."<BR>Error querying database.<BR>";
-  RenderError($title,$message);
-  exit();
- }
-$schdrows=mysql_num_rows($result);
-for ($i=1; $i<=$schdrows; $i++) {
-  $schdarray[$i]=mysql_fetch_assoc($result);
-  $schdredirect.=" <A HREF=#".$schdarray[$i]["sessionid"].">".htmlspecialchars($schdarray[$i]["title"])."</A>";
-  $feedback_file=sprintf("../Local/Feedback/%s.jpg",$schdarray[$i]["sessionid"]);
-  if (file_exists($feedback_file)) {
-    $schdarray[$i]["feedbackgraph"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Feedback graph from surveys:<br>";
-    $schdarray[$i]["feedbackgraph"].="<img src=\"$feedback_file\"></TD>\n  </TR>\n";
-  }
-  if (isset($feedback_array['graph'][$schdarray[$i]["Sess-Con"]])) {
-    $schdarray[$i]["autofeedbackgraph"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Feedback graph from surveys:<br>";
-    $schdarray[$i]["autofeedbackgraph"].=generateSvgString($schdarray[$i]["sessionid"],$_SESSION['conid']);
-    $schdarray[$i]["autofeedbackgraph"].="</TD>\n  </TR>\n";
-  }
-  if (isset($feedback_array[$schdarray[$i]["Sess-Con"]])) {
-    $schdarray[$i]["feedbackwritten"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Written feedback from surveys:\n";
-    $schdarray[$i]["feedbackwritten"].=$feedback_array[$schdarray[$i]["Sess-Con"]]."</TD>\n  </TR>\n";
-  }
- }
-
-// Build the previous schedule of classes into oldschdarray
+// Build the schedule of classes into schd_array
 $query = <<<EOD
 SELECT
     concat(sessionid,"-",conid) as "Sess-Con",
@@ -217,8 +97,8 @@ SELECT
     allrooms,
     pocketprogtext,
     progguiddesc,
-    if((THQT.questiontypeid IS NULL),"",THQT.questiontypeid) AS questiontypeid,
-    DATE_FORMAT(ADDTIME('$ConStartDatim', starttime),'%a %l:%i %p') as 'Start Time',
+    if((questiontypeid IS NULL),"",questiontypeid) AS questiontypeid,
+    DATE_FORMAT(ADDTIME(constartdate, starttime),'%a %l:%i %p') as 'Start Time',
     CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
@@ -230,46 +110,56 @@ SELECT
       AS Duration,
     persppartinfo,
     notesforpart,
+    partlist,
     concat(if((servicenotes!=''),servicenotes,""),
            if(((servicenotes!='') AND (servicelist!='')),", ",""),
            if((servicelist!=''),servicelist,''),
            if((((servicenotes!='') OR (servicelist!='')) AND (featurelist!='')),", ",""),
            if((featurelist!=''),featurelist,'')) AS Needed
   FROM
-      $ReportDB.ParticipantOnSession
-    JOIN $ReportDB.ConInfo USING (conid)
-    JOIN $ReportDB.Sessions USING (sessionid,conid)
-    JOIN $ReportDB.Tracks USING (trackid)
-    JOIN (SELECT 
-           sessionid, 
-           conid, 
+      ParticipantOnSession
+    JOIN ConInfo USING (conid)
+    JOIN Sessions USING (sessionid,conid)
+    JOIN Tracks USING (trackid)
+    JOIN (SELECT
+           sessionid,
+           conid,
 	   GROUP_CONCAT(DISTINCT roomname SEPARATOR ", ") as 'allrooms',
 	   starttime
-         FROM 
-             $ReportDB.Schedule 
-           JOIN $ReportDB.Rooms USING (roomid) 
-         GROUP BY 
-           sessionid,conid) X USING (sessionid,conid)							       
-    LEFT JOIN $ReportDB.TypeHasQuestionType THQT USING (typeid,conid)
+         FROM
+             Schedule
+           JOIN Rooms USING (roomid)
+         GROUP BY
+           sessionid,conid) W USING (sessionid,conid)
+    LEFT JOIN TypeHasQuestionType USING (typeid,conid)
     LEFT JOIN (SELECT
            sessionid,
 	   conid,
            GROUP_CONCAT(DISTINCT servicename SEPARATOR ', ') as 'servicelist'
          FROM
-             $ReportDB.SessionHasService
-	   JOIN $ReportDB.Services USING (serviceid,conid)
+             SessionHasService
+	   JOIN Services USING (serviceid,conid)
          GROUP BY
-	       sessionid,conid) Y USING (sessionid,conid)
+	       sessionid,conid) X USING (sessionid,conid)
     LEFT JOIN (SELECT
            sessionid,
 	   conid,
            GROUP_CONCAT(DISTINCT featurename SEPARATOR ', ') as 'featurelist'
          FROM
-             $ReportDB.SessionHasFeature
-	   JOIN $ReportDB.Features USING (featureid,conid)
+             SessionHasFeature
+	   JOIN Features USING (featureid,conid)
          GROUP BY
-	   sessionid) Z USING (sessionid,conid)
-
+	    sessionid,conid) Y USING (sessionid,conid)
+    LEFT JOIN (SELECT
+            sessionid,
+            conid,
+            GROUP_CONCAT("  <TR>\n    <TD>&nbsp;</TD>\n    <TD>",pubsname, if(moderator IN('0','1','Yes')," <I>mod</I> ",""), if(volunteer IN('0','1','Yes')," <I>volunteer</I> ",""), if(introducer IN('0','1','Yes')," <I>introducer</I> ",""), if(aidedecamp IN('0','1','Yes')," <I>assistant</I> ",""), "</TD>\n    <TD colspan=5>", if(comments,comments,""), "</TD>\n  </TR>\n" SEPARATOR "") AS partlist
+          FROM
+              ParticipantOnSession
+            JOIN Participants USING (badgeid)
+            LEFT JOIN ParticipantSessionInterest USING (sessionid,conid,badgeid)
+          GROUP BY
+	    sessionid,conid) Z USING (sessionid,conid)
   WHERE
     badgeid="$badgeid"
   ORDER BY
@@ -282,62 +172,41 @@ if (!$result=mysql_query($query,$link)) {
   RenderError($title,$message);
   exit();
  }
-$oldschdrows=mysql_num_rows($result);
-for ($i=1; $i<=$oldschdrows; $i++) {
-  $oldschdarray[$i]=mysql_fetch_assoc($result);
-  $oldschdredirect.=" <A HREF=#".$oldschdarray[$i]["Sess-Con"].">".htmlspecialchars($oldschdarray[$i]["title"])."</A>";
-  $feedback_file=sprintf("../Local/Feedback/%s.jpg",$oldschdarray[$i]["sessionid"]);
+$otherschdcon="";
+$currentschdredirect="";
+$otherschdredirect="";
+$schd_rows=mysql_num_rows($result);
+for ($i=1; $i<=$schd_rows; $i++) {
+  $schd_array[$i]=mysql_fetch_assoc($result);
+  if ($otherschdcon!=$schd_array[$i]["conid"]) {
+      $otherschdcon=$schd_array[$i]["conid"];
+    if ($schd_array[$i]['conid'] == $_SESSION['conid']) {
+      $currentschdredirect.="<br>$otherschdcon: ";
+    } else {
+      $otherschdredirect.="<br>$otherschdcon: ";
+    }
+  }
+  if ($schd_array[$i]['conid'] == $_SESSION['conid']) {
+    $currentschdredirect.=" <A HREF=#".$schd_array[$i]["Sess-Con"].">".htmlspecialchars($schd_array[$i]["title"])."</A>";
+  } else {
+    $otherschdredirect.=" <A HREF=#".$schd_array[$i]["Sess-Con"].">".htmlspecialchars($schd_array[$i]["title"])."</A>";
+  }
+  $feedback_file=sprintf("../Local/Feedback/%s.jpg",$schd_array[$i]["sessionid"]);
   if (file_exists($feedback_file)) {
-    $oldschdarray[$i]["feedbackgraph"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Feedback graph from surveys:<br>";
-    $oldschdarray[$i]["feedbackgraph"].="<img src=\"$feedback_file\"></TD>\n  </TR>\n";
+    $schd_array[$i]["feedbackgraph"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Feedback graph from surveys:<br>";
+    $schd_array[$i]["feedbackgraph"].="<img src=\"$feedback_file\"></TD>\n  </TR>\n";
   }
-  if (isset($feedback_array['graph'][$oldschdarray[$i]["Sess-Con"]])) {
-    $oldschdarray[$i]["autofeedbackgraph"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Feedback graph from surveys:<br>";
-    $oldschdarray[$i]["autofeedbackgraph"].=generateSvgString($oldschdarray[$i]["sessionid"],$oldschdarray[$i]["conid"]);
-    $oldschdarray[$i]["autofeedbackgraph"].="</TD>\n  </TR>\n";
+  if (isset($feedback_array['graph'][$schd_array[$i]["Sess-Con"]])) {
+    $schd_array[$i]["autofeedbackgraph"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Feedback graph from surveys:<br>";
+    $schd_array[$i]["autofeedbackgraph"].=generateSvgString($schd_array[$i]["sessionid"],$schd_array[$i]["conid"]);
+    $schd_array[$i]["autofeedbackgraph"].="</TD>\n  </TR>\n";
   }
-  if (isset($feedback_array[$oldschdarray[$i]["Sess-Con"]])) {
-    $oldschdarray[$i]["feedbackwritten"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Written feedback from surveys:\n";
-    $oldschdarray[$i]["feedbackwritten"].=$feedback_array[$oldschdarray[$i]["Sess-Con"]]."</TD>\n  </TR>\n";
+  if (isset($feedback_array[$schd_array[$i]["Sess-Con"]])) {
+    $schd_array[$i]["feedbackwritten"]="  <TR>\n    <TD>&nbsp;</TD>\n    <TD colspan=6 class=border1000>Written feedback from surveys:\n";
+    $schd_array[$i]["feedbackwritten"].=$feedback_array[$schd_array[$i]["Sess-Con"]]."</TD>\n  </TR>\n";
   }
 }
 
-
-// Build the list of individuals associated with each class into partarray
-$query = <<<EOD
-SELECT
-    POS.sessionid,
-    CD.badgename,
-    P.pubsname,
-    POS.moderator,
-    POS.volunteer,
-    POS.introducer,
-    POS.aidedecamp,
-    PSI.comments AS PresenterComments
-  FROM
-      ParticipantOnSession POS
-    JOIN $ReportDB.CongoDump CD USING(badgeid)
-    JOIN $ReportDB.Participants P USING(badgeid)
-    LEFT JOIN ParticipantSessionInterest PSI USING(sessionid,badgeid)
-  WHERE
-    POS.sessionid in (SELECT
-                          sessionid 
-                        FROM
-                            ParticipantOnSession
-                        WHERE badgeid='$badgeid')
-  ORDER BY
-    sessionid,
-    moderator DESC
-EOD;
-if (!$result=mysql_query($query,$link)) {
-  $message.=$query."<BR>Error querying database.<BR>";
-  RenderError($title,$message);
-  exit();
- }
-$partrows=mysql_num_rows($result);
-for ($i=1; $i<=$partrows; $i++) {
-  $partarray[$i]=mysql_fetch_assoc($result);
- }
 
 // Begin the presentation of the information
 topofpagereport($title,$description,$additionalinfo);
@@ -345,7 +214,7 @@ if (file_exists("../Local/Verbiage/MySchedule_0")) {
   echo file_get_contents("../Local/Verbiage/MySchedule_0");
  } else {
   echo "<P>Below is the list of all the schedule elements for which you are scheduled.  If you need any changes\n";
-  echo "to this schedule please contact <A HREF=\"mailto:$ProgramEmail\">$ProgramEmail</A>.</P>\n";
+  echo "to this schedule please contact <A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.</P>\n";
   echo "<P>In order to put together the entire schedule, we had to schedule some panels outside of\n";
   echo "the times that certain panelists requested.  If this happened to you, we would love to have\n";
   echo "you on the panel, but understand if you cannot make it.  Please let us know if you cannot.</P>\n";
@@ -372,45 +241,59 @@ echo "<P>Your registration status is <SPAN class=\"hilit\">$regmessage.</SPAN></
 if ($pcommentrows > 0) {
   echo "<P>General <A HREF=#genfeedback>Feedback</A> received about or for you.\n</P>";
  }
-echo "<P>Go directly to this year's class: $schdredirect</P>\n";
-echo "<P>Go to a previous year's class: $oldschdredirect</P>\n";
-echo "<P>Thank you -- <A HREF=\"mailto:$ProgramEmail\">Programming</a>\n";
+if ($currentschdredirect != "") {
+  echo "<P>Go directly to this event's classes: $currentschdredirect</P>\n";
+}
+if ($otherschdredirect != "") {
+  echo "<P>Go to all of your other classes: $otherschdredirect</P>\n";
+}
+echo "<P>Thank you -- <A HREF=\"mailto:".$_SESSION['programemail']."\">Programming</a>\n";
+if ($pcommentrows > 0) {
+  echo "<hr>\n<P><A NAME=genfeedback></A>Personal Feedback:</A></P>\n";
+  echo "<UL>\n";
+  for ($i=1; $i<=$pcommentrows; $i++) {
+    echo "  <LI>".$pcommentarray[$i]["Comment"]."\n";
+  }
+  echo "</UL>\n<br>\n";
+}
+echo "<HR>\n<H3>Classes</H3>\n<HR>\n";
 echo "<TABLE>\n";
+//echo "  <TR><TD></TD><TD width=\"30%\"></TD><TD width=\"20%\"></TD><TD></TD><TD width=\"6%\"></TD><TD></TD><TD width=\"18%\"></TD></TR>\n";
 echo "  <COL><COL width=\"30%\"><COL width=\"20%\"><COL><COL width=\"6%\"><COL><COL width=\"18%\">\n";
-for ($i=1; $i<=$schdrows; $i++) {
+for ($i=1; $i<=$schd_rows; $i++) {
   echo "  <TR>\n";
-  echo "    <TD class=\"hilit\"><A NAME=".$schdarray[$i]["sessionid"]."></A>".$schdarray[$i]["sessionid"]."</TD>\n";
-  echo "    <TD class=\"hilit\">".htmlspecialchars($schdarray[$i]["title"])."</TD>\n";
-  echo "    <TD class=\"hilit\">".$schdarray[$i]["roomname"]."</TD>\n";
-  echo "    <TD class=\"hilit\">".$schdarray[$i]["trackname"]."</TD>\n";
+  echo "    <TD class=\"hilit\"><A NAME=".$schd_array[$i]["Sess-Con"]."></A>".$schd_array[$i]["conname"]."</TD>\n";
+  echo "    <TD class=\"hilit\">".htmlspecialchars($schd_array[$i]["title"])."</TD>\n";
+  echo "    <TD class=\"hilit\">".$schd_array[$i]["allrooms"]."</TD>\n";
+  echo "    <TD class=\"hilit\">".$schd_array[$i]["trackname"]."</TD>\n";
   echo "    <TD class=\"hilit\">&nbsp;</TD>\n";
-  echo "    <TD class=\"hilit\">".$schdarray[$i]["Start Time"]."</TD>\n";
-  echo "    <TD class=\"hilit\">Duration: ".$schdarray[$i]["Duration"]."</TD>\n";
+  echo "    <TD class=\"hilit\">".$schd_array[$i]["Start Time"]."</TD>\n";
+  echo "    <TD class=\"hilit\">Duration: ".$schd_array[$i]["Duration"]."</TD>\n";
   echo "  </TR>\n";
   echo "  <TR>\n";
   echo "    <TD>&nbsp;</TD>\n";
-  echo "    <TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($schdarray[$i]["progguiddesc"])."</TD>\n";
+  echo "    <TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($schd_array[$i]["progguiddesc"])."</TD>\n";
   echo "  </TR>\n";
   echo "  <TR>\n";
   echo "    <TD>&nbsp;</TD>\n";
-  echo "    <TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($schdarray[$i]["pocketprogtext"])."</TD>\n";
+  echo "    <TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($schd_array[$i]["pocketprogtext"])."</TD>\n";
   echo "  </TR>\n";
-  if ($schdarray[$i]["persppartinfo"] != "") {
+  if ($schd_array[$i]["persppartinfo"] != "") {
     echo "  <TR>\n";
     echo "    <TD>&nbsp;</TD>\n";
-    echo "    <TD colspan=6 class=\"border0010\">Requirements: ".htmlspecialchars($schdarray[$i]["persppartinfo"])."</TD>\n";
+    echo "    <TD colspan=6 class=\"border0010\">Requirements: ".htmlspecialchars($schd_array[$i]["persppartinfo"])."</TD>\n";
     echo "  </TR>\n";
   }
-  if ($schdarray[$i]["notesforpart"] != "") {
+  if ($schd_array[$i]["notesforpart"] != "") {
     echo "  <TR>\n";
     echo "    <TD>&nbsp;</TD>\n";
-    echo "    <TD colspan=6 class=\"border0010\">Participant notes: ".htmlspecialchars($schdarray[$i]["notesforpart"])."</TD>\n";
+    echo "    <TD colspan=6 class=\"border0010\">Participant notes: ".htmlspecialchars($schd_array[$i]["notesforpart"])."</TD>\n";
     echo "  </TR>\n";
   }
-  if ($schdarray[$i]["Needed"] != "") {
+  if ($schd_array[$i]["Needed"] != "") {
     echo "  <TR>\n";
     echo "    <TD>&nbsp;</TD>\n";
-    echo "    <TD colspan=6 class=\"border0010\">Support requests: ".htmlspecialchars($schdarray[$i]["Needed"])."</TD>\n";
+    echo "    <TD colspan=6 class=\"border0010\">Support requests: ".htmlspecialchars($schd_array[$i]["Needed"])."</TD>\n";
     echo "  </TR>\n";
   }
   echo "  <TR>\n";
@@ -422,98 +305,14 @@ for ($i=1; $i<=$schdrows; $i++) {
   echo "  </TR>\n";
   echo "  <TR>\n";
   echo "    <TD colspan=7 class=\"smallspacer\">&nbsp;</TD></TR>\n";
-  for ($j=1; $j<=$partrows; $j++) {
-    if ($partarray[$j]["sessionid"]!=$schdarray[$i]["sessionid"]) {
-      continue;
-    }
-    if ($partarray[$j+1]["sessionid"]==$schdarray[$i]["sessionid"]) {
-      $class="border0010";
-    }
-    else {
-      $class="";
-    }
-    echo "  <TR>\n    <TD>&nbsp;</TD>\n";
-    echo "    <TD class=\"$class\">".htmlspecialchars($partarray[$j]["pubsname"]);
-    if ($partarray[$j]["pubsname"]!=$partarray[$j]["badgename"]) echo " (".htmlspecialchars($partarray[$j]["badgename"]).")";
-    if ($partarray[$j]["moderator"]) {
-      echo " <I>mod</I> ";
-    }
-    if ($partarray[$j]["volunteer"]) {
-      echo " <I>volunteer</I> ";
-    }
-    if ($partarray[$j]["introducer"]) {
-      echo " <I>introducer</I> ";
-    }
-    if ($partarray[$j]["aidedecamp"]) {
-      echo " <I>assistant</I> ";
-    }
-    echo "</TD>\n";
-    echo "    <TD colspan=5 class=\"$class\">".htmlspecialchars(fix_slashes($partarray[$j]["PresenterComments"]));
-    echo "</TD>\n";
-    echo "  </TR>\n";
-  }
-  echo $schdarray[$i]["feedbackgraph"];
-  echo $schdarray[$i]["autofeedbackgraph"];
-  echo $schdarray[$i]["feedbackwritten"];
+  echo "  <TR>\n";
+  echo $schd_array[$i]["partlist"];
+  echo $schd_array[$i]["feedbackgraph"];
+  echo $schd_array[$i]["autofeedbackgraph"];
+  echo $schd_array[$i]["feedbackwritten"];
   echo "  <TR>\n    <TD colspan=7 class=\"border0020\">&nbsp;</TD>\n  </TR>\n";
   echo "  <TR>\n    <TD colspan=7 class=\"border0000\">&nbsp;</TD>\n  </TR>\n";
  }
-echo "</TABLE>\n"; 
-if ($pcommentrows > 0) {
-  echo "<hr>\n<P><A NAME=genfeedback></A>Personal Feedback:</A></P>\n";
-  echo "<UL>\n";
-  for ($i=1; $i<=$pcommentrows; $i++) {
-    echo "  <LI>".$pcommentarray[$i]["comment"]."\n";
-  }
-  echo "</UL>\n<br>\n";
-}
-
-echo "<HR>\n<H3>Previous classes</H3>\n<HR>\n";
-echo "<TABLE>\n";
-echo "  <COL><COL width=\"30%\"><COL width=\"20%\"><COL><COL width=\"6%\"><COL><COL width=\"18%\">\n";
-for ($i=1; $i<=$oldschdrows; $i++) {
-  echo "  <TR>\n";
-  echo "    <TD class=\"hilit\"><A NAME=".$oldschdarray[$i]["Sess-Con"]."></A>".$oldschdarray[$i]["conname"]."</TD>\n";
-  echo "    <TD class=\"hilit\">".htmlspecialchars($oldschdarray[$i]["title"])."</TD>\n";
-  echo "    <TD class=\"hilit\">".$oldschdarray[$i]["allrooms"]."</TD>\n";
-  echo "    <TD class=\"hilit\">".$oldschdarray[$i]["trackname"]."</TD>\n";
-  echo "    <TD class=\"hilit\">&nbsp;</TD>\n";
-  echo "    <TD class=\"hilit\">".$oldschdarray[$i]["Start Time"]."</TD>\n";
-  echo "    <TD class=\"hilit\">Duration: ".$oldschdarray[$i]["Duration"]."</TD>\n";
-  echo "  </TR>\n";
-  echo "  <TR>\n";
-  echo "    <TD>&nbsp;</TD>\n";
-  echo "    <TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($oldschdarray[$i]["progguiddesc"])."</TD>\n";
-  echo "  </TR>\n";
-  echo "  <TR>\n";
-  echo "    <TD>&nbsp;</TD>\n";
-  echo "    <TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($oldschdarray[$i]["pocketprogtext"])."</TD>\n";
-  echo "  </TR>\n";
-  if ($oldschdarray[$i]["persppartinfo"] != "") {
-    echo "  <TR>\n";
-    echo "    <TD>&nbsp;</TD>\n";
-    echo "    <TD colspan=6 class=\"border0010\">Requirements: ".htmlspecialchars($oldschdarray[$i]["persppartinfo"])."</TD>\n";
-    echo "  </TR>\n";
-  }
-  if ($oldschdarray[$i]["notesforpart"] != "") {
-    echo "  <TR>\n";
-    echo "    <TD>&nbsp;</TD>\n";
-    echo "    <TD colspan=6 class=\"border0010\">Participant notes: ".htmlspecialchars($oldschdarray[$i]["notesforpart"])."</TD>\n";
-    echo "  </TR>\n";
-  }
-  if ($oldschdarray[$i]["Needed"] != "") {
-    echo "  <TR>\n";
-    echo "    <TD>&nbsp;</TD>\n";
-    echo "    <TD colspan=6 class=\"border0010\">Support requests: ".htmlspecialchars($oldschdarray[$i]["Needed"])."</TD>\n";
-    echo "  </TR>\n";
-  }
-  echo "  <TR>\n";
-  echo $oldschdarray[$i]["feedbackgraph"];
-  echo $oldschdarray[$i]["autofeedbackgraph"];
-  echo $oldschdarray[$i]["feedbackwritten"];
-  echo "  <TR>\n    <TD colspan=7 class=\"border0020\">&nbsp;</TD>\n  </TR>\n";
-  echo "  <TR>\n    <TD colspan=7 class=\"border0000\">&nbsp;</TD>\n  </TR>\n";
- }
-echo "</TABLE>\n"; 
+echo "</TABLE>\n";
 correct_footer();
 ?>

@@ -1,14 +1,15 @@
 <?php
 global $participant,$message_error,$message2,$congoinfo;
-$title="Show Search Session Results";
-// initialize db; check login; retrieve $badgeid
-require_once ('PartCommonCode.php');
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
+require_once('PartCommonCode.php');
 
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+// Localizations
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
+$badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
+$title="Show Search Session Results";
+
+// Passed in Variables
+$trackid=$_POST["track"];
+$titlesearch=stripslashes($_POST["title"]);
 
 /* If the individual doing the searches is a Programming Volunteer,
    they get to see all the scheduled classes, otherwise, just the
@@ -17,60 +18,63 @@ if ($BiotDB=="BIODB") {unset($BIODB);}
 
 if (may_I('Programming')) {
   $invitedguest_p="";
-  $schedule_p="JOIN Schedule USING (sessionid)";
+  $schedule_p="JOIN Schedule USING (sessionid,conid)";
 } else {
-  $invitedguest_p="S2.invitedguest=0 AND";
+  $invitedguest_p="invitedguest=0 AND";
   $schedule_p="";
 }
 
-$trackid=$_POST["track"];
-$titlesearch=stripslashes($_POST["title"]);
 // List of sessions that match search criteria 
 // Does not includes sessions in which participant is interested if they do match match search
 // Use "My Panel Interests" page to just see everything in which you are interested
 $query = <<<EOD
 SELECT
-        S.sessionid,
-        T.trackname,
-        S.title,
-        CASE
-            WHEN (minute(S.duration)=0) THEN date_format(S.duration,'%l hr')
-            WHEN (hour(S.duration)=0) THEN date_format(S.duration, '%i min')
-            ELSE date_format(S.duration,'%l hr, %i min')
-            END
-            as duration,
-        S.pocketprogtext,
-        S.progguiddesc,
-        S.persppartinfo,
-        PSI.badgeid
-    FROM
-        Sessions S JOIN
-        $ReportDB.Tracks T USING (trackid) JOIN
-        $ReportDB.SessionStatuses SST USING (statusid) LEFT JOIN
-                (SELECT
-                         badgeid, sessionid
-                     FROM
-                         ParticipantSessionInterest
-                     WHERE badgeid='$badgeid') as PSI USING (sessionid)
-    WHERE
-        SST.may_be_scheduled=1 AND
-        S.Sessionid in
-            (SELECT S2.Sessionid FROM
-                     Sessions S2
-                     JOIN $ReportDB.Tracks T USING (trackid)
-                     JOIN $ReportDB.Types Y USING (typeid)
-	             $schedule_p
-                 WHERE
-                     $invitedguest_p
-                     T.selfselect=1 AND
-                     Y.selfselect=1
+    concat(conname," - ",sessionid) AS Sessionid,
+    trackname,
+    title,
+    CASE
+      WHEN (minute(duration)=0) THEN date_format(duration,'%l hr')
+      WHEN (hour(duration)=0) THEN date_format(duration, '%i min')
+      ELSE date_format(duration,'%l hr, %i min')
+    END AS duration,
+    pocketprogtext,
+    progguiddesc,
+    persppartinfo,
+    badgeid
+  FROM
+      Sessions
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
+    LEFT JOIN (SELECT
+          badgeid,
+          sessionid,
+          conid
+        FROM
+            ParticipantSessionInterest
+        WHERE
+          badgeid='$badgeid') as PSI USING (sessionid,conid)
+  WHERE
+    conid=$conid AND
+    may_be_scheduled=1 AND
+    sessionid in (SELECT
+          sessionid
+        FROM
+            Sessions
+          JOIN Tracks T USING (trackid)
+          JOIN Types Y USING (typeid)
+          $schedule_p
+        WHERE
+          $invitedguest_p
+          conid=$conid AND
+          T.selfselect=1 AND
+          Y.selfselect=1
 EOD;
 if ($trackid!=0) {
-  $query.="                     AND S.trackid=$trackid\n";
+  $query.="          AND trackid=$trackid\n";
 }
 if ($titlesearch!="") {
   $x=mysql_real_escape_string($titlesearch,$link);
-  $query.="                     AND S.title LIKE \"%$x%\"\n";
+  $query.="          AND title LIKE \"%$x%\"\n";
 }
 $query.=")\n";
 if (!$result=mysql_query($query,$link)) {

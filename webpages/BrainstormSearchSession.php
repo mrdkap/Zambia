@@ -1,12 +1,6 @@
 <?php
 require_once('BrainstormCommonCode.php');
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
+$conid=$_SESSION['conid'];
 
 $title="Search Panels";
 $description="<P>Clicking Search without making any selections will display all panels.</P>";
@@ -42,7 +36,7 @@ if (file_exists("../Local/Verbiage/BrainstormSearchSession_0")) {
   <TR>
     <TD>Track:</TD>
     <TD><SELECT class="tcell" name="track">
-          <?php $query = "SELECT trackid, trackname FROM $ReportDB.Tracks WHERE selfselect=1 ORDER BY display_order"; populate_select_from_query($query, $trackid, "ANY", false); ?>
+          <?php $query = "SELECT trackid, trackname FROM Tracks WHERE selfselect=1 ORDER BY display_order"; populate_select_from_query($query, $trackid, "ANY", false); ?>
         </SELECT></TD>
     <TD>Title Search:</TD>
     <TD> <INPUT type="text" name="title" value="<?php echo $titlesearch; ?>"></TD>
@@ -80,10 +74,11 @@ SELECT
     persppartinfo
   FROM
       Sessions
-    JOIN $ReportDB.Tracks USING (trackid)
-    JOIN $ReportDB.SessionStatuses USING (statusid)
-    JOIN $ReportDB.Types USING (typeid)
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
+    JOIN Types USING (typeid)
   WHERE
+    conid=$conid AND
     statusname in ('Edit Me','Brainstorm','Vetted','Assigned','Scheduled') and
     typename in ('Panel','Class','Presentation','Author Reading','Lounge','SIG/BOF/MnG','Social','EVENT','Performance')
 EOD;

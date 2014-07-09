@@ -1,17 +1,9 @@
 <?php
 global $participant,$message,$message_error,$message2,$congoinfo;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-$conid=$_SESSION['conid'];
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
-$title="My Profile";
-
 // initialize db, check login, set $badgeid from session
 require_once('PartCommonCode.php'); 
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
+$title="My Profile";
 
 //Get the reg email (switched to brainstorm coordinator)
 //     conrolename like '%Registration%' AND
@@ -19,9 +11,9 @@ $query = <<<EOD
 SELECT
     email
   FROM
-      $ReportDB.ConRoles
-    JOIN $ReportDB.UserHasConRole USING (conroleid)
-    JOIN $ReportDB.CongoDump USING (badgeid)
+      ConRoles
+    JOIN UserHasConRole USING (conroleid)
+    JOIN CongoDump USING (badgeid)
   WHERE
     conrolename like '%BrainstormCoord%' AND
     conid=$conid
@@ -109,7 +101,7 @@ if (isset($_POST['update'])) {
   }
 
   // Begin the query:
-  $query_start="UPDATE $ReportDB.Participants SET ";
+  $query_start="UPDATE Participants SET ";
   $query="";
 
   // ... add password ...
@@ -150,7 +142,7 @@ if (isset($_POST['update'])) {
   }
   // Update interested if changed
   if ($_POST['interested']!=$participant['interested']) {
-    $query ="UPDATE $ReportDB.Interested SET ";
+    $query ="UPDATE Interested SET ";
     $query.="interestedtypeid=".$_POST['interested']." ";
     $query.="WHERE badgeid=\"".$badgeid."\" AND conid=".$_SESSION['conid'];
     if (!mysql_query($query,$link)) {
@@ -162,7 +154,7 @@ if (isset($_POST['update'])) {
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
       $value_array=array($_SESSION['conid'], $badgeid, mysql_real_escape_string(stripslashes($_POST['interested'])));
-      $message.=submit_table_element($link,"Admin Participants","$ReportDB.Interested", $element_array, $value_array);
+      $message.=submit_table_element($link,"Admin Participants","Interested", $element_array, $value_array);
     } elseif ($r_matched[1]>1) {
       $message.="There might be something wrong with the table, there are multiple interested elements for this year.";
     }

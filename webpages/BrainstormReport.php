@@ -1,13 +1,7 @@
 <?php
 require_once('BrainstormCommonCode.php');
 global $link;
-
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_SESSION['conid'];
 
 if ($_GET['status']=="scheduled") {
   $selstatus="'Assigned','Scheduled'";
@@ -51,7 +45,7 @@ if ($_GET['status']=="scheduled") {
 }
 
 $additionalinfo.="<P>If you want to help, email us at: ";
-$additionalinfo.="<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A></P>\n";
+$additionalinfo.="<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A></P>\n";
 $additionalinfo.="<P>This list is sorted by Track and then Title.</P>\n";
 
 if (!empty($_SERVER['QUERY_STRING'])) {
@@ -77,11 +71,12 @@ SELECT
     persppartinfo
   FROM
       Sessions
-    JOIN $ReportDB.Tracks USING (trackid)
-    JOIN $ReportDB.SessionStatuses USING (statusid)
-    JOIN $ReportDB.Types USING (typeid)
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
+    JOIN Types USING (typeid)
   WHERE
-    statusname in ($selstatus) and
+    conid=$conid AND
+    statusname in ($selstatus) AND
     typename in ('Panel','Class','Presentation','Author Reading','Lounge','SIG/BOF/MnG','Social','EVENT','Performance')
   ORDER BY
     trackname,

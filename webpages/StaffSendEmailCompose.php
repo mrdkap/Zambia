@@ -5,15 +5,7 @@
 require_once('email_functions.php');
 require_once('StaffCommonCode.php'); //reset connection to db and check if logged in
 global $title, $message, $link;
-$conid=$_SESSION['conid'];
-$ProgramEmail=PROGRAM_EMAIL;
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 if (isset($_POST['sendto'])) { // page has been visited before so restore previous values to form
   $email=get_email_from_post();
@@ -30,7 +22,7 @@ if ($_POST['navigate']!='send') {
 $title="Staff Send Email";
 // This should be done above?
 //$email=get_email_from_post();
-$query="SELECT emailtoquery FROM $ReportDB.EmailTo where emailtoid=".$email['sendto'];
+$query="SELECT emailtoquery FROM EmailTo where emailtoid=".$email['sendto'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
@@ -56,13 +48,13 @@ for ($i=0; $i<$recipient_count; $i++) {
    expansion later. */
   $query = <<<EOD
 SELECT 
-    DISTINCT CONCAT(S.title, 
+    DISTINCT CONCAT(title, 
         if((moderator=1),' (moderating)',''), 
         if ((aidedecamp=1),' (assisting)',''), 
         if((volunteer=1),' (outside wristband checker)',''), 
         if((introducer=1),' (announcer/inside room attendant)',''),
         ' - ',
-        DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p'),
+        DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p'),
         ' - ',
         CASE
           WHEN HOUR(duration) < 1 THEN concat(date_format(duration,'%i'),'min')
@@ -71,25 +63,26 @@ SELECT
           END,
         ' in room ',
 	roomname) as Title,
-    P.pubsname,
+    pubsname,
     WEB.descriptiontext AS "description_good_web",
     BOOK.descriptiontext AS "description_good_book"
   FROM
-      Sessions S
-    JOIN Schedule SCH USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN ParticipantOnSession POS USING (sessionid)
-    JOIN $ReportDB.Participants P USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN ParticipantOnSession USING (sessionid,conid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN ConInfo USING (conid)
     LEFT JOIN (SELECT
 	      descriptiontext,
 	      sessionid
 	    FROM
-                $ReportDB.Descriptions
-	      JOIN $ReportDB.DescriptionTypes USING (descriptiontypeid)
-	      JOIN $ReportDB.BioStates USING (biostateid)
-	      JOIN $ReportDB.BioDests USING (biodestid)
+                Descriptions
+	      JOIN DescriptionTypes USING (descriptiontypeid)
+	      JOIN BioStates USING (biostateid)
+	      JOIN BioDests USING (biodestid)
 	    WHERE
               conid=$conid AND
               descriptiontypename="description" AND
@@ -99,19 +92,19 @@ SELECT
 	      descriptiontext,
 	      sessionid
 	    FROM
-                $ReportDB.Descriptions
-	      JOIN $ReportDB.DescriptionTypes USING (descriptiontypeid)
-	      JOIN $ReportDB.BioStates USING (biostateid)
-	      JOIN $ReportDB.BioDests USING (biodestid)
+                Descriptions
+	      JOIN DescriptionTypes USING (descriptiontypeid)
+	      JOIN BioStates USING (biostateid)
+	      JOIN BioDests USING (biodestid)
 	    WHERE
               conid=$conid AND
               descriptiontypename="description" AND
 	      biostatename="good" AND
 	      biodestname="book") AS BOOK USING (sessionid)
   WHERE
-    permrolename in ('Participant','General','Programming') AND
-    UHPR.conid=$conid AND
-    POS.badgeid='$individual'
+    permrolename in ('Participant','General','Programming','SuperProgramming','SuperGeneral') AND
+    conid=$conid AND
+    badgeid='$individual'
   ORDER BY
     starttime
 
@@ -160,7 +153,7 @@ Bood Description: ".$schedule_array[$j]['description_good_book']."
   }
 }
 
-$query="SELECT email FROM $ReportDB.CongoDump WHERE badgeid=".$email['sendfrom'];
+$query="SELECT email FROM CongoDump WHERE badgeid=".$email['sendfrom'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
@@ -168,7 +161,7 @@ if (!$result=mysql_query($query,$link)) {
 $emailfrom=mysql_result($result,0);
 
 if ($email['sendcc'] != 0) {
-  $query="SELECT email FROM $ReportDB.CongoDump WHERE badgeid=".$email['sendcc'];
+  $query="SELECT email FROM CongoDump WHERE badgeid=".$email['sendcc'];
   if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);

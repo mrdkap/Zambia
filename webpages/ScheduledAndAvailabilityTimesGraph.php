@@ -14,7 +14,7 @@ $title="Availability and Scheduled times for Programming";
 $description="<P>If you are seeing this, as opposed to the picture, something failed.  Probably a lack of anything in the ParticipantAvailiblityTimes, or ParticipantOnSession table.  Please fix it.</P>";
 
 /* ConStartSeconds is the seconds from the epoch that the con started
-   from CON_START_DATIM, for figuring out the times across the bottom
+   from constartdate, for figuring out the times across the bottom
    of the grid.  ConEndSeconds is the total seconds across the entire
    con, added to ConStartSeconds which indicates where the grid is to
    stop. */
@@ -113,7 +113,7 @@ SELECT
   WHERE
     conid=$conid AND
     (introducer in ('0','1','Yes') OR
-     volunteer in ('0','1','Yes')
+     volunteer in ('0','1','Yes'))
 EOD;
 
 list($sched_rows,$sched_header_array,$sched_array)=queryreport($query,$link,$title,$description,0);

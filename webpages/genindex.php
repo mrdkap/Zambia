@@ -1,8 +1,6 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ProgramEmail=PROGRAM_EMAIL; // make it a variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
@@ -20,12 +18,12 @@ $additionalinfo="";
 if (!$gflowname) {
   $title="List of all indicies";
   $description="<P>Here is a list of all the indicies that are available to be generated.</P>\n";
-  $additionalinfo="<P>If a Div/Area Head would like any of their reports tweaked, email to $ProgramEmail and let us know.</P>\n";
+  $additionalinfo="<P>If a Div/Area Head would like any of their reports tweaked, email to ".$_SESSION['programemail']." and let us know.</P>\n";
   $query = <<<EOD
 SELECT
     DISTINCT concat("<A HREF=genindex.php?gflowname=",gflowname,">",gflowname," Reports</A>") AS Indicies
   FROM
-      $ReportDB.GroupFlow
+      GroupFlow
   ORDER BY
     gflowname
 EOD;
@@ -56,13 +54,13 @@ SELECT
     DISTINCT concat("<A HREF=genreport.php?reportid=",R.reportid,">",R.reportid," - ",R.reporttitle,"</A> (<A HREF=genreport.php?reportid=",R.reportid,"&csv=y>csv</A>)") AS Title,
     R.reportdescription AS Description
   FROM
-    $ReportDB.GroupFlow GF,
-    $ReportDB.Reports R,
-    $ReportDB.Phase P
+      GroupFlow GF,
+      Reports R,
+      Phase P
   WHERE
-    GF.reportid=R.reportid and
-    GF.gflowname='$gflowname' and
-    (GF.phasetypeid is null or (GF.phasetypeid = P.phasetypeid and P.phasestate = TRUE and conid=$conid))
+    GF.reportid=R.reportid AND
+    GF.gflowname='$gflowname' AND
+    (GF.phasetypeid is NULL OR (GF.phasetypeid = P.phasetypeid AND P.phasestate = TRUE AND conid=$conid))
   ORDER BY
     GF.gfloworder
 EOD;

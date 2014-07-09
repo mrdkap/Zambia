@@ -93,7 +93,6 @@ foreach ($ConInfo_array_keys as $element) {
 // Find the instances of the below, and, if few enough, call there, instead of here.
 // Somewhere DOUBLE_SCHEDULE dissapeared.  Find it, and fix it.
 define("CON_NAME",$ConInfo_array['conname']);
-define("CON_START_DATIM",$ConInfo_array['constartdate']);
 define("VENDOR_EMAIL",$ConInfo_array['vendoremail']);
 define("PROGRAM_EMAIL",$ConInfo_array['programemail']);
 

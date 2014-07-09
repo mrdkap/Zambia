@@ -1,22 +1,13 @@
 <?php
 // Not sure if there is any need to support post/been here before
 require_once('email_functions.php');
-require_once('db_functions.php');
-require_once('render_functions.php');
 require_once('StaffCommonCode.php'); //reset connection to db and check if logged in
 global $message,$link;
-$conid=$_SESSION['conid'];
-$ProgramEmail=PROGRAM_EMAIL;
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
+
+// List of replacements
 $subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","\$PUBNAME\$","\$BADGENAME\$","\$SCHEDULE\$","\$FULLSCHEDULE\$","\$BIOS\$");
 $title="Send Email (Step 2 - verify)";
-
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 if (!isset($_POST['sendto'])) { // page has not been visited before
     $message_error="Expected POST data was missing.  This page is intended to be reached via a form.";
@@ -29,7 +20,7 @@ if (!validate_email($email)) {
     render_send_email($email,$message); // $message came from validate_email
     exit(0);
     }
-$query="SELECT emailtoquery FROM $ReportDB.EmailTo where emailtoid=".$email['sendto'];
+$query="SELECT emailtoquery FROM EmailTo where emailtoid=".$email['sendto'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
@@ -58,13 +49,13 @@ $individual=$recipientinfo[0]['badgeid'];
    expansion later. */
 $query = <<<EOD
 SELECT 
-    DISTINCT CONCAT(S.title, 
+    DISTINCT CONCAT(title, 
         if((moderator=1),' (moderating)',''), 
         if ((aidedecamp=1),' (assisting)',''), 
         if((volunteer=1),' (outside wristband checker)',''), 
         if((introducer=1),' (announcer/inside room attendant)',''),
         ' - ',
-        DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p'),
+        DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p'),
         ' - ',
         CASE
           WHEN HOUR(duration) < 1 THEN concat(date_format(duration,'%i'),'min')
@@ -73,25 +64,26 @@ SELECT
           END,
         ' in room ',
 	roomname) as Title,
-    P.pubsname,
+    pubsname,
     WEB.descriptiontext AS "description_good_web",
     BOOK.descriptiontext AS "description_good_book"
   FROM
-      Sessions S
-    JOIN Schedule SCH USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN ParticipantOnSession POS USING (sessionid)
-    JOIN $ReportDB.Participants P USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN ParticipantOnSession USING (sessionid,conid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN ConInfo USING (conid)
     LEFT JOIN (SELECT
 	      descriptiontext,
 	      sessionid
 	    FROM
-                $ReportDB.Descriptions
-	      JOIN $ReportDB.DescriptionTypes USING (descriptiontypeid)
-	      JOIN $ReportDB.BioStates USING (biostateid)
-	      JOIN $ReportDB.BioDests USING (biodestid)
+                Descriptions
+	      JOIN DescriptionTypes USING (descriptiontypeid)
+	      JOIN BioStates USING (biostateid)
+	      JOIN BioDests USING (biodestid)
 	    WHERE
               conid=$conid AND
               descriptiontypename="description" AND
@@ -101,19 +93,19 @@ SELECT
 	      descriptiontext,
 	      sessionid
 	    FROM
-                $ReportDB.Descriptions
-	      JOIN $ReportDB.DescriptionTypes USING (descriptiontypeid)
-	      JOIN $ReportDB.BioStates USING (biostateid)
-	      JOIN $ReportDB.BioDests USING (biodestid)
+                Descriptions
+	      JOIN DescriptionTypes USING (descriptiontypeid)
+	      JOIN BioStates USING (biostateid)
+	      JOIN BioDests USING (biodestid)
 	    WHERE
               conid=$conid AND
               descriptiontypename="description" AND
 	      biostatename="good" AND
 	      biodestname="book") AS BOOK USING (sessionid)
   WHERE
-    permrolename in ('Participant','General','Programming') AND
-    UHPR.conid=$conid AND
-    POS.badgeid='$individual'
+     permrolename in ('Participant','General','Programming','SuperProgramming','SuperGeneral') AND
+    conid=$conid AND
+    badgeid='$individual'
   ORDER BY
     starttime
 
@@ -126,37 +118,42 @@ $recipientinfo[0]['schedule'].="Your schedule:
 for ($j=1; $j<=$rows; $j++) {
   $recipientinfo[0]['schedule'].=$schedule_array[$j]['Title']."
 ";
-
-  /* This pulls the schedule information for an individual, and
-   then collects it, and stuffs it into a single variable, for
-   expansion later. */
-  $bioinfo=getBioData($individual);
-
-  /* Presenting all the type pieces.
-     Currently we are only using en-us as the language,
-     at some point this should expand beyond that.
-     Currently we are using edited as the state, at some
-     point we should move to good. */
-  $biostate='edited'; // for ($l=0; $l<count($bioinfo['biostate_array']); $l++) {
-  $biolang='en-us'; // for ($k=0; $k<count($bioinfo['biolang_array']); $k++) {
-  $recipientinfo[0]['bios'].="Your bios:
-";
-  for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
-
-    // Setup for keyname, to collapse all three variables into one passed name.
-    $biotype=$bioinfo['biotype_array'][$j];
-    // $biolang=$bioinfo['biolang_array'][$k];
-    // $biostate=$bioinfo['biostate_array'][$l];
-    $keyname=$biotype."_".$biolang."_".$biostate."_bio";
-
-    // Fold the information into the bios variable so it can be substituted below.
-    $recipientinfo[0]['bios'].=$biotype." bio: ".$bioinfo[$keyname]."
+    $recipientinfo[0]['fullschedule'].=$schedule_array[$j]['Title']."
+Web Description: ".$schedule_array[$j]['description_good_web']."
+Bood Description: ".$schedule_array[$j]['description_good_book']."
 
 ";
-  }
 }
 
-$query="SELECT email FROM $ReportDB.CongoDump WHERE badgeid=".$email['sendfrom'];
+/* This pulls the schedule information for an individual, and
+   then collects it, and stuffs it into a single variable, for
+   expansion later. */
+$bioinfo=getBioData($individual);
+
+/* Presenting all the type pieces.
+   Currently we are only using en-us as the language,
+   at some point this should expand beyond that.
+   Currently we are using edited as the state, at some
+   point we should move to good. */
+$biostate='edited'; // for ($l=0; $l<count($bioinfo['biostate_array']); $l++) {
+$biolang='en-us'; // for ($k=0; $k<count($bioinfo['biolang_array']); $k++) {
+$recipientinfo[0]['bios'].="Your bios:
+";
+for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
+
+  // Setup for keyname, to collapse all three variables into one passed name.
+  $biotype=$bioinfo['biotype_array'][$j];
+  // $biolang=$bioinfo['biolang_array'][$k];
+  // $biostate=$bioinfo['biostate_array'][$l];
+  $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+
+  // Fold the information into the bios variable so it can be substituted below.
+  $recipientinfo[0]['bios'].=$biotype." bio: ".$bioinfo[$keyname]."
+
+";
+}
+
+$query="SELECT email FROM CongoDump WHERE badgeid=".$email['sendfrom'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);

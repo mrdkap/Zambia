@@ -2,8 +2,6 @@
 //This page is intended to be hit from a cron job only.
 //Need to add some code to prevent it from being accessed any other way, but leave it exposed for now for testing.
 require_once('email_functions.php');
-require_once('CGICommonCode.php');
-require_once('error_functions.php');
 require_once('StaffCommonCode.php');
 
 // For using php mail directly, otherwise will try to use mutt
@@ -45,7 +43,7 @@ for ($i=1; $i<=$rows; $i++) {
   $body=str_replace('"','\"',$body);
   $body=str_replace('`','\'',$body);
   $body=wordwrap($body,70,"\r\n");
-  $headers="From: $from\r\nBcc: $cc\r\n$Reply-To: $from\r\n";
+  $headers="From: $from <$from>\r\nBcc: $cc\r\n$Reply-To: $from <$from>\r\n";
   $flags="-f$from -r$from";
   if ($verbose) {
     echo "<P>Email From: $from</P>\n<P>To: $to</P>\n<P>CC: $cc</P>\n";

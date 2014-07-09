@@ -1,13 +1,6 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
 $conid=$_GET['conid'];
 
 // Test for conid being passed in
@@ -16,7 +9,7 @@ if ($conid == "") {
 }
 
 // Set the conname from the conid
-$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from $ReportDB.ConInfo where conid=$conid";
+$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
 list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
 $conname=$conname_array[1]['conname'];
 $connumdays=$conname_array[1]['connumdays'];
@@ -25,13 +18,23 @@ $ConStartDatim=$conname_array[1]['constartdate'];
 $logo=$conname_array[1]['conlogo'];
 
 // LOCALIZATIONS
-$_SESSION['return_to_page']="Bios.php";
+$_SESSION['return_to_page']="Vendors.php";
 $title="Vendor List for $conname";
 $description="<P>List of all Vendors.</P>\n";
 
+$vendormap="";
+if (file_exists("../Local/$conid/Vendor_Map.svg")) {
+  $vendormap.=file_get_contents("../Local/$conid/Vendor_Map.svg");
+}
+
+$vendorlist="";
+if (file_exists("../Local/$conid/Vendor_List")) {
+  $vendorlist.=file_get_contents("../Local/$conid/Vendor_List");
+}
+
 /* This complex query grabs the name, and class information.
  Most, if not all of the formatting is done within the query, as opposed to in
- the post-processing. The bio information is grabbed seperately. */
+ the post-processing. The vendor bio information is grabbed seperately. */
 $query = <<<EOD
 SELECT
     concat('<A NAME=\"',pubsname,'\"></A>',pubsname) AS 'Participants',
@@ -39,13 +42,13 @@ SELECT
     pubsname,
     badgeid
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN $ReportDB.Interested I USING (badgeid,conid)
-    JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
-    LEFT JOIN $ReportDB.ParticipantOnSession USING (badgeid,conid)
-    LEFT JOIN $ReportDB.Sessions USING (sessionid,conid)
+      Participants
+    JOIN UserHasPermissionRole UHPR USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN Interested I USING (badgeid,conid)
+    JOIN InterestedTypes USING (interestedtypeid)
+    LEFT JOIN ParticipantOnSession USING (badgeid,conid)
+    LEFT JOIN Sessions USING (sessionid,conid)
   WHERE
     interestedtypename in ('Yes') AND
     permrolename in ('Vendor') AND
@@ -57,8 +60,10 @@ EOD;
 // Retrieve query
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
-/* Printing body.  Uses the page-init then creates the bio page. */
+/* Printing body.  Uses the page-init then creates the vendor bio page. */
 topofpagereport($title,$description,$additionalinfo);
+echo $vendormap;
+echo $vendorlist;
 $printparticipant="";
 for ($i=1; $i<=$elements; $i++) {
   if ($element_array[$i]['Participants'] != $printparticipant) {

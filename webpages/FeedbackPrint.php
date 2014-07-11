@@ -8,6 +8,7 @@ require_once('../../tcpdf/tcpdf.php');
 global $link;
 
 /* Localizations */
+set_time_limit(0);
 $_SESSION['return_to_page']="FeedbackPrint.php";
 $title="Feedback Printing";
 $print_p=$_GET['print_p'];

@@ -10,16 +10,11 @@ require_once('../../tcpdf/tcpdf.php');
 
 /* Global Variables */
 global $link;
-$ConStartDatim=$_SESSION['constartdate']; // make it a variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $badgename=$_SESSION['badgename']; // make it a variable so it can be substituted
 $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 
 // Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 if ($badgename=="") {$badgename='Anonymous';}
 if ($badgeid=="") {$badgeid='100';}
 
@@ -37,7 +32,7 @@ SELECT
     questionid,
     questiontypeid
   FROM
-      $ReportDB.QuestionsForSurvey
+      QuestionsForSurvey
   ORDER BY
     display_order
 
@@ -62,7 +57,7 @@ SELECT
     fpagecols,
     questiontypeid
   FROM
-      $ReportDB.FeedbackPages
+      FeedbackPages
   WHERE
     conid=$conid
 
@@ -84,7 +79,7 @@ $questiontotal=0;
 
 // Insert the passed values.
 if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
-  $query= "INSERT INTO $ReportDB.Feedback (sessionid,conid,questionid,questionvalue) VALUES ";
+  $query= "INSERT INTO Feedback (sessionid,conid,questionid,questionvalue) VALUES ";
   for ($i=1; $i<=$questioncount; $i++) {
     if ((isset($_POST["$i"])) && ($_POST["$i"]!="")) {
       $questiontotal++;
@@ -107,14 +102,14 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
     $element_array = array('sessionid','conid','rbadgeid','commenter','comment');
     $value_array = array($_POST['selsess'],$conid,$badgeid,$badgename,
 			 htmlspecialchars_decode($_POST['classcomment']));
-    $message.=submit_table_element($link,$title,"$ReportDB.CommentsOnSessions",$element_array, $value_array);
+    $message.=submit_table_element($link,$title,"CommentsOnSessions",$element_array, $value_array);
   }
 
   // Only do if there are comments for Programming
   if ((isset($_POST['progcomment'])) && ($_POST['progcomment']!="")) {
     $element_array = array('rbadgeid','conid','commenter','comment');
     $value_array = array($badgeid,$conid,$badgename,htmlspecialchars_decode($_POST['progcomment']));
-    $message.=submit_table_element($link,$title,"$ReportDB.CommentsOnProgramming",$element_array, $value_array);
+    $message.=submit_table_element($link,$title,"CommentsOnProgramming",$element_array, $value_array);
   }
 
   // Collect up the responses for printing.
@@ -198,7 +193,7 @@ $query=<<<EOD
 SELECT
     typeid
   FROM
-      $ReportDB.FeedbackPageHasType
+      FeedbackPageHasType
   WHERE
     fpageid=$fpageid
 
@@ -220,14 +215,15 @@ if ($typescount > 0) {
 $query=<<<EOD
 SELECT
     DISTINCT title,
-    DATE_FORMAT(ADDTIME('$ConStartDatim',starttime), '%l:%i %p') as time,
+    DATE_FORMAT(ADDTIME(constartdate,starttime), '%l:%i %p') as time,
     sessionid,
     questiontypeid
   FROM
-      $ReportDB.Sessions
-    JOIN $ReportDB.Schedule USING (sessionid,conid)
-    JOIN $ReportDB.TypeHasQuestionType USING (typeid,conid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN TypeHasQuestionType USING (typeid,conid)
+    JOIN PubStatuses USING (pubstatusid)
+    JOIN ConInfo USING (conid)
   WHERE
     $types_string
     Time_TO_SEC(starttime) > $time_start AND

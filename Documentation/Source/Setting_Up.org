@@ -712,3 +712,457 @@ for i in FFF-[34]*
     popd
   done
 #+end_src
+* Adding a year instance - Con Structure
+  Another Con instance is approaching.  To set up for this, there is
+  one file and a number of table additions you need to make.  At some
+  point the table additions might have their own form.  Feel free to
+  update them any way you are comfortable with at the moment.  The
+  update to the Local/db_name.php file should only be the update to
+  the CON_KEY entry in the file, all the rest should remain the same,
+  and probably that should migrate to something database setable at
+  some point.  The rest of the information below should be set in your
+  database tables.
+** ConInfo
+   The first place to start is setting your ConInfo information.  This
+   allows for the con to show up in the index file, and opens all the
+   information up for access, addition, and whatever else you want for
+   your con.  If you wish to see what values were set for a previous
+   instance of your con (to make sure you have the right values), you
+   might want to use a query (replacing the $conid with the previous
+   con you want to model on) like:
+#+begin_src html :exports both :results silent
+    SELECT
+        *
+      FROM
+          ConInfo
+      WHERE
+        conid=$conid;
+#+end_src
+   The values are:
+   + conid: The unique number of your con.
+   + conname: The name of your con (probably inclucign either the
+     number, or the year of your con or other unique identifier).
+   + connumdays: How many days your con will run.
+   + constartdate: When your con begins, in the format of YYYY-MM-DD
+     hh:mm:ss and preferably (for ease of thought and scheduling)
+     having your hh:mm:ss be 00:00:00 or midnight.
+   + conurl: This should be the head of your tree, and match all the
+     previous conurls for this con.
+   + conlogo: This should point to the logo of your con.  If you do
+     not modify it event-to-event, it will probably be the same as the
+     previous conlogos for this con.
+   + condefaultduration: This is the default session length in hh:mm
+     format.
+   + condurationminutes: This is an enum set to either 'TRUE' or
+     'FALSE' (yes, this is somewhat misleading, and probably should be
+     changed to something else, globally).  If it is set to 'TRUE'
+     then all times will be reported as just minutes.  If it is set to
+     'FALSE' then all times will be in hh:mm notation where
+     appropriate.
+   + congridspacer: The default spacer value for the grid, in seconds.
+     This should probably have several entries, in case the grid wants
+     to be different, for different departments, but that is an
+     enhancement, to come.
+   + conallowkids: This is an enum set to either 'TRUE' or 'FALSE'
+     (yes, this is somewhat misleading, and probably should be changed
+     to something else, globally).  If it is set to 'TRUE' it allows
+     for children, and special children programming.  If it is set to
+     'FALSE' the special children programming will not appear.
+   + contotalsess: The maximum number of total sessions you will allow
+     your various people to sign up for.  This can vary due to the
+     length of the session, how many days your con will run, etc.
+   + condailysess: The maximum number of sessions on a particular day
+     you will allow your various people to sign up for.  This can vary
+     due to the length of the session, how many days your con will
+     run, how many sessions there are in a day, and how hard you are
+     willing to work them.
+   + conavailabilityrows: How many rows of on/off times your people
+     can put in, for their availability.  The longer the con, or the
+     shorter the session, the more rows you want to allow them to
+     have.
+** Phase
+   This also has to be set up so the appropriate Phase shifting can
+   happen.  The phase of the convention will shift, over time, as
+   deadlines approach and pass.  Not all of the phasetypeids from the
+   PhaseTypes table need to be there, but, it is easier if they are,
+   so all you have to do is change the phasestate, and the appropriate
+   phase is available.  If you wish to see what values were set for a
+   previous instance of your con (to make sure you have the right
+   values), you might want to use a query (replacing the $conid with
+   the previous con you want to model on) like:
+#+begin_src html :exports both :results silent
+    SELECT
+        *
+      FROM
+          Phase
+        JOIN PhaseTypes USING (phasetypeid)
+      WHERE
+        conid=$conid;
+#+end_src
+   The values are:
+   + phaseid: the unique key for this entry
+   + conid: The con that these phases are for.  This should be set to
+     whatever conid you are creating.
+   + phasetypeid: This is the phase that is being turned on or off, as
+     described in the PhaseTypes table.
+   + phasestate: If a phase is active.
+   An example of phase shifting, is when you open your call for
+   presenters, or you close your call for vendors, or you allow
+   feedback.  This can change programatically on specific dates around
+   your con, or you can set them by hand, when you are ready for a
+   phase shift.  Many phases (or few) might be active at any given
+   point in time.
+* Adding a year instance - People
+** UserHasPermissionRole
+   This need to be set so people can actually log into your con.  This
+   defines the access any particular individual might have.
+   Individuals might have several sets of accesses, depending on their
+   roles, some cover more than one area, others do not.  This gets
+   somewhat complex, in the interweaving of some other tables, but,
+   theoretcially that was set up, and still should hold true from
+   previous instances of your con.  Of course, tweaking from year to
+   year might need to happen.  If you wish to see who had which
+   leadership roles in a previous instance of your con (to make sure
+   you are rolling forward with the right roles), you might want to
+   use a query (replacing the $conid with the previous con you want to
+   model on) like:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat(badgeid," - ",pubsname) as Who,
+        concat(permroleid," - ",permrolename) as What
+      FROM
+          UserHasPermissionRole
+        JOIN PermissionRoles USING (permroleid)
+        JOIN Participants USING (badgeid)
+      WHERE
+        conid=$conid AND
+        permrolename like "%Super%";
+#+end_src
+   This will give you the badgeids and the permroleids to add to the
+   table.  It is in the format of:
+   + badgeid: The unique id of an individual in Zambia.
+   + permroleid: One of the set of permissions that an individual will
+     have for this con. 
+   + conid: The con that these permission are for.  This should be set
+     to whatever conid you are creating. 
+   If you want to only add your particular badgeid,permroleid,conid
+   information, and then use the AdminParticipants.php page to select
+   them, and then the "Edit <INDIVIDUAL> Further" link at the bottom
+   to give each the right permissions, that will work as well.  But at
+   least you will need to be set up, so you can grant other people
+   access.
+** UserHasConRole
+   This is very similar to the UserHasPermissionRole, and was split
+   off, because not all Permission Roles want to necessarily be
+   advertized, and sometimes a Permission Role is a superset of a Con
+   Role that actually wants to be called out.  While this is not a
+   necessary step, it is a good one to follow, so people know who is
+   responsible for what, when they visit your webpage. If you wish to
+   see who had which leadership roles in a previous instance of your
+   con (to make sure you are rolling forward with the right roles),
+   you might want to use a query (replacing the $conid with the
+   previous con you want to model on) like:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat(badgeid," - ",pubsname) AS Who,
+        concat(conroleid," - ",conrolename) AS What
+      FROM
+          UserHasConRole
+        JOIN Participants USING (badgeid)
+        JOIN ConRoles USING (conroleid)
+      WHERE
+        conid=$conid;
+#+end_src
+   This will give you the badgeids and conroleids to add to the
+   table.  It is in the format of:
+   + badgeid: The unique id of an individual in Zambia.
+   + permroleid: A role that an individual will have for this con.
+   + conid: The con that the role is for.  This should be set to
+     whatever conid you are creating.
+   You can always go back and add to this, as the shape of your con
+   fills in.
+** HasReports
+   This maps the organizational chart of your convention.  Again while
+   this is not a necessary step for the start of your con, and might
+   be added to as your con goes on, usually you know what the table of
+   your organization will be, even if you don't yet know who will be
+   filling those roles.  To see what was before you can use a query
+   (replacing the $conid with the previous con you want to model on)
+   like:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat(HR.conroleid," - ",CR.conrolename) AS Role,
+        concat(hasreport," - ",CRR.conrolename) AS Report
+      FROM
+          HasReports HR
+        JOIN ConRoles CR USING (conroleid)
+        JOIN ConRoles CRR ON (hasreport=CRR.conroleid)
+      WHERE
+        conid=$conid; 
+#+end_src
+   This will give you the list of conroleids who have conroleids
+   reporting to them.  You can add them to the table as:
+   + conid: The con that these reports are for.  This should be set
+     to whatever conid you are creating. 
+   + conroleid: This is the role that has others reporting to them
+   + hasreport: The conroleid of the position that reports to the
+     specified original conroleid.
+   On the other hand, if you just want to mirror them, quickly, from
+   another instance of your con you could always (replacing $origconid
+   with the previous con you want to model on, and $conid with the
+   current one) run:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat("($conid,",conroleid,",",hasreport,"),") AS Prev
+      FROM
+          HasReports
+      WHERE
+        conid=$origconid;
+#+end_src
+   Then just massage the data slightly, and you have the insert you
+   can do to mirror the previous con.
+* Adding a year instance - Sessions
+  The sessions are mostly generated from Brainstorm (and other
+  insertions to your database) but there are a few settings that
+  should be taken care of, to make sure everything works smoothly.
+  The limits are set on an event basis, since sometimes publications
+  or the space for things to be advertized differs from year to year.
+  Also the requestables might change, depending on what is available,
+  as well as the rooms
+** PublicationLimits
+   This tracks the various limits on the publication fields, so that
+   you can have restrictions on minimum and/or maximum length of these
+   fields.  All the limit checks should be set up such that if you
+   don't have a limit set in this table, the minimum is presumed 0 and
+   the maximum is presumed to be whatever your database maximum is for
+   that particular field.  If you wish to see what limits were set for
+   a previous instance of your con (to make sure you have the right
+   limits), you might want to use a query (replacing the $conid with
+   the previous con you want to model on) like:
+#+begin_src html :exports both :results silent
+    SELECT
+        *
+      FROM
+          PublicationLimits
+      WHERE
+        conid=$conid;
+#+end_src   
+   The values are:
+   + publimid: Unique key for this table (it should auto-increment).
+   + conid: The con that these limits are for.  This should be set to
+     whatever conid you are creating.
+   + publimtype: This is an enum between two values, min and max.
+     This determiines if the limit is a minimum limit, or maximum
+     limit.
+   + publimdest: This is an enum between web and book, and should be
+     in sync with your BioDests table.  This is so you can set
+     different limits for the various publication media.
+   + publimname: This should be in sync with your BioTypes table, and
+     is the specific field that is being limited.
+   + publimval: The number of characters you are limiting this type of
+     entry to.
+   + publimnote: Any notes you want to have about the limit.
+   On the other hand, if you just want to mirror them, quickly, from
+   another instance of your con you could always (replacing $origconid
+   with the previous con you want to model on, and $conid with the
+   current one) run:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat("($conid,'",publimtype,"','",publimdest,"','",publimname,"',",publimval,",'",publimnote,"'),") AS Prev
+      FROM
+          PublicationLimits
+      WHERE
+        conid=$origconid;
+#+end_src
+   Then just massage the data slightly, and you have the insert you
+   can do to mirror the previous con.
+** Services and Features
+   These two tables are built in the same pattern.  Services are the
+   bits that logistics could get to the room, so they could be used
+   for the class.  Some of the room features (speakers, microphone)
+   fall under this, because of being extra cost.  Features are
+   elements of the room that someone would look for.  With a single
+   room, there might not be much there to choose between, but, with
+   many rooms, or different room functions depending on the time of
+   day (say, needing curtains in the daytime, and dimable lights, so
+   that projection will work correctly) so scheduling can happen more
+   easily.  To see what was set on a previous instance of your con,
+   you can use a query (replacing the $conid with the previous con you
+   want to model on) like:
+#+begin_src html :exports both :results silent
+    SELECT
+        *
+      FROM
+          Services
+      WHERE
+        conid=$conid;
+#+end_src
+   And: 
+#+begin_src html :exports both :results silent
+    SELECT
+        *
+      FROM
+          Features
+      WHERE
+        conid=$conid;
+#+end_src   
+   The values are:
+   + serviceid/featureid: Unique id for the entry (key).
+   + servicename/featurename: A description of the thing available.
+   + conid: The con that these things are available for .  This should
+     be set to whatever conid you are creating.
+   + display_order: For the select boxes, if you want to reorder
+     things, this forces the ordering.
+   On the other hand, if you just want to mirror them, quickly, from
+   another instance of your con you could always (replacing $origconid
+   with the previous con you want to model on, and $conid with the
+   current one) run:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat("('",servicename,"',$conid,'",display_order,"'),") AS Prev
+      FROM
+          Services
+      WHERE
+        conid=$origconid;
+#+end_src
+   And:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat("('",featurename,"',$conid,'",display_order,"'),") AS Prev
+      FROM
+          Features
+      WHERE
+        conid=$origconid;
+#+end_src
+   Then just massage the data slightly, and you have the insert you
+   can do to mirror the previous con.
+** Rooms
+   This needs to be fleshed out more.
+* Adding a year instance - Vendors
+** VendorSpaces and VendorFeatures
+   These two tables are built in the same pattern. VendorSpaces are
+   the size/type of space, and the cost of said space for the con.
+   VendorFeatures are all the little up-charges or non-standard things
+   that a vendor might opt for.  To see what was set on a previous
+   instance of your con, you can use a query (replacing the $conid
+   with the previous con you want to model on) like:
+#+begin_src html :exports both :results silent
+    SELECT
+        *
+      FROM
+          VendorSpaces
+      WHERE
+        conid=$conid;
+#+end_src
+   And: 
+#+begin_src html :exports both :results silent
+    SELECT
+        *
+      FROM
+          VendorFeatures
+      WHERE
+        conid=$conid;
+#+end_src   
+   The values are:
+   + vendorspaceid/vendorfeatureid: Unique id for the entry (key).
+   + vendorspacename/vendorfeaturename: A description, plus the price
+     in an easily understandable format, so the vendors know what to 
+     select for their comfort and profit.
+   + vendorspaceprice/vendorfeatureprice: Numeric representation of
+     the cost of said item, so the invoice can be generated
+     correctly.
+   + conid: The con that these things are available for .  This should
+     be set to whatever conid you are creating.
+   + display_order: For the select boxes, if you want to reorder
+     possibilities, this forces the ordering to what you want it to
+     be.
+   On the other hand, if you just want to mirror them, quickly, from
+   another instance of your con you could always (replacing $origconid
+   with the previous con you want to model on, and $conid with the
+   current one) run:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat("('",vendorspacename,"',",vendorspaceprice,",$conid,",display_order,"),") AS Prev
+      FROM
+          VendorSpaces
+      WHERE
+        conid=$origconid;
+#+end_src
+   And:
+#+begin_src html :exports both :results silent
+    SELECT
+        concat("('",vendorfeaturename,"',",vendorfeatureprice,",$conid,",display_order,"),") AS Prev
+      FROM
+          VendorFeatures
+      WHERE
+        conid=$origconid;
+#+end_src
+   Then just massage the data slightly, and you have the insert you
+   can do to mirror the previous con.
+** More Vendor stuff, pending development.
+* Adding a year instance - Feedback
+  Setting up feedback for your con is somewhat complex.  I'm not sure
+  what motivated me, originally to be so baroque, but I think it was
+  flexibility at the time.
+** Adding Questions
+   If your questions are not appropriate for this particular event,
+   you might want to add a question type to cover it, in the
+   QuestionTypes table, and then add the questions to the
+   QuestionsForSurvey table.
+   The values for QuestionTypes are:
+   + questiontypeid: Unique key for this table (it should auto-increment).
+   + questiontypename: A one or two word name for the type of question.
+   + questiontypenotes: A more indepth description of the question type.
+   The values for the QuestionsForSurvey are:
+   + questionid: Unique key for this table (it should auto-increment).
+   + questiontext: The text of the question to be asked.
+   + display_order: The order of the question to be asked.
+   + questiontypeid: What type of question it is, referencing the
+     QuestionTypes table above.
+** Setting up the page description (how it is presented)
+   For your event, there might be several different feedback forms you
+   want available, so that an individual isn't overwhelmed by the
+   number of possible choices.  One of the ways to do this is to break
+   it down by time period, another is to break it down by class type.
+   Once you have broken them down, this table sets up the various
+   possible views.  At least one view should be set to "single class",
+   so that the reference from the descriptions etc will work.
+   The values for FeedbackPages are:
+   + fpageid: Unique key for this table (it should auto-increment).
+   + conid: For which con is this page relevant.  
+   + fppagedesc: The short description of the page contents.
+   + fpagestart: The start time of the schedule elements that this
+     page covers
+   + fpageend: The end time of the schedule elements that this page
+     covers 
+   + fpagecols: The number of columns at the top of the printed page.
+   + questiontypeid: Which type of questions will show up on this
+     page, from the QuestionTypes table.
+   The type of schedule elements included in each possible Feedback
+   page is set in the FeedbackPageHasType.  This can have multiple
+   mappings.  For example, if you have both classes and panels, they
+   have different values for their typeid in the Sessions table.  To
+   have them both show up in the "single class" page, that page id
+   needs two entries in the FeedbackPageHasType table, each one
+   mapping the typeid to that fpageid.  "single class" should have a
+   mapping for every element you reference, but the feedback page for
+   just the classes would only have the typeid of classes mapped to
+   it.
+   The values for FeedbackPageHasType are:
+   + fpageid: From the FeedbackPages table.
+   + typeid: From the Types table.
+** Setting the TypeHasQuestionType
+   This is implemented to be able to cross-type questions, and make
+   sure you wanted those question types to show up for that type of
+   schedule element, for this particular event.  It does allow for
+   some greater flexibility, as opposed to having a fixed QuestionType
+   for the schedule Type, since that might change from event to event.
+   Smaller events might want all the schedule Types to have the same
+   QuestionType, larger or more siloed events might want to break it
+   down further.  Depending on what is being fed back, Divisions might
+   creep into this, as well.
+   The values for TypeHasQuestionType are:
+   + typeid: From the Types table.
+   + questiontypeid: From the QuestionTypes table.
+   + conid: For which event is being run.
+

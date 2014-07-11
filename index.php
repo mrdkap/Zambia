@@ -4,13 +4,10 @@ $ConKey=CON_KEY; // should be passed in, rather than hard set
 $webstring="";
 $HeaderTemplateFile="Local/HeaderTemplate.html";
 $FooterTemplateFile="Local/FooterTemplate.html";
-$ReportDB=REPORTDB; // Temporary, until we move to one database for it all
-// Failover if REPORTDB isn't set.
-if ($ReportDB=="REPORTDB") {$ReportDB=DBDB;}
 
 // Database link
 $link = mysql_connect(DBHOSTNAME,DBUSERID,DBPASSWORD);
-mysql_select_db($ReportDB,$link);
+mysql_select_db(DBDB,$link);
 
 // Establish the con info
 $query= <<<EOF
@@ -74,7 +71,7 @@ for ($i=1; $i<=$phaserows; $i++) {
   $phase_array[$element_array['conid']][$element_array['phasetypename']]=$element_array['phasestate'];
 }
 
-$title="Zambia -- ". $ConInfo_array[$ConKey]['conname'];
+$title="Zambia -- Check out the below links to learn about the great programming and vending we will have at upcoming events!";
 
 $onetime=0;
 for ($i=1; $i<=$conrows; $i++) {
@@ -83,7 +80,7 @@ for ($i=1; $i<=$conrows; $i++) {
   $conname=htmlspecialchars_decode($ConInfo_array[$conid]['conname']);
 
   if ($nowis < $constart) { 
-    $webstring.="<H3>Check out the below links to learn about the great programming and vending we will have at $conname!</H3>\n";
+    $webstring.="<H3>$conname:</H3>\n";
   } else {
     if ($onetime < 1) {
       $webstring.="<HR>\n<H3>Check out the below links to learn about the great programming we had at previous events:</H3>\n<HR>\n";
@@ -92,6 +89,9 @@ for ($i=1; $i<=$conrows; $i++) {
     $webstring.="<H3>$conname:</H3>\n";
   }
   $webstring.="<UL>\n";
+  if ($phase_array[$conid]['General Info Available'] == '0' ) {
+    $webstring.="  <LI><A HREF=\"webpages/GenInfo.php?conid=$conid\">General Event Information</A></LI>\n";
+  }
   $webstring.="  <LI><A HREF=\"webpages/ConStaffBios.php?conid=$conid\">Con Staff</A></LI>\n";
   if ($phase_array[$conid]['Prog Available'] == '0' ) {
     $webstring.="  <LI><A HREF=\"webpages/Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
@@ -102,6 +102,9 @@ for ($i=1; $i<=$conrows; $i++) {
   }
   if ($phase_array[$conid]['Vendors Available'] == '0' ) {
     $webstring.="  <LI><A HREF=\"webpages/Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
+  }
+  if ($phase_array[$conid]['Venue Available'] == '0' ) {
+    $webstring.="  <LI><A HREF=\"webpages/Venue.php?conid=$conid\">Venue Information</A></LI>\n";
   }
   if ($phase_array[$conid]['Vol Available'] == '0' ) {
     $webstring.="  <LI><A HREF=\"webpages/Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
@@ -147,18 +150,18 @@ if (!isset($included) && $included != 'YES')
 	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head>
-<head>
-  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=latin-1\">
+<HTML xmlns="http://www.w3.org/1999/xhtml">
+  <HEAD>
+    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=latin-1\">
 <?php
-echo "  <title>$title</title>\n";
+echo "    <TITLE>$title</TITLE>\n";
 if (file_exists($HeaderTemplateFile)) {
   readfile($HeaderTemplateFile);
  } else {
 ?>
   <link rel="stylesheet" href="Common.css" type="text/css">
-</head>
-<body>
+  </HEAD>
+  <BODY>
 <?php } echo "<H1>$title</H1>\n<hr>\n" . $webstring; 
 if (file_exists($FooterTemplateFile)) {
   readfile($FooterTemplateFile);
@@ -168,8 +171,8 @@ if (file_exists($FooterTemplateFile)) {
  }
 include ('webpages/google_analytics.php');
 ?>
-</body>
-</html>
+  </BODY>
+</HTML>
 
 <?php
 }  // close IF $included 

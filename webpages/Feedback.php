@@ -3,23 +3,25 @@ require_once('PostingCommonCode.php');
 require_once('../../tcpdf/config/lang/eng.php');
 require_once('../../tcpdf/tcpdf.php');
 
+if (isset($_GET['conid']) and ($_GET['conid'] != "")) {
+  $conid=$_GET['conid'];
+} elseif (isset($_POST['conid']) and ($_POST['conid'] != "")) {
+  $conid=$_POST['conid'];
+} else {
+  $conid=$_SESSION['conid']; // make it a variable so it can be substituted
+}
+
 /* Global Variables */
 global $link;
-$ConStartDatim=$_SESSION['constartdate']; // make it a variable so it can be substituted
-$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $badgename=$_SESSION['badgename']; // make it a variable so it can be substituted
 $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 
 // Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 if ($badgename=="") {$badgename='Anonymous';}
 if ($badgeid=="") {$badgeid='100';}
 
 // LOCALIZATIONS
-$_SESSION['return_to_page']="Feedback.php";
+$_SESSION['return_to_page']="Feedback.php&conid=$conid";
 //$print_p=$_GET['print_p'];
 $formstring="";
 
@@ -32,7 +34,7 @@ SELECT
     questionid,
     questiontypeid
   FROM
-      $ReportDB.QuestionsForSurvey
+      QuestionsForSurvey
   ORDER BY
     display_order
 
@@ -57,7 +59,7 @@ SELECT
     fpagecols,
     questiontypeid
   FROM
-      $ReportDB.FeedbackPages
+      FeedbackPages
   WHERE
     conid=$conid
 
@@ -79,7 +81,7 @@ $questiontotal=0;
 
 // Insert the passed values.
 if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
-  $query= "INSERT INTO $ReportDB.Feedback (sessionid,conid,questionid,questionvalue) VALUES ";
+  $query= "INSERT INTO Feedback (sessionid,conid,questionid,questionvalue) VALUES ";
   for ($i=1; $i<=$questioncount; $i++) {
     if ((isset($_POST["$i"])) && ($_POST["$i"]!="")) {
       $questiontotal++;
@@ -102,14 +104,14 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
     $element_array = array('sessionid','conid','rbadgeid','commenter','comment');
     $value_array = array($_POST['selsess'],$conid,$badgeid,$badgename,
 			 htmlspecialchars_decode($_POST['classcomment']));
-    $message.=submit_table_element($link,$title,"$ReportDB.CommentsOnSessions",$element_array, $value_array);
+    $message.=submit_table_element($link,$title,"CommentsOnSessions",$element_array, $value_array);
   }
 
   // Only do if there are comments for Programming
   if ((isset($_POST['progcomment'])) && ($_POST['progcomment']!="")) {
     $element_array = array('rbadgeid','conid','commenter','comment');
     $value_array = array($badgeid,$conid,$badgename,htmlspecialchars_decode($_POST['progcomment']));
-    $message.=submit_table_element($link,$title,"$ReportDB.CommentsOnProgramming",$element_array, $value_array);
+    $message.=submit_table_element($link,$title,"CommentsOnProgramming",$element_array, $value_array);
   }
 
   // Collect up the responses for printing.
@@ -137,7 +139,7 @@ if (isset($selday) and ($selday!="")) {
   echo "<UL>\n";
   for ($i=1; $i<=$fpagecount; $i++) {
     if ($i!=$single_class_no) {
-      echo "  <LI><A HREF=\"Feedback.php?selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
+      echo "  <LI><A HREF=\"Feedback.php?conid=$conid&selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
     }
   }
   echo "</UL>\n";
@@ -146,13 +148,13 @@ if (isset($selday) and ($selday!="")) {
 }
 
 // Set standard headers across the pages.
-$title=$_SESSION['conname']." $dayname Feedback";
+$title="$dayname Feedback";
 $description="<P>Not sure which class?  Check the <A HREF=Descriptions.php>descriptions</A>, <A HREF=Bios.php>bios</A>, <A HREF=Schedule.php>timeslots</A>, or <A HREF=Tracks.php>tracks</A> pages.</P>";
-//$additionalinfo="<P><A HREF=\"Feedback.php?selday=$selday&print_p=y\">Printable</A> version.</P>\n";
+//$additionalinfo="<P><A HREF=\"Feedback.php?conid=$conid&selday=$selday&print_p=y\">Printable</A> version.</P>\n";
 $additionalinfo.="<P>Done with this time block?  Pick a different one:</P>\n<UL>\n";
   for ($i=1; $i<=$fpagecount; $i++) {
     if ($i!=$single_class_no) {
-      $additionalinfo.="  <LI><A HREF=\"Feedback.php?selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
+      $additionalinfo.="  <LI><A HREF=\"Feedback.php?conid=$conid&selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
     }
   }
 $additionalinfo.="</UL>\n";
@@ -193,7 +195,7 @@ $query=<<<EOD
 SELECT
     typeid
   FROM
-      $ReportDB.FeedbackPageHasType
+      FeedbackPageHasType
   WHERE
     fpageid=$fpageid
 
@@ -215,14 +217,15 @@ if ($typescount > 0) {
 $query=<<<EOD
 SELECT
     DISTINCT title,
-    DATE_FORMAT(ADDTIME('$ConStartDatim',starttime), '%l:%i %p') as time,
+    DATE_FORMAT(ADDTIME(constartdate,starttime), '%l:%i %p') as time,
     sessionid,
     questiontypeid
   FROM
-      $ReportDB.Sessions
-    JOIN $ReportDB.Schedule USING (sessionid,conid)
-    JOIN $ReportDB.TypeHasQuestionType USING (typeid,conid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN TypeHasQuestionType USING (typeid,conid)
+    JOIN PubStatuses USING (pubstatusid)
+    JOIN ConInfo USING (conid)
   WHERE
     $types_string
     Time_TO_SEC(starttime) > $time_start AND
@@ -249,7 +252,7 @@ if ($elements > 0) {
   /* Printing body. */
   $printstring="<TABLE border=\"0\" cellpadding=\"4\"><TR><TD colspan=\"$NumOfColumns\" align=\"center\">Please, indicate the $dayname class you are offering feedback on.</TD></TR>";
   $printstring.="<TR><TD>";
-  $formstring.="<FORM name=\"feedbackform\" method=POST action=\"Feedback.php?selday=$selday\">\n";
+  $formstring.="<FORM name=\"feedbackform\" method=POST action=\"Feedback.php?conid=$conid&selday=$selday\">\n";
   if ($sessionid!="") {
     $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"".$element_array[1]['sessionid']."\">\n";
     $formstring.="<P>Feedback on ".$element_array[1]['title']." (".$element_array[1]['time'].")</P>\n";

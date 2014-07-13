@@ -14,6 +14,7 @@ $query= <<<EOF
 SELECT
     conname,
     constartdate,
+    connumdays,
     conid
   FROM
       ConInfo
@@ -38,6 +39,7 @@ for ($i=1; $i<=$conrows; $i++) {
   $ConCount_array[$i]=$tmpconinfo_array['conid'];
   $ConInfo_array[$tmpconinfo_array['conid']]['conname']=$tmpconinfo_array['conname'];
   $ConInfo_array[$tmpconinfo_array['conid']]['constartdate']=$tmpconinfo_array['constartdate'];
+  $ConInfo_array[$tmpconinfo_array['conid']]['connumdays']=$tmpconinfo_array['connumdays'];
 }
 
 $nowis=time();
@@ -71,22 +73,31 @@ for ($i=1; $i<=$phaserows; $i++) {
   $phase_array[$element_array['conid']][$element_array['phasetypename']]=$element_array['phasestate'];
 }
 
-$title="Zambia -- Check out the below links to learn about the great programming and vending we will have at upcoming events!";
+$title="Zambia -- Check out the links below to learn about the great programming and vending we will have at upcoming events!";
 
 $onetime=0;
 for ($i=1; $i<=$conrows; $i++) {
   $conid=$ConCount_array[$i];
   $constart=strtotime($ConInfo_array[$conid]['constartdate']);
+  $connumdays=$ConInfo_array[$conid]['connumdays'];
+  if ($connumdays > 1) {
+    $offset=86400 * ($connumdays - 1);
+    $condate=date("l, F j ",$constart);
+    $condate.=" - ";
+    $condate.=date("l, F j Y",($constart + $offset));
+  } else {
+    $condate=date("l, F j Y",$constart);
+  }
   $conname=htmlspecialchars_decode($ConInfo_array[$conid]['conname']);
 
   if ($nowis < $constart) { 
-    $webstring.="<H3>$conname:</H3>\n";
+    $webstring.="<H3>$conname on $condate:</H3>\n";
   } else {
     if ($onetime < 1) {
       $webstring.="<HR>\n<H3>Check out the below links to learn about the great programming we had at previous events:</H3>\n<HR>\n";
       $onetime++;
     }
-    $webstring.="<H3>$conname:</H3>\n";
+    $webstring.="<H3>$conname that ran $condate:</H3>\n";
   }
   $webstring.="<UL>\n";
   if ($phase_array[$conid]['General Info Available'] == '0' ) {

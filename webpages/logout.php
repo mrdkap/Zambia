@@ -1,5 +1,5 @@
 <?php
-require_once('PartCommonCode.php');
+require_once('PostingCommonCode.php');
 $relogin=$_SESSION['conurl'];      // Set the return value
 unlock_participant('');            // unlock any records locked by this user
 $_SESSION=array();                 // Unset session data

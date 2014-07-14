@@ -2,7 +2,7 @@
 require_once ('StaffCommonCode.php');
 
 $title="Migrate Participant";
-$description="<P>Locate someone who already exists, and migrate them to ".$_SESSION['conid']." so they can be appropriately utilized.</P>\n";
+$description="<P>Locate someone who already exists, and migrate them to ".$_SESSION['conname']." so they can be appropriately utilized.</P>\n";
 
 topofpagereport($title,$description,$additionalinfo);
 

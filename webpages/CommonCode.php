@@ -1299,17 +1299,19 @@ function edit_participant ($participant_arr) {
   }
 
   // Update con roles
-  foreach ($participant_arr['wasconroleid'] as $key => $value) {
-    if (($participant_arr['wasconroleid'][$key]=="not") and
-	($participant_arr['conroleid'][$key]=="checked")) {
-      $element_array = array('badgeid', 'conroleid', 'conid');
-      $value_array = array($participant_arr['partid'], $key, $_SESSION['conid']);
-      $message.=submit_table_element($link, $title, "UserHasConRole", $element_array, $value_array);
-    }
-    if (($participant_arr['wasconroleid'][$key]=="indeed") and
-	($participant_arr['conroleid'][$key]!="checked")) {
-      $match_string="badgeid=".$participant_arr['partid']." AND conroleid=".$key." AND conid=".$_SESSION['conid'];
-      $message.=delete_table_element($link, $title, "UserHasConRole",$match_string);
+  if (isset($participant_arr['wasconroleid'])) {
+    foreach ($participant_arr['wasconroleid'] as $key => $value) {
+      if (($participant_arr['wasconroleid'][$key]=="not") and
+	  ($participant_arr['conroleid'][$key]=="checked")) {
+	$element_array = array('badgeid', 'conroleid', 'conid');
+	$value_array = array($participant_arr['partid'], $key, $_SESSION['conid']);
+	$message.=submit_table_element($link, $title, "UserHasConRole", $element_array, $value_array);
+      }
+      if (($participant_arr['wasconroleid'][$key]=="indeed") and
+	  ($participant_arr['conroleid'][$key]!="checked")) {
+	$match_string="badgeid=".$participant_arr['partid']." AND conroleid=".$key." AND conid=".$_SESSION['conid'];
+	$message.=delete_table_element($link, $title, "UserHasConRole",$match_string);
+      }
     }
   }
 

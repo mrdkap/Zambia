@@ -418,6 +418,7 @@ function insert_session() {
   $query.="servicenotes=\"".mysql_real_escape_string($session["servnotes"],$link).'",';
   $query.="statusid=".$session["status"].',';
   $query.="notesforprog=\"".mysql_real_escape_string($session["notesforprog"],$link).'",';
+  $query.="suggestor=\"".$_SESSION['badgeid'].'",';
   $query.="warnings=0,invitedguest="; // warnings db field not editable by form
   if ($session["invguest"]) {$query.="1";} else {$query.="0";}
   $result = mysql_query($query,$link);
@@ -537,8 +538,8 @@ SELECT
     sessionid, conid, trackid, typeid, divisionid, pubstatusid,
     languagestatusid, title, secondtitle, pocketprogtext, progguiddesc,
     persppartinfo, duration,estatten, kidscatid, signupreq, roomsetid,
-    notesforpart, servicenotes, statusid, notesforprog, warnings,
-    invitedguest, ts
+    notesforpart, servicenotes, statusid, notesforprog, suggestor,
+    warnings, invitedguest, ts
   FROM
       Sessions
   WHERE
@@ -585,6 +586,7 @@ EOD;
   $session["servnotes"]=$sessionarray["servicenotes"];
   $session["status"]=$sessionarray["statusid"];
   $session["notesforprog"]=$sessionarray["notesforprog"];
+  $session["suggestor"]=$sessionarray["suggestor"];
   $session["invguest"]=$sessionarray["invitedguest"];
 
   /* Set up the various feature tables, so we can loop across all of them. */

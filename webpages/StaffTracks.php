@@ -6,15 +6,11 @@ if (may_I("Staff")) {
   require_once('PartCommonCode.php');
  }
 global $link;
-$ConStartDatim=CON_START_DATIM; // make it a variable so it can be substituted
-$ConNumDays=CON_NUM_DAYS; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-$conid=$_SESSION['conid'];  // make it a variable so it can be substituted
+$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
+$ConNumDays=$_SESSION['connumdays']; // make it a variable so it can be substituted
 
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+$conid=$_GET['conid'];
+if ($conid=="") {$conid=$_SESSION['conid'];}
 
 if (isset($_GET['feedback'])) {
   $feedbackp='?feedback=y';
@@ -28,11 +24,11 @@ $description="<P>Track Schedules for all sessions.</P>\n";
 $additionalinfo="<P>Click on the session title to visit the session's <A HREF=\"StaffDescriptions.php$feedbackp\">description</A>,\n";
 $additionalinfo.="the presenter to visit their <A HREF=\"StaffBios.php$feedbackp\">bio</A>, the time to visit the session's\n";
 $additionalinfo.="<A HREF=\"StaffSchedule.php$feedbackp\">timeslot</A>, or visit the <A HREF=\"grid.php?standard=y&unpublished=y\">grid</A>.</P>\n";
-if ((strtotime($ConStartDatim)+(60*60*24*$ConNumDays)) > time()) {
+if ((strtotime($ConStart)+(60*60*24*$ConNumDays)) > time()) {
   $additionalinfo.="<P>Click on the <I>(iCal)</i> next to the track name to have an iCal Calendar sent to your machine for\n";
   $additionalinfo.="automatic inclusion, and the (iCal) next to the particular activity for one of that activity.</P>";
  }
-if (strtotime($ConStartDatim) < time()) {
+if (strtotime($ConStart) < time()) {
   $additionalinfo.="<P>Click on the (Feedback) tag to give us feedback on a particular scheduled event.</P>\n";
  }
 
@@ -52,7 +48,7 @@ $pubstatus_string=implode(",",$pubstatus_array);
 $query = <<<EOD
 SELECT
     if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"StaffBios.php$feedbackp#',pubsname,'\">',pubsname,'</A>',if((moderator=1),'(m)','')) SEPARATOR ', ')) as 'Participants',
-    concat('<A HREF=\"StaffSchedule.php$feedbackp#',DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p'),'\">',DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p'),'</A>') as 'Start Time',
+    concat('<A HREF=\"StaffSchedule.php$feedbackp#',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'\">',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'</A>') as 'Start Time',
     CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
@@ -64,32 +60,78 @@ SELECT
     GROUP_CONCAT(DISTINCT roomname SEPARATOR ', ') as Roomname,
     estatten AS Attended,
     Sessionid,
-    if ((THQT.conid=$conid),if((THQT.questiontypeid IS NULL),"",THQT.questiontypeid),"") AS questiontypeid,
-    GROUP_CONCAT(DISTINCT concat('<A NAME=\"',trackname,'\">',trackname,'</A>',if((DATE_ADD('$ConStartDatim',INTERVAL $ConNumDays DAY)>NOW()),concat(' <A HREF=StaffTrackScheduleIcal.php?trackid=',trackid,'><I>(iCal)</I></A>'),''))) as 'Track',
+    if((questiontypeid IS NULL),"",questiontypeid) AS questiontypeid,
+    GROUP_CONCAT(DISTINCT concat('<A NAME=\"',trackname,'\">',trackname,'</A>',if((DATE_ADD('$ConStart',INTERVAL $ConNumDays DAY)>NOW()),concat(' <A HREF=StaffTrackScheduleIcal.php?trackid=',trackid,'><I>(iCal)</I></A>'),''))) as 'Track',
     concat('<A HREF=StaffPrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>') AS iCal,
     concat('<A HREF=StaffFeedback.php?sessionid=',sessionid,'>(Feedback)</A>') AS Feedback,
-    concat('<A HREF=\"StaffDescriptions.php$feedbackp#',sessionid,'\">',title,'</A>') as Title,
-    concat(progguiddesc,'</P>') as 'Web Description',
-    concat(pocketprogtext,'</P>') as 'Book Description'
+    concat('<A HREF=\"StaffDescriptions.php$feedbackp#',sessionid,'\">',title_good_web,'</A>') as Title,
+    subtitle_good_web AS Subtitle,
+    concat(desc_good_web,'</P>') as 'Web Description',
+    concat(desc_good_book,'</P>') as 'Book Description'
   FROM
       Sessions
-    JOIN Schedule SCH USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN $ReportDB.Tracks T USING (trackid)
-    LEFT JOIN ParticipantOnSession USING (sessionid)
-    LEFT JOIN $ReportDB.Participants USING (badgeid)
-    LEFT JOIN $ReportDB.TypeHasQuestionType THQT USING (typeid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms R USING (roomid)
+    JOIN Tracks USING (trackid)
+    LEFT JOIN ParticipantOnSession USING (sessionid,conid)
+    LEFT JOIN Participants USING (badgeid)
+    LEFT JOIN TypeHasQuestionType USING (typeid,conid)
+    JOIN PubStatuses USING (pubstatusid)
+    JOIN (SELECT
+        sessionid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=1 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=2 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') SGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') DGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_book
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=2 AND
+	  descriptionlang='en-us') DGB USING (sessionid)
   WHERE
+    conid=$conid AND
     pubstatusname in ($pubstatus_string) AND
-    (volunteer=0 OR volunteer IS NULL) AND
-    (introducer=0 OR introducer IS NULL) AND
-    (aidedecamp=0 OR aidedecamp IS NULL)
+    (volunteer=0 OR volunteer="0" OR volunteer IS NULL) AND
+    (introducer=0 OR introducer="0" OR introducer IS NULL) AND
+    (aidedecamp=0 OR aidedecamp="0" OR aidedecamp IS NULL)
   GROUP BY
     sessionid
   ORDER BY
-    T.trackname,
-    SCH.starttime,
+    trackname,
+    starttime,
     R.display_order
 EOD;
 
@@ -114,10 +156,10 @@ for ($i=1; $i<=$elements; $i++) {
   if ($element_array[$i]['Roomname']) {
     echo sprintf("&mdash; <i>%s</i>",$element_array[$i]['Roomname']);
   }
-  if ((strtotime($ConStartDatim)+(60*60*24*$ConNumDays)) > time()) {
+  if ((strtotime($ConStart)+(60*60*24*$ConNumDays)) > time()) {
     echo sprintf("&mdash; %s",$element_array[$i]['iCal']);
   }
-  if (strtotime($ConStartDatim) < time()) {
+  if (strtotime($ConStart) < time()) {
     if ($element_array[$i]['Attended']) {
       echo sprintf("&mdash; About %s Attended",$element_array[$i]['Attended']);
     }

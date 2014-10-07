@@ -773,8 +773,13 @@ EOD;
 
 /* This takes the trackidlist, statusidlist, typeidlist, and
    sessionidlist, and returns information for RenderPrecis by producing:
-   $sessionid,$trackname,$typename,$title,$duration,$estatten,$pocketprogtext,$progguiddesc,$persppartinfo
-   IN THAT ORDER.*/
+   $sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
+   IN THAT ORDER.
+   For the title and descriptions (these should become not hard-coded):
+   descriptiontypeid: 1=title 2=subtitle 3=description
+   biostateid: 1=raw 2=edited 3=good
+   biodestid: 1=web 2=book
+   descriptionlang: Only using "en-us" for now.*/
 function retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid) {
   require_once('db_functions.php');
   global $result;
@@ -786,7 +791,7 @@ SELECT
     sessionid,
     trackname,
     typename,
-    title,
+    title_good_web as Title,
     CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
@@ -796,14 +801,49 @@ SELECT
         concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
       END AS duration,
     estatten,
-    pocketprogtext,
-    progguiddesc,
-    persppartinfo
+    desc_good_web,
+    desc_good_book,
+    persppartinfo,
+    pubsname as proposer
   FROM
       Sessions
     JOIN Tracks USING (trackid)
     JOIN Types USING (typeid)
     JOIN SessionStatuses USING (statusid)
+    JOIN Participants ON (suggestor=badgeid)
+    JOIN (SELECT
+        sessionid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=1 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') DGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_book
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=2 AND
+	  descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     conid=$conid
 EOD;
@@ -828,14 +868,14 @@ EOD;
 }
 
 /* RenderPrecis display requires:  a populated dataarray containing rows with
-   $sessionid,$trackname,$typename,$title,$duration,$estatten,$pocketprogtext,$progguiddesc,$persppartinfo
+   $sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
    IN THAT ORDER
    it displays the precis view of the data. This goes hand in hand with the retrieve_select_from_db above.*/
 function RenderPrecis($result,$showlinks) {
     echo "<hr>\n";
     echo "<TABLE>\n";
     echo "   <COL><COL><COL><COL><COL>\n";
-    while (list($sessionid,$trackname,$typename,$title,$duration,$estatten,$pocketprogtext,$progguiddesc,$persppartinfo)
+    while (list($sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer)
 	     =mysql_fetch_array($result, MYSQL_NUM)) {
         echo "<TR>\n";
         echo "  <TD rowspan=3 class=\"border0000\" id=\"sessidtcell\"><b>";
@@ -843,6 +883,7 @@ function RenderPrecis($result,$showlinks) {
 		echo "<A HREF=\"StaffAssignParticipants.php?selsess=".$sessionid."\">".$sessionid."</A>";
 	    }
         echo "&nbsp;&nbsp;</TD>\n";
+	echo "  <TD class=\"border0000\"><b>".$proposer."</TD>\n";
 	echo "  <TD class=\"border0000\"><b>".$trackname."</TD>\n";
 	echo "  <TD class=\"border0000\"><b>".$typename."</TD>\n";
         echo "  <TD class=\"border0000\"><b>";
@@ -854,11 +895,11 @@ function RenderPrecis($result,$showlinks) {
         echo "&nbsp;&nbsp;</TD>\n";
 	echo "  <TD class=\"border0000\"><b>".$duration."</TD>\n";
 	echo "</TR>\n";
-	echo "<TR><TD colspan=5 class=\"border0010\">Web: ".htmlspecialchars($progguiddesc,ENT_NOQUOTES)."</TD></TR>\n";
-	echo "<TR><TD colspan=5 class=\"border0010\">Book: ".htmlspecialchars($pocketprogtext,ENT_NOQUOTES)."</TD></TR>\n";
-	echo "<TR><TD colspan=5 class=\"border0000\">".htmlspecialchars($persppartinfo,ENT_NOQUOTES)."</TD></TR>\n";
-	echo "<TR><TD colspan=5 class=\"border0020\">&nbsp;</TD></TR>\n";
-	echo "<TR><TD colspan=5 class=\"border0000\">&nbsp;</TD></TR>\n";
+	echo "<TR><TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($desc_good_web,ENT_NOQUOTES)."</TD></TR>\n";
+	echo "<TR><TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($desc_good_book,ENT_NOQUOTES)."</TD></TR>\n";
+	echo "<TR><TD colspan=6 class=\"border0000\">".htmlspecialchars($persppartinfo,ENT_NOQUOTES)."</TD></TR>\n";
+	echo "<TR><TD colspan=6 class=\"border0020\">&nbsp;</TD></TR>\n";
+	echo "<TR><TD colspan=6 class=\"border0000\">&nbsp;</TD></TR>\n";
     }
     echo "</TABLE>\n";
 }

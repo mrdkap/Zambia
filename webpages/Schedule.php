@@ -1,12 +1,6 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // Deal with what is passed in.
 if (!empty($_SERVER['QUERY_STRING'])) {
@@ -21,12 +15,12 @@ if ($conid == "") {
 }
 
 // Set the conname from the conid
-$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from $ReportDB.ConInfo where conid=$conid";
+$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
 list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
 $conname=$conname_array[1]['conname'];
 $connumdays=$conname_array[1]['connumdays'];
 $Grid_Spacer=$conname_array[1]['congridspacer'];
-$ConStartDatim=$conname_array[1]['constartdate'];
+$ConStart=$conname_array[1]['constartdate'];
 $logo=$conname_array[1]['conlogo'];
 
 $trackname="trackname";
@@ -50,8 +44,8 @@ $query = <<<EOD
 SELECT
     phasestate
   FROM
-      $ReportDB.PhaseTypes
-    JOIN $ReportDB.Phase USING (phasetypeid)
+      PhaseTypes
+    JOIN Phase USING (phasetypeid)
   WHERE
     phasetypename like '%Feedback Available%' AND
     conid=$conid
@@ -67,10 +61,10 @@ $description="<P>Schedule for all sessions.</P>\n";
 $additionalinfo="<P>Click on the session title to visit the session's <A HREF=\"Descriptions.php$passon\">description</A>,\n";
 $additionalinfo.="the presenter to visit their <A HREF=\"Bios.php$passon\">bio</A>, the track name to visit the particular\n";
 $additionalinfo.="<A HREF=\"Tracks.php$passon\">track</A>, or visit the <A HREF=\"Postgrid.php$passon\">grid</A>.</P>\n";
-if ((strtotime($ConStartDatim)+(60*60*24*$connumdays)) > time()) {
+if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
   $additionalinfo.="<P>Click on the (iCal) tag to download the iCal calendar for the particular activity you want added to your calendar.</P>\n";
  }
-if ((strtotime($ConStartDatim) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
+if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
   $additionalinfo.="<P>Click on the (Feedback) tag to give us feedback on a particular scheduled event.</P>\n";
  }
 
@@ -82,7 +76,7 @@ if (strtoupper(DOUBLE_SCHEDULE)=="TRUE") {
   $query.="  if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator=1),'(m)','')) SEPARATOR ', ')) as 'Participants',";
 }
 $query.= <<<EOD
-    concat('<A NAME=\"',DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p'),'\"></A>',DATE_FORMAT(ADDTIME('$ConStartDatim',starttime),'%a %l:%i %p')) as 'Start Time',
+    concat('<A NAME=\"',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'\"></A>',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p')) as 'Start Time',
     CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
@@ -101,35 +95,58 @@ if (strtoupper(DOUBLE_SCHEDULE)=="TRUE") {
 }
 $query.= <<<EOD
     Sessionid,
-    concat('<A HREF=\"Descriptions.php$passon#',sessionid,'\">',title,'</A>') as Title,
-    secondtitle AS Subtitle,
+    concat('<A HREF=\"Descriptions.php$passon#',sessionid,'\">',title_good_web,'</A>') as Title,
+    subtitle_good_web AS Subtitle,
     concat('<A HREF=PrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>') AS iCal,
     concat('<A HREF=Feedback.php?sessionid=',sessionid,'>(Feedback)</A>') AS Feedback,
-    concat('<P>',progguiddesc,'</P>') as Description
+    concat('<P>',desc_good_web,'</P>') as Description
   FROM
-EOD;
-if ($conid==CON_KEY) {
-  $query.=" Sessions S JOIN Schedule USING (sessionid) LEFT JOIN ParticipantOnSession USING (sessionid)";
-} else {
-  $query.=" $ReportDB.Sessions S JOIN $ReportDB.Schedule USING (sessionid,conid) LEFT JOIN $ReportDB.ParticipantOnSession USING (sessionid,conid)";
-}
-$query.= <<<EOD
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN $ReportDB.Tracks USING (trackid)
-    LEFT JOIN $ReportDB.Participants USING (badgeid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
+      Sessions S
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms R USING (roomid)
+    JOIN Tracks USING (trackid)
+    LEFT JOIN ParticipantOnSession USING (sessionid,conid)
+    LEFT JOIN Participants USING (badgeid)
+    JOIN PubStatuses USING (pubstatusid)
+    JOIN (SELECT
+        sessionid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=1 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=2 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') SGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') DGW USING (sessionid)
   WHERE
-EOD;
-if ($conid==CON_KEY) {
-  $query.="";
-} else {
-  $query.=" conid=$conid AND  ";
-}
-$query.= <<<EOD
+    conid=$conid AND
     pubstatusname in ($pubstatus_check) AND
-    (volunteer=0 OR volunteer IS NULL) AND
-    (introducer=0 OR introducer IS NULL) AND
-    (aidedecamp=0 OR aidedecamp IS NULL)
+    (volunteer=0 OR volunteer="0" OR volunteer IS NULL) AND
+    (introducer=0 OR introducer="0" OR introducer IS NULL) AND
+    (aidedecamp=0 OR aidedecamp="0" OR aidedecamp IS NULL)
 EOD;
 if (strtoupper(DOUBLE_SCHEDULE)=="TRUE") {
   $query.="";
@@ -167,10 +184,10 @@ for ($i=1; $i<=$elements; $i++) {
   if ($element_array[$i]['Roomname']) {
     echo sprintf("&mdash; <i>%s</i>",$element_array[$i]['Roomname']);
   }
-  if ((strtotime($ConStartDatim)+(60*60*24*$connumdays)) > time()) {
+  if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
     echo sprintf("&mdash; %s",$element_array[$i]['iCal']);
   }
-  if ((strtotime($ConStartDatim) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
+  if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
     echo sprintf("&mdash; %s",$element_array[$i]['Feedback']);
   }
   echo sprintf("</DT>\n<DD>%s",$element_array[$i]['Description']);

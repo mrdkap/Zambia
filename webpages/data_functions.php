@@ -118,9 +118,11 @@ function set_session_defaults() {
     $session["languagestatusid"]=1; // default to "English"
     $session["title"]="";
     $session["secondtitle"]="";
+    $session["description_good_web"]="";
+    $session["description_good_book"]="";
     $session["pocketprogtext"]="";
-    $session["persppartinfo"]="";
     $session["progguiddesc"]="";
+    $session["persppartinfo"]="";
     $session["featdest"]="";
     $session["servdest"]="";
     $session["pubchardest"]="";

@@ -222,7 +222,9 @@ function populate_multidest_from_table($table_name, $skipset) {
 /* Function update_session()
    Takes data from global $session array and updates the
    tables Sessions, Descriptions, SessionHasFeature, SessionHasPubChar,
-   SessionHasService, SessionHasVendorFeature, SessionHasVendorSpace */
+   SessionHasService, SessionHasVendorFeature, SessionHasVendorSpace
+   pocketprogtext=description_good_book so zeroed out
+   progguiddesc=description_good_web so zeroed out */
 function update_session() {
   global $link, $session, $message2;
 
@@ -238,8 +240,8 @@ function update_session() {
 			   "pubstatusid=".$session["pubstatusid"],
 			   "title='".mysql_real_escape_string($session["title"],$link)."'",
 			   "secondtitle='".mysql_real_escape_string($session["secondtitle"],$link)."'",
-			   "pocketprogtext='".mysql_real_escape_string($session["description_good_book"],$link)."'",
-			   "progguiddesc='".mysql_real_escape_string($session["description_good_web"],$link)."'",
+			   "pocketprogtext=''",
+			   "progguiddesc=''",
 			   "persppartinfo='".mysql_real_escape_string($session["persppartinfo"],$link)."'",
 			   $duration,
 			   "estatten=".($session["atten"]!=""?$session["atten"]:"null"),
@@ -384,7 +386,9 @@ function get_next_session_id() {
 /* Function insert_session()
    Takes data from global $session array and creates new rows in
    the tables Sessions, SessionHasFeature, SessionHasService,
-   SessionHasPubChar, SessionHasVendorFeature, and SessionHasVendorSpace */
+   SessionHasPubChar, SessionHasVendorFeature, and SessionHasVendorSpace
+   pocketprogtext and pregguiddesc zeroed out
+   */
 function insert_session() {
   global $session, $link, $query, $message_error;
 
@@ -400,8 +404,8 @@ function insert_session() {
   $query.="languagestatusid=".$session["languagestatusid"].',';
   $query.="title=\"".mysql_real_escape_string($session["title"],$link).'",';
   $query.="secondtitle=\"".mysql_real_escape_string($session["secondtitle"],$link).'",';
-  $query.="pocketprogtext=\"".mysql_real_escape_string($session["description_good_book"],$link).'",';
-  $query.="progguiddesc=\"".mysql_real_escape_string($session["description_good_web"],$link).'",';
+  $query.="pocketprogtext='',";
+  $query.="progguiddesc='',";
   $query.="persppartinfo=\"".mysql_real_escape_string($session["persppartinfo"],$link).'",';
   if ($_SESSION['condurationminutes']=="TRUE") {
     $query.="duration=\"".conv_min2hrsmin($session["duration"],$link)."\", ";
@@ -533,15 +537,66 @@ function retrieve_session_from_db($sessionid) {
   global $link,$message2;
   $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
+/* For the title and descriptions (these should become not hard-coded):
+   descriptiontypeid: 1=title 2=subtitle 3=description
+   biostateid: 1=raw 2=edited 3=good
+   biodestid: 1=web 2=book
+   descriptionlang: Only using "en-us" for now. */
+
   $query= <<<EOD
 SELECT
     sessionid, conid, trackid, typeid, divisionid, pubstatusid,
-    languagestatusid, title, secondtitle, pocketprogtext, progguiddesc,
+    languagestatusid, title, secondtitle, pocketprogtext, progguiddesc, 
+    description_good_web, description_good_book, title_good_web,
     persppartinfo, duration,estatten, kidscatid, signupreq, roomsetid,
     notesforpart, servicenotes, statusid, notesforprog, suggestor,
-    warnings, invitedguest, ts
+    warnings, invitedguest, ts, subtitle_good_web
   FROM
       Sessions
+    JOIN (SELECT
+        sessionid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=1 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=2 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') SGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as description_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') DGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as description_good_book
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=2 AND
+	  descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     conid=$conid AND
     sessionid=$sessionid
@@ -566,11 +621,13 @@ EOD;
   $session["pubstatusid"]=$sessionarray["pubstatusid"];
   $session["languagestatusid"]=$sessionarray["languagestatusid"];
   $session["title"]=$sessionarray["title"];
+  $session["title_good_web"]=$sessionarray["title_good_web"];
   $session["secondtitle"]=$sessionarray["secondtitle"];
+  $session["subtitle_good_web"]=$sessionarray["subtitle_good_web"];
   $session["pocketprogtext"]=$sessionarray["pocketprogtext"];
   $session["progguiddesc"]=$sessionarray["progguiddesc"];
-  $session["description_good_book"]=$sessionarray["pocketprogtext"];
-  $session["description_good_web"]=$sessionarray["progguiddesc"];
+  $session["description_good_web"]=$sessionarray["description_good_web"];
+  $session["description_good_book"]=$sessionarray["description_good_book"];
   $session["persppartinfo"]=$sessionarray["persppartinfo"];
   $timearray=parse_mysql_time_hours($sessionarray["duration"]);
   if ($_SESSION['condurationminutes']=="TRUE") {

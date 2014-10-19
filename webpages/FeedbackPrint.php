@@ -57,10 +57,10 @@ SELECT
     Conname,
     concat(sessionid,"-",conid) AS "Sess-Con",
     if((questiontypeid IS NULL),"",questiontypeid) AS questiontypeid,
-    Title,
-    secondtitle AS Subtitle,
-    concat(progguiddesc,'</P>') AS 'Web Description',
-    concat(pocketprogtext,'</P>') AS 'Book Description'
+    if((title_good_web IS NULL),title,title_good_web) AS Title,
+    if((subtitle_good_web IS NULL), secondtitle,subtitle_good_web) AS Subtitle,
+    concat(desc_good_web,'</P>') AS 'Web Description',
+    concat(desc_good_book,'</P>') AS 'Book Description'
   FROM
       Sessions
     JOIN Schedule USING (sessionid,conid)
@@ -71,6 +71,50 @@ SELECT
     LEFT JOIN TypeHasQuestionType USING (typeid,conid)
     JOIN PubStatuses USING (pubstatusid)
     JOIN ConInfo USING (conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+      WHERE
+	  descriptiontypeid=1 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') TGW USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+      WHERE
+	  descriptiontypeid=2 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') SGW USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as desc_good_web
+      FROM
+          Descriptions
+      WHERE
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') DGW USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as desc_good_book
+      FROM
+          Descriptions
+      WHERE
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=2 AND
+	  descriptionlang='en-us') DGB USING (sessionid,conid)
   WHERE
     $conid_or_badgeid AND
     pubstatusname in ('Public') AND

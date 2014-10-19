@@ -1439,9 +1439,9 @@ function remove_flow_report ($flowid,$table,$title,$description) {
   $tablename=$table."Flow";
 
   // Establish the table element or fail
-  if (strpos($table,"Group")) {
+  if ($table=="Group") {
     $tableelement="gflowid";
-  } elseif (strpos($table,"Personal")) {
+  } elseif ($table=="Personal") {
     $tableelement="pflowid";
   } else {
     $message="<P>Error finding table $tablename.  Database not updated.</P>\n<P>";
@@ -1541,11 +1541,11 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
   $tablename=$table."Flow";
 
   // Estabilsh the table elements, or fail;
-  if (strpos($table,"Group")) {
+  if ($table=="Group") {
     $torder="gfloworder";
     $tname="gflowname";
     $tid="gflowid";
-  } elseif (strpos($table,"Personal")) {
+  } elseif ($table=="Personal") {
     $torder="pfloworder";
     $tname="badgeid";
     $tid="pflowid";

@@ -85,6 +85,12 @@ if (!$regmessage) {
 // Get all the written feedback on the sessions, and the graph of the questions.
 $feedback_array=getFeedbackData($badgeid);
 
+/* For the title and descriptions (these should become not hard-coded):
+   descriptiontypeid: 1=title 2=subtitle 3=description
+   biostateid: 1=raw 2=edited 3=good
+   biodestid: 1=web 2=book
+   descriptionlang: Only using "en-us" for now. */
+
 // Build the schedule of classes into schd_array
 $query = <<<EOD
 SELECT
@@ -93,10 +99,10 @@ SELECT
     conid,
     conname,
     trackname,
-    concat(title, if(estatten,concat(" (estimated attendance: ",estatten,")"),'')) as title,
+    concat(title_good_web, if(estatten,concat(" (estimated attendance: ",estatten,")"),'')) as title,
     allrooms,
-    pocketprogtext,
-    progguiddesc,
+    desc_good_web,
+    desc_good_book,
     if((questiontypeid IS NULL),"",questiontypeid) AS questiontypeid,
     DATE_FORMAT(ADDTIME(constartdate, starttime),'%a %l:%i %p') as 'Start Time',
     CASE
@@ -160,6 +166,39 @@ SELECT
             LEFT JOIN ParticipantSessionInterest USING (sessionid,conid,badgeid)
           GROUP BY
 	    sessionid,conid) Z USING (sessionid,conid)
+    JOIN (SELECT
+        sessionid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=1 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') DGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_book
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=2 AND
+	  descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     badgeid="$badgeid"
   ORDER BY
@@ -272,11 +311,11 @@ for ($i=1; $i<=$schd_rows; $i++) {
   echo "  </TR>\n";
   echo "  <TR>\n";
   echo "    <TD>&nbsp;</TD>\n";
-  echo "    <TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($schd_array[$i]["progguiddesc"])."</TD>\n";
+  echo "    <TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($schd_array[$i]["desc_good_web"])."</TD>\n";
   echo "  </TR>\n";
   echo "  <TR>\n";
   echo "    <TD>&nbsp;</TD>\n";
-  echo "    <TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($schd_array[$i]["pocketprogtext"])."</TD>\n";
+  echo "    <TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($schd_array[$i]["desc_good_book"])."</TD>\n";
   echo "  </TR>\n";
   if ($schd_array[$i]["persppartinfo"] != "") {
     echo "  <TR>\n";

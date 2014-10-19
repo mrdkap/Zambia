@@ -70,6 +70,8 @@ SELECT
     JOIN ConInfo USING (conid)
   WHERE
     comptypeid=$i
+  ORDER BY
+    pubsname
 EOD;
   
   // Retrieve query

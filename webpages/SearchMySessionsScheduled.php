@@ -31,7 +31,7 @@ $query = <<<EOD
 SELECT
     concat(conname," - ",sessionid) AS Sessionid,
     trackname,
-    title,
+    concat(title_good_web,if((subtitle_good_web IS NULL),"",": ".subtitle_good_web)) AS title ,
     CASE
       WHEN (minute(duration)=0) AND (starttime) THEN CONCAT(DATE_FORMAT(duration,'%l hr starting '), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a %l:%i %p'))
       WHEN (minute(duration)=0) THEN DATE_FORMAT(duration,'%l hr')
@@ -40,8 +40,8 @@ SELECT
       WHEN (starttime) THEN CONCAT(DATE_FORMAT(duration,'%l hr, %i min starting '), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a %l:%i %p'))
       ELSE DATE_FORMAT(duration,'%l hr, %i min')
     END AS duration,
-    pocketprogtext,
-    progguiddesc,
+    desc_good_web,
+    desc_good_book,
     persppartinfo,
     badgeid
   FROM
@@ -58,6 +58,50 @@ SELECT
             ParticipantSessionInterest
         WHERE
           badgeid='$badgeid') as PSI USING (sessionid,conid)
+    JOIN (SELECT
+        sessionid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=1 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=2 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') SGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_web
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=1 AND
+	  descriptionlang='en-us') DGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_book
+      FROM
+          Descriptions
+      WHERE
+          conid=$conid AND
+	  descriptiontypeid=3 AND
+	  biostateid=3 AND
+	  biodestid=2 AND
+	  descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     conid=$conid AND
     may_be_scheduled=1 AND

@@ -1,10 +1,6 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="EditGroupFlows.php";
@@ -13,19 +9,19 @@ $description="<P>Edit the order of the various group flows.</P>\n";
 $additionalinfo="<P><A HREF=genindex.php>Return</A> to the Group Flow choice page.</P>";
 
 if (isset($_POST['addto'])) {
-  add_flow_report($_POST['addto'],$_POST['addphase'],"$ReportDB.Group",$_POST['togroup'],$title,$description);
+  add_flow_report($_POST['addto'],$_POST['addphase'],"Group",$_POST['togroup'],$title,$description);
  }
 
 if (isset($_POST['unrank'])) {
-  remove_flow_report($_POST['unrank'],"$ReportDB.Group",$title,$description);
+  remove_flow_report($_POST['unrank'],"Group",$title,$description);
  }
 
 if (isset($_POST['upfrom'])) {
-  deltarank_flow_report($_POST['upfrom'],"$ReportDB.Group","Up",$title,$description);
+  deltarank_flow_report($_POST['upfrom'],"Group","Up",$title,$description);
  }
 
 if (isset($_POST['downfrom'])) {
-  deltarank_flow_report($_POST['downfrom'],"$ReportDB.Group","Down",$title,$description);
+  deltarank_flow_report($_POST['downfrom'],"Group","Down",$title,$description);
  }
 
 // Forms inserted into the query
@@ -57,8 +53,8 @@ SELECT
     phasetypeid,
     concat(phasetypename,if ((phasestate=TRUE),' (c)',' ')) AS Phases
   FROM
-      $ReportDB.PhaseTypes 
-    JOIN $ReportDB.Phase USING (phasetypeid)
+      PhaseTypes 
+    JOIN Phase USING (phasetypeid)
   WHERE
     conid=$conid
   ORDER BY
@@ -84,10 +80,10 @@ SELECT
     GF.gfloworder,
     if((GF.phasetypeid IS NULL),'ALL',PT.phasetypename) as Phase
   FROM
-      $ReportDB.GroupFlow GF,
-      $ReportDB.Reports R,
-      $ReportDB.Phase P,
-      $ReportDB.PhaseTypes PT
+      GroupFlow GF,
+      Reports R,
+      Phase P,
+      PhaseTypes PT
   WHERE
     P.phasetypeid=PT.phasetypeid AND
     GF.reportid=R.reportid AND
@@ -105,8 +101,8 @@ SELECT
     $addto_query
     concat("<A HREF=genreport.php?reportid=",R.reportid,">",R.reporttitle,"</A>") AS Title
   FROM
-      $ReportDB.Reports R
-    LEFT JOIN $ReportDB.GroupFlow GF ON R.reportid=GF.reportid
+      Reports R
+    LEFT JOIN GroupFlow GF ON R.reportid=GF.reportid
   WHERE
     GF.reportid IS NULL
   ORDER BY
@@ -119,17 +115,15 @@ list($unrows,$unheader_array,$unreport_array)=queryreport($query,$link,$title,$d
 // All reports, and their groups
 $query = <<<EOD
 SELECT
-    DISTINCT concat("<A HREF=genreport.php?reportid=",R.reportid,">",R.reporttitle,"</A>") AS Title,
-    group_concat(GF.gflowname) AS Groups
+    DISTINCT concat("<A HREF=genreport.php?reportid=",reportid,">",reporttitle,"</A>") AS Title,
+    group_concat(gflowname) AS Groups
   FROM
-      $ReportDB.Reports R,
-      $ReportDB.GroupFlow GF
-  WHERE
-    R.reportid=GF.reportid
+      Reports R
+    JOIN GroupFlow USING (reportid)
   GROUP BY
-    R.reportid
+    reportid
   ORDER BY
-    R.reportid
+    reportid
 EOD;
 
 // Retrieve query

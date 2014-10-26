@@ -305,10 +305,10 @@ function update_session() {
 	  $element_array=array('sessionid','conid','descriptiontypeid','biostateid',
 			       'biodestid','descriptionlang','descriptiontext');
 	  $value_array=array($session['sessionid'],$_SESSION['conid'],$i,$j,$k,$l,
-			     htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
+			     htmlspecialchars_decode(stripfancy($desc_array[$i][$j][$k][$l])));
 	  $message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
 	} else {
-	  $pairedvalue_array=array("descriptiontext='".mysql_real_escape_string($desc_array[$i][$j][$k][$l])."'");
+	  $pairedvalue_array=array("descriptiontext='".mysql_real_escape_string(stripfancy($desc_array[$i][$j][$k][$l]))."'");
 	  $match_string=$wherestring;
 	  $message.=update_table_element_extended_match ($link,$title,"Descriptions",$pairedvalue_array, $match_string);
 	}
@@ -475,7 +475,7 @@ function insert_session() {
 	$element_array=array('sessionid','conid','descriptiontypeid','biostateid',
 			     'biodestid','descriptionlang','descriptiontext');
 	$value_array=array($id,$_SESSION['conid'],$i,$j,$k,$l,
-			   htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
+			   htmlspecialchars_decode(stripfancy($desc_array[$i][$j][$k][$l])));
 	$message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
       }
     }

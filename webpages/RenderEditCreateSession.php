@@ -196,13 +196,13 @@ place.
                 <TR>
 		    <TD class="txtalbl"><LABEL class="dense" for="description_good_web">Web Description (<?php echo $limit_array['min']['web']['desc']."-".$limit_array['max']['web']['desc'] ?>):</LABEL></TD>
                     <TD class="txta"><TEXTAREA class="textlabelarea" cols=80 rows=5 name="description_good_web"
-                            ><?php echo htmlspecialchars($session["description_good_web"],ENT_NOQUOTES);?></TEXTAREA></TD>
+                            ><?php echo htmlspecialchars(stripfancy($session["description_good_web"]),ENT_NOQUOTES);?></TEXTAREA></TD>
                     </TR>
                 <?php if ($action!="brainstorm") { ?>
                 <TR>
                     <TD class="txtalbl"><LABEL class="dense" for="description_good_book">Program Book Description (<?php echo $limit_array['min']['book']['desc']."-".$limit_array['max']['book']['desc'] ?>):</LABEL></TD>
                     <TD class="txta"><TEXTAREA class="textlabelarea" cols=80 name="description_good_book"
-                            ><?php echo htmlspecialchars($session["description_good_book"],ENT_NOQUOTES);?></TEXTAREA></TD>
+                            ><?php echo htmlspecialchars(stripfancy($session["description_good_book"]),ENT_NOQUOTES);?></TEXTAREA></TD>
                     </TR>
 		<?php } ?>
 <?php // Modifiy this in a loop "for each language in LANGUAGE_LIST".

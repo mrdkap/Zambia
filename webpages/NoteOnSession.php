@@ -1,14 +1,7 @@
 <?php
 $title="Notes On Session";
-$description="<P>Please, select the session you wish to add notes on.</P>";
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 $conid=$_GET['conid'];
 
@@ -40,6 +33,8 @@ if ((is_numeric($id)) and ($id>0)) { // If the "id" is numerica and greater than
 // If the "id" still is not set, or reset to "", add the "Select" to the top of the form, so it can be chosen.
 if ((!isset($id)) or ($id=="")) {
 
+  // Set the description to a select version
+  $description="<P>Please, select the session you wish to add notes on.</P>";
   // Limit it to just the appropriate set of schedule elements presented
   if (may_I("Programming")) {$pubstatus_array[]="'Prog Staff'"; $pubstatus_array[]="'Public'";}
   if (may_I("Liaison")) {$pubstatus_array[]="'Public'";}
@@ -64,9 +59,9 @@ SELECT
     concat(trackname,' - ',sessionid,' - ',title) as sname
   FROM
       Sessions
-    JOIN $ReportDB.Tracks USING (trackid)
-    JOIN $ReportDB.SessionStatuses USING (statusid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
+    JOIN PubStatuses USING (pubstatusid)
   WHERE
     statusname='Brainstorm' AND
     pubstatusname in ($pubstatus_string)
@@ -101,12 +96,18 @@ EOD;
 if (isset($_POST["note"])) {
   $element_array = array('sessionid','conid','badgeid','sessnote');
   $value_array = array($id,$conid,$_SESSION['badgeid'],$_POST["note"]);
-  $message.=submit_table_element($link,"Note On Session","$ReportDB.NotesOnSessions",$element_array, $value_array);
+  $message.=submit_table_element($link,$title,"NotesOnSessions",$element_array, $value_array);
  }
+
+$description="<P><B>This is outdated.  Don't use this until NotesOnSessions have been fully migrated to VotesOnSessions.</B></P>\n";
+$description.="<P>The system knows who you are, so please, don't put your name in the \"Note\" field.  Simply put the number in the Note field, and then hit update.  Once that's done, please hit the \"Return To Report\" link, below.</P>";
 
 topofpagereport($title,$description,$additionalinfo);
 echo "<P class=\"regmsg\">$message</P>";
 
+if (isset($_SESSION['return_to_page'])) {
+  echo "<A HREF=\"".$_SESSION['return_to_page']."#$id\">Return to report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</A>";
+}
 // Add note through form below
 ?>
 
@@ -126,15 +127,20 @@ echo "<P class=\"regmsg\">$message</P>";
 $query = <<<EOD
 SELECT
     conid as "Con",
-    title as 'Title',
+    descriptiontext as 'Title',
     notesforpart as 'Presenter',
     concat(pubsname,": ",sessnote) as 'Note'
   FROM
-      $ReportDB.NotesOnSessions
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN Sessions USING (sessionid)
+      NotesOnSessions
+    JOIN Participants USING (badgeid)
+    JOIN Descriptions USING (sessionid,conid)
+    JOIN Sessions USING (sessionid,conid)
   WHERE
-    sessionid=$id
+    sessionid=$id AND
+    descriptiontypeid=1 AND
+    biostateid=3 AND
+    biodestid=1 AND
+    descriptionlang='en-us'
   ORDER BY
     timestamp
 EOD;

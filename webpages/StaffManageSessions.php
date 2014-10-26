@@ -21,6 +21,8 @@ topofpagereport($title,$description,$additionalinfo);
    <DD>A tabular report on all sessions organized by track.  Key information on each session is visible from the top level and a link takes you down into the details for any session.</DD>
    <DT><A HREF="CommentOnSessions.php">Session Comments</A></DT>
    <DD>Add comments and feedback specifically for Sessions.</DD>
+   <DT><A HREF="VoteOnSession.php">Vote on Sessions</A></DT>
+   <DD>Add or update your vote on a set of presenter Sessions.</DD>
    <DT><A HREF="ViewPrecis.php?showlinks=0">Precis View</A>&nbsp;
        (<A HREF="ViewPrecis.php?showlinks=1">Precis View With Links</A>)</DT>
    <DD>Since the purpose of the Precis is to get participants to signup to be on various panels or to help with various events, this report contains sessions where that status is "brainstorm" or "vetted".  Note that sessions marked "invited guest only" are not included in the precis (regardless of status).</DD>

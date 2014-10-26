@@ -121,6 +121,9 @@ for ($i=1; $i<=$conrows; $i++) {
     $webstring.="  <LI><A HREF=\"webpages/Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
     $webstring.="  <LI><A HREF=\"webpages/Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
   }
+  if ($phase_array[$conid]['Comments Displayed'] == '0' ) {
+    $webstring.="  <LI><A HREF=\"webpages/CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";
+  }
   if ($nowis < $constart) { 
     $webstring.="  <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
     if ($phase_array[$conid]['Brainstorm'] == '0' ) {

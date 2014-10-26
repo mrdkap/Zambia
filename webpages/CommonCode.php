@@ -791,7 +791,7 @@ SELECT
     sessionid,
     trackname,
     typename,
-    title_good_web as Title,
+    concat(title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web))) AS title,
     CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
@@ -816,33 +816,56 @@ SELECT
 	descriptiontext as title_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=1 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename='title' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
 	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+          conid=$conid AND
+	  descriptiontypename='subtitle' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') SGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as desc_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename='description' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
 	  descriptionlang='en-us') DGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as desc_good_book
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=2 AND
+	  descriptiontypename='description' AND
+	  biostatename='good' AND
+	  biodestname='book' AND
 	  descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     conid=$conid
@@ -1168,29 +1191,37 @@ function create_participant ($participant_arr) {
   $message.=submit_table_element($link, $title, "CongoDump", $element_array, $value_array);
 
   // Assign permissions.
-  $query = "INSERT INTO UserHasPermissionRole (badgeid, permroleid, conid) VALUES ";
-  foreach ($participant_arr['permroleid'] as $key => $value) {
-    $query.="('".$newbadgeid."','".$key."','".$_SESSION['conid']."'),";
-  }
+  if (empty($participant_arr['permroleid'])) {
+    $message.="No permission role set.";
+  } else {
+    $query = "INSERT INTO UserHasPermissionRole (badgeid, permroleid, conid) VALUES ";
+    foreach ($participant_arr['permroleid'] as $key => $value) {
+      $query.="('".$newbadgeid."','".$key."','".$_SESSION['conid']."'),";
+    }
 
-  $query=rtrim($query,',');
-  if (!mysql_query($query,$link)) {
-    $message_error=$query."<BR>Error updating UserHasPermissionRole database.  Database not updated.";
-    RenderError($title,$message_error);
-    exit();
+    $query=rtrim($query,',');
+    if (!mysql_query($query,$link)) {
+      $message_error=$query."<BR>Error updating UserHasPermissionRole database.  Database not updated.";
+      RenderError($title,$message_error);
+      exit();
+    }
   }
 
   // Assign con roles
-  $query = "INSERT INTO UserHasConRole (badgeid, conroleid, conid) VALUES ";
-  foreach ($participant_arr['conroleid'] as $key => $value) {
-    $query.="('".$newbadgeid."','".$key."','".$_SESSION['conid']."'),";
-  }
+  if (empty($participant_arr['conroleid'])) {
+    $message.="No con role set.";
+  } else {
+    $query = "INSERT INTO UserHasConRole (badgeid, conroleid, conid) VALUES ";
+    foreach ($participant_arr['conroleid'] as $key => $value) {
+      $query.="('".$newbadgeid."','".$key."','".$_SESSION['conid']."'),";
+    }
 
-  $query=rtrim($query,',');
-  if (!mysql_query($query,$link)) {
-    $message_error=$query."<BR>Error updating UserHasConRole database.  Database not updated.";
-    RenderError($title,$message_error);
-    exit();
+    $query=rtrim($query,',');
+    if (!mysql_query($query,$link)) {
+      $message_error=$query."<BR>Error updating UserHasConRole database.  Database not updated.";
+      RenderError($title,$message_error);
+      exit();
+    }
   }
 
   // Submit a note about what was done.

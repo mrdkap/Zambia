@@ -37,6 +37,24 @@ for ($i=1; $i<=5; $i++) {
   }
 }
 
+// Limit it to just the appropriate set of schedule elements presented
+if (may_I("Programming")) {$pubstatus_array[]="'Prog Staff'"; $pubstatus_array[]="'Public'";}
+if (may_I("Liaison")) {$pubstatus_array[]="'Public'";}
+if (may_I("General")) {$pubstatus_array[]="'Volunteer'";}
+if (may_I("Event")) {$pubstatus_array[]="'Event Staff'";}
+if (may_I("Registration")) {$pubstatus_array[]="'Reg Staff'";}
+if (may_I("Watch")) {$pubstatus_array[]="'Watch Staff'";}
+if (may_I("Vendor")) {$pubstatus_array[]="'Vendor Staff'";}
+if (may_I("Sales")) {$pubstatus_array[]="'Sales Staff'";}
+if (may_I("Fasttrack")) {$pubstatus_array[]="'Fast Track'";}
+if (may_I("Logistics")) {$pubstatus_array[]="'Logistics'"; $pubstatus_array[]="'Public'";}
+
+if (isset($pubstatus_array)) {
+  $pubstatus_string=implode(",",$pubstatus_array);
+} else {
+  $pubstatus_string="'Public'";
+}
+
 $query=<<<EOD
 SELECT
     suggestor,
@@ -44,10 +62,16 @@ SELECT
   FROM
       Sessions
     JOIN Participants ON (suggestor=badgeid)
+    JOIN SessionStatuses USING (statusid)
+    JOIN PubStatuses USING (pubstatusid)
   WHERE
-    conid=$conid
+    statusname="Brainstorm" AND
+    conid=$conid AND
+    pubstatusname in ($pubstatus_string)
   GROUP BY
     suggestor
+  ORDER BY
+    pubsname
 EOD;
 
 
@@ -73,24 +97,6 @@ echo "</FORM>\n";
 if (empty($suggestor)) {
   correct_footer();
   exit();
-}
-
-// Limit it to just the appropriate set of schedule elements presented
-if (may_I("Programming")) {$pubstatus_array[]="'Prog Staff'"; $pubstatus_array[]="'Public'";}
-if (may_I("Liaison")) {$pubstatus_array[]="'Public'";}
-if (may_I("General")) {$pubstatus_array[]="'Volunteer'";}
-if (may_I("Event")) {$pubstatus_array[]="'Event Staff'";}
-if (may_I("Registration")) {$pubstatus_array[]="'Reg Staff'";}
-if (may_I("Watch")) {$pubstatus_array[]="'Watch Staff'";}
-if (may_I("Vendor")) {$pubstatus_array[]="'Vendor Staff'";}
-if (may_I("Sales")) {$pubstatus_array[]="'Sales Staff'";}
-if (may_I("Fasttrack")) {$pubstatus_array[]="'Fast Track'";}
-if (may_I("Logistics")) {$pubstatus_array[]="'Logistics'"; $pubstatus_array[]="'Public'";}
-
-if (isset($pubstatus_array)) {
-  $pubstatus_string=implode(",",$pubstatus_array);
-} else {
-  $pubstatus_string="'Public'";
 }
 
 // This gets all the information on the suggestor's proposals.

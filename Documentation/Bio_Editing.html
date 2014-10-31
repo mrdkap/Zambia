@@ -1,51 +1,118 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-lang="en" xml:lang="en">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Bios Editing in Zambia</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="November 2011"/>
-<meta name="author" content="Percy"/>
-<meta name="description" content="Zambia is a piece of Con Management Software.  This document is a "How To" guide assisting in the way of editing the Bios for the Zambia FFF-branch instance for your convention.  This is still a work in progress."/>
-<meta name="keywords" content="Zambia, Documentation, FFF branch"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Percy" />
+<meta  name="description" content="Zambia is a piece of Con Management Software.  This document is a &quot;How To&quot; guide assisting in the way of editing the Bios for the Zambia FFF-branch instance for your convention.  This is still a work in progress."
+ />
+<meta  name="keywords" content="Zambia, Documentation, FFF branch" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style><link rel="stylesheet" href="../webpages/Common.css" type="text/css"/>
+</style>
 <script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -67,375 +134,490 @@ lang="en" xml:lang="en">
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
 <div id="content">
-
 <h1 class="title">Bios Editing in Zambia</h1>
+<p>
 
-<p>Zambia is a piece of Con Management Software.  This document is a "How To" guide assisting in the way of editing the Bios for the Zambia FFF-branch instance for your convention.  This is still a work in progress.<br/>
-<h2>Abstract:<br></h2><p>Zambia is a piece of Con Management Software.  This document is a "How To" guide assisting in the way of editing the Bios for the Zambia FFF-branch instance for your convention.  This is still a work in progress.</p>
+</p>
+<p>
+Bios Editing in Zambia
+</p>
+<p>
+Percy &lt;NELA.Percy@gmail.com&gt;
 </p>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Introduction </a></li>
-<li><a href="#sec-2">2 Biographical Information Matrix </a>
+<li><a href="#sec-1">1. Introduction</a></li>
+<li><a href="#sec-2">2. Biographical Information Matrix</a>
 <ul>
-<li><a href="#sec-2_1">2.1 Types </a></li>
-<li><a href="#sec-2_2">2.2 States </a></li>
-<li><a href="#sec-2_3">2.3 Languages </a></li>
+<li><a href="#sec-2-1">2.1. Types</a></li>
+<li><a href="#sec-2-2">2.2. States</a></li>
+<li><a href="#sec-2-3">2.3. Languages</a></li>
 </ul>
 </li>
-<li><a href="#sec-3">3 Pages </a>
+<li><a href="#sec-3">3. Pages</a>
 <ul>
-<li><a href="#sec-3_1">3.1 StaffManageBios.php </a></li>
-<li><a href="#sec-3_2">3.2 StaffEditBios.php </a></li>
-<li><a href="#sec-3_3">3.3 StaffEditCreateParticipant.php </a></li>
+<li><a href="#sec-3-1">3.1. StaffManageBios.php</a></li>
+<li><a href="#sec-3-2">3.2. StaffEditBios.php</a></li>
+<li><a href="#sec-3-3">3.3. StaffEditCreateParticipant.php</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Introduction </h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
-
-
-<p><br/>
-The biographical information for your presenters is an important<br/>
-part of the convention experience that Zambia manages.  This is part<br/>
-of how people decide they want to attend your convention and part of<br/>
-what they might want to do when there.  From a presenter's point of<br/>
-view, the biographical information is a way to connect with their<br/>
-fan-base, and allow contact, give information, or arrange for<br/>
-continued interactions.  From a con manager's point of view,<br/>
-managing biographical information is fairly work-intensive, and one<br/>
-of the things that doesn't exactly scale.<br/>
+<p>
+The biographical information for your presenters is an important
+part of the convention experience that Zambia manages.  This is part
+of how people decide they want to attend your convention and part of
+what they might want to do when there.  From a presenter's point of
+view, the biographical information is a way to connect with their
+fan-base, and allow contact, give information, or arrange for
+continued interactions.  From a con manager's point of view,
+managing biographical information is fairly work-intensive, and one
+of the things that doesn't exactly scale.
 </p>
-<p><br/>
-There are several pieces that make up the biographical information<br/>
-matrix within Zambia.  Few, any, or all of the elements can be<br/>
-chosen to be deployed and customized to the desire of your<br/>
-particular convention or set of conventions.  Currently the<br/>
-biographical information information is designed to be held in a<br/>
-shared database, outside of a specific convention, so that, while<br/>
-the information is available and editable within that convention,<br/>
-when the information is updated, it is updated across all the<br/>
-conventions served from the same server, and information is<br/>
-available across multiple convention instances.  Not all of the<br/>
-conventions will necessarily use all of the information.<br/>
-</p></div>
 
+<p>
+There are several pieces that make up the biographical information
+matrix within Zambia.  Few, any, or all of the elements can be
+chosen to be deployed and customized to the desire of your
+particular convention or set of conventions.  Currently the
+biographical information information is designed to be held in a
+shared database, outside of a specific convention, so that, while
+the information is available and editable within that convention,
+when the information is updated, it is updated across all the
+conventions served from the same server, and information is
+available across multiple convention instances.  Not all of the
+conventions will necessarily use all of the information.
+</p>
+</div>
 </div>
 
-<div id="outline-container-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Biographical Information Matrix </h2>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Biographical Information Matrix</h2>
 <div class="outline-text-2" id="text-2">
-
-
-<p><br/>
-The biographical information Matrix is made up of three different<br/>
-values.  The types of biographical information, the status of a<br/>
-biographical element, and the language that that element is written<br/>
-in.<br/>
+<p>
+The biographical information Matrix is made up of three different
+values.  The types of biographical information, the status of a
+biographical element, and the language that that element is written
+in.
 </p>
 </div>
-
-<div id="outline-container-2_1" class="outline-3">
-<h3 id="sec-2_1"><span class="section-number-3">2.1</span> Types </h3>
-<div class="outline-text-3" id="text-2_1">
-
-
-<p><br/>
-The (extendable) types that are currently in use in Zambia are:<br/>
-</p><ul>
-<li>
-Web: The verbose biographical information, limited by variables<br/>
-in the db_name.php file, that is shared on your Zambia site, for<br/>
-all to browse to, often less limited than the published<br/>
-information.  Most HTML markup works with this type.<br/>
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Types</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The (extendable) types that are currently in use in Zambia are:
+</p>
+<ul class="org-ul">
+<li>Web: The verbose biographical information, limited by variables
+in the db_name.php file, that is shared on your Zambia site, for
+all to browse to, often less limited than the published
+information.  Most HTML markup works with this type.
 </li>
-<li>
-Book: The biographical information that is published in your<br/>
-convention book, handout, or other printed materials that is<br/>
-often more limited by space concerns, and publishing costs.<br/>
-These limits are set in the db_name.php file.  This will be<br/>
-published so markup and hypertext is discouraged.<br/>
+<li>Book: The biographical information that is published in your
+convention book, handout, or other printed materials that is
+often more limited by space concerns, and publishing costs.
+These limits are set in the db_name.php file.  This will be
+published so markup and hypertext is discouraged.
 </li>
-<li>
-URI: The set of Uniform Resource Identifiers (URLs, URNs, etc)<br/>
-that are available on your Zambia site, for people to follow.<br/>
-Most HTML markup works with this type.<br/>
+<li>URI: The set of Uniform Resource Identifiers (URLs, URNs, etc)
+that are available on your Zambia site, for people to follow.
+Most HTML markup works with this type.
 </li>
-<li>
-Picture: This is a URI reference to either an outside (http)<br/>
-picture or, preferably, a copy of said picture residing on the<br/>
-serving machine (/path/to/picture), so if the original gets<br/>
-hacked, Zambia isn't compromised.<br/>
+<li>Picture: This is a URI reference to either an outside (http)
+picture or, preferably, a copy of said picture residing on the
+serving machine (/path/to/picture), so if the original gets
+hacked, Zambia isn't compromised.
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-2_2" class="outline-3">
-<h3 id="sec-2_2"><span class="section-number-3">2.2</span> States </h3>
-<div class="outline-text-3" id="text-2_2">
-
-<ul>
-<li>
-raw: This is the information provided by the presenter when they<br/>
-are permitted to, within Zambia.  This might be as far as the<br/>
-involvement with the biographical information that the Zambia<br/>
-staff will have.  This allows for unknown people to put unknown<br/>
-references and information on your web-site.  Beware.<br/>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> States</h3>
+<div class="outline-text-3" id="text-2-2">
+<ul class="org-ul">
+<li>raw: This is the information provided by the presenter when they
+are permitted to, within Zambia.  This might be as far as the
+involvement with the biographical information that the Zambia
+staff will have.  This allows for unknown people to put unknown
+references and information on your web-site.  Beware.
 </li>
-<li>
-edited: This is intended to be the mid-step, the negotiation<br/>
-point between the people responsible for what is being published<br/>
-in the literature and on the web, and the individual presenters,<br/>
-it is presented to them, so dialogue can happen, and they can see<br/>
-how it is to be presented, should it be approved.  This might be<br/>
-as far as the involvement with the biographical information that<br/>
-the Zambia staff will have.  Once in the edited mode it might be<br/>
-considered published.<br/>
+<li>edited: This is intended to be the mid-step, the negotiation
+point between the people responsible for what is being published
+in the literature and on the web, and the individual presenters,
+it is presented to them, so dialogue can happen, and they can see
+how it is to be presented, should it be approved.  This might be
+as far as the involvement with the biographical information that
+the Zambia staff will have.  Once in the edited mode it might be
+considered published.
 </li>
-<li>
-good: This is intended to be what is published.  Once the edited<br/>
-matches the raw, it should be promoted to the good level, then if<br/>
-changes to the raw show up, they can go back through the vetting<br/>
-process and, once again, be promoted to good, and then available<br/>
-for the various publishing media.<br/>
+<li>good: This is intended to be what is published.  Once the edited
+matches the raw, it should be promoted to the good level, then if
+changes to the raw show up, they can go back through the vetting
+process and, once again, be promoted to good, and then available
+for the various publishing media.
 </li>
 </ul>
-
+</div>
 </div>
 
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Languages</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+The language field is designed to contain any of the various
+language elements.  Currently en-us and fr-ca are the two expected
+ones, as a hold-over from the original "secondary language" concept
+of Zambia when it was used for a Canadian event.  Starting any
+language will allow it to be flexible enough to have it show up in
+the appropriate tables.  Just adding to the LANGUAGE_LIST searches
+for each/all of the languages listed.  While this is a first step
+in the internationalization of this software, expanding the rest,
+along these lines is expected and planned for.  Each of the other
+elements, the various verbiage on the pages, and in the reports
+will pull from similar tables, able to be customized off of, or
+feed concurrently, depending on the design the multiple languages
+available.  All of the biographical information is designed to be
+subsequently displayed, rather than switched on the
+$_SESSION['language'] variable.
+</p>
+</div>
+</div>
 </div>
 
-<div id="outline-container-2_3" class="outline-3">
-<h3 id="sec-2_3"><span class="section-number-3">2.3</span> Languages </h3>
-<div class="outline-text-3" id="text-2_3">
-
-
-<p><br/>
-The language field is designed to contain any of the various<br/>
-language elements.  Currently en-us and fr-ca are the two expected<br/>
-ones, as a hold-over from the original "secondary language" concept<br/>
-of Zambia when it was used for a Canadian event.  Starting any<br/>
-language will allow it to be flexible enough to have it show up in<br/>
-the appropriate tables.  Just adding to the LANGUAGE_LIST searches<br/>
-for each/all of the languages listed.  While this is a first step<br/>
-in the internationalization of this software, expanding the rest,<br/>
-along these lines is expected and planned for.  Each of the other<br/>
-elements, the various verbiage on the pages, and in the reports<br/>
-will pull from similar tables, able to be customized off of, or<br/>
-feed concurrently, depending on the design the multiple languages<br/>
-available.  All of the biographical information is designed to be<br/>
-subsequently displayed, rather than switched on the<br/>
-$_SESSION['language'] variable.<br/>
-</p></div>
-</div>
-
-</div>
-
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Pages </h2>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Pages</h2>
 <div class="outline-text-2" id="text-3">
-
-
-</div>
-
-<div id="outline-container-3_1" class="outline-3">
-<h3 id="sec-3_1"><span class="section-number-3">3.1</span> StaffManageBios.php </h3>
-<div class="outline-text-3" id="text-3_1">
-
-
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> StaffManageBios.php</h3>
+<div class="outline-text-3" id="text-3-1">
 <A NAME="StaffManageBios.php" ID="StaffManageBios.php"></A>
 <A HREF="../webpages/StaffManageBios.php">StaffManageBios.php</A>
 
 <p>
-The starting point for managing the biographical information data.<br/>
-This is set to work with only those folks who will be published.<br/>
-This is all the presenters, and the any of the super-volunteers.<br/>
-They might not be chosen to be published, or they might be,<br/>
-depending on the choice of the convention, and the relative space<br/>
-in the various publications.<br/>
+The starting point for managing the biographical information data.
+This is set to work with only those folks who will be published.
+This is all the presenters, and the any of the super-volunteers.
+They might not be chosen to be published, or they might be,
+depending on the choice of the convention, and the relative space
+in the various publications.
 </p>
-<p><br/>
-The rows are organized around the states so that if there is<br/>
-missing raw, edited (if used), and good (if used) elements, they<br/>
-are reported first, then if the raw elements and the edited<br/>
-elements don't match (if used) or the edited elements and the good<br/>
-elements don't match (if used) they are reported next.  Then,<br/>
-lastly, if everything matches, that is reported last.  Hopefully,<br/>
-come publication time, and con-time, all the elements will be in<br/>
-the last row.<br/>
+
+<p>
+The rows are organized around the states so that if there is
+missing raw, edited (if used), and good (if used) elements, they
+are reported first, then if the raw elements and the edited
+elements don't match (if used) or the edited elements and the good
+elements don't match (if used) they are reported next.  Then,
+lastly, if everything matches, that is reported last.  Hopefully,
+come publication time, and con-time, all the elements will be in
+the last row.
 </p>
-<p><br/>
-The columns are a combination of the various languages available<br/>
-(somewhat useless if only one language is used, but there, as a<br/>
-place-holder) and the type of the element.<br/>
+
+<p>
+The columns are a combination of the various languages available
+(somewhat useless if only one language is used, but there, as a
+place-holder) and the type of the element.
 </p>
-<p><br/>
-To bring up the list of individuals in any particular category of<br/>
-missing, incorrect, or even correct information, simply click on<br/>
-the number of elements in the state you wish to work with.  In the<br/>
-example below, there are seven individuals who do not have an<br/>
-edited en-us web entry in the biographical information matrix.  By<br/>
-clicking on the "7" in that section of the table, you bring up the<br/>
-list of participants who's elements need editing.<br/>
+
+<p>
+To bring up the list of individuals in any particular category of
+missing, incorrect, or even correct information, simply click on
+the number of elements in the state you wish to work with.  In the
+example below, there are seven individuals who do not have an
+edited en-us web entry in the biographical information matrix.  By
+clicking on the "7" in that section of the table, you bring up the
+list of participants who's elements need editing.
 </p>
-<p><br/>
-The table might resemble the following:<br/>
-</p><TABLE  border="1" rules="all" frame="all">
-<a name="tbl:staffmanageparticipantbiographies" id="tbl:staffmanageparticipantbiographies"></a>
-<caption>Staff - Manage Participant Biographies</caption>
-<colgroup><col align="left" /><col align="right" /><col align="right" /><col align="right" /><col align="right" /><col align="right" /><col align="right" /><col align="right" /><col align="right" />
+
+<p>
+The table might resemble the following:
+</p>
+<table id="tbl:staffmanageparticipantbiographies" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption align="above"><span class="table-number">Table 1:</span> Staff - Manage Participant Biographies</caption>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
 </colgroup>
 <thead>
-<tr><th scope="col">Count of the States of the bios</th><th scope="col">en-us web</th><th scope="col">fr-ca web</th><th scope="col">en-us book</th><th scope="col">fr-ca book</th><th scope="col">en-us uri</th><th scope="col">fr-ca uri</th><th scope="col">en-us picture</th><th scope="col">fr-ca picture</th></tr>
+<tr>
+<th scope="col" class="left">Count of the States of the bios</th>
+<th scope="col" class="right">en-us web</th>
+<th scope="col" class="right">fr-ca web</th>
+<th scope="col" class="right">en-us book</th>
+<th scope="col" class="right">fr-ca book</th>
+<th scope="col" class="right">en-us uri</th>
+<th scope="col" class="right">fr-ca uri</th>
+<th scope="col" class="right">en-us picture</th>
+<th scope="col" class="right">fr-ca picture</th>
+</tr>
 </thead>
 <tbody>
-<tr><td>Missing raw bio</td><td></td><td></td><td>3</td><td>6</td><td>59</td><td>61</td><td>14</td><td>61</td></tr>
-<tr><td>Missing edited bio</td><td>7</td><td>16</td><td>21</td><td>5</td><td>48</td><td>61</td><td>14</td><td>61</td></tr>
-<tr><td>Missing good bio</td><td>59</td><td>59</td><td>59</td><td>59</td><td>59</td><td>61</td><td>14</td><td>61</td></tr>
-<tr><td>Raw bio doesn't match edited bio</td><td>17</td><td>11</td><td>18</td><td>19</td><td>9</td><td></td><td></td><td></td></tr>
-<tr><td>Edited bio doesn't match good bio</td><td>12</td><td>9</td><td>28</td><td>46</td><td>9</td><td></td><td></td><td></td></tr>
-<tr><td>All bios match</td><td>5</td><td>3</td><td>4</td><td></td><td></td><td>61</td><td>47</td><td>61</td></tr>
+<tr>
+<td class="left">Missing raw bio</td>
+<td class="right">&#xa0;</td>
+<td class="right">&#xa0;</td>
+<td class="right">3</td>
+<td class="right">6</td>
+<td class="right">59</td>
+<td class="right">61</td>
+<td class="right">14</td>
+<td class="right">61</td>
+</tr>
+
+<tr>
+<td class="left">Missing edited bio</td>
+<td class="right">7</td>
+<td class="right">16</td>
+<td class="right">21</td>
+<td class="right">5</td>
+<td class="right">48</td>
+<td class="right">61</td>
+<td class="right">14</td>
+<td class="right">61</td>
+</tr>
+
+<tr>
+<td class="left">Missing good bio</td>
+<td class="right">59</td>
+<td class="right">59</td>
+<td class="right">59</td>
+<td class="right">59</td>
+<td class="right">59</td>
+<td class="right">61</td>
+<td class="right">14</td>
+<td class="right">61</td>
+</tr>
+
+<tr>
+<td class="left">Raw bio doesn't match edited bio</td>
+<td class="right">17</td>
+<td class="right">11</td>
+<td class="right">18</td>
+<td class="right">19</td>
+<td class="right">9</td>
+<td class="right">&#xa0;</td>
+<td class="right">&#xa0;</td>
+<td class="right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">Edited bio doesn't match good bio</td>
+<td class="right">12</td>
+<td class="right">9</td>
+<td class="right">28</td>
+<td class="right">46</td>
+<td class="right">9</td>
+<td class="right">&#xa0;</td>
+<td class="right">&#xa0;</td>
+<td class="right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">All bios match</td>
+<td class="right">5</td>
+<td class="right">3</td>
+<td class="right">4</td>
+<td class="right">&#xa0;</td>
+<td class="right">&#xa0;</td>
+<td class="right">61</td>
+<td class="right">47</td>
+<td class="right">61</td>
+</tr>
 </tbody>
 </table>
 
-
-<p><br/>
-Once the particular subsection of the editing has been picked, you<br/>
-will be provided with a matrix of names in this category, so you<br/>
-might choose the one(s) to be edited.<br/>
+<p>
+Once the particular subsection of the editing has been picked, you
+will be provided with a matrix of names in this category, so you
+might choose the one(s) to be edited.
 </p>
-<p><br/>
-The three columns in this table are:<br/>
-</p><ul>
-<li>
-Participant: If the link that is this name is chosen from this<br/>
-column, you will be brought to the <a href="#StaffEditBios.php">StaffEditBios.php</a> page<br/>
-relevant to the participant chosen, for editing purposes.<br/>
-</li>
-<li>
-Edit Full: If the link that is this name is chosen from this<br/>
-column, you will be brought to the <a href="#StaffEditCreateParticipant.php">StaffEditCreateParticipant.php</a><br/>
-page, in the mode of editing the participant chosen, in case that<br/>
-is necessary to find out more about who they are, or if there are<br/>
-any notes, or the like to assist you with the biographical<br/>
-information editing.<br/>
-</li>
-<li>
-Currently being edited by: This shows you the individual who<br/>
-presumes that they are the one editing the particular<br/>
-information.  Please, do not choose to edit biographical<br/>
-information for someone who is locked by someone other than you.<br/>
 
-<p><br/>
-</p></li>
+<p>
+The three columns in this table are:
+</p>
+<ul class="org-ul">
+<li>Participant: If the link that is this name is chosen from this
+column, you will be brought to the <a href="#sec-3-2">3.2</a> page
+relevant to the participant chosen, for editing purposes.
+</li>
+<li>Edit Full: If the link that is this name is chosen from this
+column, you will be brought to the <a href="#sec-3-3">3.3</a>
+page, in the mode of editing the participant chosen, in case that
+is necessary to find out more about who they are, or if there are
+any notes, or the like to assist you with the biographical
+information editing.
+</li>
+<li>Currently being edited by: This shows you the individual who
+presumes that they are the one editing the particular
+information.  Please, do not choose to edit biographical
+information for someone who is locked by someone other than you.
+</li>
 </ul>
 
-<p>The table might resemble the following:<br/>
-</p><TABLE  border="1" rules="all" frame="all">
-<a name="tbl:staffmanageparticipantbiographiessubedit" id="tbl:staffmanageparticipantbiographiessubedit"></a>
-<caption>Staff - Manage Participant Biographies Subedit</caption>
-<colgroup><col align="left" /><col align="left" /><col align="left" />
+<p>
+The table might resemble the following:
+</p>
+<table id="tbl:staffmanageparticipantbiographiessubedit" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption align="above"><span class="table-number">Table 2:</span> Staff - Manage Participant Biographies Subedit</caption>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
 </colgroup>
 <thead>
-<tr><th scope="col">Participant</th><th scope="col">Edit Full</th><th scope="col">Currently being edited by</th></tr>
+<tr>
+<th scope="col" class="left">Participant</th>
+<th scope="col" class="left">Edit Full</th>
+<th scope="col" class="left">Currently being edited by</th>
+</tr>
 </thead>
 <tbody>
-<tr><td>Mr E.</td><td>Mr E.</td><td></td></tr>
-<tr><td>Joker</td><td>Joker</td><td>Str8mn</td></tr>
-<tr><td>Batman</td><td>Batman</td><td>The Riddler</td></tr>
-<tr><td>The Riddler</td><td>The Riddler</td><td>Batman</td></tr>
-<tr><td>Catwoman</td><td>Catwoman</td><td></td></tr>
-<tr><td>Cartman</td><td>Cartman</td><td></td></tr>
-<tr><td>Robin</td><td>Robin</td><td></td></tr>
+<tr>
+<td class="left">Mr E.</td>
+<td class="left">Mr E.</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">Joker</td>
+<td class="left">Joker</td>
+<td class="left">Str8mn</td>
+</tr>
+
+<tr>
+<td class="left">Batman</td>
+<td class="left">Batman</td>
+<td class="left">The Riddler</td>
+</tr>
+
+<tr>
+<td class="left">The Riddler</td>
+<td class="left">The Riddler</td>
+<td class="left">Batman</td>
+</tr>
+
+<tr>
+<td class="left">Catwoman</td>
+<td class="left">Catwoman</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">Cartman</td>
+<td class="left">Cartman</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">Robin</td>
+<td class="left">Robin</td>
+<td class="left">&#xa0;</td>
+</tr>
 </tbody>
 </table>
 
-
-<p><br/>
-There is also the "return" link, just above the table, that brings<br/>
-you back to the <a href="#tbl:staffmanageparticipantbiographies">Staff - Manage Participant Biographies</a>, in case you<br/>
-are done with this particular subset of individuals, and wish to<br/>
-deal with another.<br/>
-</p></div>
-
+<p>
+There is also the "return" link, just above the table, that brings
+you back to the <a href="#tbl:staffmanageparticipantbiographies">Staff - Manage Participant Biographies</a>, in case you
+are done with this particular subset of individuals, and wish to
+deal with another.
+</p>
+</div>
 </div>
 
-<div id="outline-container-3_2" class="outline-3">
-<h3 id="sec-3_2"><span class="section-number-3">3.2</span> StaffEditBios.php </h3>
-<div class="outline-text-3" id="text-3_2">
-
-
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> StaffEditBios.php</h3>
+<div class="outline-text-3" id="text-3-2">
 <A NAME="StaffEditBios.php" ID="StaffEditBios.php"></A>
 <A HREF="../webpages/StaffEditBios.php">StaffEditBios.php</A>
 
 <p>
-If the edited and/or good states are to be used, this page is where<br/>
-an individual's information is edited.  If just the raw information<br/>
-is used, there is no need to use this page.  Once this page is<br/>
-opened for a participant, the editing individual's name will be<br/>
-placed in the "Currently being edited by" column, so two people<br/>
-don't try to edit the same bio information at the same time.  <br/>
+If the edited and/or good states are to be used, this page is where
+an individual's information is edited.  If just the raw information
+is used, there is no need to use this page.  Once this page is
+opened for a participant, the editing individual's name will be
+placed in the "Currently being edited by" column, so two people
+don't try to edit the same bio information at the same time.  
 </p>
-<p><br/>
-There are two links at the top of the page.  The first, being the<br/>
-individuals name, will lead you to the<br/>
-<a href="#StaffEditCreateParticipant.php">StaffEditCreateParticipant.php</a> page, in the mode of editing the<br/>
-participant chosen, and the return link, which will bring you right<br/>
-back to the table <a href="#tbl:staffmanageparticipantbiographiessubedit">Staff - Manage Participant Biographies Subedit</a> on<br/>
-the <a href="#StaffManageBios.php">StaffManageBios.php</a> page.<br/>
-</p>
-<p><br/>
-Of course, any of the "Save Whole Page" buttons will save the<br/>
-current state of the entire page, and clear the "Currently being<br/>
-edited by" flag.<br/>
-</p>
-<p><br/>
-This design of this page has a series of elements, broken down<br/>
-first by state element (raw, edited, good) state, then by language<br/>
-(en-us, fr-ca), and then by the type (web, book, uri, picture)<br/>
-allowing for the editing of the edited (if used) and good (if used)<br/>
-information.  The raw information is there for reference and<br/>
-copying purposes only and is not in a malleable state.<br/>
-</p></div>
 
+<p>
+There are two links at the top of the page.  The first, being the
+individuals name, will lead you to the
+<a href="#sec-3-3">3.3</a> page, in the mode of editing the
+participant chosen, and the return link, which will bring you right
+back to the table <a href="#tbl:staffmanageparticipantbiographiessubedit">Staff - Manage Participant Biographies Subedit</a> on
+the <a href="#sec-3-1">3.1</a> page.
+</p>
+
+<p>
+Of course, any of the "Save Whole Page" buttons will save the
+current state of the entire page, and clear the "Currently being
+edited by" flag.
+</p>
+
+<p>
+This design of this page has a series of elements, broken down
+first by state element (raw, edited, good) state, then by language
+(en-us, fr-ca), and then by the type (web, book, uri, picture)
+allowing for the editing of the edited (if used) and good (if used)
+information.  The raw information is there for reference and
+copying purposes only and is not in a malleable state.
+</p>
+</div>
 </div>
 
-<div id="outline-container-3_3" class="outline-3">
-<h3 id="sec-3_3"><span class="section-number-3">3.3</span> StaffEditCreateParticipant.php </h3>
-<div class="outline-text-3" id="text-3_3">
-
-
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> StaffEditCreateParticipant.php</h3>
+<div class="outline-text-3" id="text-3-3">
 <A NAME="StaffEditCreateParticipant.php" ID="StaffEditCreateParticipant.php"></A>
 <A HREF="../webpages/StaffEditCreateParticipant.php?action=edit">StaffEditCreateParticipant.php</A>
 
 <p>
-While this page is of more general use (which is documented<br/>
-elsewhere) if absolutely necessary, it can be used to modify the<br/>
-raw biographical information. This is most useful should that be<br/>
-the only state of the information chosen for this instance of<br/>
-Zambia.  The raw state of all of the types (web, book, URI,<br/>
-picture) and languages are available to be edited on this page.<br/>
-</p></div>
-</div>
-</div>
-<div id="postamble">
-<p class="author"> Author: Percy
-<a href="mailto:NELA.Percy@gmail.com">&lt;NELA.Percy@gmail.com&gt;</a>
+While this page is of more general use (which is documented
+elsewhere) if absolutely necessary, it can be used to modify the
+raw biographical information. This is most useful should that be
+the only state of the information chosen for this instance of
+Zambia.  The raw state of all of the types (web, book, URI,
+picture) and languages are available to be edited on this page.
 </p>
 </div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: November 2011</p>
+<p class="author">Author: Percy</p>
+<p class="email">Email: <a href="mailto:NELA.Percy@gmail.com">NELA.Percy@gmail.com</a></p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

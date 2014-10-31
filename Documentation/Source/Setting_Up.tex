@@ -1,4 +1,4 @@
-\documentclass[tablesignature]{scrartcl}
+\documentclass[captions=tablesignature]{scrartcl}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{fixltx2e}
@@ -6,11 +6,12 @@
 \usepackage{longtable}
 \usepackage{float}
 \usepackage{wrapfig}
-\usepackage{soul}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
 \usepackage{textcomp}
 \usepackage{marvosym}
 \usepackage{wasysym}
-\usepackage{latexsym}
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
@@ -31,36 +32,43 @@
 \let\enumerate\compactenum
 \usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
 \pagestyle{fancy}
-\providecommand{\alert}[1]{\textbf{#1}}
-
-\title{Setting Up Zambia from Scratch}
-\author{Percy, Bendyogagirl}
+\setcounter{secnumdepth}{3}
+\author{Percy, Bendyogagirl\thanks{NELA.Percy@gmail.com}}
 \date{July 2011}
-
+\title{Setting Up Zambia from Scratch}
+\hypersetup{
+  pdfkeywords={Zambia, Documentation, FFF branch},
+  pdfsubject={Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.},
+  pdfcreator={}}
 \begin{document}
 
 \maketitle
-
-% Org-mode is exporting headings to 3 levels.
-
 \pagenumbering{roman}
 \thispagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0pt}
 \lhead{}
 \rhead{}
 \chead{}
-\lfoot{{Percy, Bendyogagirl} <{nela.program@gmail.com}>}
+\lfoot{}
 \cfoot{}
-\rfoot{\thepage}
+\rfoot{}
 \begin{abstract}
 \vspace{5cm}
 {\LARGE{\textbf{Abstract:\\}}}
-Zambia is a piece of Con Management Software.  This document is a ``How To'' guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.
+
 \end{abstract}
 \newpage
 \renewcommand{\headrulewidth}{1pt}
-\chead{{Setting Up Zambia from Scratch}}
+\renewcommand{\footrulewidth}{1pt}
+\chead{
+Setting Up Zambia from Scratch
+}
+\lfoot{
+Percy, Bendyogagirl <NELA.Percy@gmail.com>
+}
+\rfoot{\thepage}
+\setcounter{tocdepth}{3}
 \tableofcontents
 \listoftables
 \listoffigures
@@ -69,10 +77,9 @@ Zambia is a piece of Con Management Software.  This document is a ``How To'' gui
 \section{Before beginning}
 \label{sec-1}
 
-
-  There are some required programs to run the Zambia software.  The
-  following programs must be running on whatever server is going to
-  serve up your Zambia instance: (LAMP or WAMP (WAMP is untested))
+There are some required programs to run the Zambia software.  The
+following programs must be running on whatever server is going to
+serve up your Zambia instance: (LAMP or WAMP (WAMP is untested))
 \begin{itemize}
 \item apache
 \item php
@@ -81,107 +88,100 @@ Zambia is a piece of Con Management Software.  This document is a ``How To'' gui
 \item SFTP/SCP
 \end{itemize}
 
-  Either on your staging machine (where you will be uploading the
-  information from) or on your server (if you are loading directly to
-  there) you must also have:
+Either on your staging machine (where you will be uploading the
+information from) or on your server (if you are loading directly to
+there) you must also have:
 \begin{itemize}
 \item svn
 \item text editing program
 \end{itemize}
 \subsection{Definitions}
-\label{sec-1_1}
-
-\begin{longtable}{|p{3.5cm}|p{13.4cm}|}
-\caption{Acronyms and Definitions} \label{tbl:acronymsdefinitions}\\
+\label{sec-1-1}
+\begin{table}[htb]
+\caption{\label{tbl:acronymsdefinitions}Acronyms and Definitions}
+\centering
+\begin{tabular}{ll}
 \hline
- Acronym or Term  &  Definition                                                                                                                                       \\
+Acronym or Term & Definition\\
 \hline
-\endhead
-\hline\multicolumn{2}{r}{Continued on next page}\
-\endfoot
-\endlastfoot
+precis & An element in your schedule.  Could be a class, panel, gathering, party, room-coverage, lounge, or whatever else you might have on your schedule\\
+LAMP & Linux + Apache + MySQL + PHP/Perl/Python\\
+WAMP & Windows + Apache + MySQL + PHP/Perl/Python\\
 \hline
- precis           &  An element in your schedule.  Could be a class, panel, gathering, party, room-coverage, lounge, or whatever else you might have on your schedule  \\
- LAMP             &  Linux + Apache + MySQL + PHP/Perl/Python                                                                                                          \\
- WAMP             &  Windows + Apache + MySQL + PHP/Perl/Python                                                                                                        \\
-\hline
-\end{longtable}
+\end{tabular}
+\end{table}
 \subsection{Decisions}
-\label{sec-1_2}
-
-   You will need to decide the following before you install initially:
+\label{sec-1-2}
+You will need to decide the following before you install initially:
 \subsubsection{Standalone/Combination}
-\label{sec-1_2_1}
+\label{sec-1-2-1}
+Is this system going to be a standalone system, or are you going
+to interface it with Congo, or another piece of registration software?
 
-    Is this system going to be a standalone system, or are you going
-    to interface it with Congo, or another piece of registration software?
 \subsubsection{Single/Multiple installation}
-\label{sec-1_2_2}
+\label{sec-1-2-2}
+Is this going to be a single instantce of Zambia, or are you going
+to have multiple instances of Zambia running on the same machine
+with some shared resources?
 
-    Is this going to be a single instantce of Zambia, or are you going
-    to have multiple instances of Zambia running on the same machine
-    with some shared resources?
 \subsubsection{Webserver}
-\label{sec-1_2_3}
+\label{sec-1-2-3}
+Where is your web installation location (whatever directory you
+will be putting your files into)?  Often something like
+/var/www/Zambia-Con or /home/username/public\_html/Zambia-Con or
+the like.
 
-    Where is your web installation location (whatever directory you
-    will be putting your files into)?  Often something like
-    /var/www/Zambia-Con or /home/username/public\_{}html/Zambia-Con or
-    the like.
-\subsubsection{db\_{}name.php file}
-\label{sec-1_2_4}
-
-    This information will go in the db\_{}name.php file when you install it.
+\subsubsection{db\_name.php file}
+\label{sec-1-2-4}
+This information will go in the db\_name.php file when you install it.
 \begin{itemize}
-
 \item Required information for the program to run:
-\label{sec-1_2_4_1}%
+\label{sec-1-2-4-1}
 \begin{itemize}
 \item Database hostname (\textbf{DBHOSTNAME}). If you are setting things up on
-     the same machine that MySQL is running on, \emph{localhost} should be
-     what you are using for \textbf{DBHOSTNAME}.
+the same machine that MySQL is running on, \emph{localhost} should be
+what you are using for \textbf{DBHOSTNAME}.
 \item Database username (\textbf{DBUSERNAME}).  The user created for the
-     Zambia program to access the database(s).
+Zambia program to access the database(s).
 \item Database password (\textbf{DBPASSOWRD}).  The password created for the
-     Zambia program to access the database(s).
+Zambia program to access the database(s).
 \item Main database name (\textbf{DBDB}).  The database for all the single
-     convention specific information to live in.
+convention specific information to live in.
 \item Biographical information database name (\textbf{BIODB}).  The database
-     for all the (possibly shared between Zambia instances)
-     biographical data.  If you are having the same people either for
-     multiple years, or for multiple activities, it makes sense to
-     centralize the information, otherwise it could be a one-shot for
-     the particular convention.
+for all the (possibly shared between Zambia instances)
+biographical data.  If you are having the same people either for
+multiple years, or for multiple activities, it makes sense to
+centralize the information, otherwise it could be a one-shot for
+the particular convention.
 \item The Reports databasse name (\textbf{REPORTDB}) points to where the
-     reports are kept.  It is on of the main ways of interation with
-     the data about the convention.  If you have multiple Zambia
-     instances it makes sense for this to be a single, shared
-     resource.
+reports are kept.  It is on of the main ways of interation with
+the data about the convention.  If you have multiple Zambia
+instances it makes sense for this to be a single, shared
+resource.
 \item The CongoDump database name (\textbf{CONGODB}). Congo is another piece of
-     software designed to interact with Zambia. The information in
-     that set of databases can be accessed in a variety of ways.
+software designed to interact with Zambia. The information in
+that set of databases can be accessed in a variety of ways.
 \item The Limits (\textbf{LIMITDB}) and Localizations (\textbf{LOCALDB}) databases
-     are used to key things that are specific to a convention, but
-     might all want to live in a central database, for ease of
-     deploying new conventions.
+are used to key things that are specific to a convention, but
+might all want to live in a central database, for ease of
+deploying new conventions.
 \item The TimeCard database (\textbf{TIMECARDDB}) might want to be specific to
-     a convention, or generalized across many different activities of
-     your organization, it often is local to the convention instance,
-     but there are some reasons to have it in a single, externally
-     served database.
-\item The convention database keying tag (\textbf{CON\_{}KEY}) is useful when the
-     Limits and Localizations are stored in a single table, to
-     distinguish between which instance needs to be pulled.
+a convention, or generalized across many different activities of
+your organization, it often is local to the convention instance,
+but there are some reasons to have it in a single, externally
+served database.
+\item The convention database keying tag (\textbf{CON\_KEY}) is useful when the
+Limits and Localizations are stored in a single table, to
+distinguish between which instance needs to be pulled.
 \item your host name (\textbf{MYHOST}) (If you are setting things up on the same
-     machine that MySQL is running on, \emph{localhost} should be what you
-     are using for \textbf{MYHOST}) (this doesn't actually go in the file)
+machine that MySQL is running on, \emph{localhost} should be what you
+are using for \textbf{MYHOST}) (this doesn't actually go in the file)
 \end{itemize}
 
-
-\item Extremely useful information:\\
-\label{sec-1_2_4_2}%
-Most of this information, currently in the db\_{}name.php file,
-     would all be candidtates to be inthe Localization database.
+\item Extremely useful information:
+\label{sec-1-2-4-2}
+Most of this information, currently in the db\_name.php file,
+would all be candidtates to be inthe Localization database.
 \begin{itemize}
 \item Con name.
 \item Zambia administrator email.
@@ -190,161 +190,154 @@ Most of this information, currently in the db\_{}name.php file,
 \item Registration email.
 \item Number of days the con will run (code works for 1-8 currently.)
 \item Date and time the con will start (In the format of yyyy-mm-dd
-       HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
-       start time.)
-\item URL of the con (without the leading \href{http://}{http://} in the URL.)
+HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
+start time.)
+\item URL of the con (without the leading \url{http://} in the URL.)
 \item Logo for the con (gif, png, etc.)
-\item Availabilty Records (starting number of ``availability'' fields
-       to render in the ``when I am available'' form, 8 is a good
-       default.)
-\item Are kids avaiable (This should probably be set to ``FALSE'', it
-       is a hold-over from backwards compatibility.)
+\item Availabilty Records (starting number of "availability" fields
+to render in the "when I am available" form, 8 is a good
+default.)
+\item Are kids avaiable (This should probably be set to "FALSE", it
+is a hold-over from backwards compatibility.)
 \item Default Duration of the classes. (How long, in H:MM format that
-       the classes are expected to be.)
-\item Duration in Minutes (Should probably be ``FALSE'': TRUE: in mmm;
-       False: in hh:mm - affects session edit/create page only, not
-       reports.)
+the classes are expected to be.)
+\item Duration in Minutes (Should probably be "FALSE": TRUE: in mmm;
+False: in hh:mm - affects session edit/create page only, not
+reports.)
 \item Grid Spacer (The time divisions in the fixed grid produced, in
-       seconds.  For example 1800 is 60 sec/min and 30 min, and a good
-       default.)
+seconds.  For example 1800 is 60 sec/min and 30 min, and a good
+default.)
 \end{itemize}
-
 
 \item Very useful information
-\label{sec-1_2_4_3}%
+\label{sec-1-2-4-3}
 \begin{itemize}
 \item Guests of Honor badgelist (if you have specific featured Guests
-       of Honor, the badgeids get listed here, comma seperated.)
-       (This is being migrated as a flag for a presenter.)
+of Honor, the badgeids get listed here, comma seperated.)
+(This is being migrated as a flag for a presenter.)
 \item Prefered total number of sessions upper limit (so your
-       presenters don't oversubscribe themselves 5 is good default for
-       a 3-4 day con.) (This should move to the Limits database.)
+presenters don't oversubscribe themselves 5 is good default for
+a 3-4 day con.) (This should move to the Limits database.)
 \item Prefered daily number of sessions upper limit (3 is a good
-       default.) (This should move to the Limits database.)
+default.) (This should move to the Limits database.)
 \end{itemize}
 
-
-\item Description minimums and maximums\\
-\label{sec-1_2_4_4}%
+\item Description minimums and maximums
+\label{sec-1-2-4-4}
 All of this information should be migrated to the Limits
-     database.  Only set a value if you need it, unset values are
-     simply presume there is no limit to the information in that
-     direction.  At some point, the precis descriptions will be folded
-     into the same, or a similar structure to the Biographical
-     Information is, currently.
+database.  Only set a value if you need it, unset values are
+simply presume there is no limit to the information in that
+direction.  At some point, the precis descriptions will be folded
+into the same, or a similar structure to the Biographical
+Information is, currently.
 \begin{itemize}
 \item Minimum web biography character length (Some cons have minimum
-       biographical information requirements.)
+biographical information requirements.)
 \item Maximum web biography character length (Some cons have a
-       different limits for what is on the web, and what is in the
-       book, 3000 characters is a good starting default for the WWW.)
+different limits for what is on the web, and what is in the
+book, 3000 characters is a good starting default for the WWW.)
 \item Minimum book biography character length (Some cons have minimum
-       biographical information requirements.)
+biographical information requirements.)
 \item Maximum book biography character length (if there isn't a
-       difference in the limit, but still, there is a limit, set to
-       the same as the web maximum.)
+difference in the limit, but still, there is a limit, set to
+the same as the web maximum.)
 \item Minimum uri biography character length (the URI block is often
-       unlimited in either direction.)
+unlimited in either direction.)
 \item Maximum uri biography character length (the URI block is often
-       unlimited in either direction.)
+unlimited in either direction.)
 \item Minimum picture biography character length (the picture line is
-       often unlimited in either direction.)
+often unlimited in either direction.)
 \item Maximum picture biography character length (the picture line is
-       often unlimited in either direction.)
+often unlimited in either direction.)
 \item Minimum web precis character length (You need a precis
-       description of at least this long to be acceptable, 10 as a
-       good default.)
+description of at least this long to be acceptable, 10 as a
+good default.)
 \item Maximum web precis character length (3000 as a good default.)
 \item Minimum book precis character length (if there isn't a
-       difference in the limit, set it to the same as above for these,
-       as well.)
+difference in the limit, set it to the same as above for these,
+as well.)
 \item Maximum book precis character length
 \item Minimum precis title character length (You need a precis title
-       of at least this long to be acceptable, 5 as a good default.)
+of at least this long to be acceptable, 5 as a good default.)
 \item Maximum precis title character length (50 as a good default.)
 \item Minimum name character length (if there is a need to make sure
-       all names are of at least a specifc length.)
+all names are of at least a specifc length.)
 \item Maximum name character length (if there is a need to make sure
-       all names are no more than a specifc length.)
+all names are no more than a specifc length.)
 \end{itemize}
 
-
-\item Other interesting settings\\
-\label{sec-1_2_4_5}%
+\item Other interesting settings
+\label{sec-1-2-4-5}
 The linguistic settings (below) will go away once the precis
-     descriptions are migrated to a similar format as the Biographical
-     information currently resides.
+descriptions are migrated to a similar format as the Biographical
+information currently resides.
 \begin{itemize}
 \item Is this a bilingual event (This should probably be set to
-       ``FALSE'' due to it's lack of complete support across the system,
-       and the next few elements in this list, ignored.)
+"FALSE" due to it's lack of complete support across the system,
+and the next few elements in this list, ignored.)
 \item What the second language is.
 \item Title caption in second language.
 \item Description caption in second language.
 \item Biography caption in second language.
 \end{itemize}
 
+\item The rest of the file should not have to change.
+\label{sec-1-2-4-6}
+\end{itemize}
 
-\item The rest of the file should not have to change.\\
-\label{sec-1_2_4_6}%
-\end{itemize} % ends low level
 \section{Downloading}
 \label{sec-2}
+If you are checking the code out directly on the hosting machine,
+replace the final "Zambia" with what you decided the web install
+location will be.  If not, you can rename it to whatever you wish to
+call your staging area.
 
-  If you are checking the code out directly on the hosting machine,
-  replace the final ``Zambia'' with what you decided the web install
-  location will be.  If not, you can rename it to whatever you wish to
-  call your staging area.
+Please, check out the code from:
 
-  Please, check out the code from:
-
-  svn co \href{https://zambia.svn.sourceforge.net/svnroot/zambia/branches/FFF/}{https://zambia.svn.sourceforge.net/svnroot/zambia/branches/FFF/} Zambia
+svn co \url{https://zambia.svn.sourceforge.net/svnroot/zambia/branches/FFF/} Zambia
 \section{Local file setup}
 \label{sec-3}
+There are certain localisms you want to set up, outside the svn
+tree. This is so (should you need to) if an upgrade to the code-base
+is desired, it can be done, without writing over your
+customizations.
 
-  There are certain localisms you want to set up, outside the svn
-  tree. This is so (should you need to) if an upgrade to the code-base
-  is desired, it can be done, without writing over your
-  customizations.
+To begin the process change to your web install location.  There you
+should see a list of files, and you will add one called "Local".
+When done your list of files should be:
+These files you will have to create or modify.
+\subsection{db\_name.php}
+\label{sec-3-1}
+Copy the example webpages/db\_name\_sample.php to Local/db\_name.php
+as a start, and then put in the values you decided upon before
+starting the install process.
 
-  To begin the process change to your web install location.  There you
-  should see a list of files, and you will add one called ``Local''.
-  When done your list of files should be:
-  These files you will have to create or modify.
-\subsection{db\_{}name.php}
-\label{sec-3_1}
-
-     Copy the example webpages/db\_{}name\_{}sample.php to Local/db\_{}name.php
-     as a start, and then put in the values you decided upon before
-     starting the install process.
 \subsection{FooterTemplate.html}
-\label{sec-3_2}
+\label{sec-3-2}
+This is where you will put your standard footer, that will be
+below all the public pages, to customize the look and feel to
+match your event's presentation.
 
-     This is where you will put your standard footer, that will be
-     below all the public pages, to customize the look and feel to
-     match your event's presentation.
 \subsection{HeaderTemplate.html}
-\label{sec-3_3}
+\label{sec-3-3}
+This is where you will put your standard header, that will be
+above all the public pages, to customize the look and feel to
+match your event's presentation.
 
-     This is where you will put your standard header, that will be
-     above all the public pages, to customize the look and feel to
-     match your event's presentation.
-\subsection{Participant\_{}Images}
-\label{sec-3_4}
+\subsection{Participant\_Images}
+\label{sec-3-4}
+If you choose to have images of your participants with their
+bios, make this directory, and any pictures that match the
+badgename of the participant will be put next to the bios.
 
-     If you choose to have images of your participants with their
-     bios, make this directory, and any pictures that match the
-     badgename of the participant will be put next to the bios.
 \subsection{Verbiage}
-\label{sec-3_5}
-
-     If you wish to customize what is put forth to your participants,
-     many of the pages allow for customization.  The list of them will
-     grow as more are done.  Any information in these files will
-     replace the default text.  Some examples of these files are:
-\subsubsection{BrainstormWelcome\_{}0}
-\label{sec-3_5_1}
-
+\label{sec-3-5}
+If you wish to customize what is put forth to your participants,
+many of the pages allow for customization.  The list of them will
+grow as more are done.  Any information in these files will
+replace the default text.  Some examples of these files are:
+\subsubsection{BrainstormWelcome\_0}
+\label{sec-3-5-1}
 \begin{verbatim}
 <P> Here you can submit new suggestions or look at existing ideas for
 panels, Meet and Greets, Special Interest Groups, Birds Of a Feathers,
@@ -382,16 +375,16 @@ will make it.  We do save good ideas for future conventions.</P>
   volunteer to help process these ideas.
 </UL>
 \end{verbatim}
-\subsubsection{Introduction\_{}Blurb\_{}0}
-\label{sec-3_5_2}
 
+\subsubsection{Introduction\_Blurb\_0}
+\label{sec-3-5-2}
 \begin{verbatim}
 and before I introduce our speaker, let me ask, How many of you are
 new?  Well, let me tell you, you are in for one heck of a ride.<br
 \end{verbatim}
-\subsubsection{Schedule\_{}Blurb\_{}0}
-\label{sec-3_5_3}
 
+\subsubsection{Schedule\_Blurb\_0}
+\label{sec-3-5-3}
 \begin{verbatim}
 Welcome to the Circus Fantastique.  We really appreciate all your
 efforts to make this weekend go so well.  Below is your schedule for
@@ -399,9 +392,9 @@ the weekend.  If you have any questions, please, do not hesitate to
 find our staff in the Green Room, or whomever our point-person is at
 that time.  </P><P>I hope you will have all the fun you can!<hr>
 \end{verbatim}
-\subsubsection{StaffPage\_{}0}
-\label{sec-3_5_4}
 
+\subsubsection{StaffPage\_0}
+\label{sec-3-5-4}
 \begin{verbatim}
 <P> Please note the tabs above.  One of them will take you to your
 participant view.  Another will allow you to manage Sessions.  Note
@@ -453,9 +446,9 @@ room!)  The language needs to match what you want to see
 
 </UL>
 \end{verbatim}
-\subsubsection{Volunteer\_{}Jobs\_{}0}
-\label{sec-3_5_5}
 
+\subsubsection{Volunteer\_Jobs\_0}
+\label{sec-3-5-5}
 \begin{verbatim}
 <UL>
 <H3>Introducer: (in room)</H3>
@@ -522,9 +515,9 @@ might be pressed into service.
   problem.
 </UL>
 \end{verbatim}
-\subsubsection{Welcome\_{}Letter\_{}Presenters\_{}0}
-\label{sec-3_5_6}
 
+\subsubsection{Welcome\_Letter\_Presenters\_0}
+\label{sec-3-5-6}
 \begin{verbatim}
 <P>Dude!
 
@@ -537,9 +530,9 @@ everyone learned bags of info, and your flow was rad!
 
 <P>The org-folk.
 \end{verbatim}
-\subsubsection{Welcome\_{}Letter\_{}Presenters\_{}and\_{}Volunteers\_{}0}
-\label{sec-3_5_7}
 
+\subsubsection{Welcome\_Letter\_Presenters\_and\_Volunteers\_0}
+\label{sec-3-5-7}
 \begin{verbatim}
 <P>We would like to express our gratitude for your contribution to the
 Ancient Order of the Spies Convention.  Your expertise, wisdom,
@@ -563,9 +556,9 @@ addition to this event is an advantage to all.
 
 <P>Opsidec Limited Organizers
 \end{verbatim}
-\subsubsection{Welcome\_{}Letter\_{}Volunteers\_{}0}
-\label{sec-3_5_8}
 
+\subsubsection{Welcome\_Letter\_Volunteers\_0}
+\label{sec-3-5-8}
 \begin{verbatim}
 <P>We would like to express our gratitude for your contribution to the
 Con of your Dreams.  Your willingness to share your time and energy
@@ -588,156 +581,143 @@ is an advantage to all.
 
 <P>The Programming Team
 \end{verbatim}
+
 \section{Database setup}
 \label{sec-4}
-
-  You should already have mysql set up.  If mysql is not already set
-  up, a good guide to setting up a mysql server is:
+You should already have mysql set up.  If mysql is not already set
+up, a good guide to setting up a mysql server is:
 
 \begin{small}
-  \href{http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch34_:_Basic_MySQL_Configuration}{http://www.linuxhomenetworking.com/wiki/index.php/Quick\_HOWTO\_:\_Ch34\_:\_Basic\_MySQL\_Configuration}
+\url{http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch34_:_Basic_MySQL_Configuration}
 \end{small}
 
-  The pieces of information you will need are from the above decisions
-  for the db\_{}name.php file:
+The pieces of information you will need are from the above decisions
+for the db\_name.php file:
 
 \begin{itemize}
 \item database hostname: (\textbf{DBHOSTNAME}) (If you are setting things up on
-    the same machine that MySQL is running on, \emph{localhost} should be
-    what you are using for \textbf{DBHOSTNAME}).
+the same machine that MySQL is running on, \emph{localhost} should be
+what you are using for \textbf{DBHOSTNAME}).
 \item database username: (\textbf{DBUSERNAME})
 \item database password: (\textbf{DBPASSOWRD})
 \item database name: (\textbf{DBNAME})
 \item Each of the alternate database locators that will be used:
-    (\textbf{BIODB}), (\textbf{REPORTDB}), (\textbf{CONGODB}), (\textbf{LIMITDB}), (\textbf{LOCALDB}),
-    (\textbf{TIMECARDDB})
+(\textbf{BIODB}), (\textbf{REPORTDB}), (\textbf{CONGODB}), (\textbf{LIMITDB}), (\textbf{LOCALDB}),
+(\textbf{TIMECARDDB})
 \item your host name (\textbf{MYHOST}) (If you are setting things up on the
-    same machine that MySQL is running on, \emph{localhost} should be what
-    you are using for \textbf{MYHOST})
+same machine that MySQL is running on, \emph{localhost} should be what
+you are using for \textbf{MYHOST})
 \end{itemize}
 \subsection{Hosted server}
-\label{sec-4_1}
+\label{sec-4-1}
+If you are going to have your database served from a machine that
+is running cpanel or some other menu-based software, the method of
+setting up your database should be documented there.
 
-  If you are going to have your database served from a machine that
-  is running cpanel or some other menu-based software, the method of
-  setting up your database should be documented there.
-
-  The chances are your setup will have you:
+The chances are your setup will have you:
 \begin{itemize}
 \item create a database or databases
 \item possibly create a MySQL user
 \item add MySQL user to the database or databases
 \item grant the MySQL user all privs.
 \end{itemize}
-\subsection{Your own MySQL Setup}
-\label{sec-4_2}
 
-   If you are setting up your own MySQL server, and need to set up the
-   database by hand the following steps should work for you.  Don't
-   forget to replace the instances of \textbf{DBHOSTNAME}, \textbf{DBUSERNAME},
-   etc. with the proper bits of information.
+\subsection{Your own MySQL Setup}
+\label{sec-4-2}
+If you are setting up your own MySQL server, and need to set up the
+database by hand the following steps should work for you.  Don't
+forget to replace the instances of \textbf{DBHOSTNAME}, \textbf{DBUSERNAME},
+etc. with the proper bits of information.
 
 \begin{itemize}
 \item Log into the database: (it should ask you for your MySQL root password)
 \end{itemize}
-
 \begin{verbatim}
 mysql -h*DBHOSTNAME* -p -u root
 \end{verbatim}
-
-
 \begin{itemize}
 \item Create your database:
 \end{itemize}
-
 \begin{verbatim}
 create database DBNAME;
 \end{verbatim}
-
-
 \begin{itemize}
 \item Grant \textbf{DBUSERNAME} user access with the password of \textbf{DBPASSWORD}:
 \end{itemize}
-
 \begin{verbatim}
 grant all on DBNAME.* to 'DBUSERNAME'@'MYHOST' identified by 'DBPASSOWRD';
 grant lock tables on DBNAME.* to 'DBUSERNAME'@'MYHOST';
 \end{verbatim}
-
-
 \begin{itemize}
 \item Reset the privilages
 \end{itemize}
-
 \begin{verbatim}
 flush privileges;
 \end{verbatim}
+
 \section{Database populate}
 \label{sec-5}
-
-  change directories until you are in the Install directory, then:
+change directories until you are in the Install directory, then:
 \begin{verbatim}
 mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./EmptyDbase.dump
 \end{verbatim}
+
 \section{Database tweaks}
 \label{sec-6}
+Some of the tables in the database don't yet have appropriate
+front-ends, so, to customize them for your particular event, you
+will need to modify them directly from the MySQL client.  As
+development proceeds, these will get fewer over time.
 
-  Some of the tables in the database don't yet have appropriate
-  front-ends, so, to customize them for your particular event, you
-  will need to modify them directly from the MySQL client.  As
-  development proceeds, these will get fewer over time.
-
-  Currently, they are:
+Currently, they are:
 \begin{itemize}
 \item Divisions:: If you want some other divisions than Other,
-    Programming, Events, Fixed Functions, Hotel, Unspecified, and
-    Volunteer.
+Programming, Events, Fixed Functions, Hotel, Unspecified, and
+Volunteer.
 \item EmailCC:: Needs to be customized for your convention.
 \item EmailFrom:: Needs to be customized for your convention.
 \item EmailTo:: Might need to be customized.
 \item Features:: List of things that can be in a room.  Might need to be
-    customized.
-\item Phases:: The ``Phase'' you are in will need to be changed as your
-    phase changes.
+customized.
+\item Phases:: The "Phase" you are in will need to be changed as your
+phase changes.
 \item PreconHours:: If you are tracking volunteer hours, the PreconHours
-    will probably need to be added to.
+will probably need to be added to.
 \item PubStatuses:: Depending on the useage of the software, you might
-    need more statuses than Prog Staff, Public, Do Not Print, and
-    Volunteer.
+need more statuses than Prog Staff, Public, Do Not Print, and
+Volunteer.
 \item QuestionsForSurvey:: You might want to change these.
 \item RegTypes:: Depending on how you use it, the RegTypes may change.
 \item Roles:: Fairly standard, but might want to be customized for your
-    convention.
+convention.
 \item RoomSets: Fairly standard, but might want to be customized for
-    your convention.
+your convention.
 \item Rooms:: This definitely wants to be customized for your
-    convention.
+convention.
 \item Services:: List of services that can be provided to a room.  Might
-    need to be customized.
+need to be customized.
 \item SessionStatuses:: Might need to be customized for your
-    convention.
+convention.
 \item Tracks:: Probably will want to be customized for your convention
 \item Types:: May want to be customized for your convention.
 \end{itemize}
 
-  Also, some of the Permission interconnects might have to be
-  customized for your convention.
+Also, some of the Permission interconnects might have to be
+customized for your convention.
 
-  One set of tables that you might be updating across the life of this
-  instance of Zambia is the Reports table.  As people generate useful
-  reports, they do tend to get shared.  We hope that, should you
-  develop noteworthy reports, you share them back with the community
-  at large, as well.
+One set of tables that you might be updating across the life of this
+instance of Zambia is the Reports table.  As people generate useful
+reports, they do tend to get shared.  We hope that, should you
+develop noteworthy reports, you share them back with the community
+at large, as well.
 
-  Loading such reports are often as simple as:
+Loading such reports are often as simple as:
 \begin{verbatim}
 mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./NewReports.sql
 \end{verbatim}
 
-
-
-  Sharing them is as simple as, say, exporting your new report called
-  \emph{voltimepanelists}:
+Sharing them is as simple as, say, exporting your new report called
+\emph{voltimepanelists}:
 \begin{verbatim}
 echo "SELECT * FROM Reports WHERE reportname='voltimepanelists';" | 
 mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME > ./NewReports.sql
@@ -745,100 +725,93 @@ mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME > ./NewReports.sql
 \section{Account creation}
 \label{sec-7}
 \subsection{Standalone}
-\label{sec-7_1}
+\label{sec-7-1}
+If you are going to be using Zambia and not some other registration
+package, you are going to need access to the program, to begin
+adding the people who are going to be working with the system.
 
-   If you are going to be using Zambia and not some other registration
-   package, you are going to need access to the program, to begin
-   adding the people who are going to be working with the system.
-
-   Currently the easiest way to do so is to add the first three users,
-   by pulling in the Initial\_{}Users.sql file from the \emph{Install}
-   directory.
+Currently the easiest way to do so is to add the first three users,
+by pulling in the Initial\_Users.sql file from the \emph{Install}
+directory.
 
 \begin{verbatim}
 mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./Inital_Users.sql
 \end{verbatim}
 
+Once you have done that, you can log in to Zambia using the badgeid
+of \textbf{101} and the password of \textbf{changeme}.
 
+You then can modify the appropriate information.  Under the \emph{Manage
+Participants \& Schedule} tab, there is an \emph{Administer Participants}
+choice.  Selecting that will allow you to update your password
+(\_important step\_) and the "Edit Further" link at the bottom of
+the page will allow you to update the information so it actually
+matches you.
 
-   Once you have done that, you can log in to Zambia using the badgeid
-   of \textbf{101} and the password of \textbf{changeme}.
+Feel free to then go and add the rest of your staff, off of the
+\emph{Enter Participants} link.
 
-   You then can modify the appropriate information.  Under the \emph{Manage    Participants \& Schedule} tab, there is an \emph{Administer Participants}
-   choice.  Selecting that will allow you to update your password
-   (\underline{important step}) and the ``Edit Further'' link at the bottom of
-   the page will allow you to update the information so it actually
-   matches you.
-
-   Feel free to then go and add the rest of your staff, off of the
-   \emph{Enter Participants} link.
 \subsection{Congo}
-\label{sec-7_2}
+\label{sec-7-2}
+You might want to complete the activites above, just to make sure
+you have access, but once you do, you can migrate the congo data
+into the system, so all the other folks have their information
+added.
 
-   You might want to complete the activites above, just to make sure
-   you have access, but once you do, you can migrate the congo data
-   into the system, so all the other folks have their information
-   added.
-
-   From congo, do:
+From congo, do:
 \begin{verbatim}
 export_program_participants_congo.sql
 \end{verbatim}
 
-
-
-   This generates sql that can be, in turn, locaded into Zambia.
+This generates sql that can be, in turn, locaded into Zambia.
 \subsection{Not Congo}
-\label{sec-7_3}
+\label{sec-7-3}
+Tying this into another registration system is slightly more
+complicated.  The easiest way is to use the "regtype" field to
+track the registration number that the various other registration
+programs give you, and see if there is a way to massage their data
+into the "CongoDump" format.
 
-   Tying this into another registration system is slightly more
-   complicated.  The easiest way is to use the ``regtype'' field to
-   track the registration number that the various other registration
-   programs give you, and see if there is a way to massage their data
-   into the ``CongoDump'' format.
 \section{First steps}
 \label{sec-8}
 \subsection{Schedule}
-\label{sec-8_1}
-
-   Establishing the schedule of activities in the form of a ``todo''
-   list is probably the first thing you wish to do.
+\label{sec-8-1}
+Establishing the schedule of activities in the form of a "todo"
+list is probably the first thing you wish to do.
 
 \begin{verbatim}
 YourWebPath/webpages/genreport.php?reportname=tasklistdisplay
 \end{verbatim}
 
+Replacing, of course \emph{YourWebPath} with the proper URL to get to
+your Zambia-FFF branch install.
 
-
-   Replacing, of course \emph{YourWebPath} with the proper URL to get to
-   your Zambia-FFF branch install.
 \subsection{Brainstorming}
-\label{sec-8_2}
+\label{sec-8-2}
+The Brainstorming links should work immediately.  From the top
+directory (index) page of your site, you should be able to click on
+the "Suggest a Session/Presenter" button and get right into it.
 
-   The Brainstorming links should work immediately.  From the top
-   directory (index) page of your site, you should be able to click on
-   the ``Suggest a Session/Presenter'' button and get right into it.
 \section{Backing up}
 \label{sec-9}
+Under the \emph{scripts} directory there is a nice little shell-script
+that you can call with cron to back your information up.  If you are
+to use it, make sure you create the \emph{Data\_Backup} directory under
+the \emph{Local} directory before you use it.  I back up weekly several
+months before the con, start in on daily once heavy changes are
+being made, so we loose less information if there is a problem, and
+then about a month or so after the con, back off to weekly or
+monthly.  At one point in time, I was running it hourly, just to be
+sure.
 
-  Under the \emph{scripts} directory there is a nice little shell-script
-  that you can call with cron to back your information up.  If you are
-  to use it, make sure you create the \emph{Data\_{}Backup} directory under
-  the \emph{Local} directory before you use it.  I back up weekly several
-  months before the con, start in on daily once heavy changes are
-  being made, so we loose less information if there is a problem, and
-  then about a month or so after the con, back off to weekly or
-  monthly.  At one point in time, I was running it hourly, just to be
-  sure.
-
-  The script is invoked as:
+The script is invoked as:
 \begin{verbatim}
 backup_mysql /your/path/to/Zambia-FFF/instance
 \end{verbatim}
+
 \section{Quick and dirty}
 \label{sec-10}
-
-  To build a quick and dirty copy on the same machine as another running version: 
+To build a quick and dirty copy on the same machine as another running version: 
 \begin{itemize}
 \item for i in ../Zambia-FFF/* ; do ln -s \$i . ; done
 \item rm Local
@@ -849,21 +822,529 @@ backup_mysql /your/path/to/Zambia-FFF/instance
 \item cd ../Local
 \item mkdir Verbiage
 \item for i in ../../Zambia-FFF/Local/*.html ; do ln -s \$i . ; done
-\item ln -s ../../Zambia-FFF/Local/Participant\_{}Images .
+\item ln -s ../../Zambia-FFF/Local/Participant\_Images .
 \end{itemize}
-
-  Finally, copy over, and modify the db\_{}name.php as appropraite
-  To update them all do:
+Finally, copy over, and modify the db\_name.php as appropraite
+To update them all do:
 \begin{verbatim}
 for i in FFF-[34]*
   do 
     pushd $i/webpages
     for j in ../../Zambia-FFF/webpages/*
       do 
-        ln -s $j .
+	ln -s $j .
       done
     popd
   done
 \end{verbatim}
 
+\section{Adding a year instance - Con Structure}
+\label{sec-11}
+Another Con instance is approaching.  To set up for this, there is
+one file and a number of table additions you need to make.  At some
+point the table additions might have their own form.  Feel free to
+update them any way you are comfortable with at the moment.  The
+update to the Local/db\_name.php file should only be the update to
+the CON\_KEY entry in the file, all the rest should remain the same,
+and probably that should migrate to something database setable at
+some point.  The rest of the information below should be set in your
+database tables.
+\subsection{ConInfo}
+\label{sec-11-1}
+The first place to start is setting your ConInfo information.  This
+allows for the con to show up in the index file, and opens all the
+information up for access, addition, and whatever else you want for
+your con.  If you wish to see what values were set for a previous
+instance of your con (to make sure you have the right values), you
+might want to use a query (replacing the \$conid with the previous
+con you want to model on) like:
+\begin{verbatim}
+SELECT
+    *
+  FROM
+      ConInfo
+  WHERE
+    conid=$conid;
+\end{verbatim}
+The values are:
+\begin{itemize}
+\item conid: The unique number of your con.
+\item conname: The name of your con (probably inclucign either the
+number, or the year of your con or other unique identifier).
+\item connumdays: How many days your con will run.
+\item constartdate: When your con begins, in the format of YYYY-MM-DD
+hh:mm:ss and preferably (for ease of thought and scheduling)
+having your hh:mm:ss be 00:00:00 or midnight.
+\item conurl: This should be the head of your tree, and match all the
+previous conurls for this con.
+\item conlogo: This should point to the logo of your con.  If you do
+not modify it event-to-event, it will probably be the same as the
+previous conlogos for this con.
+\item condefaultduration: This is the default session length in hh:mm
+format.
+\item condurationminutes: This is an enum set to either 'TRUE' or
+'FALSE' (yes, this is somewhat misleading, and probably should be
+changed to something else, globally).  If it is set to 'TRUE'
+then all times will be reported as just minutes.  If it is set to
+'FALSE' then all times will be in hh:mm notation where
+appropriate.
+\item congridspacer: The default spacer value for the grid, in seconds.
+This should probably have several entries, in case the grid wants
+to be different, for different departments, but that is an
+enhancement, to come.
+\item conallowkids: This is an enum set to either 'TRUE' or 'FALSE'
+(yes, this is somewhat misleading, and probably should be changed
+to something else, globally).  If it is set to 'TRUE' it allows
+for children, and special children programming.  If it is set to
+'FALSE' the special children programming will not appear.
+\item contotalsess: The maximum number of total sessions you will allow
+your various people to sign up for.  This can vary due to the
+length of the session, how many days your con will run, etc.
+\item condailysess: The maximum number of sessions on a particular day
+you will allow your various people to sign up for.  This can vary
+due to the length of the session, how many days your con will
+run, how many sessions there are in a day, and how hard you are
+willing to work them.
+\item conavailabilityrows: How many rows of on/off times your people
+can put in, for their availability.  The longer the con, or the
+shorter the session, the more rows you want to allow them to
+have.
+\end{itemize}
+
+\subsection{Phase}
+\label{sec-11-2}
+This also has to be set up so the appropriate Phase shifting can
+happen.  The phase of the convention will shift, over time, as
+deadlines approach and pass.  Not all of the phasetypeids from the
+PhaseTypes table need to be there, but, it is easier if they are,
+so all you have to do is change the phasestate, and the appropriate
+phase is available.  If you wish to see what values were set for a
+previous instance of your con (to make sure you have the right
+values), you might want to use a query (replacing the \$conid with
+the previous con you want to model on) like:
+\begin{verbatim}
+SELECT
+    *
+  FROM
+      Phase
+    JOIN PhaseTypes USING (phasetypeid)
+  WHERE
+    conid=$conid;
+\end{verbatim}
+The values are:
+\begin{itemize}
+\item phaseid: the unique key for this entry
+\item conid: The con that these phases are for.  This should be set to
+whatever conid you are creating.
+\item phasetypeid: This is the phase that is being turned on or off, as
+described in the PhaseTypes table.
+\item phasestate: If a phase is active.
+\end{itemize}
+An example of phase shifting, is when you open your call for
+presenters, or you close your call for vendors, or you allow
+feedback.  This can change programatically on specific dates around
+your con, or you can set them by hand, when you are ready for a
+phase shift.  Many phases (or few) might be active at any given
+point in time.
+
+\section{Adding a year instance - People}
+\label{sec-12}
+\subsection{UserHasPermissionRole}
+\label{sec-12-1}
+This need to be set so people can actually log into your con.  This
+defines the access any particular individual might have.
+Individuals might have several sets of accesses, depending on their
+roles, some cover more than one area, others do not.  This gets
+somewhat complex, in the interweaving of some other tables, but,
+theoretcially that was set up, and still should hold true from
+previous instances of your con.  Of course, tweaking from year to
+year might need to happen.  If you wish to see who had which
+leadership roles in a previous instance of your con (to make sure
+you are rolling forward with the right roles), you might want to
+use a query (replacing the \$conid with the previous con you want to
+model on) like:
+\begin{verbatim}
+SELECT
+    concat(badgeid," - ",pubsname) as Who,
+    concat(permroleid," - ",permrolename) as What
+  FROM
+      UserHasPermissionRole
+    JOIN PermissionRoles USING (permroleid)
+    JOIN Participants USING (badgeid)
+  WHERE
+    conid=$conid AND
+    permrolename like "%Super%";
+\end{verbatim}
+This will give you the badgeids and the permroleids to add to the
+table.  It is in the format of:
+\begin{itemize}
+\item badgeid: The unique id of an individual in Zambia.
+\item permroleid: One of the set of permissions that an individual will
+have for this con.
+\item conid: The con that these permission are for.  This should be set
+to whatever conid you are creating.
+\end{itemize}
+If you want to only add your particular badgeid,permroleid,conid
+information, and then use the AdminParticipants.php page to select
+them, and then the "Edit <INDIVIDUAL> Further" link at the bottom
+to give each the right permissions, that will work as well.  But at
+least you will need to be set up, so you can grant other people
+access.
+
+\subsection{UserHasConRole}
+\label{sec-12-2}
+This is very similar to the UserHasPermissionRole, and was split
+off, because not all Permission Roles want to necessarily be
+advertized, and sometimes a Permission Role is a superset of a Con
+Role that actually wants to be called out.  While this is not a
+necessary step, it is a good one to follow, so people know who is
+responsible for what, when they visit your webpage. If you wish to
+see who had which leadership roles in a previous instance of your
+con (to make sure you are rolling forward with the right roles),
+you might want to use a query (replacing the \$conid with the
+previous con you want to model on) like:
+\begin{verbatim}
+SELECT
+    concat(badgeid," - ",pubsname) AS Who,
+    concat(conroleid," - ",conrolename) AS What
+  FROM
+      UserHasConRole
+    JOIN Participants USING (badgeid)
+    JOIN ConRoles USING (conroleid)
+  WHERE
+    conid=$conid;
+\end{verbatim}
+This will give you the badgeids and conroleids to add to the
+table.  It is in the format of:
+\begin{itemize}
+\item badgeid: The unique id of an individual in Zambia.
+\item permroleid: A role that an individual will have for this con.
+\item conid: The con that the role is for.  This should be set to
+whatever conid you are creating.
+\end{itemize}
+You can always go back and add to this, as the shape of your con
+fills in.
+
+\subsection{HasReports}
+\label{sec-12-3}
+This maps the organizational chart of your convention.  Again while
+this is not a necessary step for the start of your con, and might
+be added to as your con goes on, usually you know what the table of
+your organization will be, even if you don't yet know who will be
+filling those roles.  To see what was before you can use a query
+(replacing the \$conid with the previous con you want to model on)
+like:
+\begin{verbatim}
+SELECT
+    concat(HR.conroleid," - ",CR.conrolename) AS Role,
+    concat(hasreport," - ",CRR.conrolename) AS Report
+  FROM
+      HasReports HR
+    JOIN ConRoles CR USING (conroleid)
+    JOIN ConRoles CRR ON (hasreport=CRR.conroleid)
+  WHERE
+    conid=$conid;
+\end{verbatim}
+This will give you the list of conroleids who have conroleids
+reporting to them.  You can add them to the table as:
+\begin{itemize}
+\item conid: The con that these reports are for.  This should be set
+to whatever conid you are creating.
+\item conroleid: This is the role that has others reporting to them
+\item hasreport: The conroleid of the position that reports to the
+specified original conroleid.
+\end{itemize}
+On the other hand, if you just want to mirror them, quickly, from
+another instance of your con you could always (replacing \$origconid
+with the previous con you want to model on, and \$conid with the
+current one) run:
+\begin{verbatim}
+SELECT
+    concat("($conid,",conroleid,",",hasreport,"),") AS Prev
+  FROM
+      HasReports
+  WHERE
+    conid=$origconid;
+\end{verbatim}
+Then just massage the data slightly, and you have the insert you
+can do to mirror the previous con.
+
+\section{Adding a year instance - Sessions}
+\label{sec-13}
+The sessions are mostly generated from Brainstorm (and other
+insertions to your database) but there are a few settings that
+should be taken care of, to make sure everything works smoothly.
+The limits are set on an event basis, since sometimes publications
+or the space for things to be advertized differs from year to year.
+Also the requestables might change, depending on what is available,
+as well as the rooms
+\subsection{PublicationLimits}
+\label{sec-13-1}
+This tracks the various limits on the publication fields, so that
+you can have restrictions on minimum and/or maximum length of these
+fields.  All the limit checks should be set up such that if you
+don't have a limit set in this table, the minimum is presumed 0 and
+the maximum is presumed to be whatever your database maximum is for
+that particular field.  If you wish to see what limits were set for
+a previous instance of your con (to make sure you have the right
+limits), you might want to use a query (replacing the \$conid with
+the previous con you want to model on) like:
+\begin{verbatim}
+SELECT
+    *
+  FROM
+      PublicationLimits
+  WHERE
+    conid=$conid;
+\end{verbatim}
+The values are:
+\begin{itemize}
+\item publimid: Unique key for this table (it should auto-increment).
+\item conid: The con that these limits are for.  This should be set to
+whatever conid you are creating.
+\item publimtype: This is an enum between two values, min and max.
+This determiines if the limit is a minimum limit, or maximum
+limit.
+\item publimdest: This is an enum between web and book, and should be
+in sync with your BioDests table.  This is so you can set
+different limits for the various publication media.
+\item publimname: This should be in sync with your BioTypes table, and
+is the specific field that is being limited.
+\item publimval: The number of characters you are limiting this type of
+entry to.
+\item publimnote: Any notes you want to have about the limit.
+\end{itemize}
+On the other hand, if you just want to mirror them, quickly, from
+another instance of your con you could always (replacing \$origconid
+with the previous con you want to model on, and \$conid with the
+current one) run:
+\begin{verbatim}
+SELECT
+    concat("($conid,'",publimtype,"','",publimdest,"','",publimname,"',",publimval,",'",publimnote,"'),") AS Prev
+  FROM
+      PublicationLimits
+  WHERE
+    conid=$origconid;
+\end{verbatim}
+Then just massage the data slightly, and you have the insert you
+can do to mirror the previous con.
+
+\subsection{Services and Features}
+\label{sec-13-2}
+These two tables are built in the same pattern.  Services are the
+bits that logistics could get to the room, so they could be used
+for the class.  Some of the room features (speakers, microphone)
+fall under this, because of being extra cost.  Features are
+elements of the room that someone would look for.  With a single
+room, there might not be much there to choose between, but, with
+many rooms, or different room functions depending on the time of
+day (say, needing curtains in the daytime, and dimable lights, so
+that projection will work correctly) so scheduling can happen more
+easily.  To see what was set on a previous instance of your con,
+you can use a query (replacing the \$conid with the previous con you
+want to model on) like:
+\begin{verbatim}
+SELECT
+    *
+  FROM
+      Services
+  WHERE
+    conid=$conid;
+\end{verbatim}
+And: 
+\begin{verbatim}
+SELECT
+    *
+  FROM
+      Features
+  WHERE
+    conid=$conid;
+\end{verbatim}
+The values are:
+\begin{itemize}
+\item serviceid/featureid: Unique id for the entry (key).
+\item servicename/featurename: A description of the thing available.
+\item conid: The con that these things are available for .  This should
+be set to whatever conid you are creating.
+\item display\_order: For the select boxes, if you want to reorder
+things, this forces the ordering.
+\end{itemize}
+On the other hand, if you just want to mirror them, quickly, from
+another instance of your con you could always (replacing \$origconid
+with the previous con you want to model on, and \$conid with the
+current one) run:
+\begin{verbatim}
+SELECT
+    concat("('",servicename,"',$conid,'",display_order,"'),") AS Prev
+  FROM
+      Services
+  WHERE
+    conid=$origconid;
+\end{verbatim}
+And:
+\begin{verbatim}
+SELECT
+    concat("('",featurename,"',$conid,'",display_order,"'),") AS Prev
+  FROM
+      Features
+  WHERE
+    conid=$origconid;
+\end{verbatim}
+Then just massage the data slightly, and you have the insert you
+can do to mirror the previous con.
+
+\subsection{Rooms}
+\label{sec-13-3}
+This needs to be fleshed out more.
+
+\section{Adding a year instance - Vendors}
+\label{sec-14}
+\subsection{VendorSpaces and VendorFeatures}
+\label{sec-14-1}
+These two tables are built in the same pattern. VendorSpaces are
+the size/type of space, and the cost of said space for the con.
+VendorFeatures are all the little up-charges or non-standard things
+that a vendor might opt for.  To see what was set on a previous
+instance of your con, you can use a query (replacing the \$conid
+with the previous con you want to model on) like:
+\begin{verbatim}
+SELECT
+    *
+  FROM
+      VendorSpaces
+  WHERE
+    conid=$conid;
+\end{verbatim}
+And: 
+\begin{verbatim}
+SELECT
+    *
+  FROM
+      VendorFeatures
+  WHERE
+    conid=$conid;
+\end{verbatim}
+The values are:
+\begin{itemize}
+\item vendorspaceid/vendorfeatureid: Unique id for the entry (key).
+\item vendorspacename/vendorfeaturename: A description, plus the price
+in an easily understandable format, so the vendors know what to 
+select for their comfort and profit.
+\item vendorspaceprice/vendorfeatureprice: Numeric representation of
+the cost of said item, so the invoice can be generated
+correctly.
+\item conid: The con that these things are available for .  This should
+be set to whatever conid you are creating.
+\item display\_order: For the select boxes, if you want to reorder
+possibilities, this forces the ordering to what you want it to
+be.
+\end{itemize}
+On the other hand, if you just want to mirror them, quickly, from
+another instance of your con you could always (replacing \$origconid
+with the previous con you want to model on, and \$conid with the
+current one) run:
+\begin{verbatim}
+SELECT
+    concat("('",vendorspacename,"',",vendorspaceprice,",$conid,",display_order,"),") AS Prev
+  FROM
+      VendorSpaces
+  WHERE
+    conid=$origconid;
+\end{verbatim}
+And:
+\begin{verbatim}
+SELECT
+    concat("('",vendorfeaturename,"',",vendorfeatureprice,",$conid,",display_order,"),") AS Prev
+  FROM
+      VendorFeatures
+  WHERE
+    conid=$origconid;
+\end{verbatim}
+Then just massage the data slightly, and you have the insert you
+can do to mirror the previous con.
+
+\subsection{More Vendor stuff, pending development.}
+\label{sec-14-2}
+
+\section{Adding a year instance - Feedback}
+\label{sec-15}
+Setting up feedback for your con is somewhat complex.  I'm not sure
+what motivated me, originally to be so baroque, but I think it was
+flexibility at the time.
+\subsection{Adding Questions}
+\label{sec-15-1}
+If your questions are not appropriate for this particular event,
+you might want to add a question type to cover it, in the
+QuestionTypes table, and then add the questions to the
+QuestionsForSurvey table.
+The values for QuestionTypes are:
+\begin{itemize}
+\item questiontypeid: Unique key for this table (it should auto-increment).
+\item questiontypename: A one or two word name for the type of question.
+\item questiontypenotes: A more indepth description of the question type.
+\end{itemize}
+The values for the QuestionsForSurvey are:
+\begin{itemize}
+\item questionid: Unique key for this table (it should auto-increment).
+\item questiontext: The text of the question to be asked.
+\item display\_order: The order of the question to be asked.
+\item questiontypeid: What type of question it is, referencing the
+QuestionTypes table above.
+\end{itemize}
+
+\subsection{Setting up the page description (how it is presented)}
+\label{sec-15-2}
+For your event, there might be several different feedback forms you
+want available, so that an individual isn't overwhelmed by the
+number of possible choices.  One of the ways to do this is to break
+it down by time period, another is to break it down by class type.
+Once you have broken them down, this table sets up the various
+possible views.  At least one view should be set to "single class",
+so that the reference from the descriptions etc will work.
+The values for FeedbackPages are:
+\begin{itemize}
+\item fpageid: Unique key for this table (it should auto-increment).
+\item conid: For which con is this page relevant.
+\item fppagedesc: The short description of the page contents.
+\item fpagestart: The start time of the schedule elements that this
+page covers
+\item fpageend: The end time of the schedule elements that this page
+covers
+\item fpagecols: The number of columns at the top of the printed page.
+\item questiontypeid: Which type of questions will show up on this
+page, from the QuestionTypes table.
+\end{itemize}
+The type of schedule elements included in each possible Feedback
+page is set in the FeedbackPageHasType.  This can have multiple
+mappings.  For example, if you have both classes and panels, they
+have different values for their typeid in the Sessions table.  To
+have them both show up in the "single class" page, that page id
+needs two entries in the FeedbackPageHasType table, each one
+mapping the typeid to that fpageid.  "single class" should have a
+mapping for every element you reference, but the feedback page for
+just the classes would only have the typeid of classes mapped to
+it.
+The values for FeedbackPageHasType are:
+\begin{itemize}
+\item fpageid: From the FeedbackPages table.
+\item typeid: From the Types table.
+\end{itemize}
+
+\subsection{Setting the TypeHasQuestionType}
+\label{sec-15-3}
+This is implemented to be able to cross-type questions, and make
+sure you wanted those question types to show up for that type of
+schedule element, for this particular event.  It does allow for
+some greater flexibility, as opposed to having a fixed QuestionType
+for the schedule Type, since that might change from event to event.
+Smaller events might want all the schedule Types to have the same
+QuestionType, larger or more siloed events might want to break it
+down further.  Depending on what is being fed back, Divisions might
+creep into this, as well.
+The values for TypeHasQuestionType are:
+\begin{itemize}
+\item typeid: From the Types table.
+\item questiontypeid: From the QuestionTypes table.
+\item conid: For which event is being run.
+\end{itemize}
 \end{document}

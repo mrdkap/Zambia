@@ -1,9 +1,9 @@
 (setq org-publish-project-alist
       '(("Zambia-html"
-	 :base-directory "~/nelaroot/www/FFF-NE-38/Documentation/Source"
+	 :base-directory "~/nelaprog/www/main/Documentation/Source"
 	 :base-extension "org"
-	 :publishing-directory "~/nelaroot/www/FFF-NE-38/Documentation"
-	 :publishing-function org-publish-org-to-html
+	 :publishing-directory "~/nelaprog/www/main/Documentation"
+	 :publishing-function org-html-publish-to-html
 	 :preserve-breaks t
 	 :sub-superscript nil
 	 :timestamps nil
@@ -33,10 +33,10 @@
 	 :html-preamble t)
 
 	("Zambia-pdf"
-	 :base-directory "~/nelaroot/www/FFF-NE-38/Documentation/Source"
+	 :base-directory "~/nelaprog/www/main/Documentation/Source"
 	 :base-extension "org"
-	 :publishing-directory "~/nelaroot/www/FFF-NE-38/Documentation/PDF"
-	 :publishing-function org-publish-org-to-pdf
+	 :publishing-directory "~/nelaprog/www/main/Documentation/PDF"
+	 :publishing-function org-latex-publish-to-pdf
 	 :preserve-breaks t
 	 :sub-superscript nil
 	 :timestamps nil
@@ -67,15 +67,15 @@
 	 :table-of-contents t)
 
 	("Zambia-images"
-	 :base-directory "~/nelaroot/www/FFF-NE-38/Documentation/Source/Images"
+	 :base-directory "~/nelaprog/www/main/Documentation/Source/Images"
 	 :base-extension "jpg\\|gif\\|png"
-	 :publishing-directory "~/nelaroot/www/FFF-NE-38/Documentation/Images"
+	 :publishing-directory "~/nelaprog/www/main/Documentation/Images"
 	 :publishing-function org-publish-attachment)
 
 	("Zambia-other"
-	 :base-directory "~/nelaroot/www/FFF-NE-38/Documentation/Source"
+	 :base-directory "~/nelaprog/www/main/Documentation/Source"
 	 :base-extension "css"
-	 :publishing-directory "~/nelaroot/www/FFF-NE-38/Documentation"
+	 :publishing-directory "~/nelaprog/www/main/Documentation"
 	 :publishing-function org-publish-attachment)
 
 	("Zambia" :components ("Zambia-other" "Zambia-images" "Zambia-pdf" "Zambia-html"))))

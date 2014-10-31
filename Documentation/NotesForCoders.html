@@ -1,51 +1,118 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-lang="en" xml:lang="en">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Notes for Coders</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="March 2010"/>
-<meta name="author" content="Peter"/>
-<meta name="description" content="Zambia is a piece of Conference Management Software.  This document is a general guide assisting in the way of programming the Zambia FFF-branch, as inhereted from the main branch."/>
-<meta name="keywords" content="Zambia, Documentation, FFF branch"/>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Peter" />
+<meta  name="description" content="Zambia is a piece of Conference Management Software.  This document is a general guide assisting in the way of programming the Zambia FFF-branch, as inhereted from the main branch."
+ />
+<meta  name="keywords" content="Zambia, Documentation, FFF branch" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style><link rel="stylesheet" href="../webpages/Common.css" type="text/css"/>
+</style>
 <script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -67,157 +134,284 @@ lang="en" xml:lang="en">
  }
 /*]]>*///-->
 </script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
 
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
 </head>
 <body>
 <div id="content">
-
 <h1 class="title">Notes for Coders</h1>
+<p>
 
-<p>Zambia is a piece of Conference Management Software.  This document is a general guide assisting in the way of programming the Zambia FFF-branch, as inhereted from the main branch.<br/>
-<h2>Abstract:<br></h2><p>Zambia is a piece of Conference Management Software.  This document is a general guide assisting in the way of programming the Zambia FFF-branch, as inhereted from the main branch.</p>
+</p>
+<p>
+Notes for Coders
+</p>
+<p>
+Peter &lt;NELA.Percy@gmail.com&gt;
 </p>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Files </a>
+<li><a href="#sec-1">1. Files</a>
 <ul>
-<li><a href="#sec-1_1">1.1 contains configuration information that each conference should set: Local/db_name.php </a></li>
-<li><a href="#sec-1_2">1.2 contains css information: Common.css  ParticipantSection.css  StaffSection.css </a></li>
-<li><a href="#sec-1_3">1.3 auto generated files that display a page (aka you can link to them) </a></li>
-<li><a href="#sec-1_4">1.4 contains functions and constants that other pages use (not autogenerated) </a></li>
-<li><a href="#sec-1_5">1.5 file that displays a page and can be linked to  (not autogenerated) </a></li>
-<li><a href="#sec-1_6">1.6 file that processes a post operation, but calls a separate file to </a></li>
-<li><a href="#sec-1_7">1.7 file that processes a post operation and display the results </a></li>
-<li><a href="#sec-1_8">1.8 file that contains functions used by a page of the same name </a></li>
-<li><a href="#sec-1_9">1.9 shell script for report generation: gencsv.sh genindex.sh genreports.sh </a></li>
+<li><a href="#sec-1-1">1.1. contains configuration information that each conference should set: Local/db_name.php</a></li>
+<li><a href="#sec-1-2">1.2. contains css information: Common.css  ParticipantSection.css  StaffSection.css</a></li>
+<li><a href="#sec-1-3">1.3. auto generated files that display a page (aka you can link to them)</a></li>
+<li><a href="#sec-1-4">1.4. contains functions and constants that other pages use (not autogenerated)</a></li>
+<li><a href="#sec-1-5">1.5. file that displays a page and can be linked to  (not autogenerated)</a></li>
+<li><a href="#sec-1-6">1.6. file that processes a post operation, but calls a separate file to</a></li>
+<li><a href="#sec-1-7">1.7. file that processes a post operation and display the results</a></li>
+<li><a href="#sec-1-8">1.8. file that contains functions used by a page of the same name</a></li>
+<li><a href="#sec-1-9">1.9. shell script for report generation: gencsv.sh genindex.sh genreports.sh</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. Interesting hacks</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Presenter only</a></li>
+<li><a href="#sec-2-2">2.2. Duration</a></li>
+<li><a href="#sec-2-3">2.3. Time compare</a></li>
+<li><a href="#sec-2-4">2.4. Row count</a></li>
+<li><a href="#sec-2-5">2.5. Previous con</a></li>
+<li><a href="#sec-2-6">2.6. Alternate Roles</a></li>
+<li><a href="#sec-2-7">2.7. Multi-select boxes</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Files </h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Files</h2>
 <div class="outline-text-2" id="text-1">
-
-<p>We need consistency, so here is the plan:<br/>
+<p>
+We need consistency, so here is the plan:
 </p>
 </div>
-
-<div id="outline-container-1_1" class="outline-3">
-<h3 id="sec-1_1"><span class="section-number-3">1.1</span> contains configuration information that each conference should set: Local/db_name.php </h3>
-<div class="outline-text-3" id="text-1_1">
-
-
-<p><br/>
-</p></div>
-
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> contains configuration information that each conference should set: Local/db_name.php</h3>
 </div>
 
-<div id="outline-container-1_2" class="outline-3">
-<h3 id="sec-1_2"><span class="section-number-3">1.2</span> contains css information: Common.css  ParticipantSection.css  StaffSection.css </h3>
-<div class="outline-text-3" id="text-1_2">
-
-
-<p><br/>
-</p></div>
-
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> contains css information: Common.css  ParticipantSection.css  StaffSection.css</h3>
 </div>
 
-<div id="outline-container-1_3" class="outline-3">
-<h3 id="sec-1_3"><span class="section-number-3">1.3</span> auto generated files that display a page (aka you can link to them) </h3>
-<div class="outline-text-3" id="text-1_3">
-
-<p>lowercasewithnounderscores.php<br/>
-<b>No Longer Used!</b><br/>
-</p>
-<p><br/>
-</p></div>
-
-</div>
-
-<div id="outline-container-1_4" class="outline-3">
-<h3 id="sec-1_4"><span class="section-number-3">1.4</span> contains functions and constants that other pages use (not autogenerated) </h3>
-<div class="outline-text-3" id="text-1_4">
-
-<p>lower_with_underscore_functions.php<br/>
-db_functions.php           # for database related functions<br/>
-data_functions.php<br/>
-validate_functions.php<br/>
-render_functions.php<br/>
-</p>
-<p><br/>
-</p></div>
-
-</div>
-
-<div id="outline-container-1_5" class="outline-3">
-<h3 id="sec-1_5"><span class="section-number-3">1.5</span> file that displays a page and can be linked to  (not autogenerated) </h3>
-<div class="outline-text-3" id="text-1_5">
-
-<p>StrongCaps.php<br/>
-BrainstormStrongCaps.php    # for brainstorm pages<br/>
-StaffStrongCaps.php    # for staff only pages<br/>
-ParticipantStrongCaps.php    # for Participant only pages<br/>
-CommonStrongCaps.php    # pages used by at least 2 different groups<br/>
-</p>
-<p><br/>
-</p></div>
-
-</div>
-
-<div id="outline-container-1_6" class="outline-3">
-<h3 id="sec-1_6"><span class="section-number-3">1.6</span> file that processes a post operation, but calls a separate file to </h3>
-<div class="outline-text-3" id="text-1_6">
-
-<p>display the results (deprecated?)<br/>
-SubmitStongCaps.php<br/>
-</p>
-<p><br/>
-</p></div>
-
-</div>
-
-<div id="outline-container-1_7" class="outline-3">
-<h3 id="sec-1_7"><span class="section-number-3">1.7</span> file that processes a post operation and display the results </h3>
-<div class="outline-text-3" id="text-1_7">
-
-<p>(often by calling a function that is elsewhere)<br/>
-StrongCaps_POST.php<br/>
-</p>
-<p><br/>
-</p></div>
-
-</div>
-
-<div id="outline-container-1_8" class="outline-3">
-<h3 id="sec-1_8"><span class="section-number-3">1.8</span> file that contains functions used by a page of the same name </h3>
-<div class="outline-text-3" id="text-1_8">
-
-<p>(and not elsewhere.   If it is used elsewhere it needs to move)<br/>
-StrongCaps_FNC.php<br/>
-</p>
-<p><br/>
-</p></div>
-
-</div>
-
-<div id="outline-container-1_9" class="outline-3">
-<h3 id="sec-1_9"><span class="section-number-3">1.9</span> shell script for report generation: gencsv.sh genindex.sh genreports.sh </h3>
-<div class="outline-text-3" id="text-1_9">
-
-
-<p><br/>
-</p></div>
-</div>
-</div>
-<div id="postamble">
-<p class="author"> Author: Peter
-<a href="mailto:NELA.Percy@gmail.com">&lt;NELA.Percy@gmail.com&gt;</a>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> auto generated files that display a page (aka you can link to them)</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+lowercasewithnounderscores.php
+<b>No Longer Used!</b>
 </p>
 </div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> contains functions and constants that other pages use (not autogenerated)</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+lower_with_underscore_functions.php
+db_functions.php           # for database related functions
+data_functions.php
+validate_functions.php
+render_functions.php
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> file that displays a page and can be linked to  (not autogenerated)</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+StrongCaps.php
+BrainstormStrongCaps.php    # for brainstorm pages
+StaffStrongCaps.php    # for staff only pages
+ParticipantStrongCaps.php    # for Participant only pages
+CommonStrongCaps.php    # pages used by at least 2 different groups
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> file that processes a post operation, but calls a separate file to</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+display the results (deprecated?)
+SubmitStongCaps.php
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> file that processes a post operation and display the results</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+(often by calling a function that is elsewhere)
+StrongCaps_POST.php
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> file that contains functions used by a page of the same name</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+(and not elsewhere.   If it is used elsewhere it needs to move)
+StrongCaps_FNC.php
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> shell script for report generation: gencsv.sh genindex.sh genreports.sh</h3>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Interesting hacks</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Presenter only</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+To end up with either a blank, or just the presenter (no aidedecamp, introducer, or volunteer) in a group_concat use:
+group_concat(if(volunteer=0 and introducer=0 and aidedecamp=0,pubsname,NULL) SEPARATOR " - ") AS 'Participants' or
+group_concat(if(volunteer=0 and introducer=0 and aidedecamp=0,pubsname,NULL), if(moderator=1,' (M)','') order by moderator DESC, pubsname SEPARATOR " - ") AS 'Participants'
+It's much easier and cleaner than doing the whole sub-SELECT thing, or limiting it with:
+volunteer=0 AND introducer=0 AND aidedecamp=0
+group_concat(' ',P.pubsname, if(moderator=1,'  (M)','') order by moderator, pubsname
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Duration</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+This is what we have standardized on for the duration printing:
+ CASE
+   WHEN HOUR(duration) &lt; 1 THEN
+     concat(date_format(duration,'%i'),'min')
+   WHEN MINUTE(duration)=0 THEN
+     concat(date_format(duration,'%k'),'hr')
+   ELSE
+     concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
+   END AS Duration,
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Time compare</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+time_to_sec(starttime) &lt; time_to_sec("19:30:00") compares two times.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Row count</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+select @rownum:=@rownum+1 AS "Order", title from Sessions, (SELECT @rownum:=0) AS R
+or with more complexity, and applicability:
+concat("&lt;INPUT type=\"checkbox\" name=\"del",@rownum:=@rownum+1,"\" value=\"1\"&gt;\n&lt;INPUT type=\"hidden\" name=\"row",@rownum,"\" value=\"",scheduleid,"\"&gt;&lt;INPUT type=\"hidden\" name=\"rowsession",@rownum,"\" value=\"",sessionid,"\"&gt;") AS "Delete",
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Previous con</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+LEFT JOIN (SELECT
+               GROUP_CONCAT(conid, " - ", interestedtypename) AS previous,
+               badgeid
+             FROM
+                 $ReportDB.Interested
+               JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
+             WHERE
+                conid!=$conid
+              GROUP BY
+                 badgeid) PV USING (badgeid)
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6" class="outline-3">
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Alternate Roles</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+LEFT JOIN (SELECT
+               email,
+               GROUP_CONCAT("&lt;A HREF=StaffEditCreateParticipant.php?action=edit&amp;partid=",badgeid,"&gt;",permrolename,"&lt;/A&gt;" SEPARATOR ", ") AS altrole
+             UMFRAY
+                 $ReportDB.UserHasPermissionRole
+               JOIN $ReportDB.PermissionRoles USING (permroleid)
+               JOIN $ReportDB.CongoDump USING (badgeid)
+             WHERE
+               conid=$conid AND
+               permrolename NOT IN ('Vendor')
+             GROUP BY
+               badgeid) AR USING (email)
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-7" class="outline-3">
+<h3 id="sec-2-7"><span class="section-number-3">2.7</span> Multi-select boxes</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+need the specail "close" button to work (from the javascript file)
+as well as the mapping to a multi-box, and the "src" and "dest" set
+up properly.  All expect the conid now, so that has to be ported.
+The "SessionHas" can be in either for the nonce.  Check the
+db_functions and the data_functions files as well, to make sure
+those are going to work.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: March 2010</p>
+<p class="author">Author: Peter</p>
+<p class="email">Email: <a href="mailto:NELA.Percy@gmail.com">NELA.Percy@gmail.com</a></p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

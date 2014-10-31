@@ -5,49 +5,13 @@
 #+DESCRIPTION: Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in the way of entering and keeping track of Presenters for the Zambia FFF-branch instance for your conference.  This is still a work in progress.
 #+KEYWORDS: Zambia, Documentation, FFF branch
 #+LANGUAGE: en
-
-#+OPTIONS: \n:t ^:nil timestamp:nil creator:nil H:3 num:t @:t ::nil |:t -:t todo:nil tasks:nil tags:t <:t *:t author:t email:t skip:nil d:t f:t pri:t
-#+LATEX_CLASS: koma-article
-#+LaTeX_CLASS_OPTIONS: [tablesignature] 
-#+LATEX_HEADER: \usepackage{booktabs}
-#+LATEX_HEADER: \usepackage[scaled]{beraserif}
-#+LATEX_HEADER: \usepackage[scaled]{berasans}
-#+LATEX_HEADER: \usepackage[scaled]{beramono}
-#+LATEX_HEADER: \usepackage[usenames,dvipsnames]{color}
-#+LATEX_HEADER: \usepackage{fancyhdr}
-#+LATEX_HEADER: \usepackage{subfig}
-#+LaTeX_HEADER: \usepackage{listings}
-#+LaTeX_HEADER: \lstnewenvironment{common-lispcode}
-#+LaTeX_HEADER: {\lstset{language={HTML},basicstyle={\ttfamily\footnotesize},frame=single,breaklines=true}}
-#+LaTeX_HEADER: {}
-#+LATEX_HEADER: \usepackage{paralist}
-#+LATEX_HEADER: \let\itemize\compactitem
-#+LATEX_HEADER: \let\description\compactdesc
-#+LATEX_HEADER: \let\enumerate\compactenum
-#+LATEX_HEADER: \usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
-#+LATEX_HEADER: \pagestyle{fancy}
-#+LaTeX: \pagenumbering{roman}
-#+LaTeX: \thispagestyle{fancy}
-#+LaTeX: \renewcommand{\headrulewidth}{0pt}
-#+LaTeX: \renewcommand{\footrulewidth}{1pt}
-#+LaTeX: \lhead{}
-#+LaTeX: \rhead{}
-#+LaTeX: \chead{}
-#+LaTeX: \lfoot{{{{{AUTHOR}}}} <{{{{EMAIL}}}}>}
-#+LaTeX: \cfoot{}
-#+LaTeX: \rfoot{\thepage}
-#+LaTeX: \begin{abstract}
-#+LaTeX: \vspace{5cm}
-#+LaTeX: {\LARGE{\textbf{Abstract:\\}}}
-{{{DESCRIPTION}}}
-#+LaTeX: \end{abstract}
-#+HTML:<h2>Abstract:<br></h2><p>{{{DESCRIPTION}}}</p>
-#+LaTeX: \newpage
-#+LaTeX: \renewcommand{\headrulewidth}{1pt}
-#+LaTeX: \chead{{{{{TITLE}}}}}
-#+LaTeX: \tableofcontents
-#+LaTeX: \listoftables
+#+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:3 num:3 toc:nil @:t ::nil |:t -:t todo:nil tasks:nil tags:nil <:t *:t author:t email:t skip:nil d:t f:t pri:t
+#+STARTUP: fninline
+#+SETUPFILE: "Headers/setupfile.org"
+#+INCLUDE: "Headers/include.org"
+#+TOC: headlines 3
 #+LaTeX: \listoffigures
+#+LaTeX: \listoftables
 #+LaTeX: \newpage
 #+LaTeX: \pagenumbering{arabic}
 * Introduction
@@ -63,28 +27,94 @@
   Please do not let that deter you from enjoying this document.
 
 * Entering Presenters
+#+HTML: <A NAME="StaffManageParticipants.php" ID="StaffManageParticipants.php"></A>   
+#+HTML: <A HREF="../webpages/StaffManageParticipants.php">StaffManageParticipants.php</A>
 
   There are two basic paths for entering Presenters into Zambia,
   either they are entered via outside suggestion (by someone, possibly
   the presenter themselves) when the call for presenters is open, or
   by someone on the Liaison Team entering their information, because
-  negotiations by another channel of communications has happened.  If
-  the presenter is already in the system, either said presenter or a
-  member of the Liaison Team can indicate their interest without
-  rentering their data. In this case, go directly to the next section.
+  negotiations by another channel of communications has happened.
 
-** Ouside Suggestions
+  This is only necessary if the Presenter is not already in the
+  system.  If the Presenter is in the system a member of the Liaison
+  Team can indicate their interest without rentering their data.
+
+  Most of the work on a Presenter level is done from the [[Entering Presenters]["Manage
+  Participants & Schedule"]] tab which references the
+  StaffManageParticipants.php page.  Most of the below sections are
+  choices off of this page.
+
+#+CAPTION: Manage Participants
+#+LABEL: fig:Zambia_Presenter_Flow_Manage_Participants
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
+[[./Images/Manage_Participants.png]]
+
+** Check to see if a Presenter already exists in Zambia
+
+   There are two places to check to see if an individual is already in
+   Zambia.  They could be already active for this year (perhaps in
+   this capacity, perhaps in another) or they might need to be migrted
+   from another con-instance to be available for this year.
+
+*** Administer Participants Check
+#+HTML: <A HREF="../webpages/AdminParticipants.php">AdminParticipants.php</A>
+
+    If they are already in Zambia for this year, you would be able to
+    find them under the [[Entering Presenters]["Manage Participants & Schedule"]] tab, the
+    second link down is the [[Updating Presenter Information]["Administer Participants"]] link which
+    references the AdminParticipants.php page.  This will bring up a
+    set of ways to select the participant from information you know.
+   
+#+CAPTION: Administer Participants Header
+#+LABEL: fig:Zambia_Presenter_Flow_Administer_Participants_Header
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
+[[./Images/Administer_Participants_Header.png]]
+
+    If the Preseter exists under one of the pulldowns, you can
+    continue from the the [[Updating Presenter Information]["Administer Participants"]] section below.
+
+*** Migrate Participant from another con-instance
+#+HTML: <A NAME="StaffMigrateParticipant.php" ID="StaffMigrageParticipant.php"></A>   
+#+HTML: <A HREF="../webpages/StaffMigrageParticipant.php">StaffMigrageParticipant.php</A>
+
+    A Presenter might exist in Zambia but not be set for this
+    con-instance, and we want only one instance of a person in Zambia,
+    so the next step is to see if the Presenter can be migrated from
+    another con-instance to the current con-instance.
+
+    Under the [[Entering Presenters]["Manage Participants & Schedule"]] tab, the third link
+    down is the [[Migrate Participant from another con-instance]["Migrate Partitipant from another con-instance"]] link
+    which references the StaffMigrageParticipant.php page.  This will
+    bring up a set of ways to select the participant from the
+    information that you know, including their email address.
+
+#+CAPTION: Migrate Participant Header
+#+LABEL: fig:Zambia_Presenter_Flow_Migrate_Participant_Header
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
+[[./Images/Migrate_Participant_Header.png]]
+
+    Once the Presenter is selected, a form very similar to the
+    [[Presenters by a Liaison]["Enter Participant"]] form is brought up, with several fields
+    already filled in.  Follow the instructions below from that point
+    to make sure they are migrated to this con-instance.  From that
+    point forward, you should be able to find them under the
+    [[Updating Presenter Information]["Administer Participants"]] link.
+
+** Presenters by Ouside Suggestions
+#+HTML: <A NAME="BrainstormSuggestPresenter.php" ID="BrainstormSuggestPresenter.php"></A>
 #+HTML: <A HREF="../webpages/BrainstormSuggestPresenter.php">BrainstormSuggestPresenter.php</A>
    
    Depending on your convention, many of the folks who are going to
    present either applied to do so (once you put the call for
    presenters) or are recommended by other folk.  Either way they
    will probably have been entered in the Brainstorm Suggest a
-   Presenter form.
+   Presenter form, which is accessable under the Brainstorm [[Presenters by Ouside Suggestions]["Suggest a
+   Presenter"]] tab.
 
 #+CAPTION: Brainstorm Suggest Presenter
 #+LABEL: fig:Zambia_Presenter_Flow_Brainstorm_Suggest_Presenter
-#+ATTR_LaTeX: placement=[H] width=0.98\textwidth
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
 [[./Images/Brainstorm_Suggest_Presenter.png]]
 
    Fortunately or unfortunately, depending on the individual, you
@@ -95,7 +125,7 @@
 
 #+CAPTION: Notes On Presenter
 #+LABEL: fig:Zambia_Presenter_Flow_Notes_On_Presenter
-#+ATTR_LaTeX: placement=[H] width=0.5\textwidth
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
 [[./Images/Notes_On_Participant.png]]
 
    The element appears at the bottom of a presenter administration
@@ -107,22 +137,24 @@
    submitted doesn't actually connect you, or is incorrect, they will
    be helpful in facilitating the contact.
 
-** By a Liaison person
-#+LaTeX: \label{StaffEditCreateParticipant.php}
+** Presenters by a Liaison
 #+HTML: <A NAME="StaffEditCreateParticipant.php" ID="StaffEditCreateParticipant.php"></A>   
 #+HTML: <A HREF="../webpages/StaffEditCreateParticipant.php?action=create">StaffEditCreateParticipant.php</A>
    
    Often a Liaison person is tapped to enter in a participant because
-   of negotiations done using other chanels.  Entering in the
-   Presenter's information is slightly more comprehensive on the Enter
-   Participant page which can also be found by going to the "Manage
-   Participant & Schedule" tab, and then choosing the "Enter
-   Participants" link.
-
+   of negotiations done using other chanels.  If they aren't already
+   in Zambia, having checked both the [[Updating Presenter Information]["Administer Participants"]] link
+   and the [[Migrate Participant from another con-instance]["Migrate Partitipant from another con-instance"]] link, the
+   participant has to be entered manually.  Entering in the Presenter's
+   information is slightly more comprehensive than doing so in the
+   Brainstorm [[Presenters by Ouside Suggestions]["Suggest a Presenter"]] tab.  Under the [[Entering Presenters]["Manage
+   Participants & Schedule"]] tab, the fourth link down is the [[Presenters by a Liaison]["Enter
+   Participant"]] link which references the
+   StaffEditCreateParticipant.php page.
 
 #+CAPTION: Add Participant
 #+LABEL: fig:Zambia_Presenter_Flow_Add_Participant
-#+ATTR_LaTeX: placement=[H] width=0.95\textwidth
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
 [[./Images/Add_Participant.png]]
 
    + In the names section, the first name, name for publications and
@@ -188,18 +220,19 @@
    + Don't forget to hit the "Save" button, please.
 
 * Updating Presenter Information
-#+HTML: <A HREF="../AdminParticipants.php">AdminParticipants.php</A>
+#+HTML: <A NAME="AdminParticipants.php" ID="AdminParticipants.php"></A>
+#+HTML: <A HREF="../webpages/AdminParticipants.php">AdminParticipants.php</A>
 
   Once in the system, the most common request by presenters is to have
   their password reset so that they can update the rest of their
   profile.  To do this, go to the Administer Participants link under
-  the Manage Participants & Schedule tab.  Select the presenter from
+  the [[Entering Presenters]["Manage Participants & Schedule"]] tab.  Select the presenter from
   the drop-down menu and, once selected you may change their password,
   their interested and available setting, and their published name.
 
 #+CAPTION: Administer Participants
 #+LABEL: fig:Zambia_Presenter_Flow_Administer_Participants
-#+ATTR_LaTeX: placement=[H] width=0.95\textwidth
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
 [[./Images/Administer_Participants.png]]
 
   Most of the other modification pages won't have the presenter in the
@@ -214,29 +247,33 @@
 
   At the bottom of the Admin Participants page, there are several
   different links.  The next-most useful page is the first one: "Edit
-  PUBNAME further". When using the direct link, you will need to
-  reselect the participant from the top of the page.
+  PUBNAME further". When using the direct link as opposed to just
+  clicking through, you will need to reselect the participant from the
+  top of the page.
 
 #+HTML: <A HREF="../webpages/StaffEditCreateParticipant.php?action=edit">StaffEditCreateParticipant.php</A>
 
-  This link will take you back to the page you should be familiar
-  with, when you were creating the participant.  You can add to or
-  change any of the extant information at this time.  If you want to
-  see the importance of the fields, please see section on
-  [[StaffEditCreateParticipant.php]] for diagram and instructions.
+  The StaffEditCreateParticipant.php link will take you back to the
+  page you should be familiar with, when you were creating the
+  participant.  You can add to or change any of the extant information
+  at this time.  If you want to see the importance of the fields,
+  please see section on [[Presenters by a Liaison][Presenters by a Liaison]] for diagram and
+  instructions.
 
 * Entering Compensation
+#+HTML: <A NAME="StaffEditCompensation.php" ID="StaffEditCompensation.php"></A>   
 #+HTML: <A HREF="../webpages/StaffEditCompensation.php">StaffEditCompensation.php</A>
 
-  There are two ways to reach the place to enter Compensation for a
+  There are three ways to reach the place to enter Compensation for a
   Presenter.  One way is to go to the bottom of the Admin Participants
   page mentioned in the last section, then select the second link:
-  "Set Compensation for PUBNAME".  When using the direct link, you
-  will need to reselect the participant from the top of the page.
+  "Set Compensation for PUBNAME", the second is to use the direct link
+  above.  When using the direct link, you will need to reselect the
+  participant from the top of the page.
 
 #+CAPTION: Compensation Update
 #+LABEL: fig:Zambia_Presenter_Flow_Compensation_Update
-#+ATTR_LaTeX: placement=[H] width=0.98\textwidth
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
 [[./Images/Compensation_Update.png]]
 
 
@@ -245,14 +282,14 @@
   very conference dependant, please make sure any compensation entered
   is in lines with your conference's policies.
 
-  You can also select the presenter name from the Presenter
+  The third path is to select the presenter name from the Presenter
   Compensation table.
 
 #+HTML: <A HREF="../webpages/PresenterCompensation.php">PresenterCompensation.php</A>
 
 #+CAPTION: Compensation Information
 #+LABEL: fig:Zambia_Presenter_Flow_Compensation_Information
-#+ATTR_LaTeX: placement=[H] width=0.98\textwidth
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
 [[./Images/Compensation_Information.png]]
 
   This table will fill in with the information entered.  The notes
@@ -278,7 +315,8 @@
   particular individual or set of individuals, that is done in several
   ways.
 
-** Outside suggestion
+** S.E. by Outside Suggestions
+#+HTML: <A NAME="BrainstormCreateSession.php" ID="BrainstormCreateSession.php"></A>   
 #+HTML: <A HREF="../webpages/BrainstormCreateSession.php">BrainstormCreateSession.php</A>
    
    The Schedule Elements entered in from the outside, or by a
@@ -293,19 +331,85 @@
 
 #+CAPTION: Brainstorm New Session
 #+LABEL: fig:Zambia_Presenter_Flow_Brainstorm New Session
-#+ATTR_LaTeX: placement=[H] width=0.98\textwidth
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
 [[./Images/Brainstorm_New_Session.png]]
    
-** By a Liaison person
+** S.E. by a Presenter
+#+HTML: <A NAME="MyProposals.php" ID="MyProposals.php"></A>   
+#+HTML: <A HREF="../webpages/MyProposals.php">MyProposals.php</A>
+
+   This is the most preferred way to add Schedule Elements that are
+   classes being put on by a specific Presenter or set of Presenters.
+   If you are a liaison for said presenter, instead of adding the
+   class Schedule Element in the [[S.E. by a Liaison][S.E. by a Liaison]] section below,
+   please log in as your Presenter (since you will more than likely be
+   setting their password, anyway) and follow these instructions.
+   
+   When a presenter logs in, the first page seen is the welcome page.
+   This, unlike most of what is done in Zambia has blue (rather than
+   green) tabs, so should be visually different.  There is a "Submit a
+   Proposal" tab at the top.  There might also be a "Submit a
+   Proposal" link in the body.  If the tab is blue (not grayed out)
+   then that tab can be used to propose Schedule Elements.
+
+#+CAPTION: Propose Session
+#+LABEL: fig:Zambia_Presenter_Flow_Propose_Session
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
+[[./Images/Propose_Session.png]]
+
+   + Track: Finding the appropriate track is sometimes tricky if it
+     falls into multiple categories.  You may want to set this to
+     some variant of "General", or "I don't know", depending on the
+     decision of your particular convention.
+
+   + Type: What type of offering it is.  Often "Panel" or "Class" but
+     might be something else.
+
+   + Title and Subtitle: Some conventions have limits on the length of
+     these, and how they are published.
+
+   + Room Set: Most room-sets will be standarized by your convention,
+     but sometimes a presenter has a particular preference that can
+     be accommodated.  Most often "class room", "theater", or
+     "unspecified" will be your choice.
+
+   + Web Description: This is the description of the Schedule Element
+     that will be on the website, once it is scheduled. It is shared
+     with the Brainstorm page until then. Because of this, please
+     enter an accurate description of the Schedule Element.  There may
+     be length constraints (on both ends) for the description.
+
+   + Program Book Description: This is the description of the Schedule
+     Element that will end up in the publications.  It doesn't need to
+     be entered immediately (especially if the Schedule Element has
+     not yet become "Vetted"). There are probably has greater
+     restrictions on the length, due to the web costing less for space
+     than publications do.
+
+   + Additional info: This is for anything else that should be tracked
+     with this particluar class, like notes for the programming
+     committee, if there are handouts, do they need a massage table,
+     or the like.
+
+   + Please, do not forget to save your work, or you will be unhappy.
+
+** S.E. by a Liaison
+#+HTML: <A NAME="CreateSession.php" ID="CreateSession.php"></A>   
 #+HTML: <A HREF="../webpages/CreateSession.php">CreateSession.php</A>
 
-   This form isn't overly complex, but there are some very important
-   pieces here.  This can be found from the "Create a New Session"
-   link under the "Manage Sessions" tab.
+   Note: The preference, if possible, is for the liaison to log into
+   Zambia as the Presenter in question, and enter in their classes
+   from there, as above in the [[S.E. by a Presenter][S.E. by a Presenter]] section.
+
+   If you are filling out this form, you will find that it isn't
+   overly complex, but there are some very important pieces here.
+   This can be found from the first link, the "Create a New Session"
+   link under the "Manage Sessions" tab, or directly from the
+   CreateSession.php link.
 
 #+CAPTION: Add New Session
 #+LABEL: fig:Zambia_Presenter_Flow_Add_New_Session
-#+ATTR_LaTeX: placement=[H] width=0.98\textwidth
+#+ATTR_LaTeX: :float nil :placement [H] :width 0.98\textwidth
 [[./Images/Add_New_Session.png]]
 
    + The session number is just there for reference.  If the next step
@@ -418,14 +522,6 @@
 
    + Please, do not forget to save your work, or you will be unhappy.
 
-** By a Presenter
-   
-   The presenter is taken to the outside suggestion section and asked
-   to fill out the form there.  It will have their name associated
-   with it directly, as opposed to "Idea Suggestion" as the suggesting
-   individual.  This will allow for the association between them and
-   the Schedule Element to be clean and fast.
-
 ** Associating the Schedule Element with a Presenter
 
    Most conventions only want to assign Presenters to Schedule
@@ -464,7 +560,7 @@
    since it was submitted, but also if you select the link provided by
    the "Session #" number, you will be in the right place.
 
-   A fifth path is under the "Manage Participants & Schedule" tab,
+   A fifth path is under the [[Entering Presenters]["Manage Participants & Schedule"]] tab,
    using the "Assign participants to a session" link and choosing the
    Schedule Element from the pull-down menu at the top of the page.
 #+HTML: <A HREF="../webpages/StaffAssignParticipants.php">StaffAssignParticipants.php</A>
@@ -495,29 +591,34 @@
 #+LaTeX: \appendix
 #+LaTeX: \pagenumbering{Alph}
 * Appendix
-#+LaTeX: \begin{tiny}
+#+LaTeX: \begin{small}
 #+CAPTION: Web Pages Referenced in this Document
 #+LABEL: tbl:usefulpages
-#+ATTR_LaTeX: longtable align=|l|l|l|
+#+ATTR_LaTeX: :environment longtable :align |l|l|l| :width 0.98\textwidth
+#+ATTR_HTML: :border 1 :rules all :frame border
 |------------------------+----------------------------------------------+------------------------------------------------------------------|
 | Page Name              | Link                                         | Description                                                      |
 |------------------------+----------------------------------------------+------------------------------------------------------------------|
+| Manage Participants    | StaffManageParticipants.php                  | Staring point for most Participant management activity.          |
 | Suggest A Presenter    | BrainstormSuggestPresenter.php               | Used by non-con folks to suggest Participants.                   |
+| Migrate A Participant  | StaffMigrageParticipant.php                  | Used to Migrate a Participant from another con-instance.         |
 | Create Participant     | StaffEditCreateParticipant.php?action=create | Used to create a Participant from scratch.                       |
 | Administer Participant | AdminParticipants.php                        | Used to set the password, attendence state, and pubsname only.   |
 | Edit Participant       | StaffEditCreateParticipant.php?action=edit   | Used to update a Participant's information.                      |
 | Edit Compensation      | StaffEditCompensation.php                    | Used to edit a Presenter's compensation package.                 |
 | Presenter Compensation | PresenterCompensation.php                    | Used to display the compensation for all presenters compensated. |
 | Suggest a Session      | BrainstormCreateSession.php                  | Used by non-con folks to suggest Schedule Elements               |
+| Propose a Session      | MyProposals.php                              | Used by a Presenter to propose a Schedule Element.               |
 | Create a New Session   | CreateSession.php                            | Used to create a Schedule Element from scratch.                  |
-| Assign Participants    | StaffAssignParticipants.php                  | Used to connect a Participant to a Schedule Element              |
+| Assign Participants    | StaffAssignParticipants.php                  | Used to connect a Participant to a Schedule Element.             |
 |------------------------+----------------------------------------------+------------------------------------------------------------------|
-#+LaTeX: \end{tiny}
+#+LaTeX: \end{small}
 
 #+LaTeX: \begin{tiny}
 #+CAPTION: Useful Reports
 #+LABEL: tbl:usefulreports
-#+ATTR_LaTeX: longtable align=|l|l|l|
+#+ATTR_LaTeX: :environment longtable :align |l|l|l| :width 0.98\textwidth
+#+ATTR_HTML: :border 1 :rules all :frame border
 |-------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------|
 | Report Name       | Link                                            | Description                                                                                                              |
 |-------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------|
@@ -531,6 +632,6 @@
 |-------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------|
 #+LaTeX: \end{tiny}
 
-  In point of fact, there turned out to be too many of them, for this
-  sampling to be useful.  Please check the Conflict Reports and the
-  Prog Reports Indicies on the Available Reports page.
+  In point of fact, there turned out to be too many useful reports,
+  for this sampling to be useful.  Please check the Conflict Reports
+  and the Prog Reports Indicies on the Available Reports page.

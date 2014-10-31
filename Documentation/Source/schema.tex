@@ -1,0 +1,1313 @@
+\documentclass[captions=tablesignature]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{booktabs}
+\usepackage[scaled]{beraserif}
+\usepackage[scaled]{berasans}
+\usepackage[scaled]{beramono}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{fancyhdr}
+\usepackage{subfig}
+\usepackage{listings}
+\lstnewenvironment{common-lispcode}
+{\lstset{language={HTML},basicstyle={\ttfamily\footnotesize},frame=single,breaklines=true}}
+{}
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\description\compactdesc
+\let\enumerate\compactenum
+\usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
+\pagestyle{fancy}
+\author{Percy\thanks{NELA.Percy@gmail.com}}
+\date{March 2012}
+\title{Schema for database 'zambiademo'}
+\hypersetup{
+  pdfkeywords={Zambia, Documentation, FFF branch},
+  pdfsubject={Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in the way of entering and keeping track of Presenters for the Zambia FFF-branch instance for your conference.  This is still a work in progress.},
+  pdfcreator={}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\pagenumbering{roman}
+\thispagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{}
+\rhead{}
+\chead{}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+\begin{abstract}
+\vspace{5cm}
+{\LARGE{\textbf{Abstract:\\}}}
+ \\
+\end{abstract}
+\newpage
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+\chead{
+Schema for database 'zambiademo' \\
+}
+\lfoot{
+Percy <NELA.Percy@gmail.com> \\
+}
+\rfoot{\thepage}
+\setcounter{tocdepth}{2}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+\section{CongoDump}
+\label{sec-1}
+
+\begin{table}[htb]
+\caption{\label{tbl:congodumpfields}CongoDump Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+firstname & varchar(30) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+lastname & varchar(40) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+badgename & varchar(51) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+phone & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+email & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+postaddress & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+regtype & varchar(40) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:congodumpindexes}CongoDump Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+CongoDump & 0 & PRIMARY & 1 & badgeid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Divisions}
+\label{sec-2}
+
+\begin{table}[htb]
+\caption{\label{tbl:divisionsfields}Divisions Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+divisionid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+divisionname & varchar(30) & latin1\_general\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL &  &  & 0 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:Divisionsindexes}Divisions Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Divisions & 0 & PRIMARY & 1 & divisionid & A & 5 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Features}
+\label{sec-3}
+
+\begin{table}[htb]
+\caption{\label{tbl:featuresfields}Features Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+featureid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+featurename & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:featuresindexes}Features Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Features & 0 & PRIMARY & 1 & featureid & A & 12 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{KidsCategories}
+\label{sec-4}
+
+\begin{table}[htb]
+\caption{\label{tbl:kidscategoriesfields}KidsCategories Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+kidscatid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+kidscatname & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:kidscategoriesindexes}KidsCategories Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+KidsCategories & 0 & PRIMARY & 1 & kidscatid & A & 4 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{ParticipantAvailability}
+\label{sec-5}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantavailabilityfields}ParticipantAvailability Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+fridaymaxprog & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+saturdaymaxprog & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+sundaymaxprog & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+maxprog & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+preventconflict & varchar(255) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+otherconstraints & varchar(255) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+numkidsfasttrack & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantavailabilityindexes}ParticipantAvailability Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+ParticipantAvailability & 0 & PRIMARY & 1 & badgeid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantavailabilityfkr}ParticipantAvailabilty Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+ParticipantAvailability\_ibfk\_1 & Participants & `badgeid` & `badgeid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{ParticipantAvailabilityTimes}
+\label{sec-6}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantavailabilitytimesfields}ParticipantAvailabilityTimes Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+availabilitynum & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+starttime & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+endtime & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantavailabilitytimesindexes}ParticipantAvailabilityTimes Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+ParticipantAvailabilityTimes & 0 & PRIMARY & 1 & badgeid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+ParticipantAvailabilityTimes & 0 & PRIMARY & 2 & availabilitynum & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantavailabilitytimesfkr}ParticipantAvailabilityTimes Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+ParticipantAvailabilityTimes\_ibfk\_1 & Participants & `badgeid` & `badgeid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{ParticipantHasRole}
+\label{sec-7}
+
+\begin{table}[htb]
+\caption{\label{tbl:participanthasrolefields}ParticipantHasRole Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+roleid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participanthasroleindexes}ParticipantHasRole Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+ParticipantHasRole & 0 & PRIMARY & 1 & badgeid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+ParticipantHasRole & 0 & PRIMARY & 2 & roleid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+ParticipantHasRole & 1 & roleid & 1 & roleid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participanthasrolefkr}ParticipantHasRole Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+ParticipantHasRole\_ibfk\_1 & Participants & `badgeid` & `badgeid` & \\
+ParticipantHasRole\_ibfk\_2 & Roles & `roleid` & `roleid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{ParticipantInterests}
+\label{sec-8}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantinterestsfields}ParticipantInterests Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+yespanels & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+nopanels & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+yespeople & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+nopeople & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+otherroles & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantinterestesindexes}ParticipantInterests Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+ParticipantInterests & 0 & PRIMARY & 1 & badgeid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantinterestsfkr}ParticipantInterests Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+ParticipantInterests\_ibfk\_1 & Participants & `badgeid` & `badgeid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{ParticipantOnSession}
+\label{sec-9}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantonsessionfields}ParticipantOnSession Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+sessionid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+moderator & tinyint(4) & NULL & YES &  & 0 &  & select,insert,update,references & \\
+ts & timestamp & NULL & YES &  & CURRENT\_TIMESTAMP &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantonsessionindexes}ParticipantOnSession Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+ParticipantOnSession & 0 & PRIMARY & 1 & badgeid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+ParticipantOnSession & 0 & PRIMARY & 2 & sessionid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+ParticipantOnSession & 1 & sessionid & 1 & sessionid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantonsessionfkr}ParticipantOnSession Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+ParticipantOnSession\_ibfk\_1 & Participants & `badgeid` & `badgeid` & \\
+ParticipantOnSession\_ibfk\_2 & Sessions & `sessionid` & `sessionid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Participants}
+\label{sec-10}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantsfields}Participants Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+password & varchar(32) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+bestway & varchar(12) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+interested & tinyint(1) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+bio & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+pubsname & varchar(50) & latin1\_general\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantsindexes}Participants Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Participants & 0 & PRIMARY & 1 & badgeid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{ParticipantSessionInterest}
+\label{sec-11}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantsessioninterestfields}ParticipantSessionInterest Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+sessionid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+rank & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+willmoderate & tinyint(1) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+comments & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantsessioninterestindexes}ParticipantSessionInterest Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+ParticipantSessionInterest & 0 & PRIMARY & 1 & badgeid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+ParticipantSessionInterest & 0 & PRIMARY & 2 & sessionid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+ParticipantSessionInterest & 1 & sessionid & 1 & sessionid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantsessioninterestsfkr}ParticipantSessionInterests Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+ParticipantSessionInterest\_ibfk\_1 & Participants & `badgeid` & `badgeid` & \\
+ParticipantSessionInterest\_ibfk\_2 & Sessions & `sessionid` & `sessionid` & \\
+ParticipantSessionInterest\_ibfk\_3 & Participants & `badgeid` & `badgeid` & \\
+ParticipantSessionInterest\_ibfk\_4 & Sessions & `sessionid` & `sessionid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{ParticipantSuggestions}
+\label{sec-12}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantsuggestionsfields}ParticipantSuggestions Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+paneltopics & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+otherideas & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+suggestedguests & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantsuggestionsindexes}ParticipantSuggestions Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+ParticipantSuggestions & 0 & PRIMARY & 1 & badgeid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:participantsuggestionsfkr}ParticipantSuggestions Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+ParticipantSuggestions\_ibfk\_1 & Participants & `badgeid` & `badgeid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{PermissionAtoms}
+\label{sec-13}
+
+\begin{table}[htb]
+\caption{\label{tbl:permissionatomsfields}PermissionAtoms Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+permatomid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+permatomtag & varchar(20) & latin1\_swedish\_ci &  & UNI &  &  & select,insert,update,references & \\
+page & varchar(20) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+notes & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:permissionatomsindexes}PermissionAtoms Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+PermissionAtoms & 0 & PRIMARY & 1 & permatomid & A & 4 & (NULL) & (NULL) &  & BTREE & \\
+PermissionAtoms & 0 & taginx & 1 & permatomtag & A & 4 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{PermissionRoles}
+\label{sec-14}
+
+\begin{table}[htb]
+\caption{\label{tbl:permissionrolesfields}PermissionRoles Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+permroleid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+permrolename & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+notes & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:permissionrolesindexes}PermissionRoles Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+PermissionRoles & 0 & PRIMARY & 1 & permroleid & A & 3 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Permissions}
+\label{sec-15}
+
+\begin{table}[htb]
+\caption{\label{tbl:permissionsfields}Permissions Fields}
+\centering
+\begin{tabular}{lllllrlll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+permissionid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+permatomid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+phaseid & int(11) & NULL & YES & MUL & 0 &  & select,insert,update,references & null indicates all phases\\
+permroleid & int(11) & NULL & YES & MUL & 0 &  & select,insert,update,references & null indicates not applicable\\
+badgeid & int(11) & NULL & YES &  & 0 &  & select,insert,update,references & null indicates not applicable\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:permissionsindexes}Permissions Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Permissions & 0 & PRIMARY & 1 & permissionid & A & 4 & (NULL) & (NULL) &  & BTREE & \\
+Permissions & 0 & unique1 & 1 & permatomid & A & 4 & (NULL) & (NULL) &  & BTREE & \\
+Permissions & 0 & unique1 & 2 & phaseid & A & 4 & (NULL) & (NULL) & YES & BTREE & \\
+Permissions & 0 & unique1 & 3 & permroleid & A & 4 & (NULL) & (NULL) & YES & BTREE & \\
+Permissions & 0 & unique1 & 4 & badgeid & A & 4 & (NULL) & (NULL) & YES & BTREE & \\
+Permissions & 1 & FK\_Permissions & 1 & phaseid & A & 4 & (NULL) & (NULL) & YES & BTREE & \\
+Permissions & 1 & FK\_PRoles & 1 & permroleid & A & 4 & (NULL) & (NULL) & YES & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:permissionsfkr}Permissions Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+Permissions\_ibfk\_1 & PermissionAtoms & `permatomid` & `permatomid` & \\
+Permissions\_ibfk\_2 & Phases & `phaseid` & `phaseid` & \\
+Permissions\_ibfk\_3 & PermissionRoles & `permroleid` & `permroleid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Phases}
+\label{sec-16}
+
+\begin{table}[htb]
+\caption{\label{tbl:phasesfields}Phases Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+phaseid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+phasename & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+current & tinyint(1) & NULL & YES &  & 0 &  & select,insert,update,references & \\
+notes & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:phasesindexes}Phases Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Phases & 0 & PRIMARY & 1 & phaseid & A & 4 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{PubCharacteristics}
+\label{sec-17}
+
+\begin{table}[htb]
+\caption{\label{tbl:pubcharacteristicsfields}PubCharacteristics Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+pubcharid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+pubcharname & varchar(30) & latin1\_general\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+pubchartag & varchar(10) & latin1\_general\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL &  &  & 0 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:pubcharacteristicsindexes}PubCharacteristics Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+PubCharacteristics & 0 & PRIMARY & 1 & pubcharid & A & 4 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{PubStatuses}
+\label{sec-18}
+
+\begin{table}[htb]
+\caption{\label{tbl:pubsttausesfields}PubStatuses Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+pubstatusid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+pubstatusname & varchar(12) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL &  &  & 0 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:pubstatusesindexes}PubStatuses Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+PubStatuses & 0 & PRIMARY & 1 & pubstatusid & A & 3 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{RegTypes}
+\label{sec-19}
+
+\begin{table}[htb]
+\caption{\label{tbl:regtypesfields}RegTypes Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+regtype & varchar(40) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+message & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:regtypesindexes}RegTypes Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+RegTypes & 0 & PRIMARY & 1 & regtype & A & 9 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Roles}
+\label{sec-20}
+
+\begin{table}[htb]
+\caption{\label{tbl:rolesfields}Roles Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+roleid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+rolename & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:rolesindexes}Roles Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Roles & 0 & PRIMARY & 1 & roleid & A & 12 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{RoomHasSet}
+\label{sec-21}
+
+\begin{table}[htb]
+\caption{\label{tbl:roomhassetfields}RoomHasSet Fields}
+\centering
+\begin{tabular}{lllllrlll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+roomid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+roomsetid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+capacity & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:roomhassetindexes}RoomHasSet Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+RoomHasSet & 0 & PRIMARY & 1 & roomid & A & 84 & (NULL) & (NULL) &  & BTREE & \\
+RoomHasSet & 0 & PRIMARY & 2 & roomsetid & A & 84 & (NULL) & (NULL) &  & BTREE & \\
+RoomHasSet & 1 & roomsetid & 1 & roomsetid & A & 8 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:roomhassetfkr}RoomHasSet Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+RoomHasSet\_ibfk\_1 & Rooms & `roomid` & `roomid` & \\
+RoomHasSet\_ibfk\_2 & RoomSets & `roomsetid` & `roomsetid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Rooms}
+\label{sec-22}
+
+\begin{table}[htb]
+\caption{\label{tbl:roomsfields}Rooms Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+roomid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+roomname & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+height & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+dimensions & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+area & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+function & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+floor & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+notes & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+opentime1 & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+closetime1 & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+opentime2 & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+closetime2 & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+opentime3 & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+closetime3 & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:roomsindexes}Rooms Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Rooms & 0 & PRIMARY & 1 & roomid & A & 38 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{RoomSets}
+\label{sec-23}
+
+\begin{table}[htb]
+\caption{\label{tbl:roomsetsfields}RoomSets Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+roomsetid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+roomsetname & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:roomsetsindexes}RoomSets Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+RoomSets & 0 & PRIMARY & 1 & roomsetid & A & 12 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Schedule}
+\label{sec-24}
+
+\begin{table}[htb]
+\caption{\label{tbl:schedulefields}Schedule Fields}
+\centering
+\begin{tabular}{lllllrlll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+scheduleid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+sessionid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+roomid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+starttime & time & NULL &  &  & 00:00:00 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:scheduleindexes}Schedule Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Schedule & 0 & PRIMARY & 1 & scheduleid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+Schedule & 1 & sessionid & 1 & sessionid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+Schedule & 1 & roomid & 1 & roomid & A & 1 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:schedulefkr}Schedule Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+Schedule\_ibfk\_1 & Sessions & `sessionid` & `sessionid` & \\
+Schedule\_ibfk\_2 & Rooms & `roomid` & `roomid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Services}
+\label{sec-25}
+
+\begin{table}[htb]
+\caption{\label{tbl:servicesfields}Services Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+serviceid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+servicename & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:serviceindexes}Service Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Services & 0 & PRIMARY & 1 & serviceid & A & 14 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{SessionHasFeature}
+\label{sec-26}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionhasfeaturefields}SessionHasFeature Fields}
+\centering
+\begin{tabular}{lllllrlll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+sessionid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+featureid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionhasfeatureindexes}SessionHasFeature Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+SessionHasFeature & 0 & PRIMARY & 1 & sessionid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+SessionHasFeature & 0 & PRIMARY & 2 & featureid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+SessionHasFeature & 1 & featureid & 1 & featureid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionhasfeaturefkr}SessionHasFeature Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+SessionHasFeature\_ibfk\_1 & Sessions & `sessionid` & `sessionid` & \\
+SessionHasFeature\_ibfk\_2 & Features & `featureid` & `featureid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{SessionHasPubChar}
+\label{sec-27}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionhaspubcharfields}SessionHasPubChar Fields}
+\centering
+\begin{tabular}{lllllrlll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+sessionid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+pubcharid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionhaspubcharindexes}SessionHasPubChar Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+SessionHasPubChar & 0 & PRIMARY & 1 & sessionid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+SessionHasPubChar & 0 & PRIMARY & 2 & pubcharid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+SessionHasPubChar & 1 & Fkey2 & 1 & pubcharid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionhaspubcharfkr}SessionHasPubChar Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+Fkey1 & Sessions & `sessionid` & `sessionid` & \\
+Fkey2 & PubCharacteristics & `pubcharid` & `pubcharid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{SessionHasService}
+\label{sec-28}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionhasservicefields}SessionHasService Fields}
+\centering
+\begin{tabular}{lllllrlll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+sessionid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+serviceid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionhasserviceindexes}SessionHasService Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+SessionHasService & 0 & PRIMARY & 1 & sessionid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+SessionHasService & 0 & PRIMARY & 2 & serviceid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+SessionHasService & 1 & serviceid & 1 & serviceid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessonhasservicefkr}SessionHasService Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+SessionHasService\_ibfk\_1 & Sessions & `sessionid` & `sessionid` & \\
+SessionHasService\_ibfk\_2 & Services & `serviceid` & `serviceid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Sessions}
+\label{sec-29}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionsfields}Sessions Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+sessionid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+trackid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+typeid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+divisionid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+pubstatusid & int(11) & NULL & YES & MUL & 0 &  & select,insert,update,references & \\
+pubsno & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+title & varchar(100) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+pocketprogtext & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+progguiddesc & text & latin1\_general\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+persppartinfo & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+duration & time & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+estatten & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+kidscatid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+signupreq & tinyint(1) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+roomsetid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+notesforpart & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+servicenotes & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+statusid & int(11) & NULL &  & MUL & 0 &  & select,insert,update,references & \\
+notesforprog & text & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+warnings & tinyint(1) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+invitedguest & tinyint(1) & NULL & YES &  & 0 &  & select,insert,update,references & \\
+ts & timestamp & NULL & YES &  & CURRENT\_TIMESTAMP &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionsindexes}Sessions Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Sessions & 0 & PRIMARY & 1 & sessionid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+Sessions & 1 & trackid & 1 & trackid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+Sessions & 1 & typeid & 1 & typeid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+Sessions & 1 & kidscatid & 1 & kidscatid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+Sessions & 1 & roomsetid & 1 & roomsetid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+Sessions & 1 & statusid & 1 & statusid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+Sessions & 1 & Sessions\_ibfk\_6 & 1 & pubstatusid & A & 2 & (NULL) & (NULL) & YES & BTREE & \\
+Sessions & 1 & Sessions\_ibfk\_7 & 1 & divisionid & A & 2 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionsfkr}Sessions Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+Sessions\_ibfk\_7 & Divisions & `divisionid` & `divisionid` & \\
+Sessions\_ibfk\_1 & Tracks & `trackid` & `trackid` & \\
+Sessions\_ibfk\_2 & Types & `typeid` & `typeid` & \\
+Sessions\_ibfk\_3 & KidsCategories & `kidscatid` & `kidscatid` & \\
+Sessions\_ibfk\_4 & RoomSets & `roomsetid` & `roomsetid` & \\
+Sessions\_ibfk\_5 & SessionStatuses & `statusid` & `statusid` & \\
+Sessions\_ibfk\_6 & PubStatuses & `pubstatusid` & `pubstatusid` & \\
+\hline
+\end{tabular}
+\end{table}
+\section{SessionStatuses}
+\label{sec-30}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionstatusesfields}SessionStatuses Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+statusid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+statusname & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:sessionstatusesindexes}SessionStatuses Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+SessionStatuses & 0 & PRIMARY & 1 & statusid & A & 7 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Times}
+\label{sec-31}
+
+\begin{table}[htb]
+\caption{\label{tbl:timessfields}Times Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+timeindex & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+timetext & char(10) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:timesindexes}Times Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Times & 0 & PRIMARY & 1 & timeindex & A & 24 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Tracks}
+\label{sec-32}
+
+\begin{table}[htb]
+\caption{\label{tbl:tracksfields}Tracks Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+trackid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+trackname & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+selfselect & tinyint(1) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:trackssindexes}Tracks Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Tracks & 0 & PRIMARY & 1 & trackid & A & 22 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{Types}
+\label{sec-33}
+
+\begin{table}[htb]
+\caption{\label{tbl:typesfields}Types Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+typeid & int(11) & NULL &  & PRI & (NULL) & auto\_increment & select,insert,update,references & \\
+typename & varchar(50) & latin1\_swedish\_ci & YES &  & (NULL) &  & select,insert,update,references & \\
+display\_order & int(11) & NULL & YES &  & (NULL) &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:typesindexes}Types Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+Types & 0 & PRIMARY & 1 & typeid & A & 16 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+\section{UserHasPermissionRole}
+\label{sec-34}
+
+\begin{table}[htb]
+\caption{\label{tbl:userhaspermissionrolefields}UserHasPermissionRole Fields}
+\centering
+\begin{tabular}{lllllllll}
+\hline
+Field & Type & Collation & Null & Key & Default & Extra & Privileges & Comment\\
+\hline
+badgeid & varchar(15) & latin1\_swedish\_ci &  & PRI &  &  & select,insert,update,references & \\
+permroleid & int(11) & NULL &  & PRI & 0 &  & select,insert,update,references & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:userhaspermissionroleindexes}UserHasPermissionRole Indexes}
+\centering
+\begin{tabular}{lrlrllrlllll}
+\hline
+Table & Non unique & Key name & Seq in index & Column name & Collation & Cardinality & Sub part & Packed & Null & Index type & Comment\\
+\hline
+UserHasPermissionRole & 0 & PRIMARY & 1 & badgeid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+UserHasPermissionRole & 0 & PRIMARY & 2 & permroleid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+UserHasPermissionRole & 1 & FK\_UserHasPermissionRole & 1 & permroleid & A & 0 & (NULL) & (NULL) &  & BTREE & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\caption{\label{tbl:UserHasPermissionrolefkr}UserHasPermissionRole Foreign Key Relationships}
+\centering
+\begin{tabular}{lllll}
+\hline
+FK Id & Reference Table & Source Column & Target Column & Extra Info\\
+\hline
+UserHasPermissionRole\_ibfk\_2 & PermissionRoles & `permroleid` & `permroleid` & \\
+UserHasPermissionRole\_ibfk\_1 & Participants & `badgeid` & `badgeid` & \\
+\hline
+\end{tabular}
+\end{table}
+\end{document}

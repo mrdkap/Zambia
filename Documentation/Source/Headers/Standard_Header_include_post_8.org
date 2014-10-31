@@ -1,0 +1,29 @@
+#+LaTeX: \pagenumbering{roman}
+#+LaTeX: \thispagestyle{fancy}
+#+LaTeX: \renewcommand{\headrulewidth}{0pt}
+#+LaTeX: \renewcommand{\footrulewidth}{0pt}
+#+LaTeX: \lhead{}
+#+LaTeX: \rhead{}
+#+LaTeX: \chead{}
+#+LaTeX: \lfoot{}
+#+LaTeX: \cfoot{}
+#+LaTeX: \rfoot{}
+#+LaTeX: \begin{abstract}
+#+LaTeX: \vspace{5cm}
+#+HTML:<H2>Abstract:</H2>
+#+LaTeX: {\LARGE{\textbf{Abstract:\\}}}
+{{{DESCRIPTION}}}
+#+LaTeX: \end{abstract}
+#+LaTeX: \newpage
+#+LaTeX: \renewcommand{\headrulewidth}{1pt}
+#+LaTeX: \renewcommand{\footrulewidth}{1pt}
+#+LaTeX: \chead{
+{{{TITLE}}}
+#+LaTeX: }
+#+LaTeX: \lfoot{
+{{{AUTHOR}}} <{{{EMAIL}}}>
+#+LATEX: }
+#+LaTeX: \rfoot{\thepage}
+#+TOC: headlines 2
+#+LaTeX: \newpage
+#+LaTeX: \pagenumbering{arabic}

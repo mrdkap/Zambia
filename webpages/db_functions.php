@@ -89,7 +89,7 @@ function get_name_and_email(&$name, &$email) {
 
 /* Function populate_select_from_table(...)
    Reads parameters (see below) and a specified table from the db.
-   Outputs HTML of the "<OPTION>" values for a Select control. 
+   Outputs HTML of the "<OPTION>" values for a Select control.
    set $default_value=-1 for no default value (note not really supported by HTML)
    set $default_value=0 for initial value to be set as $option_0_text
    otherwise the initial value will be equal to the row whose id == $default_value
@@ -116,7 +116,7 @@ function populate_select_from_table($table_name, $default_value, $option_0_text,
 
 /* Function populate_select_from_query(...)
    Reads parameters (see below) and a specified query for the db.
-   Outputs HTML of the "<OPTION>" values for a Select control. 
+   Outputs HTML of the "<OPTION>" values for a Select control.
    set $default_value=-1 for no default value (note not really supported by HTML)
    set $default_value=0 for initial value to be set as $option_0_text
    otherwise the initial value will be equal to the row whose id == $default_value
@@ -133,10 +133,39 @@ function populate_select_from_query($query, $default_value, $option_0_text, $def
   $result=mysql_query($query,$link);
   while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
     echo "<OPTION value=".$option_value." ";
-    if ($option_value==$default_value)
+    if ($option_value==$default_value) {
       echo "selected";
+    }
     echo ">".$option_name."</OPTION>\n";
   }
+}
+
+/* Function populate_select_from_query_inline(...)
+   Reads parameters (see below) and a specified query for the db.
+   Outputs HTML of the "<OPTION>" values for a Select control.
+   set $default_value=-1 for no default value (note not really supported by HTML)
+   set $default_value=0 for initial value to be set as $option_0_text
+   otherwise the initial value will be equal to the row whose id == $default_value
+   assumes id's in the table start at 1
+   if $default_flag is true, the option 0 will always appear.
+   if $default_flag is false, the option 0 will only appear when $default_value is 0. */
+function populate_select_from_query_inline($query, $default_value, $option_0_text, $default_flag) {
+  global $link;
+  $returnstring="";
+  if ($default_value==0) {
+    $returnstring.="<OPTION value=0 selected>".$option_0_text."</OPTION>\n";
+  } elseif ($default_flag) {
+    $returnstring.="<OPTION value=0>".$option_0_text."</OPTION>\n";
+  }
+  $result=mysql_query($query,$link);
+  while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
+    $returnstring.="<OPTION value=".$option_value." ";
+    if ($option_value==$default_value) {
+      $returnstring.="selected";
+    }
+    $returnstring.=">".$option_name."</OPTION>\n";
+  }
+  return($returnstring);
 }
 
 /* Function populate_checkbox_block_from_array($label, $element_list, $key, $value, $box_array)
@@ -157,7 +186,7 @@ function populate_checkbox_block_from_array($label, $element_list, $key, $value,
       echo "<INPUT type=\"hidden\" name=\"was".$label."[".$box_array[$i][$key]."]\" value=\"not\">\n";
       echo "<INPUT type=\"checkbox\" name=\"".$label."[".$box_array[$i][$key]."]\" value=\"checked\">".$box_array[$i][$value]."\n";
     }
-  } 
+  }
   echo "<INPUT type=\"hidden\" name=\"".$label."_list\" value=\"".$element_list."\">\n";
 }
 
@@ -233,6 +262,9 @@ function update_session() {
   } else {
     $duration="duration='".mysql_real_escape_string($session["duration"],$link)."'";
   }
+
+  // Fix secondtitle to subtitle
+  $session["subtitle"]=$session["secondtitle"];
 
   $pairedvalue_array=array("trackid=".$session["track"],
 			   "typeid=".$session["type"],
@@ -392,6 +424,9 @@ function get_next_session_id() {
 function insert_session() {
   global $session, $link, $query, $message_error;
 
+  // Fix secondtitle to subtitle
+  $session["subtitle"]=$session["secondtitle"];
+
   $query="INSERT into Sessions set ";
   $query.="sessionid=".$session['sessionid'].',';
   $query.="conid=".$_SESSION['conid'].", ";
@@ -546,57 +581,69 @@ function retrieve_session_from_db($sessionid) {
   $query= <<<EOD
 SELECT
     sessionid, conid, trackid, typeid, divisionid, pubstatusid,
-    languagestatusid, title, secondtitle, pocketprogtext, progguiddesc, 
+    languagestatusid, title, secondtitle, pocketprogtext, progguiddesc,
     description_good_web, description_good_book, title_good_web,
     persppartinfo, duration,estatten, kidscatid, signupreq, roomsetid,
     notesforpart, servicenotes, statusid, notesforprog, suggestor,
     warnings, invitedguest, ts, subtitle_good_web
   FROM
       Sessions
-    JOIN (SELECT
+    LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as title_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=1 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
-	  descriptionlang='en-us') TGW USING (sessionid)
+        conid=$conid AND
+	descriptiontypename='title' AND
+	biostatename='good' AND
+	biodestname='web' AND
+	descriptionlang='en-us') TGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as subtitle_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=2 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
-	  descriptionlang='en-us') SGW USING (sessionid)
+        conid=$conid AND
+	descriptiontypename='subtitle' AND
+	biostatename='good' AND
+	biodestname='web' AND
+	descriptionlang='en-us') SGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as description_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
-	  descriptionlang='en-us') DGW USING (sessionid)
+        conid=$conid AND
+	descriptiontypename='description' AND
+	biostatename='good' AND
+	biodestname='web' AND
+	descriptionlang='en-us') DGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as description_good_book
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=2 AND
-	  descriptionlang='en-us') DGB USING (sessionid)
+        conid=$conid AND
+	descriptiontypename='description' AND
+	biostatename='good' AND
+	biodestname='book' AND
+	descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     conid=$conid AND
     sessionid=$sessionid
@@ -626,8 +673,17 @@ EOD;
   $session["subtitle_good_web"]=$sessionarray["subtitle_good_web"];
   $session["pocketprogtext"]=$sessionarray["pocketprogtext"];
   $session["progguiddesc"]=$sessionarray["progguiddesc"];
-  $session["description_good_web"]=$sessionarray["description_good_web"];
-  $session["description_good_book"]=$sessionarray["description_good_book"];
+  if (($sessionarray["description_good_web"]=="") and ($sessionarray["progguiddesc"]!="")) {
+    $session["description_good_web"]=$sessionarray["progguiddesc"];
+  } else {
+    $session["description_good_web"]=$sessionarray["description_good_web"];
+  }
+  if (($sessionarray["description_good_book"]=="") and ($sessionarray["pocketprogtext"]!="")) {
+    $session["description_good_book"]=$sessionarray["pocketprogtext"];
+  } else {
+    $session["description_good_book"]=$sessionarray["description_good_book"];
+  }
+
   $session["persppartinfo"]=$sessionarray["persppartinfo"];
   $timearray=parse_mysql_time_hours($sessionarray["duration"]);
   if ($_SESSION['condurationminutes']=="TRUE") {

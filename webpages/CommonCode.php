@@ -316,7 +316,7 @@ function brainstorm_header($title) {
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     maketab("Suggest a Session",may_I('BrainstormSubmit'),"BrainstormCreateSession.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    maketab("Search Sessions",1,"BrainstormSearchSession.php");
+    maketab("Search Sessions",1,"BrainstormReport.php?status=search");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     maketab("Suggest a Presenter",may_I('BrainstormSubmit'),"BrainstormSuggestPresenter.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
@@ -780,7 +780,7 @@ EOD;
    biostateid: 1=raw 2=edited 3=good
    biodestid: 1=web 2=book
    descriptionlang: Only using "en-us" for now.*/
-function retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid) {
+function retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist) {
   require_once('db_functions.php');
   global $result;
   global $link, $title, $message2;
@@ -879,7 +879,7 @@ EOD;
   if (($trackidlist!=0) and ($trackidlist!="")) {$query.=" AND trackid in ($trackidlist)";}
   if (($statusidlist!=0) and ($statusidlist!='')) {$query.=" AND statusid in ($statusidlist)";}
   if (($typeidlist!=0) and ($typeidlist!='')) {$query.=" AND typeid in ($typeidlist)";}
-  if (($sessionid!=0) and ($sessionid!='')) {$query.=" AND sessionid = $sessionid";}
+  if (($sessionidlist!=0) and ($sessionidlist!='')) {$query.=" AND sessionid in ($sessionidlist)";}
 
   //Retrieve query and fail if query fails.
   if (($result=mysql_query($query,$link))==false) {
@@ -894,38 +894,42 @@ EOD;
    $sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
    IN THAT ORDER
    it displays the precis view of the data. This goes hand in hand with the retrieve_select_from_db above.*/
-function RenderPrecis($result,$showlinks) {
-    echo "<hr>\n";
-    echo "<TABLE>\n";
-    echo "   <COL><COL><COL><COL><COL>\n";
-    while (list($sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer)
-	     =mysql_fetch_array($result, MYSQL_NUM)) {
-        echo "<TR>\n";
-        echo "  <TD rowspan=3 class=\"border0000\" id=\"sessidtcell\"><b>";
-        if ($showlinks){
-		echo "<A HREF=\"StaffAssignParticipants.php?selsess=".$sessionid."\">".$sessionid."</A>";
-	    }
-        echo "&nbsp;&nbsp;</TD>\n";
-	echo "  <TD class=\"border0000\"><b>".$proposer."</TD>\n";
-	echo "  <TD class=\"border0000\"><b>".$trackname."</TD>\n";
-	echo "  <TD class=\"border0000\"><b>".$typename."</TD>\n";
-        echo "  <TD class=\"border0000\"><b>";
-           if ($showlinks){
-                   echo "<A HREF=\"EditSession.php?id=".$sessionid."\">".htmlspecialchars($title,ENT_NOQUOTES)."</A>";
-	       } else {
-                   echo htmlspecialchars($title,ENT_NOQUOTES);
-               }
-        echo "&nbsp;&nbsp;</TD>\n";
-	echo "  <TD class=\"border0000\"><b>".$duration."</TD>\n";
-	echo "</TR>\n";
-	echo "<TR><TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($desc_good_web,ENT_NOQUOTES)."</TD></TR>\n";
-	echo "<TR><TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($desc_good_book,ENT_NOQUOTES)."</TD></TR>\n";
-	echo "<TR><TD colspan=6 class=\"border0000\">".htmlspecialchars($persppartinfo,ENT_NOQUOTES)."</TD></TR>\n";
-	echo "<TR><TD colspan=6 class=\"border0020\">&nbsp;</TD></TR>\n";
-	echo "<TR><TD colspan=6 class=\"border0000\">&nbsp;</TD></TR>\n";
+function RenderPrecis($result) {
+  echo "<hr>\n";
+  echo "<TABLE>\n";
+  echo "   <COL><COL><COL><COL><COL>\n";
+  while (list($sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer)=mysql_fetch_array($result, MYSQL_NUM)) {
+    echo "<TR>\n";
+    echo "  <TD rowspan=3 class=\"border0000\" id=\"sessidtcell\"><b>";
+    if (may_I('Staff')){
+      echo "<A HREF=\"StaffAssignParticipants.php?selsess=".$sessionid."\">".$sessionid."</A>";
     }
-    echo "</TABLE>\n";
+    echo "&nbsp;&nbsp;</TD>\n";
+    if (may_I('Staff')) {
+      echo "  <TD class=\"border0000\"><b>".$proposer."</TD>\n";
+      echo "  <TD class=\"border0000\"><b>".$trackname."</TD>\n";
+    } else {
+      echo "  <TD colspan=2 class=\"border0000\"><b>".$trackname."</TD>\n";
+    }
+    echo "  <TD class=\"border0000\"><b>".$typename."</TD>\n";
+    echo "  <TD class=\"border0000\"><b>";
+    if (may_I('Staff')){
+      echo "<A HREF=\"EditSession.php?id=".$sessionid."\">".htmlspecialchars($title,ENT_NOQUOTES)."</A>";
+    } else {
+      echo htmlspecialchars($title,ENT_NOQUOTES);
+    }
+    echo "&nbsp;&nbsp;</TD>\n";
+    echo "  <TD class=\"border0000\"><b>".$duration."</TD>\n";
+    echo "</TR>\n";
+    echo "<TR><TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($desc_good_web,ENT_NOQUOTES)."</TD></TR>\n";
+    echo "<TR><TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($desc_good_book,ENT_NOQUOTES)."</TD></TR>\n";
+    echo "<TR><TD colspan=6 class=\"border0000\">".htmlspecialchars($persppartinfo,ENT_NOQUOTES)."</TD></TR>\n";
+    echo "<TR><TD colspan=6 class=\"border0020\">&nbsp;</TD></TR>\n";
+    echo "<TR><TD colspan=6 class=\"border0000\">&nbsp;</TD></TR>\n";
+  }
+  echo "</TABLE>\n";
 }
+
 /* Generic insert takes five variables: link, title, Table, array of elements, array of values */
 function submit_table_element ($link, $title, $table, $element_array, $value_array) {
   foreach ($element_array as $element) {$element_string.=mysql_real_escape_string(stripslashes($element)).",";}

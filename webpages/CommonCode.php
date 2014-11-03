@@ -2,7 +2,6 @@
 require_once('Constants.php');
 require_once('data_functions.php');
 require_once('db_functions.php');
-require_once('render_functions.php');
 require_once('validation_functions.php');
 require_once('php_functions.php');
 require_once('error_functions.php');
@@ -928,6 +927,88 @@ function RenderPrecis($result) {
     echo "<TR><TD colspan=6 class=\"border0000\">&nbsp;</TD></TR>\n";
   }
   echo "</TABLE>\n";
+}
+
+/* This function will output the page with the form to search for a session
+   Variables:
+   track: a number signifying the trackid in the Tracks table, or 0 - implying all
+   status: a number signifying the statusid in the SessonStatuses table, or 0 - implying all
+   type: a number signifying the typeid in the Types table, or 0 - implying all
+   sessionid: a sessionid from the Sessions table, limited to this con-instance.
+   The output varies depending on the permissions of the caller.
+*/
+function RenderSearchSession ($track,$status,$type,$sessionid) {
+
+  // If staff, switch on the queries.  Else defaults to Brainstorm
+  if (may_I('Staff')) {
+    $query_track="SELECT trackid, trackname FROM Tracks ORDER BY display_order";
+    $query_status="SELECT statusid, statusname FROM SessionStatuses ORDER BY display_order";
+    $query_type="SELECT typeid, typename FROM Types ORDER BY display_order";
+    $colspan=9;
+  } else {
+    $query_track="SELECT trackid, trackname FROM Tracks WHERE selfselect=1 ORDER BY display_order";
+    // Search left out of choices to avoid tail-biting.
+    $statuschoice['all']="ANY";
+    $statuschoice['unseen']="New (Unseen)";
+    $statuschoice['reviewed']="Reviewed";
+    $statuschoice['likely']="Likely to Occur";
+    $statuschoice['scheduled']="Scheduled";
+    $sessionid="";
+    $colspan=4;
+  }
+
+  $returnstring.="    <INPUT type=\"hidden\" name=\"issearch\" value=\"1\">\n";
+  $returnstring.="    <TABLE>\n";
+  $returnstring.="      <TR>\n";
+
+  //Track Info
+  $returnstring.="        <TD>Track: </TD>\n";
+  $returnstring.="        <TD><SELECT class=\"tcell\" name=\"track\">\n";
+  $returnstring.=populate_select_from_query_inline($query_track, $track, "ANY", true);
+  $returnstring.="            </SELECT></TD>\n";
+
+  //Type Info, only for Staff
+  if (may_I('Staff')) {
+    $returnstring.="        <TD>Type:</TD>\n";
+    $returnstring.="        <TD><SELECT name=\"type\">\n";
+    $returnstring.=populate_select_from_query_inline($query_type, $type, "ANY", true);
+    $returnstring.="            </SELECT></TD>\n";
+  }
+
+  //Status Info
+  $returnstring.="        <TD>Status:</TD>\n";
+  $returnstring.="        <TD><SELECT name=\"status\">\n";
+  //different for Staff and Brainstorm
+  if (may_I('Staff')) {
+    $returnstring.=populate_select_from_query_inline($query_status, $status, "ANY", true);
+  } else {
+    foreach ($statuschoice as $key => $value) {
+      $returnstring.="<OPTION value=\"$key\" ";
+      if ($key==$_POST['status']) {
+	$returnstring.="selected";
+      }
+      $returnstring.=">$value</OPTION>\n";
+    }
+  }
+  $returnstring.="            </SELECT></TD>\n";
+
+  //Sessionid, only for Staff
+  if (may_I('Staff')) {
+    $returnstring.="        <TD>Session ID:</TD>\n";
+    $returnstring.="        <TD><INPUT type=\"text\" name=\"sessionid\" size=\"10\"";
+    if ((isset($sessionid)) and (is_numeric($sessionid)) and ($sessionid > 0)) {
+      $returnstring.=" value=\"$sessionid\"";
+    }
+    $returnstring.=">\n</TD>";
+    $returnstring.="        <TD>(Leave blank for any)</TD>\n";
+  }
+  $returnstring.="      </TR>\n";
+
+  //Submit button
+  $returnstring.="      <TR><TD colspan=$colspan align=right><BUTTON type=submit value=\"search\">Search</BUTTON></TD></TR>\n";
+  $returnstring.="    </TABLE>\n";
+
+  return($returnstring);
 }
 
 /* Generic insert takes five variables: link, title, Table, array of elements, array of values */

@@ -1,6 +1,5 @@
 <?php
 require_once('StaffCommonCode.php');
-require_once('RenderSearchSession.php');
 global $participant,$message_error,$message2,$congoinfo;
 
 $title="Staff - Manage Sessions";
@@ -17,17 +16,18 @@ topofpagereport($title,$description,$additionalinfo);
    <DD>Rapidly access a Session from the list of Sessions to Edit or Update.</DD>
    <DT><A HREF="genreport.php?reportname=viewsessioncountreport">View Counts of Sessions</A>(<A HREF="genreport.php?reportname=viewrollupsessioncountreport">Alternate View Counts of Sessions</A>)</DT>
    <DD>A quick report broken down by status and then by track to give an idea of where we are.</DD>
-   <DT><A HREF="genreport.php?reportname=ViewAllSessions">View All Sessions:</A></DT>
+   <DT><A HREF="genreport.php?reportname=ViewAllSessions">View All Sessions</A></DT>
    <DD>A tabular report on all sessions organized by track.  Key information on each session is visible from the top level and a link takes you down into the details for any session.</DD>
    <DT><A HREF="CommentOnSessions.php">Session Comments</A></DT>
    <DD>Add comments and feedback specifically for Sessions.</DD>
    <DT><A HREF="VoteOnSession.php">Vote on Sessions</A></DT>
    <DD>Add or update your vote on a set of presenter Sessions.</DD>
-   <DT><A HREF="ViewPrecis.php?showlinks=0">Precis View</A>&nbsp;
-       (<A HREF="ViewPrecis.php?showlinks=1">Precis View With Links</A>)</DT>
-   <DD>Since the purpose of the Precis is to get participants to signup to be on various panels or to help with various events, this report contains sessions where that status is "brainstorm" or "vetted".  Note that sessions marked "invited guest only" are not included in the precis (regardless of status).</DD>
+   <DT><A HREF="ViewPrecis.php">Precis View</A></DT>
+  <DD>This shows all the active Precis, in the status of "Brainstorm", "Edit me", "Vetted", "Assigned", or "Scheduled".</DD>
 </DL>
 
 <P> Session Search (shows same data as Precis View except on all sessions):</P>
-<?php RenderSearchSession(); ?>
+<FORM method=POST action="ViewPrecis.php">
+<?php $search=RenderSearchSession(0,0,0,""); echo $search ?>
+</FORM>
 <?php correct_footer(); ?>

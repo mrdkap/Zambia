@@ -30,7 +30,7 @@ Please expect the suggestions you submit to evolve over time.
 physically possible with the space and time we have, so not 
 everything will make it.   We do save good ideas for future conventions. 
 <UL> 
-  <LI> <A HREF="BrainstormSearchSession.php">Search </A> for similar ideas or get inspiration.
+  <LI> <A HREF="BrainstormReport.php?status=search">Search </A> for similar ideas or get inspiration.
   <LI> Email <?php echo "<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A> ";?> to suggest modifications on existing suggestion.
   <LI> <A HREF="BrainstormCreateSession.php">Enter a new suggestion.</A>
   <LI> See the list of <A HREF="BrainstormReport.php?status=all">All</A> suggestions (we have seen some and not see others).

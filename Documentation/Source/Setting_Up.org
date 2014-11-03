@@ -840,7 +840,7 @@ for i in FFF-[34]*
    This will give you the badgeids and conroleids to add to the
    table.  It is in the format of:
    + badgeid: The unique id of an individual in Zambia.
-   + permroleid: A role that an individual will have for this con.
+   + conroleid: A role that an individual will have for this con.
    + conid: The con that the role is for.  This should be set to
      whatever conid you are creating.
    You can always go back and add to this, as the shape of your con

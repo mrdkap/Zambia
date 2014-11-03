@@ -4,7 +4,8 @@ global $link;
 $conid=$_SESSION['conid'];
 $badgeid=$_SESSION['badgeid'];
 $title="Votes On Session";
-$description="<P>Select the presenter's classes you wish to vote on.</P>";
+$description="<P>Select the presenter's classes you wish to vote on, or ";
+$description.="<A HREF=\"genreport.php?reportname=brainstormsubmiswvotes\">see all the votes</A>.</P>";
 
 if (isset($_GET["suggestor"])) { // Sets the "suggestor" from the GET string
   $suggestor=$_GET["suggestor"];
@@ -103,7 +104,7 @@ if (empty($suggestor)) {
 $query=<<<EOD
 SELECT
     concat('<A NAME=',sessionid,' HREF=StaffAssignParticipants.php?selsess=',sessionid,'>', sessionid,'</A>') AS 'Session<BR>id',
-    concat('<A HREF=EditSession.php?id=',sessionid,'>',title_good_web,if(subtitle_good_web,concat(": ",subtitle_good_web),''),'</A>') AS Title,
+    concat('<A HREF=EditSession.php?id=',sessionid,'>',title_good_web,if(subtitle_good_web IS NOT NULL, concat(": ",subtitle_good_web),''),'</A>') AS Title,
     concat(P.pubsname,' - ',notesforpart) AS 'Proposer',
     Trackname,
     desc_good_web AS Description,
@@ -251,7 +252,11 @@ for ($i=1; $i<=$votable_rows; $i++) {
   echo "  </TR>\n";
 }
 echo "</TABLE>\n";
+echo "<BR>\n";
+echo "<BR>\n";
 echo "<BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\" >Update</BUTTON>\n";
+echo "<BR>\n";
+echo "<BR>\n";
 echo "</FORM>\n";
 
 echo "<P>Here are the classes, their descriptions, and the votes to date:</P>\n";

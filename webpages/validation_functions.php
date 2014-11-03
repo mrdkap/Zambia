@@ -248,7 +248,7 @@ function validate_participant_availability() {
   }
   if ($_SESSION['connumdays']>1) {
     for ($i=1; $i<=$_SESSION['connumdays']; $i++) {
-      if (!($partAvail["maxprogday$i"]>=0 and $partAvail["maxprogday$i"]<=10)) {
+      if (!($partAvail["maxprogday$i"]>=0 and $partAvail["maxprogday$i"]<=$_SESSION['condailysess'])) {
 	$messages.="For each daily maximum number of panels, enter a number between 0 and ".$_SESSION['condailysess']."<BR>\n";
 	$flag=false;
 	break;

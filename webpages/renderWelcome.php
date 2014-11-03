@@ -90,8 +90,8 @@ to your participation again next year.</P>
 
 <P> Your attendence is currently listed as: <?php echo $interested; ?>.</P>
 
-<P> If this does not match with your expectations please, get in touch with
-your liaison person, as soon as possible.</P>
+<P> If this does not match with your expectations please get in touch with
+your liaison person as soon as possible.</P>
 
 <HR>
 <?php if ($chpw) { ?>
@@ -133,11 +133,11 @@ if (may_I('my_availability')) {
     echo file_get_contents("../Local/Verbiage/Welcome_3");
   } else {
 ?>
-  <P> We need to know your availability for scheduling. Please complete the questions in our <A HREF="my_sched_constr.php">"My Availability"</A> form so we can best accomodate your scheduling preferences.
+  <P> We need to know your availability for scheduling. Please complete the questions in our <A HREF="my_sched_constr.php">"My Availability"</A> form so we can best accommodate your scheduling preferences.
     <UL>
-      <LI> Set the total number of times you would be willing to commit to, for all of <?php echo $_SESSION['conname']; ?>.</LI>
-      <LI> Set the per day number of times you would be willing to commit to. </LI>
-      <LI> Indicate the times you are able to commit to <?php echo $_SESSION['conname']; ?>. </LI>
+      <LI> Set the total number of time slots you would be willing to commit to for the whole event.</LI>
+      <LI> Set the number of time slots per day to which you would be willing to commit. </LI>
+      <LI> Indicate the times you are available. </LI>
       <LI> Indicate any conflicts or other constraints. </LI>
     </UL></P>
 <?php
@@ -148,14 +148,14 @@ if (file_exists("../Local/Verbiage/Welcome_4")) {
 } else {
 ?>
  <P>Please check the contact information we have on file for you under <A HREF="my_contact.php">"My Profile"</A>. Here you can change your password<?php
-if (may_I('EditBio')) { ?>, edit your name as wish for it to appear in our publications and edit your bio<?php } ?>.
+if (may_I('EditBio')) { ?>, edit your name as you wish for it to appear in our publications, and edit your bio<?php } ?>.
 If you are a new presenter or vendor, we will need a short and long bio for <?php echo $_SESSION['conname']; ?> web and program book publications.
     <UL>
       <LI>Check your contact information.</LI>
-      <LI>Change your passowrd.</LI>
+      <LI>Change your password.</LI>
 <?php  if (may_I('EditBio')) { ?>
       <LI>Edit your name as you want to appear in our publications.</LI>
-      <LI>Enter a short and long bio for <?php echo $_SESSION['conname']; ?> web and program book publications.</LI>
+      <LI>Enter a short and long bio for web and program book publications.</LI>
 <?php } ?>
     </UL></P>
 <?php
@@ -165,8 +165,8 @@ if (may_I('my_schedule')) {
       echo file_get_contents("../Local/Verbiage/Welcome_5");
     } else {
 ?>
-  <P>We offer a personalized view of your schedule. To see what you have been scheduled to do at the con, see <A HREF="MySchedule.php">"My Schedule"</A>. If there are issues, conflict or questions please email us at 
-<a href="mailto: <?php echo $_SESSION['programemail']; ?>"><?php echo $_SESSION['programemail']; ?></a> As a courtesy to you, any previous schedules are listed on this page.</P>
+  <P>We offer a personalized view of your schedule. To see what you have been scheduled to do at the con, see <A HREF="MySchedule.php">"My Schedule"</A>. If there are issues, conflicts or questions please email us at 
+<a href="mailto: <?php echo $_SESSION['programemail']; ?>"><?php echo $_SESSION['programemail']; ?></a>. As a courtesy to you, any previous schedules are listed on this page.</P>
 <?php
   }
 }
@@ -176,7 +176,7 @@ if (may_I('search_panels')) {
   } else {
 ?>
 <HR>
-  <P>We offer panel discussions.  To see what has been suggested for <?php echo $_SESSION['conname']; ?>, <A HREF="my_sessions1.php">"Search Panels"</A> and select the ones you are interest in. (Please save your selections often.)</P>
+  <P>We offer panel discussions.  To see what has been suggested for <?php echo $_SESSION['conname']; ?>, <A HREF="my_sessions1.php">"Search Panels"</A> and select the ones you are interested in. (Please save your selections often.)</P>
 <?php 
   }
 }

@@ -12,7 +12,7 @@ $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $BioDB=BIODB; // make it a variable so it can be substituted
 
 // To make navigation easier
-$jumpstring="<P>Jump to: <A HREF=\"#Flow\">Session Flow</A> :: <A HREF=\"#ToO\">Table of Orgaization</A> :: <A HREF=\"#Jobs\">Job Descriptions</A></P>\n";
+$jumpstring="<P>Jump to: <A HREF=\"#Flow\">Session Flow</A> :: <A HREF=\"#ToO\">Table of Organization</A> :: <A HREF=\"#Jobs\">Job Descriptions</A></P>\n";
 
 // Header variables
 $title="Staff Overview";

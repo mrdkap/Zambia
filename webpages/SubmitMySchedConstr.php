@@ -4,6 +4,7 @@
     global $partAvail,$availability;
     require ('PartCommonCode.php'); // initialize db; check login;
     //                                  set $badgeid from session
+    $conid=$_SESSION['conid'];
     get_participant_availability_from_post();
     $status=validate_participant_availability(); /* return true if OK.  Store error messages in
         global $messages */

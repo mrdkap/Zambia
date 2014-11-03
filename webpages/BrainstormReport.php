@@ -82,46 +82,11 @@ $additionalinfo.="<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['
 $additionalinfo.="<P>This list is sorted by Track and then Title.</P>\n";
 
 if ((isset($_POST['status'])) OR ($_GET['status']=='search')) {
-  // This query is all the tracks that could be self-selected.
-  $query = "SELECT trackid, trackname FROM Tracks WHERE selfselect=1 ORDER BY display_order";
+  $search=RenderSearchSession($trackid,$statusid,0,"");
 
   $additionalinfo.="<BR>\n";
   $additionalinfo.="<FORM name=\"brainstormsearchsession\" method=POST action=\"BrainstormReport.php\">\n";
-  $additionalinfo.="<INPUT type=\"hidden\" name=\"issearch\" value=\"1\">\n";
-  $additionalinfo.="<TABLE>\n";
-  $additionalinfo.="  <TR>\n";
-
-  //Track info
-  $additionalinfo.="    <TD>Track:</TD>\n";
-  $additionalinfo.="    <TD><SELECT class=\"tcell\" name=\"track\">\n";
-  $additionalinfo.=populate_select_from_query_inline($query, $trackid, "ANY", true);
-  $additionalinfo.="        </SELECT></TD>\n";
-  $additionalinfo.="    <TD>Status:</TD>\n";
-  $additionalinfo.="    <TD><SELECT class=\"tcell\" name=\"status\">\n";
-
-  // Select on status to display
-  foreach ($statuschoice as $key => $value) {
-    $additionalinfo.="<OPTION value=\"$key\" ";
-    if ($key==$_POST['status']) {
-      $additionalinfo.="selected";
-    }
-    $additionalinfo.=">$value</OPTION>\n";
-  }
-
-  /* Title needs to be added to search ability soon.
-     $additionalinfo.="    <TD>Title Search:</TD>\n";
-     $additionalinfo.="    <TD> <INPUT type=\"text\" name=\"title\" value=\"$titlesearch\"></TD>\n";
-  */
-  // The next line is a placeholder for the title search, dyked out above:
-  $additionalinfo.="    <TD></TD>\n<TD></TD>\n";
-
-  $additionalinfo.="  </TR>\n";
-  $additionalinfo.="  <TR>\n";
-  $additionalinfo.="    <TD colspan=7, align=right>\n";
-  $additionalinfo.="      <BUTTON type=submit value=\"search\">Search</BUTTON>\n";
-  $additionalinfo.="    </TD>\n";
-  $additionalinfo.="  </TR>\n";
-  $additionalinfo.="</TABLE>\n";
+  $additionalinfo.=$search;
   $additionalinfo.="</FORM>\n";
 
   // Add the switch on track
@@ -156,4 +121,4 @@ if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid)==
 // Or fail.
 $message_error="Error retrieving from database. ".$message2;
 RenderError($title,$message_error);
-?> 
+?>

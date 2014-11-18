@@ -271,10 +271,10 @@ $header_cells.="</TR>";
 $query = <<<EOD
 SELECT
       sessionid,
-      GROUP_CONCAT(IF((volunteer=0 AND introducer=0 AND aidedecamp=0),concat("<A HREF=\"StaffBios.php#",pubsname,"\">",pubsname,"</A>",if((moderator=1),'(m), ',', ')),"") SEPARATOR "") as presentpubsnames,
-      GROUP_CONCAT(IF((volunteer=1),concat(pubsname,"(v), "),"") SEPARATOR "") as volpubsnames,
-      GROUP_CONCAT(IF((introducer=1),concat(pubsname,"(i), "),"") SEPARATOR "") as intpubsnames,
-      GROUP_CONCAT(IF((aidedecamp=1),concat(pubsname,"(a), "),"") SEPARATOR "") as aidpubsnames
+      GROUP_CONCAT(IF((volunteer not in ('1','yes') AND introducer not in ('1','yes') AND aidedecamp not in ('1','yes')),concat("<A HREF=\"StaffBios.php#",pubsname,"\">",pubsname,"</A>",if((moderator in ('1','yes')),'(m), ',', ')),"") SEPARATOR "") as presentpubsnames,
+      GROUP_CONCAT(IF((volunteer in ('1','yes')),concat(pubsname,"(v), "),"") SEPARATOR "") as volpubsnames,
+      GROUP_CONCAT(IF((introducer in ('1','yes')),concat(pubsname,"(i), "),"") SEPARATOR "") as intpubsnames,
+      GROUP_CONCAT(IF((aidedecamp in ('1','yes')),concat(pubsname,"(a), "),"") SEPARATOR "") as aidpubsnames
     FROM
       Sessions
     JOIN ParticipantOnSession USING (sessionid,conid)

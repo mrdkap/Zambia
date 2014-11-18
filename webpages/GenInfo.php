@@ -56,6 +56,12 @@ if ($nowis < $constart) {
     $description.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
     $description.="    <INPUT type=\"submit\" name=\"submit\" value=\"Class/Presenter Submission\">\n";
     $description.="  </FORM>\n";
+    $description.="  <FORM name=\"brainstormviewform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+    $description.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+    $description.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+    $description.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+    $description.="    <INPUT type=\"submit\" name=\"submit\" value=\"View Suggested Classes\">\n";
+    $description.="  </FORM>\n";
   }
   if ($phase_array['Vendor'] == '0' ) {
     $description.=" -";

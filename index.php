@@ -78,6 +78,7 @@ $title="Zambia -- Check out the links below to learn about the great programming
 $onetime=0;
 for ($i=1; $i<=$conrows; $i++) {
   $conid=$ConCount_array[$i];
+  if ($ConInfo_array[$conid]['constartdate']=="0000-00-00 00:00:00") continue;
   $constart=strtotime($ConInfo_array[$conid]['constartdate']);
   $connumdays=$ConInfo_array[$conid]['connumdays'];
   if ($connumdays > 1) {
@@ -133,6 +134,12 @@ for ($i=1; $i<=$conrows; $i++) {
       $webstring.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
       $webstring.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
       $webstring.="    <INPUT type=\"submit\" name=\"submit\" value=\"Class/Presenter Submission\">\n";
+      $webstring.="  </FORM>\n";
+      $webstring.="  <FORM name=\"brainstormviewform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+      $webstring.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+      $webstring.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+      $webstring.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+      $webstring.="    <INPUT type=\"submit\" name=\"submit\" value=\"View Suggested Classes\">\n";
       $webstring.="  </FORM>\n";
     }
     if ($phase_array[$conid]['Vendor'] == '0' ) {

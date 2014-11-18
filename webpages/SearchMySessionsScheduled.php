@@ -31,7 +31,7 @@ $query = <<<EOD
 SELECT
     concat(conname," - ",sessionid) AS Sessionid,
     trackname,
-    concat(title_good_web,if((subtitle_good_web IS NULL),"",": ".subtitle_good_web)) AS title ,
+    concat(title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web))) AS title ,
     CASE
       WHEN (minute(duration)=0) AND (starttime) THEN CONCAT(DATE_FORMAT(duration,'%l hr starting '), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a %l:%i %p'))
       WHEN (minute(duration)=0) THEN DATE_FORMAT(duration,'%l hr')

@@ -67,6 +67,10 @@ function SubmitAssignParticipants() {
     $element_array = array('badgeid','sessionid','conid','moderator','volunteer','introducer','aidedecamp');
     $value_array = array($asgnpart, $selsessionid, $conid, "0", "0", "0", "0");
     $message.=submit_table_element($link, $title, "ParticipantOnSession", $element_array, $value_array);
+    // statusid 7 is Assigned.  This should probably be done more dynamically.
+    $pairedvalue_array=array("statusid='7'");
+    $match_string="sessionid='".$selsessionid."' AND conid='".$conid."'";
+    $message.=update_table_element_extended_match ($link,$title,"Sessions",$pairedvalue_array, $match_string);
   }
 }
 ?>    

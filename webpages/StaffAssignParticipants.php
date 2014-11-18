@@ -77,14 +77,72 @@ if ($selsessionid==0) {
 
 $query = <<<EOD
 SELECT 
-    title,
-    pocketprogtext,
-    progguiddesc,
+    concat(title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web))) AS title,
+    desc_good_web,
+    desc_good_book,
     persppartinfo,
     notesforpart,
-    notesforprog
+    notesforprog,
+    pubsname
   FROM
       Sessions
+    JOIN Participants ON (suggestor=badgeid)
+    JOIN (SELECT
+        sessionid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+          conid=$conid AND
+	  descriptiontypename='title' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+          conid=$conid AND
+	  descriptiontypename='subtitle' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') SGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+          conid=$conid AND
+	  descriptiontypename='description' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') DGW USING (sessionid)
+    LEFT JOIN (SELECT
+        sessionid,
+	descriptiontext as desc_good_book
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+          conid=$conid AND
+	  descriptiontypename='description' AND
+	  biostatename='good' AND
+	  biodestname='book' AND
+	  descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     sessionid=$selsessionid AND
     conid=$conid
@@ -107,11 +165,11 @@ if (mysql_num_rows($result)!=1) {
 echo "<H2>$selsessionid - <A HREF=\"EditSession.php?id=".$selsessionid."\">".htmlspecialchars(mysql_result($result,0,"title"))."</A></H2>";    
 echo "<P>Web Program Text\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"progguiddesc"));
+echo htmlspecialchars(mysql_result($result,0,"desc_good_web"));
 echo "\n";
 echo "<P>Program Book Text\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"pocketprogtext"));
+echo htmlspecialchars(mysql_result($result,0,"desc_good_book"));
 echo "\n";
 echo "<P>Prospective Participant Info\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
@@ -120,6 +178,10 @@ echo "\n";
 echo "<P>Notes for Participant\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
 echo htmlspecialchars(mysql_result($result,0,"notesforpart"));
+echo "\n";
+echo "<P>Suggestor\n";
+echo "<P class=\"border1111 lrmargin lrpad\">";
+echo htmlspecialchars(mysql_result($result,0,"pubsname"));
 echo "\n";
 echo "<P>Notes for Program Staff\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
@@ -236,7 +298,7 @@ SELECT
                           sessionid=$selsessionid AND
 		          conid=$conid)
   ORDER BY
-    IF(instr(pubsname,lastname)>0,lastname,substring_index(pubsname,' ',-1)),firstname
+    pubsname
 EOD;
 
 $i=0;

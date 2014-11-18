@@ -131,6 +131,23 @@ function validate_integer($input,$min,$max) {
         array('options' => array('min_range' => $min, 'max_range' => $max))
         );
     }
+// Function validate_conid($conid)
+// Return true if input is a valid conid element
+// otherwise false
+function validate_conid($conid) {
+  global $link;
+  $query="SELECT conid FROM ConInfo";
+  list($rows,$header_array,$conid_array)=queryreport($query,$link,"alidate_conid","","");
+  $retval=false;
+  for ($i=1; $i<=$rows; $i++) {
+    if ($conid_array[$i]['conid']==$conid) {
+      $retval=true;
+    }
+  }
+  return ($retval);
+}
+
+
 // Function validate_session()
 // Reads global $session array and performs tests.
 // If a test fails, then the global $message is populated

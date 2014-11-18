@@ -15,8 +15,8 @@ if (isset($_GET["id"])) { // Sets the "id" from the GET string
   $id=$_POST["id"];
  }
 
-if ((is_numeric($id)) and ($id>0)) { // If the "id" is numerica and greater than one, test it
-  $status=retrieve_session_from_db($id);
+if ((is_numeric($id)) and ($id>0)) { // If the "id" is numeric and greater than one, test it
+  $status=retrieve_session_from_db($id,$conid);
   if ($status==-3) {
     $message_error.="Error retrieving record from database. ".$message2;
     $error=true;

@@ -779,15 +779,18 @@ EOD;
    biostateid: 1=raw 2=edited 3=good
    biodestid: 1=web 2=book
    descriptionlang: Only using "en-us" for now.*/
-function retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist) {
+function retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist,$prevcon) {
   require_once('db_functions.php');
   global $result;
   global $link, $title, $message2;
   $conid=$_SESSION['conid'];
 
+  if (validate_conid($prevcon)) {$conid=$prevcon;}
+
   $query=<<<EOD
 SELECT
     sessionid,
+    conid,
     trackname,
     typename,
     concat(title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web))) AS title,
@@ -890,14 +893,14 @@ EOD;
 }
 
 /* RenderPrecis display requires:  a populated dataarray containing rows with
-   $sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
+   $sessionid,$conid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
    IN THAT ORDER
    it displays the precis view of the data. This goes hand in hand with the retrieve_select_from_db above.*/
 function RenderPrecis($result) {
   echo "<hr>\n";
   echo "<TABLE>\n";
   echo "   <COL><COL><COL><COL><COL>\n";
-  while (list($sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer)=mysql_fetch_array($result, MYSQL_NUM)) {
+  while (list($sessionid,$conid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer)=mysql_fetch_array($result, MYSQL_NUM)) {
     echo "<TR>\n";
     echo "  <TD rowspan=3 class=\"border0000\" id=\"sessidtcell\"><b>";
     if (may_I('Staff')){
@@ -905,7 +908,12 @@ function RenderPrecis($result) {
     }
     echo "&nbsp;&nbsp;</TD>\n";
     if (may_I('Staff')) {
-      echo "  <TD class=\"border0000\"><b>".$proposer."</TD>\n";
+      echo "  <TD class=\"border0000\"><b>".$proposer;
+      if ($conid != $_SESSION['conid']) {
+	echo " <A HREF=\"MyMigrations.php?sessionid=".$sessionid."&conid=".$conid."\">Migrate</A></TD>\n";
+      } else {
+	echo "</TD>\n";
+      }
       echo "  <TD class=\"border0000\"><b>".$trackname."</TD>\n";
     } else {
       echo "  <TD colspan=2 class=\"border0000\"><b>".$trackname."</TD>\n";
@@ -936,6 +944,9 @@ function RenderPrecis($result) {
    type: a number signifying the typeid in the Types table, or 0 - implying all
    sessionid: a sessionid from the Sessions table, limited to this con-instance.
    The output varies depending on the permissions of the caller.
+   Still missing:
+   Title search
+   Suggestor search
 */
 function RenderSearchSession ($track,$status,$type,$sessionid) {
 

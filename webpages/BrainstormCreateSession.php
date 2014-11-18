@@ -13,6 +13,7 @@ set_session_defaults();
 $id=get_next_session_id();
 if (!$id) { exit(); }
 $session["sessionid"]=$id;
+$session["newsessionid"]=$id;
 $action="brainstorm";
 RenderEditCreateSession($action,$session,$message_warn,$message_error);
 exit();

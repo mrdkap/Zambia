@@ -18,6 +18,7 @@ $trackid=0;
 $typeid=0;
 $statusid=0;
 $sessionid="";
+$conid=$_SESSION['conid'];
 $rtp="";
 
 if ((isset($_POST["track"])) and (is_numeric($_POST["track"]))) {
@@ -44,6 +45,14 @@ if ((isset($_POST["sessionid"])) and (is_numeric($_POST["sessionid"]))) {
   $sessionid=$_GET["sessionid"];
 }
 
+if ((isset($_POST["conid"])) and (is_numeric($_POST["conid"]))) {
+  $conid=$_POST["conid"];
+  $title=$conid . " - Precis";
+} elseif ((isset($_GET["conid"])) and (is_numeric($_GET["conid"]))) {
+  $conid=$_GET["conid"];
+  $title=$conid . " - Precis";
+}
+
 if ($trackid!=0) {
   $trackidlist=$trackid;
   if ($rtp!="") {$rtp.="&";}
@@ -64,13 +73,21 @@ if ($sessionid!="") {
   if ($rtp!="") {$rtp.="&";}
   $rtp.="sessionid=$sessionid";
 }
+if ($conid!=$_SESSION['conid']) {
+  $conid=$conid;
+  if ($rtp!="") {$rtp.="&";}
+  $rtp.="conid=$conid";
+}
 
 if ($rtp!="") {$_SESSION['return_to_page'].="?$rtp";}
 
 // Get the selected information for precis processing
-if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist)==0) {
+if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist,$conid)==0) {
   topofpagereport($title,$description,$additionalinfo);
   echo "<FORM method=POST action=\"ViewPrecis.php\">\n";
+  if ($conid!=$_SESSION['conid']) {
+    echo "<INPUT type=hidden name=conid value=$conid>\n";
+  }
   $search=RenderSearchSession($trackid,$statusid,$typeid,$sessionid);
   echo $search;
   echo "</FORM>\n";

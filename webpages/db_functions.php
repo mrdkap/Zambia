@@ -567,10 +567,11 @@ function insert_session() {
    Reads Sessions, SessionHasFeature, and SessionHasService
    SessionHasVendorFeature, and SessionHasVeondorSpace tables
    from db to populate global array $session. */
-function retrieve_session_from_db($sessionid) {
+function retrieve_session_from_db($sessionid,$conid) {
   global $session;
   global $link,$message2;
-  $conid=$_SESSION['conid']; // make it a variable so it can be substituted
+  // $conid is now passed in.
+  //$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 /* For the title and descriptions (these should become not hard-coded):
    descriptiontypeid: 1=title 2=subtitle 3=description

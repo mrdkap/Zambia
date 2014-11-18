@@ -17,7 +17,6 @@ get_nameemail_from_post($name, $email); //store in arguments and SESSION variabl
 /* return true if OK.  Store error messages in global $messages */
 $email_status=validate_name_email($name,$email);; 
 get_session_from_post(); // store in global $session array
-prepare_db();
 /* return true if OK.  Store error messages in global $messages */
 $status=validate_session(); 
 if ($status==false || $email_status==false) {
@@ -50,7 +49,7 @@ if ($action=="edit") {
 }
 // action = create/brainstorm/propose
 $id=insert_session();
-if (!$id) {
+if (empty($id)) {
   $message_warn=""; // warning message
   $message_warn.="<BR>".$query."\nUnknown error creating record.  Database not updated successfully.";
   RenderEditCreateSession($action,$session,$message_warn,$message_error);
@@ -76,9 +75,9 @@ if ($action=='brainstorm') {
 record_session_history($id, $badgeid, $name, $email, $editcode, $session['status']);
 set_session_defaults();
 $id=get_next_session_id();
-if (!$id)
-  exit();
+if (empty($id)) {exit(); }
 $session["sessionid"]=$id;
+$session["newsessionid"]=$id;
 RenderEditCreateSession($action,$session,$message_warn,$message_error);
 exit();
 ?>

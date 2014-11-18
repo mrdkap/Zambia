@@ -56,7 +56,7 @@ $regmessage=$row[0];
 $query = <<<EOD
 SELECT
     count(*) AS poscount,
-    SUM(if(introducer IN ('0','1','Yes'),1,0)) AS intro_p
+    SUM(if(introducer in ('1','Yes'),1,0)) AS intro_p
   FROM
       ParticipantOnSession
     JOIN Schedule USING (sessionid,conid)
@@ -86,21 +86,19 @@ if (!$regmessage) {
 $feedback_array=getFeedbackData($badgeid);
 
 /* For the title and descriptions (these should become not hard-coded):
-   descriptiontypeid: 1=title 2=subtitle 3=description
-   biostateid: 1=raw 2=edited 3=good
-   biodestid: 1=web 2=book
+   biostateid: Only using "good" for now.
    descriptionlang: Only using "en-us" for now. */
 
 // Build the schedule of classes into schd_array
 $query = <<<EOD
 SELECT
-    concat(sessionid,"-",conid) as "Sess-Con",
+    DISTINCT concat(sessionid,"-",conid) as "Sess-Con",
     sessionid,
     conid,
     conname,
     trackname,
-    concat(title_good_web, if(estatten,concat(" (estimated attendance: ",estatten,")"),'')) as title,
-    allrooms,
+    concat(if(title_good_web IS NOT NULL,title_good_web,title), if(subtitle_good_web IS NOT NULL,concat(": ",subtitle_good_web),""),if(estatten IS NOT NULL,concat(" (estimated attendance: ",estatten,")"),'')) as title,
+    if(allrooms IS NOT NULL,allrooms,"") AS allrooms,
     desc_good_web,
     desc_good_book,
     if((questiontypeid IS NULL),"",questiontypeid) AS questiontypeid,
@@ -127,7 +125,7 @@ SELECT
     JOIN ConInfo USING (conid)
     JOIN Sessions USING (sessionid,conid)
     JOIN Tracks USING (trackid)
-    JOIN (SELECT
+    LEFT JOIN (SELECT
            sessionid,
            conid,
 	   GROUP_CONCAT(DISTINCT roomname SEPARATOR ", ") as 'allrooms',
@@ -136,7 +134,7 @@ SELECT
              Schedule
            JOIN Rooms USING (roomid)
          GROUP BY
-           sessionid,conid) W USING (sessionid,conid)
+           sessionid,conid) RL USING (sessionid,conid)
     LEFT JOIN TypeHasQuestionType USING (typeid,conid)
     LEFT JOIN (SELECT
            sessionid,
@@ -146,7 +144,7 @@ SELECT
              SessionHasService
 	   JOIN Services USING (serviceid,conid)
          GROUP BY
-	       sessionid,conid) X USING (sessionid,conid)
+	       sessionid,conid) SL USING (sessionid,conid)
     LEFT JOIN (SELECT
            sessionid,
 	   conid,
@@ -155,50 +153,73 @@ SELECT
              SessionHasFeature
 	   JOIN Features USING (featureid,conid)
          GROUP BY
-	    sessionid,conid) Y USING (sessionid,conid)
+	    sessionid,conid) FL USING (sessionid,conid)
     LEFT JOIN (SELECT
             sessionid,
             conid,
-            GROUP_CONCAT("  <TR>\n    <TD>&nbsp;</TD>\n    <TD>",pubsname, if(moderator IN('0','1','Yes')," <I>mod</I> ",""), if(volunteer IN('0','1','Yes')," <I>volunteer</I> ",""), if(introducer IN('0','1','Yes')," <I>introducer</I> ",""), if(aidedecamp IN('0','1','Yes')," <I>assistant</I> ",""), "</TD>\n    <TD colspan=5>", if(comments,comments,""), "</TD>\n  </TR>\n" SEPARATOR "") AS partlist
+            GROUP_CONCAT("  <TR>\n    <TD>&nbsp;</TD>\n    <TD>",pubsname, if(moderator IN('1','Yes')," <I>mod</I> ",""), if(volunteer IN('1','Yes')," <I>volunteer</I> ",""), if(introducer IN('1','Yes')," <I>introducer</I> ",""), if(aidedecamp IN('1','Yes')," <I>assistant</I> ",""), "</TD>\n    <TD colspan=5>", if(comments,comments,""), "</TD>\n  </TR>\n" SEPARATOR "") AS partlist
           FROM
               ParticipantOnSession
             JOIN Participants USING (badgeid)
             LEFT JOIN ParticipantSessionInterest USING (sessionid,conid,badgeid)
           GROUP BY
-	    sessionid,conid) Z USING (sessionid,conid)
-    JOIN (SELECT
+	    sessionid,conid) PL USING (sessionid,conid)
+    LEFT JOIN (SELECT
         sessionid,
+	conid,
 	descriptiontext as title_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=1 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
-	  descriptionlang='en-us') TGW USING (sessionid)
+	  descriptiontypename='title' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') TGW USING (sessionid,conid)
     LEFT JOIN (SELECT
         sessionid,
+	conid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  descriptiontypename='subtitle' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') SGW USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
 	descriptiontext as desc_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
-	  descriptionlang='en-us') DGW USING (sessionid)
+	  descriptiontypename='description' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') DGW USING (sessionid,conid)
     LEFT JOIN (SELECT
         sessionid,
+	conid,
 	descriptiontext as desc_good_book
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=2 AND
-	  descriptionlang='en-us') DGB USING (sessionid)
+	  descriptiontypename='description' AND
+	  biostatename='good' AND
+	  biodestname='book' AND
+	  descriptionlang='en-us') DGB USING (sessionid,conid)
   WHERE
     badgeid="$badgeid"
   ORDER BY
@@ -335,6 +356,10 @@ for ($i=1; $i<=$schd_rows; $i++) {
     echo "    <TD colspan=6 class=\"border0010\">Support requests: ".htmlspecialchars($schd_array[$i]["Needed"])."</TD>\n";
     echo "  </TR>\n";
   }
+  echo "  <TR>\n";
+  echo "    <TD>&nbsp;</TD>\n";
+  echo "    <TD colspan=6 class=\"border0010\">Propose <A HREF=MyMigrations.php?sessionid=".$schd_array[$i]['sessionid']."&conid=".$schd_array[$i]['conid'].">".$schd_array[$i]['title']."</A> for ".$_SESSION['conname'].".</TD>\n";
+  echo "  </TR>\n";
   echo "  <TR>\n";
   echo "    <TD colspan=7 class=\"smallspacer\">&nbsp;</TD></TR>\n";
   echo "  <TR>\n";

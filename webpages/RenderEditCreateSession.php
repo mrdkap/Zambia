@@ -6,9 +6,13 @@
    message1: a string to display before the form
    message2: an urgent string to display before the form and after m1 */
 function RenderEditCreateSession ($action, $session, $message1, $message2) {
-  global $name, $email, $debug;
+  global $link, $name, $email, $debug;
+  $conid=$_SESSION['conid'];
+  $badgeid=$_SESSION['badgeid'];
   require_once("CommonCode.php");
   require_once("javascript_functions.php");
+
+
 
   // This switched on, the specific action, and ends if one of the
   // specified ones don't exist.
@@ -24,13 +28,59 @@ function RenderEditCreateSession ($action, $session, $message1, $message2) {
   } elseif ($action=="propose") {
     $title="Propose Session";
     $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
-    $additionalinfo.="  <FORM name=\"brainstormform\" method=\"POST\" action=\"doLogin.php\">\n";
+    /* $additionalinfo.="  <FORM name=\"brainstormform\" method=\"POST\" action=\"doLogin.php\">\n";
     $additionalinfo.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
     $additionalinfo.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
     $additionalinfo.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
     $additionalinfo.="    <INPUT type=\"submit\" name=\"submit\" value=\"Log out and look at what has already been submitted.\">\n";
-    $additionalinfo.="  </FORM>\n";
-    //$additionalinfo ="<P>Here are the sessions you previously proposed:</P>\n";
+    $additionalinfo.="  </FORM>\n"; */
+
+    //Accepted
+    $query=<<<EOD
+SELECT
+    title
+  FROM
+      Sessions
+    JOIN SessionStatuses USING (statusid)
+  WHERE
+    conid=$conid AND
+    statusname in ('Vetted','Assigned','Scheduled') AND
+    suggestor=$badgeid
+EOD;
+
+    list($accepted_rows,$accepted_header_array,$accepted_array)=queryreport($query,$link,$title,$query,0);
+
+    $accepted_string="";
+    for ($i=1 ; $i<=$accepted_rows ; $i++) {
+      $accepted_string.=$accepted_array[$i]['title'] . ", ";
+    }
+    $accepted_string=trim($accepted_string,", ");
+
+    $additionalinfo.="<P>Here are the sessions accepted so far: $accepted_string</P>\n";
+
+    // Proposed
+    $query=<<<EOD
+SELECT
+    title
+  FROM
+      Sessions
+    JOIN SessionStatuses USING (statusid)
+  WHERE
+    conid=$conid AND
+    statusname not in ('duplicate','Vetted','Assigned','Scheduled') AND
+    suggestor=$badgeid
+EOD;
+
+    list($proposed_rows,$proposed_header_array,$proposed_array)=queryreport($query,$link,$title,$query,0);
+
+    $proposed_string="";
+    for ($i=1 ; $i<=$proposed_rows ; $i++) {
+      $proposed_string.=$proposed_array[$i]['title'] . ", ";
+    }
+    $proposed_string=trim($proposed_string,", ");
+
+    $additionalinfo.="<P>Here are the (other) sessions you proposed: $proposed_string</P>\n";
+
   } elseif ($action=="brainstorm") {
     $title="Proposed Session";
     $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
@@ -82,7 +132,7 @@ function RenderEditCreateSession ($action, $session, $message1, $message2) {
                 <?php } ?>
                 <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
                 <INPUT type="hidden" name="divisionid" value="<?php echo $session["divisionid"];?>">
-                <INPUT type="hidden" name="sessionid" value="<?php echo $session["sessionid"];?>">
+                <INPUT type="hidden" name="sessionid" value="<?php echo $session["newsessionid"];?>">
                 <?php } else { ?>
                 <SPAN><LABEL for="sessionid">Session #: </LABEL><A HREF=StaffAssignParticipants.php?selsess=<?php echo $session["sessionid"];?>>
                       <?php echo $session["sessionid"];?></A>
@@ -183,7 +233,7 @@ place.
                     </SELECT>&nbsp;&nbsp;</SPAN>
 		<?php } ?>
 	        <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
-                <INPUT type="hidden" name="status" value="<?php echo $session["status"];?>">
+                <INPUT type="hidden" name="status" value="1">
                 <?php } else { ?>
                 <SPAN><LABEL for="status">Status:</LABEL>
                     <SELECT name="status"><?php populate_select_from_table("SessionStatuses", $session["status"], "", FALSE); ?></SELECT>

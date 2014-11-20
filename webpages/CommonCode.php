@@ -809,7 +809,7 @@ SELECT
     pubsname as proposer
   FROM
       Sessions
-    JOIN Tracks USING (trackid)
+    JOIN Tracks T USING (trackid)
     JOIN Types USING (typeid)
     JOIN SessionStatuses USING (statusid)
     JOIN Participants ON (suggestor=badgeid)
@@ -882,6 +882,7 @@ EOD;
   if (($statusidlist!=0) and ($statusidlist!='')) {$query.=" AND statusid in ($statusidlist)";}
   if (($typeidlist!=0) and ($typeidlist!='')) {$query.=" AND typeid in ($typeidlist)";}
   if (($sessionidlist!=0) and ($sessionidlist!='')) {$query.=" AND sessionid in ($sessionidlist)";}
+  if ($_SESSION['badgeid']==100) {$query.=" ORDER BY T.display_order,title";}
 
   //Retrieve query and fail if query fails.
   if (($result=mysql_query($query,$link))==false) {

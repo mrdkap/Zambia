@@ -111,7 +111,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   $_SESSION['return_to_page']="BrainstormReport.php?status=all";
 }
 
-if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid)==0) {
+if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid,$_SESSION['conid'])==0) {
   topofpagereport($title,$description,$additionalinfo);
   RenderPrecis($result);
   correct_footer();

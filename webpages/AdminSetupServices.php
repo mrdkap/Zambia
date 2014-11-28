@@ -3,7 +3,16 @@ require_once ('StaffCommonCode.php');
 global $link;
 $title="Setup Services et al";
 $description="<P>Select the various elements that should be migrated to this con-instance.</P>\n";
+$additionalinfo="";
 $conid=$_SESSION['conid'];
+
+// Who can modify what:
+if ((may_I("SuperProgramming")) or (may_I("SuperLogistics"))) {
+  $additionalinfo.="<P>Check or uncheck the Services and Features you desire to have ";
+  $additionalinfo.="available or unavailable for request in the schedule elements.</P>\n";
+} else {
+  $additionalinfo="<P>You don't have permission to change any elements at this time.</P>\n";
+}
 
 // Fetch the base list of services.
 $query="SELECT baseserviceid, baseservicename FROM BaseServices";
@@ -111,19 +120,23 @@ if (strlen($error_message)>0) {
 echo "<FORM name=\"updatelists\" class=\"bb\" method=POST action=\"AdminSetupServices.php\">\n";
 echo "  <INPUT type=\"hidden\" name=\"update\" value=\"Yes\">\n";
 
-// Service set
-echo "  <HR>\n";
-echo "  <SPAN><LABEL for=\"serviceid\">Which service are available:</LABEL>\n";
-populate_checkbox_block_from_array("serviceid",$servicename_list,"baseserviceid","baseservicename",$baseservice_array);
-echo "  </SPAN>\n  <BR>\n";
-echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
+// Service set, only by SuperProgramming or SuperLogistics
+if ((may_I("SuperProgramming")) or (may_I("SuperLogistics"))) {
+  echo "  <HR>\n";
+  echo "  <SPAN><LABEL for=\"serviceid\">Which service are available:</LABEL>\n";
+  populate_checkbox_block_from_array("serviceid",$servicename_list,"baseserviceid","baseservicename",$baseservice_array);
+  echo "  </SPAN>\n  <BR>\n";
+  echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
+}
 
-// Feature set
-echo "  <HR>\n";
-echo "  <SPAN><LABEL for=\"featureid\">Which features are available:</LABEL>\n";
-populate_checkbox_block_from_array("featureid",$featurename_list,"basefeatureid","basefeaturename",$basefeature_array);
-echo "  </SPAN>\n  <BR>\n";
-echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
+// Feature set, only by SuperProgramming or SuperLogistics
+if ((may_I("SuperProgramming")) or (may_I("SuperLogistics"))) {
+  echo "  <HR>\n";
+  echo "  <SPAN><LABEL for=\"featureid\">Which features are available:</LABEL>\n";
+  populate_checkbox_block_from_array("featureid",$featurename_list,"basefeatureid","basefeaturename",$basefeature_array);
+  echo "  </SPAN>\n  <BR>\n";
+  echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
+}
 
 // Close the form
 echo "</FORM>";

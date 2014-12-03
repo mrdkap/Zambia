@@ -1,39 +1,32 @@
 <?php
-    global $participant,$message_error,$message2,$congoinfo,$session_interests,$session_interest_index, $title;
-    $title="Select Interested Sessions";
-    require ('PartCommonCode.php'); //define database functions
-    require ('PartPanelInterests_FNC.php');
-    require ('PartPanelInterests_Render.php');
+global $participant,$message_error,$message2,$congoinfo,$session_interests,$session_interest_index, $title;
+$title="Select Interested Sessions";
+require ('PartCommonCode.php'); //define database functions
+require ('PartPanelInterests_FNC.php');
+require ('PartPanelInterests_Render.php');
+
     $maxrow=$_POST["maxrow"];
     $delcount=0;
     $dellist="";
     for ($i=0;$i<=$maxrow;$i++) {
-        if (($_POST["checked".$i]==1)&&(!isset($_POST["int".$i]))) {
-            $dellist.=(($delcount==0)?"":",").$_POST["sessionid".$i];
-            $delcount++;
-            }
-        }
+      if (($_POST["checked".$i]==1)&&(!isset($_POST["int".$i]))) {
+	$dellist.=(($delcount==0)?"":",").$_POST["sessionid".$i];
+	$delcount++;
+      }
+    }
     if ($delcount>0) {
-        $query="DELETE FROM ParticipantSessionInterest WHERE badgeid=\"".$badgeid."\" and sessionid in (";
-        $query.=$dellist.")";
-        if (!mysql_query($query,$link)) {
-            $message=$query."<BR>Error updating database.  Database not updated.";
-            RenderError($title,$message);
-            exit();
-            }
-        }
+      $match_string="badgeid=\"$badgeid\" and sessionid in ($dellist) and conid=".$_SESSION['conid'];
+      $message.=delete_table_element($link, $title, "ParticipantSessionInterest", $match_string);
+    }
     $inscount=0;
     for ($i=0;$i<=$maxrow;$i++) {
-        if (($_POST["checked".$i]==0)&&(isset($_POST["int".$i]))) {
-            $query="INSERT INTO ParticipantSessionInterest set badgeid=".$badgeid.", sessionid=".$_POST["sessionid".$i];
-            if (!mysql_query($query,$link)) {
-                $message=$query."<BR>Error updating database.  Database not updated.";
-                RenderError($title,$message);
-                exit();
-                }
-            $inscount++;
-            }
-        }
+      if (($_POST["checked".$i]==0)&&(isset($_POST["int".$i]))) {
+	$element_array = array('badgeid', 'sessionid', 'conid','ibadgeid');
+	$value_array = array($badgeid, $_POST['sessionid'.$i], $_SESSION['conid'], $_SESSION['badgeid']);
+	$message.=submit_table_element($link, $title, "ParticipantSessionInterest", $element_array, $value_array);
+	$inscount++;
+      }
+    }
     $message=""; 
     $error=false;
     if (($delcount==0)&&($inscount==0)) {

@@ -1,16 +1,8 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
 $title="Invite Participants";
 $description="<P>Use this tool to put sessions marked \"invited guests only\" on a participant's interest list.</P>\n";
-
 
 // Collaps the three choices into one
 if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
@@ -36,16 +28,10 @@ if (isset($_POST["selsess"])) { // room was selected by a form
 topofpagereport($title,$description,$additionalinfo);
 
 if (($selpartid!=0) && ($selsessionid!=0)) {
-  $query="INSERT INTO ParticipantSessionInterest SET badgeid=\"".$selpartid."\", ";
-  $query.="sessionid=".$selsessionid;
-  $result=mysql_query($query,$link);
-  if ($result) {
-    echo "<P class=\"regmsg\">Database successfully updated.</P>\n";
-  } elseif (mysql_errno($link)==1062) {
-    echo "<P class=\"errmsg\">Database not updated.  That participant was already invited to that session.</P>";
-  } else {
-    echo $query."<P class=\"errmsg\">Database not updated.</P>";
-  }
+  $element_array = array('badgeid', 'sessionid', 'conid','ibadgeid');
+  $value_array = array($asgnpart, $selsessionid, $conid, $_SESSION['badgeid']);
+  $message.=submit_table_element($link, $title, "ParticipantSessionInterest", $element_array, $value_array);
+  echo $message;
 }
 
 if ($selsessionid==0) {

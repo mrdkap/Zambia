@@ -83,7 +83,8 @@ SELECT
     persppartinfo,
     notesforpart,
     notesforprog,
-    pubsname
+    pubsname,
+    statusid
   FROM
       Sessions
     JOIN Participants ON (suggestor=badgeid)
@@ -188,6 +189,8 @@ echo "<P class=\"border1111 lrmargin lrpad\">";
 echo htmlspecialchars(mysql_result($result,0,"notesforprog"));
 echo "\n";
 echo "<HR>\n";
+$statusid=mysql_result($result,0,"statusid");
+
 $query = <<<EOD
 SELECT
     badgeid AS posbadgeid,
@@ -199,6 +202,7 @@ SELECT
     pubsname,
     rank,
     willmoderate,
+    psits,
     comments
   FROM
       Participants
@@ -231,6 +235,9 @@ SELECT
   WHERE
     sessionid=$selsessionid OR
     sessionid is null
+  ORDER BY
+    psits,
+    pubsname
 EOD;
 if (!$result=mysql_query($query,$link)) {
     $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
@@ -281,14 +288,13 @@ SELECT
   FROM
       Participants
     JOIN CongoDump USING(badgeid)
-    JOIN UserHasPermissionRole UHPR USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid)
     JOIN PermissionRoles USING (permroleid)
-    JOIN Interested I USING (badgeid)
+    JOIN Interested USING (badgeid,conid)
     JOIN InterestedTypes USING (interestedtypeid)
   WHERE
     interestedtypename in ('Yes') AND
-    UHPR.conid=$conid AND
-    I.conid=$conid AND
+    conid=$conid AND
     permrolename in ($permrolecheck_string) AND
     badgeid not in (SELECT
                           badgeid
@@ -306,17 +312,17 @@ $modid=0;
 $volid=0;
 $intid=0;
 while ($bigarray[$i] = mysql_fetch_array($result, MYSQL_ASSOC)) {
-    if ($bigarray[$i]["moderator"]==1) {
-        $modid=$bigarray[$i]["badgeid"];
-        }
-    if ($bigarray[$i]["volunteer"]==1) {
-        $volid=$bigarray[$i]["badgeid"];
-        }
-    if ($bigarray[$i]["introducer"]==1) {
-        $intid=$bigarray[$i]["badgeid"];
-        }
-    $i++;
-    }
+  if (($bigarray[$i]["moderator"]==1) or ($bigarray[$i]["moderator"]=="Yes")) {
+    $modid=$bigarray[$i]["badgeid"];
+  }
+  if (($bigarray[$i]["volunteer"]==1) or ($bigarray[$i]["volunteer"]=="Yes")) {
+    $volid=$bigarray[$i]["badgeid"];
+  }
+  if (($bigarray[$i]["introducer"]==1) or ($bigarray[$i]["introducer"]=="Yes")) {
+    $intid=$bigarray[$i]["badgeid"];
+  }
+  $i++;
+}
 $numrows=$i; 
 echo "<FORM name=\"selsesform\" method=POST action=\"StaffAssignParticipants.php\">\n";
 echo "<DIV class=\"SubmitDiv\"><BUTTON type=\"submit\" name=\"update\" class=\"SubmitButton\">Update</BUTTON></DIV>\n";
@@ -338,7 +344,8 @@ for ($i=0;$i<$numrows;$i++) {
     echo ((isset($bigarray[$i]["posbadgeid"]))?1:0)."\">\n";
     echo "      </TD>\n";
     echo "      <TD class=\"vatop\">".$bigarray[$i]["badgeid"]."</TD>\n";
-    echo "      <TD class=\"vatop\">".$bigarray[$i]["pubsname"]."</TD>\n";
+    echo "      <TD class=\"vatop\">".$bigarray[$i]["pubsname"]." (";
+    echo $bigarray[$i]["psits"].")</TD>\n";
     echo "      <TD class=\"vatop\">Rank: ".$bigarray[$i]["rank"]."</TD>\n";
     echo "      <TD class=\"vatop\">".(($bigarray[$i]["willmoderate"]==1)?"Volunteered to moderate.":"")."</TD>\n";
     echo "      </TR>\n";
@@ -374,6 +381,7 @@ echo "<INPUT type=\"hidden\" name=\"numrows\" value=\"$numrows\">\n";
 echo "<INPUT type=\"hidden\" name=\"wasmodid\" value=\"$modid\">\n";
 echo "<INPUT type=\"hidden\" name=\"wasvolid\" value=\"$volid\">\n";
 echo "<INPUT type=\"hidden\" name=\"wasintid\" value=\"$intid\">\n";
+echo "<INPUT type=\"hidden\" name=\"statusid\" value=\"$statusid\">\n";
 echo "<DIV class=\"SubmitDiv\"><BUTTON type=\"submit\" name=\"update\" class=\"SubmitButton\">Update</BUTTON></DIV>\n";
 echo "<HR>\n";
 echo "<DIV><LABEL for=\"asgnpart\">Assign participant not indicated as interested or invited.</LABEL><BR>\n";

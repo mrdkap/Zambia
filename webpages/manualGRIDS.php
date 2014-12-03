@@ -35,6 +35,7 @@ $type_array['Sales']="sales=y&";
 $type_array['Vending']="vending=y&";
 $type_array['Watch']="watch=y&";
 $type_array['Logistics/Tech']="logistics=y&";
+$type_array['Lounges']="lounge=y&";
 
 //build the returned array
 $header_array=array_keys($how_array);

@@ -1,7 +1,7 @@
 <?php
 global $participant,$message,$message_error,$message2,$congoinfo;
 // initialize db, check login, set $badgeid from session
-require_once('PartCommonCode.php'); 
+require_once('PartCommonCode.php');
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $title="My Profile";
 
@@ -40,41 +40,44 @@ $bioinfo=getBioData($badgeid);
 // Only do the following, if there was an update to the information.
 if (isset($_POST['update'])) {
 
-  /* We are only updating the raw bios here, so only a 2-depth
-   search happens on biolang and biotypename to see if they
+  /* We are only updating the raw bios here, so only a 3-depth
+   search happens on biolang, biotypename and biodest to see if they
    were passed (updated) and record the update. */
   $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+      for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-      // Setup for keyname, to collapse all three variables into one passed name.
-      $biotype=$bioinfo['biotype_array'][$i];
-      $biolang=$bioinfo['biolang_array'][$j];
-      // $biostate=$bioinfo['biostate_array'][$k];
-      $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	// Setup for keyname, to collapse all three variables into one passed name.
+	$biotype=$bioinfo['biotype_array'][$i];
+	$biolang=$bioinfo['biolang_array'][$j];
+	// $biostate=$bioinfo['biostate_array'][$k];
+	$biodest=$bioinfo['biodest_array'][$l];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-      // clean up the passed information
-      $_POST[$keyname] = stripfancy(stripslashes($_POST[$keyname]));
+	// clean up the passed information
+	$_POST[$keyname] = stripfancy(stripslashes($_POST[$keyname]));
 
-      /* If the bios are changed first reject the change if user is not allowed to edit bios now
-       and reject submitted bios that are too long otherwise update the bios directly now.*/
-      if ($_POST[$keyname]!=$bioinfo[$keyname]) {
-	if (!may_I('EditBio')) { 
-	  $message_error.="You may not update your bios for publication at this time.\n";
-	} elseif ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($_POST[$keyname])>$limit_array['max'][$biotype]['bio'])) {
-	  $message_error.=ucfirst($biotype)." ($biolang) Biography is too long: ".(strlen($_POST[$keyname]));
-	  $message_error.=" characters (maximum limit ".$limit_array['max'][$biotype]['bio'];
-	  $message_error.=" characters), so it isn't updated.  Please edit.";
-	  $bioinfo[$keyname]=$_POST[$keyname];
-	} elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($_POST[$keyname])<$limit_array['min'][$biotype]['bio'])) {
-	  $message_error.=ucfirst($biotype)." ($biolang) Biography is too short: ".(strlen($_POST[$keyname]));
-	  $message_error.=" characters (minimum limit ".$limit_array['min'][$biotype]['bio'];
-	  $message_error.=" characters), so it isn't updated.  Please edit.";
-	  $bioinfo[$keyname]=$_POST[$keyname];
-	} else {
-	  $x=mysql_real_escape_string($_POST[$keyname],$link);
-	  $message.=update_bio_element($link,$title,$x,$badgeid,$biotype,$biolang,$biostate);
-	  $bioinfo[$keyname]=$_POST[$keyname];
+	/* If the bios are changed first reject the change if user is not allowed to edit bios now
+	   and reject submitted bios that are too long otherwise update the bios directly now.*/
+	if ($_POST[$keyname]!=$bioinfo[$keyname]) {
+	  if (!may_I('EditBio')) {
+	    $message_error.="You may not update your bios for publication at this time.\n";
+	  } elseif ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($_POST[$keyname])>$limit_array['max'][$biotype]['bio'])) {
+	    $message_error.=ucfirst($biotype)." ($biolang) Biography is too long: ".(strlen($_POST[$keyname]));
+	    $message_error.=" characters (maximum limit ".$limit_array['max'][$biotype]['bio'];
+	    $message_error.=" characters), so it isn't updated.  Please edit.";
+	    $bioinfo[$keyname]=$_POST[$keyname];
+	  } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($_POST[$keyname])<$limit_array['min'][$biotype]['bio'])) {
+	    $message_error.=ucfirst($biotype)." ($biolang) Biography is too short: ".(strlen($_POST[$keyname]));
+	    $message_error.=" characters (minimum limit ".$limit_array['min'][$biotype]['bio'];
+	    $message_error.=" characters), so it isn't updated.  Please edit.";
+	    $bioinfo[$keyname]=$_POST[$keyname];
+	  } else {
+	    $x=mysql_real_escape_string($_POST[$keyname],$link);
+	    $message.=update_bio_element($link,$title,$x,$badgeid,$biotype,$biolang,$biostate,$biodest);
+	    $bioinfo[$keyname]=$_POST[$keyname];
+	  }
 	}
       }
     }
@@ -174,7 +177,7 @@ participant_header($title);
 if ($message_error!="") {
   echo "<P class=\"errmsg\">$message_error</P>";
 }
-if ($message!="") { 
+if ($message!="") {
   echo "<P class=\"regmsg\">$message</P>";
 }
 
@@ -185,7 +188,7 @@ if ($message!="") {
   <div id="update_section">
 <?php /*  This should not (necessarily) be modifiable by the user.  See Welocme page for more info
     <div class="divlistbox">
-      <span class="spanlabcb">I am interested and able to participate in 
+      <span class="spanlabcb">I am interested and able to participate in
         programming for <?php echo CON_NAME; ?>&nbsp;</span>
       <?php $int=$participant['interested']; ?>
       <span class="spanvalcb"><SELECT name=interested class="yesno">
@@ -198,7 +201,7 @@ if ($message!="") {
     <div id="bestway">
       <span class="spanlabcb">Preferred mode of contact&nbsp;</span>
       <div id="bwbuttons">
-<?php 
+<?php
 /* For each of the possible ways to contact, email, altcontact, postal address, or phone
  if the element exists in their file, offer it up as a possibility to be their preferred
  means of contact, with whatever they have chosen before, as the checked choice. */
@@ -285,27 +288,27 @@ if (strlen($congoinfo['phone'])>0) {
       <span class="label">Postal Address&nbsp;</span>
       <span class="value"><?php echo $congoinfo["postaddress1"]; ?></span>
       </div>
-<?php if (strlen($congoinfo['postaddress2'])>0) { ?>      
+<?php if (strlen($congoinfo['postaddress2'])>0) { ?>
     <div class="congo_data">
       <span class="label">&nbsp;</span>
       <span class="value"><?php echo $congoinfo["postaddress2"]; ?></span>
       </div>
       <?php } ?>
-<?php if ((strlen($congoinfo['postcity'])>0) or (strlen($congoinfo['poststate'])>0) or (strlen($congoinfo['postzip'])>0)) { ?>      
+<?php if ((strlen($congoinfo['postcity'])>0) or (strlen($congoinfo['poststate'])>0) or (strlen($congoinfo['postzip'])>0)) { ?>
     <div class="congo_data">
       <span class="label">&nbsp;</span>
       <span class="value"><?php echo "{$congoinfo['postcity']}, {$congoinfo['poststate']} {$congoinfo['postzip']}"; ?></span>
       </div>
       <?php } ?>
-<?php if (strlen($congoinfo['postcountry'])>0) { ?>      
+<?php if (strlen($congoinfo['postcountry'])>0) { ?>
     <div class="congo_data">
       <span class="label">&nbsp;</span>
       <span class="value"><?php echo $congoinfo['postcountry']; ?></span>
       </div>
       <?php } ?>
   </div>
-  <P class="congo-note">Please confirm your contact information.  If it is 
-not correct, contact <A href="mailto:<?php echo $regemail ?>">registration</a> with your 
+  <P class="congo-note">Please confirm your contact information.  If it is
+not correct, contact <A href="mailto:<?php echo $regemail ?>">registration</a> with your
 current information. This data is downloaded periodically from the registration database, and should be correct within a week.
 </div>
 

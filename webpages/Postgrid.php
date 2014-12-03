@@ -168,7 +168,7 @@ EOD;
   for ($i=1; $i<=$rooms; $i++) {
     $x=$header_array[$i]["roomid"];
     $y=$header_array[$i]["roomname"];
-    $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),title,\"\") SEPARATOR '') as \"%s title\"",$x,$y);
+    $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),concat(title_good_web,if((subtitle_good_web IS NULL),\"\",concat(\": \",subtitle_good_web))),\"\") SEPARATOR '') as \"%s title\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),sessionid,\"\") SEPARATOR '') as \"%s sessionid\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),",$x);
     $query.="CASE WHEN HOUR(duration) < 1 THEN concat(date_format(duration,'%i'),'min')";
@@ -186,6 +186,34 @@ EOD;
     JOIN Types USING (typeid)
     JOIN PubStatuses USING (pubstatusid)
     JOIN ConInfo USING (conid)
+        JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  descriptiontypename='title' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+          descriptionlang='en-us') TGW USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  descriptiontypename='subtitle' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') SGW USING (sessionid,conid)
   WHERE
     pubstatusname in ($pubstatus_check) AND
     TIME_TO_SEC(starttime) <= $time AND

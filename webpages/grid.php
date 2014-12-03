@@ -65,6 +65,7 @@ $logselect=$_GET['logistics'];
 $eventselect=$_GET['events'];
 $fasttrackselect=$_GET['fasttrack'];
 $trackselect=$_GET['track'];
+$loungeselect=$_GET['lounge'];
 $goh=$_GET['goh'];
 $default=$_GET['default'];
 
@@ -84,6 +85,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   if (may_I('Logistics')) {$logselect="y";}
   if (may_I('Events')) {$eventselect="y";}
   if (may_I('Fasttrack')) {$fasttrackselect="y";}
+  if (may_I('Lounge')) {$loungeselect="y";}
 }
 
 // If Participant, fix several of the variables, so there is only one grid displayed.
@@ -98,7 +100,8 @@ if ($_SESSION['role']=="Participant") {
   $watchselect="n";
   $logselect="n";
   $eventselect="n";
-  $fastrtactselect=="n";
+  $fastrtactselect="n";
+  $loungeselect="n";
   $filled="n";
   $beginonly="n";
   $goh="n";
@@ -155,6 +158,9 @@ if ($eventselect=="y") {
  }
 if ($fasttrackselect=="y") {
   $typeprint.="Fast Track ";
+ }
+if ($loungeselect=="y") {
+  $typeprint.="Lounges ";
  }
 if ($trackselect=="y") {
   $typeortrackprint=", colored by track";
@@ -225,6 +231,7 @@ if ($vendselect=="y") {$pubstatus_array[]="'Vendor Staff'";}
 if ($watchselect=="y") {$pubstatus_array[]="'Watch Staff'";}
 if ($eventselect=="y") {$pubstatus_array[]="'Event Staff'";}
 if ($fasttrackselect=="y") {$pubstatus_array[]="'Fast Track'";}
+if ($loungeselect=="y") {$pubstatus_array[]="'Lounge Staff'";}
 if (isset($pubstatus_array)) {
   $pubstatus_string=implode(",",$pubstatus_array);
   $pubstatus_check=" pubstatusname IN ($pubstatus_string)";
@@ -238,7 +245,6 @@ if ($standard=="y") {
     $pubstatus_check=" pubstatusid > 0";
   }
 }
-  
 
 $query ="SELECT roomname, roomid";
 $query.=" FROM Rooms";
@@ -292,7 +298,7 @@ list($presenters,$unneeded_array_b,$presenters_tmp_array)=queryreport($query,$li
 
 for ($i=1; $i<=$presenters; $i++) {
   $presenters_array[$presenters_tmp_array[$i]['sessionid']]=$presenters_tmp_array[$i]['presentpubsnames'].$presenters_tmp_array[$i]['volpubsnames'].$presenters_tmp_array[$i]['intpubsnames'].$presenters_tmp_array[$i]['aidpubsnames'];
- } 
+ }
 
 /* These queries finds the first and last second that is actually
  scheduled so we don't waste grid-space. */
@@ -301,7 +307,7 @@ list($earliest,$unneeded_array_c,$grid_start_sec_array)=queryreport($query,$link
 $grid_start_sec=$grid_start_sec_array[1]['beginschedule'];
 
 $query = <<<EOD
-SELECT 
+SELECT
     (TIME_TO_SEC(starttime) + TIME_TO_SEC(duration)) as 'endschedule'
   FROM
       Schedule
@@ -351,16 +357,50 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
   for ($i=1; $i<=$rooms; $i++) {
     $header_roomid=$header_array[$i]["roomid"];
     $header_roomname=$header_array[$i]["roomname"];
-    $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,S.title,\"\") SEPARATOR '') as \"%s title\"",$header_roomid,$header_roomname);
+    $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,concat(title_good_web,if((subtitle_good_web IS NULL),\"\",concat(\": \",subtitle_good_web))),\"\") SEPARATOR '') as \"%s title\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,S.sessionid,\"\") SEPARATOR '') as \"%s sessionid\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,S.duration,\"\") SEPARATOR '') as \"%s duration\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,IF(S.estatten,S.estatten,\"\"),\"\") SEPARATOR '') as \"%s total\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,T.htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$header_roomid,$header_roomname);
   }
-  $query.=" FROM Schedule SCH JOIN Sessions S USING (sessionid,conid)";
-  $query.=" JOIN Rooms R USING (roomid) JOIN $typeortrack";
-  $query.=" JOIN PubStatuses USING (pubstatusid)";
-  $query.=" WHERE conid=$conid AND";
+  $query.=<<<EOD
+  FROM
+      Schedule SCH
+    JOIN Sessions S USING (sessionid,conid)
+    JOIN Rooms R USING (roomid)
+    JOIN $typeortrack
+    JOIN PubStatuses USING (pubstatusid)
+    JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  descriptiontypename='title' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') TGW USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  descriptiontypename='subtitle' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') SGW USING (sessionid,conid)
+  WHERE
+    conid=$conid AND
+EOD;
   if ($goh=="y") {$query.=" S.sessionid in (SELECT DISTINCT sessionid from ParticipantOnSession WHERE badgeid IN $GohBadgeList and conid=$conid) AND";}
   $query.=$pubstatus_check." AND";
   if ($beginonly=="y") {
@@ -426,8 +466,14 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
 topofpagereport($title,$description,$additionalinfo);
 $skipinit=0;
 $skipaccum=1;
+if (empty($printrows_array)) {
+  echo "<P>Sorry, no grid-elements match your selection at this time.</P>";
+  correct_footer();
+  exit();
+}
+
 foreach ($printrows_array as $i) {
-  if ($skipaccum == 1) { 
+  if ($skipaccum == 1) {
     if ($skipinit != 0) {echo "</TABLE>\n";} else {$skipinit++;}
     echo "<TABLE class=\"border1111\">";
     //            echo "<TABLE BORDER=1>";
@@ -477,7 +523,7 @@ foreach ($printrows_array as $i) {
 	}
       }
       else
-	{ echo "<TD class=\"border1111\">&nbsp;"; } 
+	{ echo "<TD class=\"border1111\">&nbsp;"; }
       echo "</TD>";
     }
     echo "</TR>\n";

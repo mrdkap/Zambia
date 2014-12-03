@@ -122,21 +122,24 @@ EOD;
   // Get a set of bioinfo, and map it to the appropriate $participant_arr.
   $bioinfo=getBioData($selpartid);
 
-  /* We are only updating the raw en-us bios here, so only a 1-depth
-     search happens on biotypename. */
-   $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
-   $biolang='en-us'; //  for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
-   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
-          
-     // Setup for keyname, to collapse all three variables into one passed name.
-     $biotype=$bioinfo['biotype_array'][$i];
-     // $biolang=$bioinfo['biolang_array'][$j];
-     // $biostate=$bioinfo['biostate_array'][$k];
-     $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+  /* We are only updating the raw en-us bios here, so only a 2-depth
+     search happens on biotypename and biodest. */
+  $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
+  $biolang='en-us'; //  for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+  for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
+    for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-     // Clear the values.
-     $part_arr[1][$keyname]=$bioinfo[$keyname];
-   }
+      // Setup for keyname, to collapse all four variables into one passed name.
+      $biotype=$bioinfo['biotype_array'][$i];
+      // $biolang=$bioinfo['biolang_array'][$j];
+      // $biostate=$bioinfo['biostate_array'][$k];
+      $biodest=$bioinfo['biodest_array'][$i];
+      $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
+
+      // Clear the values.
+      $part_arr[1][$keyname]=$bioinfo[$keyname];
+    }
+  }
 }
 
 ?>

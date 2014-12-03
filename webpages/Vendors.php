@@ -37,7 +37,7 @@ if (file_exists("../Local/$conid/Vendor_List")) {
  the post-processing. The vendor bio information is grabbed seperately. */
 $query = <<<EOD
 SELECT
-    concat('<A NAME=\"',pubsname,'\"></A>',pubsname) AS 'Participants',
+    DISTINCT concat('<A NAME=\"',pubsname,'\"></A>',pubsname) AS 'Participants',
     if((secondtitle!=''),concat('<A NAME=\"', sessionid, '\">', secondtitle, '</A>'),"") AS 'Location',
     pubsname,
     badgeid
@@ -80,15 +80,17 @@ for ($i=1; $i<=$elements; $i++) {
     $namecount=0;
     $tablecount=0;
     $biostate='raw'; // for ($l=0; $l<count($bioinfo['biostate_array']); $l++) {
+    $biodest='web'; // for ($m=0; $m<count($bioinfo['biodest_array']); $m++) {
     for ($k=0; $k<count($bioinfo['biolang_array']); $k++) {
       $bioout=array();
       for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
 
-	// Setup for keyname, to collapse all three variables into one passed name.
+	// Setup for keyname, to collapse all four variables into one passed name.
 	$biotype=$bioinfo['biotype_array'][$j];
 	$biolang=$bioinfo['biolang_array'][$k];
 	// $biostate=$bioinfo['biostate_array'][$l];
-	$keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	// $biodest=$bioinfo['biodest_array'][$m];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
 	// Set up the useful pieces.
 	if (isset($bioinfo[$keyname])) {$bioout[$biotype]=$bioinfo[$keyname];}
@@ -110,9 +112,9 @@ for ($i=1; $i<=$elements; $i++) {
 	}
       }
 /*    if (isset($bioout['location']) AND ($bioout['location'] != "")) {
-	echo sprintf("<B>%s</B> - %s<br>\n",$printparticipant,$bioout['location']); */
+        echo sprintf("<B>%s</B> - %s<br>\n",$printparticipant,$bioout['location']); */
       if ($element_array[$i]['Location'] != "") {
-        echo sprintf("<B>%s</B> - %s<br>\n",$printparticipant,$element_array[$i]['Location']);
+	echo sprintf("<B>%s</B> - %s<br>\n",$printparticipant,$element_array[$i]['Location']);
 	$namecount++;
       }
       if (isset($bioout['web']) AND ($bioout['web'] != "")) {
@@ -135,6 +137,6 @@ for ($i=1; $i<=$elements; $i++) {
     // If there were no bios
     if ($namecount==0) { echo sprintf("<P><B>%s</B>",$printparticipant);}
   }
- }
+}
 correct_footer();
 

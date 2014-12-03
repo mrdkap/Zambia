@@ -23,7 +23,7 @@ $Grid_Spacer=$conname_array[1]['congridspacer'];
 $ConStart=$conname_array[1]['constartdate'];
 $logo=$conname_array[1]['conlogo'];
 
-$groupby="progguiddesc";
+$groupby="desc_good_web";
 $roomname="concat('<A HREF=\"Tracks.php$passon#',roomname,'\">',roomname,'</A>')";
 $trackname="trackname";
 if (isset($_GET['volunteer'])) {
@@ -104,40 +104,49 @@ SELECT
 	descriptiontext as title_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=1 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename='title' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
 	  descriptionlang='en-us') TGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as subtitle_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=2 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename='subtitle' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
 	  descriptionlang='en-us') SGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as desc_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename='description' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
 	  descriptionlang='en-us') DGW USING (sessionid)
   WHERE
     conid=$conid AND
     pubstatusname in ($pubstatus_check) AND
-    (volunteer=0 OR volunteer="0" OR volunteer IS NULL) AND
-    (introducer=0 OR introducer="0" OR introducer IS NULL) AND
-    (aidedecamp=0 OR aidedecamp="0" OR aidedecamp IS NULL)
+    (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
+    (introducer IS NULL OR introducer not in ('1','Yes')) AND
+    (aidedecamp IS NULL OR aidedecamp not in ('1','Yes'))
   GROUP BY
     $groupby
   ORDER BY
@@ -149,6 +158,7 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 
 /* Printing body.  Uses the page-init then creates the Descriptions. */
 topofpagereport($title,$description,$additionalinfo);
+
 echo "<DL>\n";
 for ($i=1; $i<=$elements; $i++) {
   echo sprintf("<P><DT><B>%s</B>",$element_array[$i]['Title']);

@@ -155,15 +155,17 @@ for ($i=1; $i<=$elements; $i++) {
     $namecount=0;
     $tablecount=0;
     $biostate='edited'; // for ($l=0; $l<count($bioinfo['biostate_array']); $l++) {
+    $biodest='web'; // for ($m=0; $m<count($bioinfo['biodest_array']); $m++) {
     for ($k=0; $k<count($bioinfo['biolang_array']); $k++) {
       $bioout=array();
       for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
 
-	// Setup for keyname, to collapse all three variables into one passed name.
+	// Setup for keyname, to collapse all four variables into one passed name.
 	$biotype=$bioinfo['biotype_array'][$j];
 	$biolang=$bioinfo['biolang_array'][$k];
 	// $biostate=$bioinfo['biostate_array'][$l];
-	$keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	// $biodest=$bioinfo['biodest_array'][$m];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
 	// Set up the useful pieces.
 	if (isset($bioinfo[$keyname])) {$bioout[$biotype]=$bioinfo[$keyname];}
@@ -227,6 +229,9 @@ for ($i=1; $i<=$elements; $i++) {
   if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
     echo sprintf("&mdash; %s",$element_array[$i]['Feedback']);
   }
- }
-correct_footer();
+}
+echo "    </TD>\n  </TR>\n</TABLE>\n";
+echo "<P>&nbsp;</P>\n";
 
+correct_footer();
+?>

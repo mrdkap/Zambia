@@ -140,17 +140,20 @@ $biolang='en-us'; // for ($k=0; $k<count($bioinfo['biolang_array']); $k++) {
 $recipientinfo[0]['bios'].="Your bios:
 ";
 for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
+  for ($m=0; $m<count($bioinfo['biodest_array']); $m++) {
 
-  // Setup for keyname, to collapse all three variables into one passed name.
-  $biotype=$bioinfo['biotype_array'][$j];
-  // $biolang=$bioinfo['biolang_array'][$k];
-  // $biostate=$bioinfo['biostate_array'][$l];
-  $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+    // Setup for keyname, to collapse all four variables into one passed name.
+    $biotype=$bioinfo['biotype_array'][$j];
+    // $biolang=$bioinfo['biolang_array'][$k];
+    // $biostate=$bioinfo['biostate_array'][$l];
+    $biodest=$bioinfo['biodest_array'][$l];
+    $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-  // Fold the information into the bios variable so it can be substituted below.
-  $recipientinfo[0]['bios'].=$biotype." bio: ".$bioinfo[$keyname]."
+    // Fold the information into the bios variable so it can be substituted below.
+    $recipientinfo[0]['bios'].=$biotype." bio: ".$bioinfo[$keyname]."
 
 ";
+  }
 }
 
 $query="SELECT email FROM CongoDump WHERE badgeid=".$email['sendfrom'];

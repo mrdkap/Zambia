@@ -147,36 +147,64 @@ EOD;
 		  (may_I("SuperVendor")) or
 		  (may_I("Liaison")) or
 		  (may_I("SuperLiaison"))) {
-		/* We are only updating the raw bios here, so only a 2-depth
-		   search happens on biolang and biotypename. */
+		/* temporary hack, to help migrate the bios from a 3-depth to a 4-depth array */
+		if (((!isset($participant_arr['bio_en-us_raw_web_bio'])) or
+		     ($participant_arr['bio_en-us_raw_web_bio'] == "")) and 
+		    ($participant_arr['web_en-us_raw_web_bio'] != "")) {
+		  $participant_arr['bio_en-us_raw_web_bio'] = $participant_arr['web_en-us_raw_web_bio'];
+		}
+		if (((!isset($participant_arr['bio_en-us_raw_book_bio'])) or
+		     ($participant_arr['bio_en-us_raw_book_bio'] == "")) and 
+		    ($participant_arr['book_en-us_raw_web_bio'] != "")) {
+		  $participant_arr['bio_en-us_raw_book_bio'] = $participant_arr['book_en-us_raw_web_bio'];
+		}
+		if (((!isset($participant_arr['bio_en-us_raw_book_bio'])) or
+		     ($participant_arr['bio_en-us_raw_book_bio'] == "")) and 
+		    ($participant_arr['book_en-us_raw_book_bio'] != "")) {
+		  $participant_arr['bio_en-us_raw_book_bio'] = $participant_arr['book_en-us_raw_book_bio'];
+		}
+		if ((!isset($participant_arr['name_en-us_raw_web_bio'])) or
+		    ($participant_arr['name_en-us_raw_web_bio'] == "")) {
+		  $participant_arr['name_en-us_raw_web_bio'] = $participant_arr['pubsname'];
+		}
+		if ((!isset($participant_arr['name_en-us_raw_book_bio'])) or
+		    ($participant_arr['name_en-us_raw_book_bio'] == "")) {
+		  $participant_arr['name_en-us_raw_book_bio'] = $participant_arr['pubsname'];
+		}
+
+		/* We are only updating the raw bios here, so only a 3-depth
+		   search happens on biolang, biotypename, and biodest. */
 		$biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
 		for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
 		  for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+		    for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-		    // Setup for keyname, to collapse all three variables into one passed name.
-		    $biotype=$bioinfo['biotype_array'][$i];
-		    $biolang=$bioinfo['biolang_array'][$j];
-		    // $biostate=$bioinfo['biostate_array'][$k];
-		    $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+		      // Setup for keyname, to collapse all three variables into one passed name.
+		      $biotype=$bioinfo['biotype_array'][$i];
+		      $biolang=$bioinfo['biolang_array'][$j];
+		      // $biostate=$bioinfo['biostate_array'][$k];
+		      $biodest=$bioinfo['biodest_array'][$l];
+		      $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-		    echo "            <DIV class=\"denseform\">\n";
-		    echo "                <SPAN><LABEL for=\"$keyname\" style=\"vertical-align: top\">";
-		    echo ucfirst($biotype)." ($biolang) Biography";
-		    $limit_string="";
-		    if (isset($limit_array['max'][$biotype]['bio'])) {
-		      $limit_string.=" maximum ".$limit_array['max'][$biotype]['bio'];
+		      echo "            <DIV class=\"denseform\">\n";
+		      echo "                <SPAN><LABEL for=\"$keyname\" style=\"vertical-align: top\">";
+		      echo ucfirst($biotype)." $biodest ($biolang) Biography";
+		      $limit_string="";
+		      if (isset($limit_array['max'][$biotype]['bio'])) {
+			$limit_string.=" maximum ".$limit_array['max'][$biotype]['bio'];
+		      }
+		      if (isset($limit_array['min'][$biotype]['bio'])) {
+			$limit_string.=" minimum ".$limit_array['min'][$biotype]['bio'];
+		      }
+		      if ($limit_string !="") {
+			echo "<BR>(Limit".$limit_string." characters)";
+		      }
+		      echo ": </LABEL>\n";
+		      echo "                    <TEXTAREA class=\"textlabelarea\" cols=70 name=\"$keyname\" >";
+		      echo htmlspecialchars($participant_arr[$keyname],ENT_NOQUOTES)."</TEXTAREA>\n";
+		      echo "                    </SPAN>\n";
+		      echo "                </DIV>\n";
 		    }
-		    if (isset($limit_array['min'][$biotype]['bio'])) {
-		      $limit_string.=" minimum ".$limit_array['min'][$biotype]['bio'];
-		    }
-		    if ($limit_string !="") {
-		      echo "<BR>(Limit".$limit_string." characters)";
-		    }
-		    echo ": </LABEL>\n";
-		    echo "                    <TEXTAREA class=\"textlabelarea\" cols=70 name=\"$keyname\" >";
-		    echo htmlspecialchars($participant_arr[$keyname],ENT_NOQUOTES)."</TEXTAREA>\n";
-		    echo "                    </SPAN>\n";
-		    echo "                </DIV>\n";
 		  }
 		}
 	      }?>

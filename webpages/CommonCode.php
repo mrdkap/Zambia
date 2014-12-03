@@ -627,13 +627,6 @@ function queryreport($query,$link,$title,$description,$reportid) {
  searching. */
 function select_participant ($selpartid, $limit, $returnto) {
   $conid=$_SESSION['conid'];
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
-
   global $link;
 
 /* Get all the Permission Roles */
@@ -642,7 +635,7 @@ SELECT
     permrolename,
     notes
   FROM
-      $ReportDB.PermissionRoles
+      PermissionRoles
   WHERE
     permroleid > 1
 EOD;
@@ -668,12 +661,16 @@ EOD;
   }
   $permrolecheck_string=implode(",",$permrolecheck_array);
 
-  if ($limit!='') {
+  if ($limit=="ALL") {
+    $limittables='';
+    $limitwhere='';
+    $emailaddr=" ',email,'";
+  } elseif ($limit!='') {
     $query=<<<EOD
 SELECT
     interestedtypeid
   FROM
-      $ReportDB.InterestedTypes
+      InterestedTypes
   WHERE
     interestedtypename=$limit
 EOD;
@@ -687,28 +684,33 @@ EOD;
       RenderError("Broken Query - select_participant - InterestedTypes", $message);
       exit;
     }
-    $limittables="    JOIN $ReportDB.Interested I USING (badgeid)\n";
-    $limitwhere="    interestedtypeid=$interestedtypeid AND\n    I.conid=$conid AND\n";
+    $limittables ="    JOIN UserHasPermissionRole USING (badgeid)\n";
+    $limittables.="    JOIN PermissionRoles USING (permroleid)\n";
+    $limittables.="    JOIN Interested I USING (badgeid,conid)\n";
+    $limitwhere ="  WHERE\n";
+    $limitwhere.="    interestedtypeid=$interestedtypeid AND\n";
+    $limitwhere.="    conid=$conid AND\n";
+    $limitwhere.="    permrolename in ($permrolecheck_string)\n";
+    $emailaddr="";
   } else {
-    $limittables='';
-    $limitwhere='';
+    $limittables ="    JOIN UserHasPermissionRole USING (badgeid)\n";
+    $limittables.="    JOIN PermissionRoles USING (permroleid)\n";
+    $limitwhere ="  WHERE\n";
+    $limitwhere.="    conid=$conid AND\n";
+    $limitwhere.="    permrolename in ($permrolecheck_string)\n";
+    $emailaddr="";
   }
 
   // lastname, firstname (badgename/pubsname) - partid
   $query0=<<<EOD
 SELECT
     DISTINCT badgeid,
-    concat(lastname,', ',firstname,' (',badgename,'/',pubsname,') - ',badgeid) AS pname
+    concat(lastname,', ',firstname,' (',badgename,'/',pubsname,')$emailaddr - ',badgeid) AS pname
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.CongoDump USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      Participants
+    JOIN CongoDump USING (badgeid)
     $limittables
-  WHERE
     $limitwhere
-    permrolename in ($permrolecheck_string) AND
-    UHPR.conid=$conid
   ORDER BY
     lastname
 EOD;
@@ -717,17 +719,12 @@ EOD;
   $query1=<<<EOD
 SELECT
     DISTINCT badgeid,
-    concat(firstname,' ',lastname,' (',badgename,'/',pubsname,') - ',badgeid) AS pname
+    concat(firstname,' ',lastname,' (',badgename,'/',pubsname,')$emailaddr - ',badgeid) AS pname
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.CongoDump USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      Participants
+    JOIN CongoDump USING (badgeid)
     $limittables
-  WHERE
     $limitwhere
-    permrolename in ($permrolecheck_string) AND
-    UHPR.conid=$conid
   ORDER BY
     firstname
 EOD;
@@ -736,19 +733,28 @@ EOD;
   $query2=<<<EOD
 SELECT
     DISTINCT badgeid,
-    concat(pubsname,'/',badgename,' (',lastname,', ',firstname,') - ',badgeid) AS pname
+    concat(pubsname,'/',badgename,' (',lastname,', ',firstname,')$emailaddr - ',badgeid) AS pname
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.CongoDump USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      Participants
+    JOIN CongoDump USING (badgeid)
     $limittables
-  WHERE
     $limitwhere
-    permrolename in ($permrolecheck_string) AND
-    UHPR.conid=$conid
   ORDER BY
     pubsname
+EOD;
+
+  // pubsname/badgename (lastname, firstname) - partid
+  $query3=<<<EOD
+SELECT
+    DISTINCT badgeid,
+    concat(email,": ",pubsname,'/',badgename,' (',lastname,', ',firstname,') - ',badgeid) AS pname
+  FROM
+      Participants
+    JOIN CongoDump USING (badgeid)
+    $limittables
+    $limitwhere
+  ORDER BY
+    email
 EOD;
 
   // Now give the choices
@@ -765,6 +771,12 @@ EOD;
   echo "<SELECT name=\"partidp\">\n";
   populate_select_from_query($query2, $selpartid, "Select Participant (Pubsname)", true);
   echo "</SELECT></DIV>\n";
+  if ($limit=='ALL') {
+    echo "<DIV><LABEL for=\"partide\">Select Participant (Email Address) </LABEL>\n";
+    echo "<SELECT name=\"partide\">\n";
+    populate_select_from_query($query3, $selpartid, "Select Participant (Email Address)", true);
+    echo "</SELECT></DIV>\n";
+  }
   echo "<P>&nbsp;\n";
   echo "<DIV class=\"SubmitDiv\"><BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Submit</BUTTON></DIV>\n";
   echo "</FORM>\n";
@@ -1031,7 +1043,11 @@ function submit_table_element ($link, $title, $table, $element_array, $value_arr
   $value_string=substr($value_string,0,-1);
   $query= "INSERT INTO $table ($element_string) VALUES ($value_string)";
   if (!mysql_query($query,$link)) {
-    $message_error=$query."<BR>Error updating $table.  Database not updated.";
+    if (mysql_errno($link)==1062) {
+      $message_error=$query."<BR>Error updating $table.  Record already exists.";
+    } else {
+      $message_error=$query."<BR>Error updating $table.  Database not updated.";
+    }
     RenderError($title,$message_error);
     exit;
   }
@@ -1097,16 +1113,9 @@ function refrom ($transstring) {
 
 /* Used to add a note on a participant as part of flow, and allowing for participant change. */
 function submit_participant_note ($note, $partid) {
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
-
   global $link;
 
-  $query = "INSERT INTO $ReportDB.NotesOnParticipants (badgeid,rbadgeid,note,conid) VALUES ('";
+  $query = "INSERT INTO NotesOnParticipants (badgeid,rbadgeid,note,conid) VALUES ('";
   $query.=$partid."','";
   $query.=$_SESSION['badgeid']."','";
   $query.=mysql_real_escape_string($note)."','";
@@ -1124,13 +1133,6 @@ function submit_participant_note ($note, $partid) {
 // I'm no longer sure why the below is here ...
 //"SELECT PR.pubsname, PB.pubsname, N.timestamp, N.note FROM NotesOnParticipants N, $ReportDB.Participants PR, $ReportDB.Participants PB WHERE N.rbadgeid=PR.badgeid AND N.badgeid=PB.badgeid;
 function show_participant_notes ($partid) {
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
-
   global $link;
 
   $query = <<<EOD
@@ -1140,8 +1142,8 @@ SELECT
     note as 'What Was Done',
     conid as "Con"
   FROM
-      $ReportDB.NotesOnParticipants N
-      JOIN $ReportDB.Participants P ON N.rbadgeid=P.badgeid
+      NotesOnParticipants N
+    JOIN Participants P ON N.rbadgeid=P.badgeid
   WHERE
     N.badgeid=$partid
   ORDER BY
@@ -1245,28 +1247,31 @@ function create_participant ($participant_arr) {
   }
 
   // Add Bios.
-  /* We are only updating the raw bios here, so only a 2-depth
-   search happens on biolang and biotypename. */
+  /* We are only updating the raw bios here, so only a 3-depth
+   search happens on biolang, biotypename, and biodest. */
   $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+      for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-      // Setup for keyname, to collapse all three variables into one passed name.
-      $biotype=$bioinfo['biotype_array'][$i];
-      $biolang=$bioinfo['biolang_array'][$j];
-      // $biostate=$bioinfo['biostate_array'][$k];
-      $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	// Setup for keyname, to collapse all three variables into one passed name.
+	$biotype=$bioinfo['biotype_array'][$i];
+	$biolang=$bioinfo['biolang_array'][$j];
+	// $biostate=$bioinfo['biostate_array'][$k];
+	$biodest=$bioinfo['biodest_array'][$l];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-      // Length-check the values.
-      $biotext=stripslashes(htmlspecialchars_decode($participant_arr[$keyname]));
-      if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($biotext)>$limit_array['max'][$biotype]['bio'])) {
-	$message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	$message.=" too long (".strlen($biotext)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
-       } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($biotext)<$limit_array['min'][$biotype]['bio'])) {
-	$message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	$message.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
-       } else {
-	$message.=update_bio_element($link,$title,$biotext,$newbadgeid,$biotype,$biolang,$biostate);
+	// Length-check the values.
+	$biotext=stripslashes(htmlspecialchars_decode($participant_arr[$keyname]));
+	if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($biotext)>$limit_array['max'][$biotype]['bio'])) {
+	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
+	  $message.=" too long (".strlen($biotext)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
+	} elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($biotext)<$limit_array['min'][$biotype]['bio'])) {
+	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
+	  $messaage.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
+	} else {
+	  $message.=update_bio_element($link,$title,$biotext,$newbadgeid,$biotype,$biolang,$biostate,$biodest);
+	}
       }
     }
   }
@@ -1414,31 +1419,34 @@ function edit_participant ($participant_arr) {
   }
 
   // Update/add Bios.
-  /* We are only updating the raw bios here, so only a 2-depth
-   search happens on biolang and biotypename. */
+  /* We are only updating the raw bios here, so only a 3-depth
+   search happens on biolang, biotypename and biodest. */
   $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+      for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-      // Setup for keyname, to collapse all three variables into one passed name.
-      $biotype=$bioinfo['biotype_array'][$i];
-      $biolang=$bioinfo['biolang_array'][$j];
-      // $biostate=$bioinfo['biostate_array'][$k];
-      $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	// Setup for keyname, to collapse all three variables into one passed name.
+	$biotype=$bioinfo['biotype_array'][$i];
+	$biolang=$bioinfo['biolang_array'][$j];
+	// $biostate=$bioinfo['biostate_array'][$k];
+	$biodest=$bioinfo['biodest_array'][$l];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-      // Clean up the posted string
-      $teststring=stripslashes(htmlspecialchars_decode($participant_arr[$keyname]));
-      $biostring=stripslashes(htmlspecialchars_decode($bioinfo[$keyname]));
+	// Clean up the posted string
+	$teststring=stripslashes(htmlspecialchars_decode($participant_arr[$keyname]));
+	$biostring=stripslashes(htmlspecialchars_decode($bioinfo[$keyname]));
 
-      if ($teststring != $biostring) {
-	if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($teststring)>$limit_array['max'][$biotype]['bio'])) {
-	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	  $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
-	} elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($teststring)<$limit_array['min'][$biotype]['bio'])) {
-	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	  $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
-	} else {
-	  $message.=update_bio_element($link,$title,$teststring,$participant_arr['partid'],$biotype,$biolang,$biostate);
+	if ($teststring != $biostring) {
+	  if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($teststring)>$limit_array['max'][$biotype]['bio'])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
+	    $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
+	  } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($teststring)<$limit_array['min'][$biotype]['bio'])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
+	    $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
+	  } else {
+	    $message.=update_bio_element($link,$title,$teststring,$participant_arr['partid'],$biotype,$biolang,$biostate,$biodest);
+	  }
 	}
       }
     }
@@ -1756,11 +1764,10 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
 /* Function getBioData($badgeid)
  Reads Bios tables from db to populate returned array $bioinfo with the
  key of biotypename_biolang_biostatename_bio and the value of biotext eg:
- $bioinfo['web_en-us_raw_bio']='This bio is short and meaningless.'
+ $bioinfo['uri_en-us_raw_web_bio']='This bio is short and meaningless.'
  Returns bioinfo; */
 function getBioData($badgeid) {
   global $message_error,$message2,$link;
-  $BioDB=BIODB; // make it a variable so it can be substituted
   $LanguageList=LANGUAGE_LIST; // make it a variable so it can be substituted
 
   // Tests for the substituted variables
@@ -1769,14 +1776,15 @@ function getBioData($badgeid) {
 
   $query= <<<EOD
 SELECT
-    concat(biotypename,"_",biolang,"_",biostatename,"_bio") AS biokey,
+    concat(biotypename,"_",biolang,"_",biostatename,"_",biodestname,"_bio") AS biokey,
     biotext
   FROM
-      $BioDB.Bios
-    JOIN $BioDB.BioTypes USING (biotypeid)
-    JOIN $BioDB.BioStates USING (biostateid)
+      Bios
+    JOIN BioTypes USING (biotypeid)
+    JOIN BioStates USING (biostateid)
+    JOIN BioDests USING (biodestid)
   WHERE
-        badgeid="$badgeid"
+    badgeid="$badgeid"
 EOD;
   $result=mysql_query($query,$link);
   if (!$result) {
@@ -1789,7 +1797,7 @@ EOD;
   }
 
   // Get all current possible biolang
-  $query="SELECT DISTINCT(biolang) FROM $BioDB.Bios";
+  $query="SELECT DISTINCT(biolang) FROM Bios";
   if (isset($LanguageList)) {$query.=" WHERE biolang in $LanguageList";}
   if (($result=mysql_query($query,$link))===false) {
     $message_error.=$query."<BR>\nError retrieving biolang data from database.\n";
@@ -1802,7 +1810,7 @@ EOD;
   $bioinfo['biolang_array']=$biolang_array;
 
   // Get all current possible biotypenames
-  $query="SELECT DISTINCT(biotypename) FROM $BioDB.BioTypes";
+  $query="SELECT DISTINCT(biotypename) FROM BioTypes";
   if (($result=mysql_query($query,$link))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -1814,7 +1822,7 @@ EOD;
   $bioinfo['biotype_array']=$biotype_array;
 
   // Get all current possible biostatenames
-  $query="SELECT DISTINCT(biostatename) FROM $BioDB.BioStates";
+  $query="SELECT DISTINCT(biostatename) FROM BioStates";
   if (($result=mysql_query($query,$link))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -1825,37 +1833,47 @@ EOD;
   }
   $bioinfo['biostate_array']=$biostate_array;
 
+  // Get all current possible biodestnames
+  $query="SELECT DISTINCT(biodestname) FROM BioDests";
+  if (($result=mysql_query($query,$link))===false) {
+    $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
+    RenderError($title,$message_error);
+    exit();
+  }
+  while ($row=mysql_fetch_assoc($result)) {
+    $biodest_array[]=$row['biodestname'];
+  }
+  $bioinfo['biodest_array']=$biodest_array;
+
   return($bioinfo);
 }
 
-/* Specific bio update takes seven variables: link, title, biotext,
- badgeid, biotypename, biostatename, and biolang, and returns the
- success message */
-function update_bio_element ($link, $title, $newbio, $badgeid, $biotypename, $biolang, $biostatename) {
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($BioDB=="BIODB") {unset($BioDB);}
+/* Specific bio update takes eight variables: link, title, biotext,
+   badgeid, biotypename, biolang, biostatename, and biodestname, and returns
+   the success message */
+function update_bio_element ($link, $title, $newbio, $badgeid, $biotypename, $biolang, $biostatename, $biodestname) {
 
   // make sure it's clean
   $biotext=mysql_real_escape_string($newbio,$link);
 
   $query=<<<EOD
 UPDATE
-    $BioDB.Bios
-    INNER JOIN $BioDB.BioTypes using (biotypeid)
-    INNER JOIN $BioDB.BioStates using (biostateid)
+      Bios
+    INNER JOIN BioTypes USING (biotypeid)
+    INNER JOIN BioStates USING (biostateid)
+    INNER JOIN BioDests USING (biodestid)
   SET
     biotext='$biotext'
   WHERE
     badgeid='$badgeid' AND
     biotypename in ('$biotypename') AND
     biolang in ('$biolang') AND
-    biostatename in ('$biostatename')
+    biostatename in ('$biostatename') AND
+    biodestname in ('$biodestname')
 EOD;
 
   if (!mysql_query($query,$link)) {
-    $message_error.=$query."<BR>Error updating the $biotypename $biolang $biostatename bio for $badgeid.  Database not updated.";
+    $message_error.=$query."<BR>Error updating the $biotypename $biolang $biostatename $biodestname bio for $badgeid.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
@@ -1863,17 +1881,18 @@ EOD;
   if (mysql_affected_rows($link) == 0) {
 $query=<<<EOD
 INSERT INTO
-    $BioDB.Bios (badgeid, biotypeid, biostateid, biolang, biotext)
+    Bios (badgeid, biotypeid, biostateid, biodestid, biolang, biotext)
   VALUES
     ('$badgeid',
-     (SELECT biotypeid FROM $BioDB.BioTypes WHERE biotypename IN ('$biotypename')),
-     (SELECT biostateid FROM $BioDB.BioStates WHERE biostatename IN ('$biostatename')),
+     (SELECT biotypeid FROM BioTypes WHERE biotypename IN ('$biotypename')),
+     (SELECT biostateid FROM BioStates WHERE biostatename IN ('$biostatename')),
+     (SELECT biodestid FROM BioDests WHERE biodestname IN ('$biodestname')),
      '$biolang',
      '$biotext');
 EOD;
 
     if (!mysql_query($query,$link)) {
-      $message_error.=$query."<BR>Error inserting the $biotypename $biolang $biostatename bio for $badgeid.  Database not updated.";
+      $message_error.=$query."<BR>Error inserting the $biotypename $biolang $biostatename $biodestname bio for $badgeid.  Database not updated.";
       RenderError($title,$message_error);
       exit;
     }

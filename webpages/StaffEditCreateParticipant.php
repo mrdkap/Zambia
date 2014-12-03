@@ -13,7 +13,7 @@ if (isset($_GET['action'])) {
    RenderError($title,$message_error);
    exit();
  }
-if (!($action=="edit"||$action=="create")) {
+if (!($action=="edit"||$action=="create"||$action=="migrate")) {
   $title="Edit or Add Participant";
   $message_error="Parameter 'action' contains invalid value.  Can't continue.<BR>\n";
   RenderError($title,$message_error);
@@ -22,7 +22,11 @@ if (!($action=="edit"||$action=="create")) {
 
 if ($action=="create") { //initialize participant array
   $title="Add Participant";
-  staff_header($title);
+  $description ="<P>Please use this only if you have already checked with ";
+  $description.="<A HREF=\"StaffEditCreateParticipant.php?action=migrate\">Migrate Participant</A> ";
+  $description.="and they are not there.</P>\n";
+
+  topofpagereport($title,$description,$additionalinfo);
 
   // If the information has already been added, and we are
   // on the return loop, add the Participant to the database.
@@ -33,20 +37,23 @@ if ($action=="create") { //initialize participant array
   // Get a set of bioinfo, not for the info, but for the arrays.
   $bioinfo=getBioData($_SESSION['badgeid']);
 
-  /* We are only updating the raw bios here, so only a 2-depth
-   search happens on biolang and biotypename. */
+  /* We are only updating the raw bios here, so only a 3-depth
+   search happens on biolang, biotypename, and biodest. */
   $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+      for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-      // Setup for keyname, to collapse all three variables into one passed name.
-      $biotype=$bioinfo['biotype_array'][$i];
-      $biolang=$bioinfo['biolang_array'][$j];
-      // $biostate=$bioinfo['biostate_array'][$k];
-      $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	// Setup for keyname, to collapse all four variables into one passed name.
+	$biotype=$bioinfo['biotype_array'][$i];
+	$biolang=$bioinfo['biolang_array'][$j];
+	// $biostate=$bioinfo['biostate_array'][$k];
+	$biodest=$bioinfo['biodest_array'][$l];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-      // Clear the values.
-      $participant_arr[$keyname]="";
+	// Clear the values.
+	$participant_arr[$keyname]="";
+      }
     }
   }
 
@@ -74,7 +81,12 @@ if ($action=="create") { //initialize participant array
  } else {
   // get participant array from database
   $title="Edit Participant";
-  staff_header($title);
+  $description="";
+  if ($action=="migrate") {
+    $title="Migrate Participant";
+    $description="<P>Locate someone who already exists, and migrate them to ".$_SESSION['conname']." so they can be appropriately utilized.</P>\n";
+  }
+  topofpagereport($title,$description,$additionalinfo);
 
   // Collapse the three choices into one
   if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
@@ -91,7 +103,11 @@ if ($action=="create") { //initialize participant array
   }
 
   //Choose the individual from the database
-  select_participant($selpartid, "'Yes'", "StaffEditCreateParticipant.php?action=edit");
+  if ($action=="migrate") {
+    select_participant($selpartid, 'ALL', "StaffEditCreateParticipant.php?action=migrate");
+  } else {
+    select_participant($selpartid, "'Yes'", "StaffEditCreateParticipant.php?action=edit");
+  }
 
   //Stop page here if and individual has not yet been selected
   if ($selpartid==0) {
@@ -172,20 +188,23 @@ EOD;
   // Get a set of bioinfo, and map it to the appropriate $participant_arr.
   $bioinfo=getBioData($selpartid);
 
-  /* We are only updating the raw bios here, so only a 2-depth
-     search happens on biolang and biotypename. */
+  /* We are only updating the raw bios here, so only a 3-depth
+     search happens on biolang, biotypename, and biodest. */
   $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+      for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-      // Setup for keyname, to collapse all three variables into one passed name.
-      $biotype=$bioinfo['biotype_array'][$i];
-      $biolang=$bioinfo['biolang_array'][$j];
-      // $biostate=$bioinfo['biostate_array'][$k];
-      $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	// Setup for keyname, to collapse all three variables into one passed name.
+	$biotype=$bioinfo['biotype_array'][$i];
+	$biolang=$bioinfo['biolang_array'][$j];
+	// $biostate=$bioinfo['biostate_array'][$k];
+	$biodest=$bioinfo['biodest_array'][$l];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-      // Clear the values.
-      $participant_arr[$keyname]=$bioinfo[$keyname];
+	// Set the values.
+	$participant_arr[$keyname]=$bioinfo[$keyname];
+      }
     }
   }
   RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);

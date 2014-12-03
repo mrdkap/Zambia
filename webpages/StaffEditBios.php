@@ -39,8 +39,8 @@ $bioinfo=getBioData($badgeid);
 $query = <<<EOD
 SELECT
     LB.pubsname as lockedby,
-    if(P.pubsname!="",P.pubsname,concat(firstname," ",lastname)) name 
-  FROM 
+    if(P.pubsname!="",P.pubsname,concat(firstname," ",lastname)) name
+  FROM
       Participants P
     JOIN Bios B USING (badgeid)
     JOIN CongoDump USING (badgeid)
@@ -48,7 +48,7 @@ SELECT
   WHERE
     P.badgeid='$badgeid'
 EOD;
-    
+
 if (($result=mysql_query($query,$link))===false) {
   $message_error=$query."<BR>\nError retrieving lock and name data from database.\n";
   RenderError($title,$message_error);
@@ -62,34 +62,37 @@ if (isset($_POST['update'])) {
   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
       for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
+        for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-	// Setup for short names and keyname, collapsing all three variables into one passed name.
-	$biotype=$bioinfo['biotype_array'][$i];
-	$biolang=$bioinfo['biolang_array'][$j];
-	$biostate=$bioinfo['biostate_array'][$k];
-	$keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	  // Setup for short names and keyname, collapsing all four variables into one passed name.
+	  $biotype=$bioinfo['biotype_array'][$i];
+	  $biolang=$bioinfo['biolang_array'][$j];
+	  $biostate=$bioinfo['biostate_array'][$k];
+	  $biodest=$bioinfo['biodest_array'][$l];
+	  $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-	// Clean up the posted string.
-        $teststring=stripslashes(htmlspecialchars_decode($_POST[$keyname]));
-        $biostring=stripslashes(htmlspecialchars_decode($bioinfo[$keyname]));
+	  // Clean up the posted string.
+	  $teststring=stripslashes(htmlspecialchars_decode($_POST[$keyname]));
+	  $biostring=stripslashes(htmlspecialchars_decode($bioinfo[$keyname]));
 
-	// Check for differences, if they exist, update the database.
-	if ($teststring != $biostring) {
-	  if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($teststring)>$limit_array['max'][$biotype]['bio'])) {
-	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	    $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
-	   } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($teststring)<$limit_array['min'][$biotype]['bio'])) {
-	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	    $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
-	   } else { 
-	    $message.=update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate);
-	   }
-	  $bioinfo[$keyname]=$teststring;
-	 }
-       }
-     }
-   }
- }
+	  // Check for differences, if they exist, update the database.
+	  if ($teststring != $biostring) {
+	    if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($teststring)>$limit_array['max'][$biotype]['bio'])) {
+	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
+	      $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
+	    } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($teststring)<$limit_array['min'][$biotype]['bio'])) {
+	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
+	      $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
+	    } else {
+	      $message.=update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate,$biodest);
+	    }
+	    $bioinfo[$keyname]=$teststring;
+	  }
+	}
+      }
+    }
+  }
+}
 
 /* Lock the editing of the participant.
  Returns 0 if succeeded, -2 if lock failed, -1 if db error. */
@@ -119,45 +122,51 @@ echo "<INPUT type=hidden name=\"unlock\" value=\"$badgeid\">\n";
 // Top submit button.
 echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n</DIV>\n";
 
-// Three-deep array to cover all the variables.
+/* Four-deep array to cover all the variables.  The biostate is now last,
+   even though it is normally third, so that the compare one box to the next
+   can happen more cleanly.
+ */
 for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
   for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
-    for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
+    for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
+      for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
 
-      // Setup for short names and keyname, collapsing all three variables into one passed name.
-      $biotype=$bioinfo['biotype_array'][$i];
-      $biolang=$bioinfo['biolang_array'][$j];
-      $biostate=$bioinfo['biostate_array'][$k];
-      $keyname=$biotype."_".$biolang."_".$biostate."_bio";
+	// Setup for short names and keyname, collapsing all three variables into one passed name.
+	$biotype=$bioinfo['biotype_array'][$i];
+	$biolang=$bioinfo['biolang_array'][$j];
+	$biostate=$bioinfo['biostate_array'][$k];
+	$biodest=$bioinfo['biodest_array'][$l];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-      // Modify the titles for legability, and switch on the readonly for raw.
-      $readonly="";
-      if ($biostate=='raw') {
-	$readonly="readonly";
+	// Modify the titles for legability, and switch on the readonly for raw.
+	$readonly="";
+	if ($biostate=='raw') {
+	  $readonly="readonly";
+	}
+
+	// For now, skip the "good" category
+	if ($biostate=='good') {continue;}
+
+	// Set up the LABEL.
+	echo "<LABEL for=\"$keyname\">".ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	$limit_string="";
+	if (isset($limit_array['max'][$biotype]['bio'])) {
+	  $limit_string.=" maximum ".$limit_array['max'][$biotype]['bio'];
+	}
+	if (isset($limit_array['min'][$biotype]['bio'])) {
+	  $limit_string.=" minimum ".$limit_array['min'][$biotype]['bio'];
+	}
+	if ($limit_string !="") {
+	  echo " (Limit".$limit_string." characters)";
+	}
+	echo ":</LABEL><BR>\n";
+
+	// Set up the input box.
+	echo "<TEXTAREA $readonly name=\"$keyname\" rows=8 cols=72>".$bioinfo[$keyname]."</TEXTAREA><BR><BR>\n";
       }
-
-      // For now, skip the "good" category
-      if ($biostate=='good') {continue;}
-
-      // Set up the LABEL.
-      echo "<LABEL for=\"$keyname\">".ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-      $limit_string="";
-      if (isset($limit_array['max'][$biotype]['bio'])) {
-	$limit_string.=" maximum ".$limit_array['max'][$biotype]['bio'];
-      }
-      if (isset($limit_array['min'][$biotype]['bio'])) {
-	$limit_string.=" minimum ".$limit_array['min'][$biotype]['bio'];
-      }
-      if ($limit_string !="") {
-	echo " (Limit".$limit_string." characters)";
-      }
-      echo ":</LABEL><BR>\n";
-
-      // Set up the input box.
-      echo "<TEXTAREA $readonly name=\"$keyname\" rows=8 cols=72>".$bioinfo[$keyname]."</TEXTAREA><BR><BR>\n";
+      // Every other change submit button.
+      echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n</DIV>\n";
     }
-    // Every language change submit button.
-    echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n</DIV>\n";
   }
 }
 echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n</DIV>\n";

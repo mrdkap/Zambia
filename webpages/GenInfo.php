@@ -47,6 +47,10 @@ if ($phase_array['Vol Available'] == '0' ) {
   $description.=" - <A HREF=\"Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A>\n";
   $description.=" - <A HREF=\"Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A>\n";
 }
+if (file_exists("../Local/$conid/Program_Book.pdf")) {
+  $description.=" - <A HREF=\"../Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
+}
+
 if ($nowis < $constart) { 
   if ($phase_array['Brainstorm'] == '0' ) {
     $description.=" -";

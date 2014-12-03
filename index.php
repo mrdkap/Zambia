@@ -73,7 +73,7 @@ for ($i=1; $i<=$phaserows; $i++) {
   $phase_array[$element_array['conid']][$element_array['phasetypename']]=$element_array['phasestate'];
 }
 
-$title="Zambia -- Check out the links below to learn about the great programming and vending we will have at upcoming events!";
+$title="Upcoming Events:";
 
 $onetime=0;
 for ($i=1; $i<=$conrows; $i++) {
@@ -95,7 +95,7 @@ for ($i=1; $i<=$conrows; $i++) {
     $webstring.="<H3>$conname on $condate:</H3>\n";
   } else {
     if ($onetime < 1) {
-      $webstring.="<HR>\n<H3>Check out the below links to learn about the great programming we had at previous events:</H3>\n<HR>\n";
+      $webstring.="<HR>\n<H2>Previous Events:</H2>\n<HR>\n";
       $onetime++;
     }
     $webstring.="<H3>$conname that ran $condate:</H3>\n";
@@ -124,6 +124,9 @@ for ($i=1; $i<=$conrows; $i++) {
   }
   if ($phase_array[$conid]['Comments Displayed'] == '0' ) {
     $webstring.="  <LI><A HREF=\"webpages/CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";
+  }
+  if (file_exists("Local/$conid/Program_Book.pdf")) {
+    $webstring.="  <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
   }
   if ($nowis < $constart) { 
     $webstring.="  <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";

@@ -7,9 +7,22 @@ $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
 $title="Show Search Session Results";
 
+$trackid=0;
+$sessionid="";
+
 // Passed in Variables
+if ((isset($_POST["track"])) and (is_numeric($_POST["track"]))) {
+  $trackid=$_POST["track"];
+} elseif ((isset($_GET["track"])) and (is_numeric($_GET["track"]))) {
+  $trackid=$_GET["track"];
+}
 $trackid=$_POST["track"];
-$titlesearch=stripslashes($_POST["title"]);
+
+if ((isset($_POST["sessionid"])) and (is_numeric($_POST["sessionid"]))) {
+  $sessionid=$_POST["sessionid"];
+} elseif ((isset($_GET["sessionid"])) and (is_numeric($_GET["sessionid"]))) {
+  $sessionid=$_GET["sessionid"];
+}
 
 /* If the individual doing the searches is a Programming Volunteer,
    they get to see all the scheduled classes, otherwise, just the
@@ -24,24 +37,23 @@ if (may_I('Programming')) {
   $schedule_p="";
 }
 
-// List of sessions that match search criteria 
+// List of sessions that match search criteria
 // Does not includes sessions in which participant is interested if they do match match search
 // Use "My Panel Interests" page to just see everything in which you are interested
 $query = <<<EOD
 SELECT
-    concat(conname," - ",sessionid) AS Sessionid,
+    sessionid,
     trackname,
     concat(title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web))) AS title ,
     CASE
-      WHEN (minute(duration)=0) AND (starttime) THEN CONCAT(DATE_FORMAT(duration,'%l hr starting '), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a %l:%i %p'))
-      WHEN (minute(duration)=0) THEN DATE_FORMAT(duration,'%l hr')
-      WHEN (hour(duration)=0) AND (starttime) THEN CONCAT(DATE_FORMAT(duration, '%i min starting '), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a %l:%i %p'))
-      WHEN (hour(duration)=0) THEN DATE_FORMAT(duration, '%i min')
-      WHEN (starttime) THEN CONCAT(DATE_FORMAT(duration,'%l hr, %i min starting '), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a %l:%i %p'))
-      ELSE DATE_FORMAT(duration,'%l hr, %i min')
+      WHEN (minute(duration)=0) AND (starttime) THEN CONCAT(DATE_FORMAT(duration,'%l&nbsp;hr&nbsp;starting&nbsp;'), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a&nbsp;%l:%i&nbsp;%p'))
+      WHEN (minute(duration)=0) THEN DATE_FORMAT(duration,'%l&nbsp;hr')
+      WHEN (hour(duration)=0) AND (starttime) THEN CONCAT(DATE_FORMAT(duration, '%i&nbsp;min&nbsp;starting&nbsp;'), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a&nbsp;%l:%i&nbsp;%p'))
+      WHEN (hour(duration)=0) THEN DATE_FORMAT(duration, '%i&nbsplmin')
+      WHEN (starttime) THEN CONCAT(DATE_FORMAT(duration,'%l&nbsp;hr,&nbsp;%i&nbsp;min&nbsp;starting&nbsp;'), DATE_FORMAT(ADDTIME(constartdate, starttime), '%a&nbsp;%l:%i&nbsp;%p'))
+      ELSE DATE_FORMAT(duration,'%l&nbsp;hr,&nbsp;%i&nbsp;min')
     END AS duration,
     desc_good_web,
-    desc_good_book,
     persppartinfo,
     badgeid
   FROM
@@ -63,45 +75,43 @@ SELECT
 	descriptiontext as title_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=1 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename='title' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
 	  descriptionlang='en-us') TGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as subtitle_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=2 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename='subtitle' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
 	  descriptionlang='en-us') SGW USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as desc_good_web
       FROM
           Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
           conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename='description' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
 	  descriptionlang='en-us') DGW USING (sessionid)
-    LEFT JOIN (SELECT
-        sessionid,
-	descriptiontext as desc_good_book
-      FROM
-          Descriptions
-      WHERE
-          conid=$conid AND
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=2 AND
-	  descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     conid=$conid AND
     may_be_scheduled=1 AND
@@ -121,9 +131,8 @@ EOD;
 if ($trackid!=0) {
   $query.="          AND trackid=$trackid\n";
 }
-if ($titlesearch!="") {
-  $x=mysql_real_escape_string($titlesearch,$link);
-  $query.="          AND title LIKE \"%$x%\"\n";
+if ($sessionid!="") {
+  $query.="          AND sessionid=$sessionid\n";
 }
 $query.=")\n  ORDER BY\n    trackid,starttime\n";
 if (!$result=mysql_query($query,$link)) {
@@ -131,10 +140,15 @@ if (!$result=mysql_query($query,$link)) {
   RenderError($title,$message);
   exit();
 }
-participant_header($title);
-//echo $query."<BR>\n";
-require ('RenderMySessions1.php');    
+
+require ('RenderMySessions1.php');
+topofpagereport($title,$description,$additionalinfo);
+echo "<FORM method=POST action=\"SearchMySessionsScheduled.php\">\n";
+$search=RenderSearchSession($trackid,$statusid,$typeid,$sessionid);
+echo $search;
+echo "</FORM>\n";
+echo "<HR>\n";
 RenderMySessions1($result);
-participant_footer();
+correct_footer();
 exit();
 ?>

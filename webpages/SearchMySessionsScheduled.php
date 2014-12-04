@@ -8,6 +8,8 @@ $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
 $title="Show Search Session Results";
 
 $trackid=0;
+$typeid=0;
+$statusid=0;
 $sessionid="";
 
 // Passed in Variables
@@ -16,7 +18,18 @@ if ((isset($_POST["track"])) and (is_numeric($_POST["track"]))) {
 } elseif ((isset($_GET["track"])) and (is_numeric($_GET["track"]))) {
   $trackid=$_GET["track"];
 }
-$trackid=$_POST["track"];
+
+if ((isset($_POST["type"])) and (is_numeric($_POST["type"]))) {
+  $typeid=$_POST["type"];
+} elseif ((isset($_GET["type"])) and (is_numeric($_GET["type"]))) {
+  $typeid=$_GET["type"];
+}
+
+if ((isset($_POST["status"])) and (is_numeric($_POST["status"]))) {
+  $statusid=$_POST["status"];
+} elseif ((isset($_GET["status"])) and (is_numeric($_GET["status"]))) {
+  $statusid=$_GET["status"];
+}
 
 if ((isset($_POST["sessionid"])) and (is_numeric($_POST["sessionid"]))) {
   $sessionid=$_POST["sessionid"];
@@ -130,6 +143,12 @@ SELECT
 EOD;
 if ($trackid!=0) {
   $query.="          AND trackid=$trackid\n";
+}
+if ($typeid!=0) {
+  $query.="          AND typeid=$typeid\n";
+}
+if ($statusid!=0) {
+  $query.="          AND statusid=$statusid\n";
 }
 if ($sessionid!="") {
   $query.="          AND sessionid=$sessionid\n";

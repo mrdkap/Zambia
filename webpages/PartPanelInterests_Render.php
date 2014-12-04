@@ -8,6 +8,9 @@ function render_session_interests($badgid,$session_interest_count,$message,$mess
     if ($message) {
         echo "<P class=\"regmsg\">".$message."</P>";
         }
+    /*
+      removing this until I can figure out the validate function fixes
+
     // "Add" Section
     echo "<FORM name=\"addform\" method=POST action=\"PartPanelInterests_POST.php\">\n";
     echo "    <table>\n";
@@ -19,6 +22,7 @@ function render_session_interests($badgid,$session_interest_count,$message,$mess
     echo "        </table>\n";
     echo "    </FORM>\n";
     echo "<HR>\n";
+    */
     // "Update Ranks" Section
     echo "<FORM name=\"sessionform\" method=POST action=\"PartPanelInterests_POST2.php\">\n";
     echo "<DIV class=\"submit\" id=\"submit\"><BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submitranks\">Save</BUTTON></DIV>\n";

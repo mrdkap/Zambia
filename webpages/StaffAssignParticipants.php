@@ -193,16 +193,20 @@ $statusid=mysql_result($result,0,"statusid");
 
 $query = <<<EOD
 SELECT
-    badgeid AS posbadgeid,
+    POS.badgeid AS posbadgeid,
+    PSI.badgeid AS psibadgeid,
     moderator,
     volunteer,
     introducer,
     aidedecamp,
-    badgeid,
+    R.badgeid,
     pubsname,
     rank,
     willmoderate,
+    obadgeid,
+    ibadgeid,
     psits,
+    R.conid,
     comments
   FROM
       Participants
@@ -230,11 +234,12 @@ SELECT
                      WHERE
                        sessionid=$selsessionid AND
                        conid=$conid) AS R2) AS R USING (badgeid)
-    LEFT JOIN ParticipantSessionInterest USING (badgeid,sessionid,conid)
-    LEFT JOIN ParticipantOnSession USING (badgeid,sessionid,conid)
+    LEFT JOIN ParticipantSessionInterest PSI ON (R.badgeid=PSI.badgeid AND R.sessionid=PSI.sessionid AND R.conid=PSI.conid)
+    LEFT JOIN ParticipantOnSession POS ON (R.badgeid=POS.badgeid AND R.sessionid=POS.sessionid and R.conid=POS.conid)
   WHERE
-    sessionid=$selsessionid OR
-    sessionid is null
+    R.conid=$conid AND
+    (R.sessionid=$selsessionid OR
+     R.sessionid is null)
   ORDER BY
     psits,
     pubsname
@@ -312,13 +317,13 @@ $modid=0;
 $volid=0;
 $intid=0;
 while ($bigarray[$i] = mysql_fetch_array($result, MYSQL_ASSOC)) {
-  if (($bigarray[$i]["moderator"]==1) or ($bigarray[$i]["moderator"]=="Yes")) {
+  if (($bigarray[$i]["moderator"]=="1") or ($bigarray[$i]["moderator"]=="Yes")) {
     $modid=$bigarray[$i]["badgeid"];
   }
-  if (($bigarray[$i]["volunteer"]==1) or ($bigarray[$i]["volunteer"]=="Yes")) {
+  if (($bigarray[$i]["volunteer"]=="1") or ($bigarray[$i]["volunteer"]=="Yes")) {
     $volid=$bigarray[$i]["badgeid"];
   }
-  if (($bigarray[$i]["introducer"]==1) or ($bigarray[$i]["introducer"]=="Yes")) {
+  if (($bigarray[$i]["introducer"]=="1") or ($bigarray[$i]["introducer"]=="Yes")) {
     $intid=$bigarray[$i]["badgeid"];
   }
   $i++;

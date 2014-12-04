@@ -969,6 +969,13 @@ function RenderSearchSession ($track,$status,$type,$sessionid) {
     $query_status="SELECT statusid, statusname FROM SessionStatuses ORDER BY display_order";
     $query_type="SELECT typeid, typename FROM Types ORDER BY display_order";
     $colspan=9;
+  } elseif (may_I('Programming')) {
+    $query_track="SELECT trackid, trackname FROM Tracks ORDER BY display_order";
+    // Status should be fixed to "Scheduled"
+    $statuschoice['scheduled']="Scheduled";
+    // Types are limited to Panels and Classes, we don't have introducers for anything else
+    $query_type="SELECT typeid,typename FROM Types WHERE typename in ('Panel','Class')";
+    $colspan=9;
   } else {
     $query_track="SELECT trackid, trackname FROM Tracks WHERE selfselect=1 ORDER BY display_order";
     // Search left out of choices to avoid tail-biting.
@@ -991,8 +998,8 @@ function RenderSearchSession ($track,$status,$type,$sessionid) {
   $returnstring.=populate_select_from_query_inline($query_track, $track, "ANY", true);
   $returnstring.="            </SELECT></TD>\n";
 
-  //Type Info, only for Staff
-  if (may_I('Staff')) {
+  //Type Info, for Staff and Program volunteers
+  if ((may_I('Staff')) OR (may_I('Programming'))) {
     $returnstring.="        <TD>Type:</TD>\n";
     $returnstring.="        <TD><SELECT name=\"type\">\n";
     $returnstring.=populate_select_from_query_inline($query_type, $type, "ANY", true);
@@ -1017,7 +1024,7 @@ function RenderSearchSession ($track,$status,$type,$sessionid) {
   $returnstring.="            </SELECT></TD>\n";
 
   //Sessionid, only for Staff
-  if (may_I('Staff')) {
+  if ((may_I('Staff')) OR (may_I('Programming'))) {
     $returnstring.="        <TD>Session ID:</TD>\n";
     $returnstring.="        <TD><INPUT type=\"text\" name=\"sessionid\" size=\"10\"";
     if ((isset($sessionid)) and (is_numeric($sessionid)) and ($sessionid > 0)) {

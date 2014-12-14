@@ -206,15 +206,6 @@ function fix_slashes($arg) {
     return $arg;
     }
 
-// Function isStaff($badgeid)
-// $badgeid is vestigial
-// returns true if user has staff permissions
-
-function isStaff($badgeid) {
-//    error_log("Zambia: ".print_r($permission_set,TRUE));
-    return (in_array("Staff",$_SESSION['permission_set']));
-    }
-
 // Function may_I($permatomtag)
 // $permatomtag is a string which designates a permission atom
 // returns TRUE if user has this permission in the current phase(s)

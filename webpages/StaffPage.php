@@ -8,8 +8,6 @@ unlock_participant(''); // unlocks any records locked by current user
 
 // LOCALIZATIONS
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 
 // To make navigation easier
 $jumpstring="<P>Jump to: <A HREF=\"#Flow\">Session Flow</A> :: <A HREF=\"#ToO\">Table of Organization</A> :: <A HREF=\"#Jobs\">Job Descriptions</A></P>\n";
@@ -23,9 +21,6 @@ $additionalinfo.="\"Sessions\" is the generic term we are using for all Events, 
 $additionalinfo.="Anime, Video, etc. and \"Precis\" is used for the description of same.</P>\n";
 $additionalinfo.="<P>There is always the somewhat-spotty <A HREF=\"../Documentation\">documentation</A></P>\n";
 
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 $query= <<<EOD
 SELECT
@@ -35,18 +30,21 @@ SELECT
     group_concat(DISTINCT '    <LI><A HREF="#',CRB.conrolename,'">',CRB.conrolenotes,'</A></LI>' SEPARATOR '\n') AS Reports,
   concat('  <DT><A NAME="',CRA.conrolename,'.desc" HREF="#',CRA.conrolename,'">',CRA.conrolenotes,'</A></DT>\n   <DD>',CRA.conroledescription,'</DD>\n') AS Description
   FROM
-      $ReportDB.ConRoles CRA
-    LEFT JOIN $ReportDB.UserHasConRole UHCR ON (UHCR.conroleid=CRA.conroleid AND UHCR.conid=$conid)
-    LEFT JOIN $ReportDB.Participants USING (badgeid)
-    LEFT JOIN $ReportDB.HasReports HRA ON (HRA.conroleid=CRA.conroleid AND HRA.conid=$conid)
-    LEFT JOIN $ReportDB.ConRoles CRB ON (CRB.conroleid=HRA.hasreport)
-    LEFT JOIN $ReportDB.HasReports HRB ON (HRB.hasreport=CRA.conroleid AND HRB.conid=$conid)
-    LEFT JOIN $ReportDB.ConRoles CRC ON (CRC.conroleid=HRB.conroleid)
+      ConRoles CRA
+    LEFT JOIN UserHasConRole UHCR ON (UHCR.conroleid=CRA.conroleid AND UHCR.conid=$conid)
+    LEFT JOIN Participants USING (badgeid)
+    LEFT JOIN HasReports HRA ON (HRA.conroleid=CRA.conroleid AND HRA.conid=$conid)
+    LEFT JOIN ConRoles CRB ON (CRB.conroleid=HRA.hasreport)
+    LEFT JOIN HasReports HRB ON (HRB.hasreport=CRA.conroleid AND HRB.conid=$conid)
+    LEFT JOIN ConRoles CRC ON (CRC.conroleid=HRB.conroleid)
   WHERE
     HRB.conid=$conid OR
-    CRA.conroleid=1
+    CRA.conrolename="Board"
   GROUP BY
     CRA.conroleid
+  ORDER BY
+    CRA.display_order,
+    CRA.conrolename
 EOD;
 
 // Retrive query
@@ -73,7 +71,7 @@ $query= <<<EOD
 SELECT
     concat("  <LI>",statusname," - ",statusdescription,"</LI>") AS Description
   FROM
-      $ReportDB.SessionStatuses
+      SessionStatuses
   ORDER BY
     display_order
 EOD;

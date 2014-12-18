@@ -84,6 +84,7 @@ SELECT
     notesforpart,
     notesforprog,
     pubsname,
+    estatten,
     statusid
   FROM
       Sessions
@@ -183,6 +184,10 @@ echo "\n";
 echo "<P>Suggestor\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
 echo htmlspecialchars(mysql_result($result,0,"pubsname"));
+echo "\n";
+echo "<P>Assigned Count\n";
+echo "<P class=\"border1111 lrmargin lrpad\">";
+echo htmlspecialchars(mysql_result($result,0,"estatten"));
 echo "\n";
 echo "<P>Notes for Program Staff\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";

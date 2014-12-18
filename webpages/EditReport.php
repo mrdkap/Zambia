@@ -1,32 +1,38 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-
 $title="Edit Reports";
 $description="<P>Use this page to edit reports.</P>\n";
 $additionalinfo="<P>A report has to be in a <A HREF=EditGroupFlows.php>Group</A> to work.</P>\n";
+$additionalinfo="<P>There should be some way to modify the permissions restriction.</P>\n";
+
+// Check to see if page can be displayed
+if (!may_I("Maint")) {
+  $message_error ="Alas, you do not have the proper permissions to view this page.";
+  $message_error.=" If you think this is in error, please, get in touch with an administrator.";
+  RenderError($title,$message_error);
+  exit();
+}
 
 // Submit the report, if there was one, when this is called
 if ((isset($_POST["reportupdate"])) and ($_POST["reportupdate"]!="")) {
   if ($_POST["selreport"] == "-1") {
-    $element_array=array('reportname','reporttitle','reportdescription','reportadditionalinfo','reportquery');
+    $element_array=array('reportname','reporttitle','reportdescription','reportadditionalinfo','reportquery','reportrestrictions');
     $value_array=array(htmlspecialchars_decode($_POST["reportname"]),
 		       htmlspecialchars_decode($_POST["reporttitle"]),
 		       htmlspecialchars_decode($_POST["reportdescription"]),
 		       htmlspecialchars_decode($_POST["reportadditionalinfo"]),
-		       htmlspecialchars_decode(refrom($_POST["reportquery"])));
-    $message.=submit_table_element($link, $title, "$ReportDB.Reports", $element_array, $value_array);
+		       htmlspecialchars_decode(refrom($_POST["reportquery"])),
+                       "NULL");
+    $message.=submit_table_element($link, $title, "Reports", $element_array, $value_array);
   } else {
     $pairedvalue_array=array("reportdescription='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportdescription"])))."'",
 			     "reportadditionalinfo='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportadditionalinfo"])))."'",
+			     "reportrestrictions='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportrestrictions"])))."'",
 			     "reportquery='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode(refrom($_POST["reportquery"]))))."'");
     $match_field="reportid";
     $match_value=$_POST["selreport"];
-    $message.=update_table_element($link, $title, "$ReportDB.Reports", $pairedvalue_array, $match_field, $match_value);
+    $message.=update_table_element($link, $title, "Reports", $pairedvalue_array, $match_field, $match_value);
   }
 }
 
@@ -50,7 +56,7 @@ SELECT
     reporttitle,
     reportdescription
   FROM
-      $ReportDB.Reports
+      Reports
   ORDER BY
     reportid
 EOD;
@@ -122,9 +128,10 @@ SELECT
     reportname,
     reportdescription,
     reportadditionalinfo,
-    reportquery
+    reportquery,
+    reportrestrictions
   FROM
-      $ReportDB.Reports
+      Reports
   WHERE reportid='$selreportid'
 EOD;
 
@@ -135,6 +142,7 @@ EOD;
   $reportdescription=$report_array[1]['reportdescription'];
   $reportadditionalinfo=$report_array[1]['reportadditionalinfo'];
   $reportquery=$report_array[1]['reportquery'];
+  $reportrestrictions=$report_array[1]['reportrestrictions'];
 
   // Return pointer
   echo "<P><A HREF=\"genreport.php?reportname=$reportname\">Return to report</A></P>";
@@ -158,6 +166,8 @@ EOD;
   <TEXTAREA name="reportdescription" rows=2 cols=72><?php echo htmlspecialchars($reportdescription) ?></TEXTAREA>
   <LABEL for="reportadditionalinfo">Additional Information:</LABEL>
   <TEXTAREA name="reportadditionalinfo" rows=2 cols=72><?php echo htmlspecialchars($reportadditionalinfo) ?></TEXTAREA>
+  <LABEL for="reportrestrictions">Restricted To:</LABEL>
+  <TEXTAREA name="reportrestrictions" rows=2 cols=72><?php echo htmlspecialchars($reportrestrictions) ?></TEXTAREA>
   <LABEL for="reportquery">Query: (note, due to a strange anomoly in the system, "FROM" is rendered in pig-latin.  Do not worry, it gets fixed.)</LABEL>
   <TEXTAREA name="reportquery" rows=15 cols=72><?php echo htmlspecialchars(unfrom($reportquery)) ?></TEXTAREA>
 </DIV> 

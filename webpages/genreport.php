@@ -3,11 +3,8 @@ require_once('StaffCommonCode.php');
 global $link;
 
 $ConStartDatim=$_SESSION['constartdate']; // make it a variable so it can be substituted
-$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
-$ConNumDays=$_SESSION['connumdays']; // make it a variable so it can be substituted
 $mybadgeid=$_SESSION['badgeid']; // make it a simple variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a simple variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
 
 // Get the various length limits for substitution
@@ -91,6 +88,7 @@ SELECT
     reporttitle,
     reportdescription,
     reportadditionalinfo,
+    reportrestrictions,
     reportquery
   FROM
       Reports
@@ -138,6 +136,25 @@ EOD;
   // Begin the per-report cycle.
   for ($i=1; $i<=$returned_reports; $i++) {
     $basereportid=$report_array[$i]['reportid'];
+
+    /* Check for permissions - if there is an array of permissions set on the report
+       walk through those permissions, to see if the person may see the report.  If
+       not, set the query to a null value and return that instead. 
+     */
+    $empty_permissions_p=1;
+    $allowed_p=0;
+    if (!empty($report_array[$i]['reportrestrictions'])) {
+      $empty_permissions_p=0;
+      $permissions_array=explode(',',$report_array[$i]['reportrestrictions']);
+      foreach ($permissions_array as $permission_check) {
+	if (may_I($permission_check)) {
+	  $allowed_p++;
+	}
+      }
+    }
+    if (($empty_permissions_p==0) AND ($allowed_p==0)) {
+      $report_array[$i]['reportquery']="SELECT '' AS 'You do not have permission to view this table.  If you think this is an error, please contact a Zambia Administrator.'";
+    }
 
     // Start with a blank $personal, walk the array, set the previous and next for this reportid
     $personal="Personal Flow: ";
@@ -213,8 +230,12 @@ EOD;
 
     // Retrieve secondary query
     list($rows,$header_array,$class_array)=queryreport($report_array[$i]['reportquery'],$link,$report_array[$i]['reporttitle'],$report_array[$i]['reportdescription'],$reportid);
-    $report_array[$i]['reportadditionalinfo'].="<P><A HREF=\"genreport.php?reportid=".$report_array[$i]['reportid']."&csv=y\" target=_blank>csv</A> file\n";
-    $report_array[$i]['reportadditionalinfo'].="<A HREF=\"genreport.php?reportid=".$report_array[$i]['reportid']."&print_p=y\" target=_blank>print</A> file</P>\n";
+    $report_array[$i]['reportadditionalinfo'].="<P>Generat a <A HREF=\"genreport.php?reportid=".$report_array[$i]['reportid']."&csv=y\" target=_blank>csv</A> file or\n";
+    $report_array[$i]['reportadditionalinfo'].="<A HREF=\"genreport.php?reportid=".$report_array[$i]['reportid']."&print_p=y\" target=_blank>print</A> the file";
+    if (may_I("Maint")) {
+      $report_array[$i]['reportadditionalinfo'].="\nor <A HREF=\"EditReport.php?selreport=".$report_array[$i]['reportid']."\">edit</A> this report";
+    }
+    $report_array[$i]['reportadditionalinfo'].=".</P>\n";
     $report_array[$i]['reportadditionalinfo'].="<P><FORM name=\"addto\" method=POST action=\"genreport.php?reportid=".$report_array[$i]['reportid']."\">";
     $report_array[$i]['reportadditionalinfo'].="<INPUT type=\"hidden\" name=\"addto\" value=\"".$report_array[$i]['reportid']."\">";
     $report_array[$i]['reportadditionalinfo'].=" <INPUT type=submit value=\"Add\">";

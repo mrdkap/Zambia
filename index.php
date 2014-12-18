@@ -42,6 +42,7 @@ for ($i=1; $i<=$conrows; $i++) {
   $ConInfo_array[$tmpconinfo_array['conid']]['connumdays']=$tmpconinfo_array['connumdays'];
 }
 
+// Establish the "now" for comparison purposes
 $nowis=time();
 
 // Establish the states, for the look of the page
@@ -75,129 +76,224 @@ for ($i=1; $i<=$phaserows; $i++) {
 
 $title="Upcoming Events:";
 
+// header/footer for each section
+$divfooter ="    </UL>\n";
+$divfooter.="  </DIV>\n";
+$genheader ="  <DIV style=\"float: left; width: 50%; font-size: 1.167em; \">\n";
+$genheader.="    <H3>General Information</H3>\n";
+$genheader.="    <UL>\n";
+$progheader ="  <DIV style=\"float: right; width: 50%; font-size: 1.167em; \">\n";
+$progheader.="    <H3>Programming Information</H3>\n";
+$progheader.="    <UL>\n";
+$volheader ="  <DIV style=\"float: left; width: 50%; font-size: 1.167em; \">\n";
+$volheader.="    <H3>Volunteer Information</H3>\n";
+$volheader.="    <UL>\n";
+$vendheader ="  <DIV style=\"float: right; width: 50%; font-size: 1.167em; \">\n";
+$vendheader.="    <H3>Vending Information</H3>\n";
+$vendheader.="    <UL>\n";
+
+// Setup for the nav set on the left
+$navstring ="        <P>Upcoming:</P>\n";
+$navstring.="        <UL>\n";
+
+// Set the counter for the "Previous" break
 $onetime=0;
+
+// Walk each of the convention instances
 for ($i=1; $i<=$conrows; $i++) {
   $conid=$ConCount_array[$i];
+
+  // Ignore non-scheduled cons
   if ($ConInfo_array[$conid]['constartdate']=="0000-00-00 00:00:00") continue;
+
+  // Set the start date, and the length of the con.
   $constart=strtotime($ConInfo_array[$conid]['constartdate']);
   $connumdays=$ConInfo_array[$conid]['connumdays'];
+
+  // Set up run dates for the con
   if ($connumdays > 1) {
     $offset=86400 * ($connumdays - 1);
-    $condate=date("l, F j ",$constart);
+    $constartmonth=date("M",$constart);
+    $conendmonth=date("M",($constart + $offset));
+    $condate=date("M jS ",$constart);
     $condate.=" - ";
-    $condate.=date("l, F j Y",($constart + $offset));
+    if ($constartmonth == $conendmonth) {
+      $condate.=date("jS Y",($constart + $offset));
+    } else {
+      $condate.=date("M jS Y",($constart + $offset));
+    }
   } else {
-    $condate=date("l, F j Y",$constart);
+    $condate=date("M jS Y",$constart);
   }
+
+  // Set the con name
   $conname=htmlspecialchars_decode($ConInfo_array[$conid]['conname']);
 
-  if ($nowis < $constart) { 
-    $webstring.="<H3>$conname on $condate:</H3>\n";
-  } else {
+  // Set the "Previous" barrier.  Once.
+  if ($nowis > ($constart + $offset)) {
     if ($onetime < 1) {
-      $webstring.="<HR>\n<H2>Previous Events:</H2>\n<HR>\n";
+      $webstring.="<DIV style=\"background-color: #ffdb70; display: table; width: 100%;\">\n";
+      $webstring.="  <H1>Previous Events:</H1>";
+      $navstring.="        </UL>\n";
+      $navstring.="        <P>Previous:</P>\n";
+      $navstring.="        <UL>\n";
+      $webstring.="</DIV>\n";
       $onetime++;
     }
-    $webstring.="<H3>$conname that ran $condate:</H3>\n";
   }
-  $webstring.="<UL>\n";
+
+  // Name and date the con.
+  $webstring.="<DIV>\n";
+  $webstring.="  <DIV style=\"float: left; width: 100%; background-color: #F0F0F0; \">\n";
+  $webstring.="    <H2><A NAME=\"$conid\"></A>$conname &mdash; $condate</H2>\n";
+  $navstring.="          <LI><A HREF=#$conid>$conname &mdash; $condate</A></LI>\n";
+  $webstring.="  </DIV>\n";
+
+  // General information block
+  $genbody="";
   if ($phase_array[$conid]['General Info Available'] == '0' ) {
-    $webstring.="  <LI><A HREF=\"webpages/GenInfo.php?conid=$conid\">General Event Information</A></LI>\n";
+    $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid\">General Event Information</A></LI>\n";
   }
-  $webstring.="  <LI><A HREF=\"webpages/ConStaffBios.php?conid=$conid\">Con Staff</A></LI>\n";
-  if ($phase_array[$conid]['Prog Available'] == '0' ) {
-    $webstring.="  <LI><A HREF=\"webpages/Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
-    $webstring.="  <LI><A HREF=\"webpages/Descriptions.php?conid=$conid\">Class Descriptions</A></LI>\n";
-    $webstring.="  <LI><A HREF=\"webpages/Schedule.php?conid=$conid\">Schedule</A></LI>\n";
-    $webstring.="  <LI><A HREF=\"webpages/Tracks.php?conid=$conid\">Tracks</A></LI>\n";
-    $webstring.="  <LI><A HREF=\"webpages/Bios.php?conid=$conid\">Presenter Bios</A></LI>\n";
-  }
-  if ($phase_array[$conid]['Vendors Available'] == '0' ) {
-    $webstring.="  <LI><A HREF=\"webpages/Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
-  }
+  $genbody.="      <LI><A HREF=\"webpages/ConStaffBios.php?conid=$conid\">Con Staff</A></LI>\n";
   if ($phase_array[$conid]['Venue Available'] == '0' ) {
-    $webstring.="  <LI><A HREF=\"webpages/Venue.php?conid=$conid\">Venue Information</A></LI>\n";
-  }
-  if ($phase_array[$conid]['Vol Available'] == '0' ) {
-    $webstring.="  <LI><A HREF=\"webpages/Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
-    $webstring.="  <LI><A HREF=\"webpages/Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
+    $genbody.="      <LI><A HREF=\"webpages/Venue.php?conid=$conid\">Venue Information</A></LI>\n";
   }
   if ($phase_array[$conid]['Comments Displayed'] == '0' ) {
-    $webstring.="  <LI><A HREF=\"webpages/CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";
+    $genbody.="      <LI><A HREF=\"webpages/CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";
   }
   if (file_exists("Local/$conid/Program_Book.pdf")) {
-    $webstring.="  <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
+    $genbody.="      <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
   }
-  if ($nowis < $constart) { 
-    $webstring.="  <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
-    if ($phase_array[$conid]['Brainstorm'] == '0' ) {
-      $webstring.="  <LI>\n";
-      $webstring.="  <FORM name=\"brainstormform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
-      $webstring.="    <INPUT type=\"submit\" name=\"submit\" value=\"Class/Presenter Submission\">\n";
-      $webstring.="  </FORM>\n";
-      $webstring.="  <FORM name=\"brainstormviewform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
-      $webstring.="    <INPUT type=\"submit\" name=\"submit\" value=\"View Suggested Classes\">\n";
-      $webstring.="  </FORM>\n";
-    }
-    if ($phase_array[$conid]['Vendor'] == '0' ) {
-      $webstring.="  <LI>\n";
-      $webstring.="  <FORM name=\"vendorform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
-      $webstring.="    <INPUT type=\"hidden\" name=\"target\" value=\"vendor\">\n";
-      $webstring.="    <INPUT type=\"submit\" name=\"submit\" value=\"New Vendor Application\">\n";
-      $webstring.="  </FORM>\n";
-    }
-  } else { 
-    if ($phase_array[$conid]['Feedback Available'] == '0') {
-      $webstring.="  <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";
-    }
-    // Percy, we need to make a hard link to Zambia or run this through Pyro,  right now, the link breaks
-    // if ($onetime < 1) {
-    $webstring.="  <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A></LI>\n";
-    // }
+  if ($genbody!="") {$webstring.=$genheader . $genbody . $divfooter;}
+
+  // Programming information block
+  $progbody="";
+  if ($phase_array[$conid]['Prog Available'] == '0' ) {
+    $progbody.="      <LI><A HREF=\"webpages/Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/Descriptions.php?conid=$conid\">Class Descriptions</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/Schedule.php?conid=$conid\">Schedule</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/Tracks.php?conid=$conid\">Tracks</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/Bios.php?conid=$conid\">Presenter Bios</A></LI>\n";
   }
-  $webstring.="</UL>\n";
+  if ($phase_array[$conid]['Brainstorm'] == '0' ) {
+    $progbody.="      <LI>\n";
+    $progbody.="      <FORM name=\"brainstormform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+    $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+    $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+    $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+    $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"Class/Presenter Submission\">\n";
+    $progbody.="      </FORM>\n";
+    $progbody.="      <FORM name=\"brainstormviewform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+    $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+    $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+    $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+    $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"View Suggested Classes\">\n";
+    $progbody.="      </FORM>\n";
+    $progbody.="      </LI>\n";
+  }
+  if ($phase_array[$conid]['Feedback Available'] == '0') {
+    $progbody.="      <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";
+  }
+  if ($nowis < $constart) {
+    $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+  } else {
+    $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A></LI>\n";
+  }
+  if ($progbody!="") {$webstring.=$progheader . $progbody . $divfooter;}
+
+  // Volunteer information block
+  $volbody="";
+  if ($phase_array[$conid]['Vol Available'] == '0' ) {
+    $volbody.="      <LI><A HREF=\"webpages/Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
+    $volbody.="      <LI><A HREF=\"webpages/Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
+  }
+  if ($volbody!="") {$webstring.=$volheader . $volbody . $divfooter;}
+
+  // Vending information block
+  $vendbody="";
+  if ($phase_array[$conid]['Vendors Available'] == '0' ) {
+    $vendbody.="      <LI><A HREF=\"webpages/Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
+  }
+  if ($phase_array[$conid]['Vendor'] == '0' ) {
+    $vendbody.="      <LI>\n";
+    $vendbody.="      <FORM name=\"vendorform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+    $vendbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+    $vendbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+    $vendbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"vendor\">\n";
+    $vendbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"New Vendor Application\">\n";
+    $vendbody.="      </FORM>\n</LI>\n";
+  }
+  if ($vendbody!="") {$webstring.=$vendheader . $vendbody . $divfooter;}
+  $webstring.="</DIV>\n";
 }
+$navstring.="        </UL>\n";
 
-
-// Percy, Added $include IF eval
-// -Mike
-if (!isset($included) && $included != 'YES')
-  {
-	
+// Now start the display.
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<HTML xmlns="http://www.w3.org/1999/xhtml">
+
+<!DOCTYPE html>
+<HTML>
   <HEAD>
-    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=latin-1\">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <?php
+/* Set up the title, and then pull in the site local HeaderTemplateFile
+   or use the simply header file below. */
 echo "    <TITLE>$title</TITLE>\n";
 if (file_exists($HeaderTemplateFile)) {
   readfile($HeaderTemplateFile);
  } else {
 ?>
-  <link rel="stylesheet" href="Common.css" type="text/css">
+    <meta name="description" content="Fetish Fair Fleamarket information page">
+    <meta name="keywords" content="">
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="webpages/Common.css" type="text/css">
+    <STYLE type="text/css">
+      h1 { font-size: 2em; margin: .5em;}
+      h2 { font-size: 1.5em; margin: .5em;}
+      h3 { font-size: 1.17em; }
+      .conname { float: left; width: 100%; }
+      .geninfo { float: left; width: 50%; }
+      .prog { float: right; width: 50%; }
+      .vol { float: left; width: 50%; }
+      .vend { float: right; width: 50%; }
+      .row-fluid:before,.row-fluid:after { display: table; line-height: 0; content: ""; }
+      .row-fluid:after { clear: both;  }
+      .row-fluid [class*="span"] { display: block; float: left; width: 100%; min-height: 30px; margin-left: 2.5%; *margin-left: 2.5%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+      .row-fluid .span3 { width: 30%; *width: 30%; }
+      article { display: table; float: right; width: 74%; }
+      footer { background-color: #F0F0F0; padding: 1em; border-top: 1px; display: table; float: right; width: 74%; }
+      header { background-color: #ffdb70; display: table; width: 100%; }
+      nav { display: table; float: left; width: 25%; }
+      nav li { margin: .3em 0 .3em 0; list-style-type: none; }
+      body { display: table; font-family: sans-serif; text-align: left; width: 99% }
+    </STYLE>
   </HEAD>
   <BODY>
-<?php } echo "<H1>$title</H1>\n<hr>\n" . $webstring; 
-if (file_exists($FooterTemplateFile)) {
+      <NAV>
+        <H2>Events</H2>
+<?php echo $navstring; ?>
+      </NAV>
+<?php } ?>
+      <ARTICLE>
+        <DIV style="background-color: #ffdb70; display: table; width: 100%;">
+<?php echo "          <H1>$title</H1>\n" ?>
+        </DIV>
+<?php echo $webstring; ?>
+      </ARTICLE>
+<?php if (file_exists($FooterTemplateFile)) {
   readfile($FooterTemplateFile);
  } else {
-  echo "<hr>\n<P>If you have questions or wish to communicate an idea, please contact ";
-  echo "<A HREF=\"mailto:$ProgramEmail\">$ProgramEmail</A>.\n</P>";
- }
+?>
+      <FOOTER>
+        <hr>
+        <P>If you have questions or wish to communicate an idea, please contact
+           <A HREF=<?php echo "\"mailto:$ProgramEmail\">$ProgramEmail"; ?></A></P>
+      </FOOTER>
+    </DIV>
+<?php }
 include ('webpages/google_analytics.php');
 ?>
   </BODY>
 </HTML>
-
-<?php
-}  // close IF $included 
-?>

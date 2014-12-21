@@ -589,6 +589,67 @@ function rendergridreport($startrows,$endrows,$header_array,$element_array) {
   return($gridstring);
 }
 
+/* This function renders the Schedule, Description, Tracks (and possibly Bios)
+   in their various forms, for their various audiences.
+   It takes 5 elements:
+   format - One of desc, bios, sched, tracks
+   header_break - If there is sectional breaks, what it breaks on
+   single_line_p - If the sched line is a single line, or includes the descriptions
+   elements - the count of the elements to loop over
+   element_array - the array of elements to loop over
+ */
+function renderschedreport($format,$header_break,$single_line_p,$elements,$element_array) {
+  $sched="<DL>\n";
+
+  $header="";
+  for ($i=1; $i<=$elements; $i++) {
+    if (($header_break != "") and ($element_array[$i][$header_break] != $header)) {
+      $header=$element_array[$i][$header_break];
+      if ($format != "bios") {
+	$sched.=sprintf("</DL><P>&nbsp;</P>\n<HR><H3>%s</H3>\n<DL>\n",$header);
+      } else {
+	$sched.=$element_array[$i]['Bio'];
+      }
+    }
+    if ($single_line_p != "T") { $sched.="<P>"; }
+    $sched.=sprintf("<DT><B>%s</B>",$element_array[$i]['Title']);
+    if (($single_line_p == "T") and
+	($format != "bios") and
+	($element_array[$i]['Participants'] != " ")) {
+      $sched.=sprintf("&mdash;%s",$element_array[$i]['Participants']);
+    }
+    if ($format != "tracks") {
+      $sched.=sprintf("&mdash;%s",$element_array[$i]['Track']);
+    }
+    if ($format != "sched") {
+      $sched.=sprintf("&mdash;%s",$element_array[$i]['Start Time']);
+    }
+    $sched.=sprintf("&mdash;%s&mdash;%s",
+		    $element_array[$i]['Duration'],
+		    $element_array[$i]['Room']);
+    if ($single_line_p != "T") {
+      $sched.=sprintf("</DT>\n<DD><P>%s",$element_array[$i]['Description']);
+      if ($element_array[$i]['Participants'] != " ") {
+	$sched.=sprintf("</P></DD>\n<DD><i>%s</i></DD>\n",$element_array[$i]['Participants']);
+      } else {
+	$sched.="</P></DD>\n";
+      }
+    } else {
+      $sched.="</DT>\n";
+    }
+    if (($element_array[$i][$header_break] != $element_array[$i + 1][$header_break]) and
+	($format == "bios")) {
+      $sched.="</DL>\n";
+      if ($element_array[$i]['istable'] > 0) {
+	$sched.="    </TD>\n  </TR>\n</TABLE>\n";
+      }
+    }
+  }
+  if ($format != "bios") {
+    $sched.="</DL>\n";
+  }
+  return($sched);
+}
 
 /* Pull the information from the databas for a report.  This should be
  checked with, and possibly unified with other functions in db_functions
@@ -1778,7 +1839,6 @@ function getBioData($badgeid) {
   $LanguageList=LANGUAGE_LIST; // make it a variable so it can be substituted
 
   // Tests for the substituted variables
-  if ($BioDB=="BIODB") {unset($BioDB);}
   if ($LanguageList=="LANGUAGE_LIST") {unset($LanguageList);}
 
   $query= <<<EOD

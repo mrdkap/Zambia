@@ -33,6 +33,22 @@ topofpagereport($title,$description,$additionalinfo);
   <DD id="feedback">Feedback forms for the various days or types to be printed, probably on different colour paper, for easier sorting.</DD>
 </DL>
 <HR>
+<P>Some useful views for the program book:</P>
+<DL>
+  <DT id="programbookdesc"><A HREF="BookBios.php">Bios</A>
+    <A HREF="BookBios.php?short=Y">(short)</A></DT>
+  <DD id="programbookdesc">An alphabetical list of the Biographical Information for the Program Book.</DD>
+  <DT id="programbookdesc"><A HREF="BookSched.php?format=desc">Descriptions</A>
+    <A HREF="BookSched.php?format=desc&short=Y">(short)</A></DT>
+  <DD id="programbookdesc">An alphabetical list of the descriptions for the Program Book.</DD>
+  <DT id="programbooksched"><A HREF="BookSched.php?format=sched">Schedule</A>
+    <A HREF="BookSched.php?format=sched&short=Y">(short)</A></DT>
+  <DD id="programbooksched">A time-sorted schedule for the Program Book.</DD>
+  <DT id="programbooktrack"><A HREF="BookSched.php?format=tracks">Tracks list</A>
+    <A HREF="BookSched.php?format=tracks&short=Y">(short)</A></DT>
+  <DD id="programbooktrack">A track-sorted schedule for the Program Book.</DD>
+</DL>
+<HR>
 <P>And one that is useful after the event feedback is done.</P>
 <DL>
   <DT id="returnedfeedback"><A HREF="FeedbackPrint.php">Returned Feedback</A></DT>

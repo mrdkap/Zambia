@@ -47,12 +47,12 @@ $vendheader.="    <UL>\n";
 // Set the header information correctly
 $description.="<DIV style=\" width: 100%; \">\n";
 $genbody="";
-$genbody.="      <LI><A HREF=\"webpages/ConStaffBios.php?conid=$conid\">Con Staff</A></LI>\n";
+$genbody.="      <LI><A HREF=\"ConStaffBios.php?conid=$conid\">Con Staff</A></LI>\n";
 if ($phase_array['Venue Available'] == '0' ) {
-  $genbody.="      <LI><A HREF=\"webpages/Venue.php?conid=$conid\">Venue Information</A></LI>\n";
+  $genbody.="      <LI><A HREF=\"Venue.php?conid=$conid\">Venue Information</A></LI>\n";
 }
 if ($phase_array['Comments Displayed'] == '0' ) {
-  $genbody.="      <LI><A HREF=\"webpages/CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";
+  $genbody.="      <LI><A HREF=\"CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";
 }
 if (file_exists("../Local/$conid/Program_Book.pdf")) {
   $genbody.="      <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
@@ -90,21 +90,21 @@ if (file_exists("../Local/$conid/Rules")) {
 if ($genbody!="") {$description.=$genheader . $genbody . $divfooter;}
 $progbody="";
 if ($phase_array['Prog Available'] == '0' ) {
-  $progbody.="      <LI><A HREF=\"webpages/Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"webpages/Descriptions.php?conid=$conid\">Class Descriptions</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"webpages/Schedule.php?conid=$conid\">Schedule</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"webpages/Tracks.php?conid=$conid\">Tracks</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"webpages/Bios.php?conid=$conid\">Presenter Bios</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"Descriptions.php?conid=$conid\">Class Descriptions</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"Schedule.php?conid=$conid\">Schedule</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"Tracks.php?conid=$conid\">Tracks</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"Bios.php?conid=$conid\">Presenter Bios</A></LI>\n";
 }
 if ($phase_array['Brainstorm'] == '0' ) {
   $progbody.="      <LI>\n";
-  $progbody.="      <FORM name=\"brainstormform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+  $progbody.="      <FORM name=\"brainstormform\" method=\"POST\" action=\"doLogin.php\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
   $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"Class/Presenter Submission\">\n";
   $progbody.="      </FORM>\n";
-  $progbody.="      <FORM name=\"brainstormviewform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+  $progbody.="      <FORM name=\"brainstormviewform\" method=\"POST\" action=\"doLogin.php\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
@@ -113,27 +113,27 @@ if ($phase_array['Brainstorm'] == '0' ) {
   $progbody.="      </LI>\n";
 }
 if ($phase_array['Feedback Available'] == '0') {
-  $progbody.="      <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";
 }
 if ($nowis < $constart) { 
-  $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
 } else {
-  $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter Login</A></LI>\n";
 }
 if ($progbody!="") {$description.=$progheader . $progbody . $divfooter;}
 $volbody="";
 if ($phase_array['Vol Available'] == '0' ) {
-  $volbody.="      <LI><A HREF=\"webpages/Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
-  $volbody.="      <LI><A HREF=\"webpages/Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
+  $volbody.="      <LI><A HREF=\"Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
+  $volbody.="      <LI><A HREF=\"Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
 }
 if ($volbody!="") {$description.=$volheader . $volbody . $divfooter;}
 $vendbody="";
 if ($phase_array['Vendors Available'] == '0' ) {
-  $vendbody.="      <LI><A HREF=\"webpages/Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
+  $vendbody.="      <LI><A HREF=\"Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
 }
 if ($phase_array['Vendor'] == '0' ) {
   $vendbody.="      <LI>\n";
-  $vendbody.="      <FORM name=\"vendorform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+  $vendbody.="      <FORM name=\"vendorform\" method=\"POST\" action=\"doLogin.php\">\n";
   $vendbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
   $vendbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
   $vendbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"vendor\">\n";

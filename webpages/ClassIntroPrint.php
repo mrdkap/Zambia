@@ -63,6 +63,18 @@ SELECT
     pubsname,
     title,
     DATE_FORMAT(ADDTIME(constartdate,starttime), '%a %l:%i %p') as StartTime,
+    CASE
+      WHEN TIME_TO_SEC(starttime) < "79000" THEN
+        concat("../Local/Verbiage/Introduction_Blurb_0-1")
+      WHEN TIME_TO_SEC(starttime) < "133300" THEN
+        concat("../Local/Verbiage/Introduction_Blurb_0-2")
+      WHEN TIME_TO_SEC(starttime) < "146000" THEN
+        concat("../Local/Verbiage/Introduction_Blurb_0-3")
+      WHEN TIME_TO_SEC(starttime) < "165000" THEN
+        concat("../Local/Verbiage/Introduction_Blurb_0-4")
+      ELSE
+        concat("../Local/Verbiage/Introduction_Blurb_0-5")
+      END AS blurb,
     roomname,
     sessionid,
     typename
@@ -111,9 +123,11 @@ SELECT
                      Bios
                    JOIN BioTypes USING (biotypeid)
                    JOIN BioStates USING (biostateid)
+	           JOIN BioDests USING (biodestid)
                  WHERE
-                   biotypename in ('book') AND
-	           biostatename in ('edited')) BWE USING (badgeid)
+                   biotypename in ('bio') AND
+	           biostatename in ('edited') AND
+	           biodestname in ('book')) BEB USING (badgeid)
   WHERE
     conid=$conid AND
     aidedecamp not in ("1", "Yes") AND
@@ -134,6 +148,8 @@ SELECT
   FROM
       SessionHasSponsor
     JOIN Participants USING (badgeid)
+  WHERE
+    conid=$conid
 EOD;
 
 // Retrieve query
@@ -166,6 +182,9 @@ for ($i=1; $i<=$classcount; $i++) {
   $starttime=$classlist_array[$i]['StartTime'];
   $roomname=$classlist_array[$i]['roomname'];
   $typename=$classlist_array[$i]['typename'];
+  if (file_exists($classlist_array[$i]['blurb'])) {
+    $intro=file_get_contents($classlist_array[$i]['blurb']);
+  }
 
   // Generic header info.
   $printstring = "<P>&nbsp;</P><P>$name, this is the information for:</P>";
@@ -173,7 +192,7 @@ for ($i=1; $i<=$classcount; $i++) {
   $printstring.= "<TR><TD colspan=\"2\"><H2>$classname</H2></TD><TD><H2>$starttime</H2></TD><TD><H2>$roomname</H2></TD></TR>";
   $printstring.= "<TR><TD>30 minute<br>headcount</TD><TD></TD><TD>60 minute<br>headcount</TD><TD></TD></TR></TABLE></P>";
   $printstring.= "<P>Introduction:</P>";
-  $printstring.= "<P>Hi and welcome!  How is everybody doing?</P>";
+  $printstring.= "<P>I think it's about time we start.</P>";
 
   // Add sponsor info.
   if (isset($sponsor_array[$sessionid])) {
@@ -182,26 +201,27 @@ for ($i=1; $i<=$classcount; $i++) {
     $printstring.=".</P>";
   }
 
-  $printstring.= "<P>I'm $name ";
+  $printstring.= "<P>I'm $name. ";
 
   // Pull in the intro-blurb.
   $printstring.=$intro;
 
   // Add the Name(s) and Bio(s) of the Presenter(s).
+  $printstring.="\n<P>Welcome to $classname.</P>\n";
   $bios="";
   for ($j=1; $j<=$presentercount; $j++) {
     if ($presenter_array[$j]['sessionid'] == $sessionid) {
       if (($typename == "Panel") AND ($presenter_array[$j]['moderator'] == "1")) {
-	$bios="<P>I'd like to turn this over to ".$presenter_array[$j]['pubsname'];
-        $bios.=", our moderator, for the $classname.</P>";
+	$bios="<P>I'll turn this over to ".$presenter_array[$j]['pubsname'];
+        $bios.=", our moderator [Lead applause].</P>";
       }
       if ($typename == "Class") {
-	$bios.="<P>".$presenter_array[$j]['pubsname']." ".$presenter_array[$j]['biotext']."</P>";
+	$bios.="<P>".$presenter_array[$j]['pubsname']." [indicate presenter]  ".$presenter_array[$j]['biotext']." [Lead applause].</P>";
       }
     }
   }
   if ($bios == "") {
-    $bios="<P>I'd like to turn this over to our Presenter(s), for the $classname.</P>";
+    $bios="<P>I'd like to turn this over to our Presenter(s).</P>";
   }
   $printstring.=" $bios";
   if ($print_p == "") {

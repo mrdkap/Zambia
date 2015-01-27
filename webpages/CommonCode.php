@@ -123,7 +123,7 @@ if (isLoggedIn()==false and !isset($logging_in)) {
 //
 // if the tab is not usable, the tab will use class 'unusabletab'
 
-function maketab($text,$usable,$url) {
+function maketab ($text,$usable,$url) {
   if ($usable) {
     echo '<SPAN class="usabletab" onmouseover="mouseovertab(this)" onmouseout="mouseouttab(this)">';
     echo '<IMG class="tabborder" SRC="images/leftCorner.gif" alt="&nbsp;">';
@@ -144,7 +144,7 @@ function maketab($text,$usable,$url) {
 /* functions to put the headers in place.  Probably should be generalized more,
  than specifically pre-scripting it, the way we do. */
 
-function posting_header($title) {
+function posting_header ($title) {
   $ConName=$_SESSION['conname']; // make it a variable so it can be substituted
   $ConUrl=$_SESSION['conurl']; // make it a variable so it can be substituted
   $HeaderTemplateFile="../Local/HeaderTemplate.html";
@@ -170,7 +170,7 @@ function posting_header($title) {
   }
 }
 
-function staff_header($title) {
+function staff_header ($title) {
   require_once ("javascript_functions.php");
   $ConName=$_SESSION['conname']; // make it a variable so it can be substituted
   $ConUrl=$_SESSION['conurl']; // make it a variable so it can be substituted
@@ -226,7 +226,7 @@ function staff_header($title) {
   //  echo "Permissions: ".print_r($_SESSION['permission_set'])."\n";
 }
 
-function participant_header($title) {
+function participant_header ($title) {
   require_once ("javascript_functions.php");
   global $badgeid;
   $ConName=$_SESSION['conname']; // make it a variable so it can be substituted
@@ -285,7 +285,7 @@ function participant_header($title) {
   echo "</table>\n\n<H2 class=\"head\">$title</H2>\n";
 }
 
-function brainstorm_header($title) {
+function brainstorm_header ($title) {
   require_once ("javascript_functions.php");
   $ConName=$_SESSION['conname']; // make it a variable so it can be substituted
   $ConUrl=$_SESSION['conurl']; // make it a variable so it can be substituted
@@ -351,7 +351,7 @@ function brainstorm_header($title) {
   echo "</table>\n\n<H2 class=\"head\">$title</H2>\n";
 }
 
-function vendor_header($title) {
+function vendor_header ($title) {
   require_once ("javascript_functions.php");
   $ConName=$_SESSION['conname']; // make it a variable so it can be substituted
   $ConUrl=$_SESSION['conurl']; // make it a variable so it can be substituted
@@ -407,7 +407,7 @@ function vendor_header($title) {
   echo "</table>\n\n<H2 class=\"head\">$title</H2>\n";
 }
 
-function posting_footer() {
+function posting_footer () {
   $FooterTemplateFile="../Local/FooterTemplate.html";
 
   if (file_exists($FooterTemplateFile)) {
@@ -420,7 +420,7 @@ function posting_footer() {
   echo "\n\n</body>\n</html>\n";
 }
 
-function staff_footer() {
+function staff_footer () {
   echo "<hr>\n<P>If you would like assistance using this tool or you would like to communicate an";
   echo " idea that you cannot fit into this form, please contact ";
   echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
@@ -428,14 +428,14 @@ function staff_footer() {
   echo "\n\n</body>\n</html>\n";
 }
 
-function participant_footer() {
+function participant_footer () {
   echo "<hr>\n<P>If you need help or to tell us something that doesn't fit here, please email ";
   echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
   include('google_analytics.php');
   echo "\n\n</body>\n</html>\n";
 }
 
-function brainstorm_footer() {
+function brainstorm_footer () {
   echo "<hr>\n<P>If you would like assistance using this tool, or ";
   echo "if you would like to communicate an idea that you cannot fit into this form, please contact ";
   echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.</P>";
@@ -443,7 +443,7 @@ function brainstorm_footer() {
   echo "\n\n</body>\n</html>\n";
 }
 
-function vendor_footer() {
+function vendor_footer () {
   echo "<hr>\n<P>If you would like assistance using this tool, please contact ";
   echo "<A HREF=\"mailto:".$_SESSION['vendoremail']."\">".$_SESSION['vendoremail']."</A>.  ";
   include('google_analytics.php');
@@ -454,7 +454,7 @@ function vendor_footer() {
  for HTML pages.  It takes the title, description and any
  additional information, and puts it all in the right place
  depending on the SESSION variable.*/
-function topofpagereport($title,$description,$info) {
+function topofpagereport ($title,$description,$info) {
   if ($_SESSION['role'] == "Brainstorm") {
     brainstorm_header($title);
   }
@@ -478,7 +478,7 @@ function topofpagereport($title,$description,$info) {
 
 /* Top of page reporting, for CSV pages.  It takes only the filename
  as an input, and spits out the CSV headers. */
-function topofpagecsv($filename) {
+function topofpagecsv ($filename) {
   header("Expires: 0");
   header("Cache-control: private");
   header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -490,7 +490,7 @@ function topofpagecsv($filename) {
 /* Footer choice, for html pages.  Select the correct footer,
  dependant on role.  This could probably just have the above footer
  functions, rolled into this, for simplicity sake. */
-function correct_footer() {
+function correct_footer () {
   if ($_SESSION['role'] == "Brainstorm") {
     brainstorm_footer();
   }
@@ -514,7 +514,7 @@ function correct_footer() {
  the switch for the close on how it is called doesn't quite work yet,
  and might want to be simplified out, depending on the calling page to
  do the right thing, dropping it to 3 variables. */
-function renderhtmlreport($startrows,$endrows,$header_array,$element_array) {
+function renderhtmlreport ($startrows,$endrows,$header_array,$element_array) {
   $headers="";
   foreach ($header_array as $header_name) {
     $headers.="<TH>";
@@ -537,11 +537,11 @@ function renderhtmlreport($startrows,$endrows,$header_array,$element_array) {
 }
 
 /* Produce the CSV body version of the information gathered in tables.
- It takes in three variables, the number of rows, the header array,
- and the elements that go in the table.  It then strips out all of the
- unwanted characters (html tags, extraneous returns, and other bits)
- and outputs the comma seperated information.*/
-function rendercsvreport($startrows,$endrows,$header_array,$element_array) {
+ It takes in four variables, the start row, the number of rows, the
+ header array, and the elements that go in the table.  It then strips
+ out all of the unwanted characters (html tags, extraneous returns,
+ and other bits) and outputs the comma seperated information.*/
+function rendercsvreport ($startrows,$endrows,$header_array,$element_array) {
   $headers="";
   $spacestr=array('\\n','\n','\\r','\r','&nbsp;');
   $newstr=array(' ',' ',' ',' ',' ');
@@ -569,7 +569,7 @@ function rendercsvreport($startrows,$endrows,$header_array,$element_array) {
  It takes in 4 elements, the start and end row for a table, of the series
  of tables, the headers which go in every table, and the full array, from
  which the subset is used.  It then prints them nicely. */
-function rendergridreport($startrows,$endrows,$header_array,$element_array) {
+function rendergridreport ($startrows,$endrows,$header_array,$element_array) {
   $headers="";
   foreach ($header_array as $header_name) {
     $headers.="<TH class=\"border2222\">";
@@ -598,7 +598,7 @@ function rendergridreport($startrows,$endrows,$header_array,$element_array) {
    elements - the count of the elements to loop over
    element_array - the array of elements to loop over
  */
-function renderschedreport($format,$header_break,$single_line_p,$elements,$element_array) {
+function renderschedreport ($format,$header_break,$single_line_p,$elements,$element_array) {
   $sched="<DL>\n";
 
   $header="";
@@ -640,7 +640,7 @@ function renderschedreport($format,$header_break,$single_line_p,$elements,$eleme
     if (($element_array[$i][$header_break] != $element_array[$i + 1][$header_break]) and
 	($format == "bios")) {
       $sched.="</DL>\n";
-      if ($element_array[$i]['istable'] > 0) {
+      if ((isset($element_array[$i]['istable'])) and ($element_array[$i]['istable'] > 0)) {
 	$sched.="    </TD>\n  </TR>\n</TABLE>\n";
       }
     }
@@ -651,12 +651,12 @@ function renderschedreport($format,$header_break,$single_line_p,$elements,$eleme
   return($sched);
 }
 
-/* Pull the information from the databas for a report.  This should be
+/* Pull the information from the database for a report.  This should be
  checked with, and possibly unified with other functions in db_functions
  file.  It takes the query and link to do the pull, title and description
  in case there is an error, or just no information, and a reportid, so
  the report can be edited if there is a query error in the report. */
-function queryreport($query,$link,$title,$description,$reportid) {
+function queryreport ($query,$link,$title,$description,$reportid) {
   mysql_query("SET group_concat_max_len = 9216;",$link);
   if (($result=mysql_query($query,$link))===false) {
     $message="<P>Error retrieving data from database.</P>\n<P>";
@@ -852,7 +852,7 @@ EOD;
    biostateid: 1=raw 2=edited 3=good
    biodestid: 1=web 2=book
    descriptionlang: Only using "en-us" for now.*/
-function retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist,$prevcon) {
+function retrieve_select_from_db ($trackidlist,$statusidlist,$typeidlist,$sessionidlist,$prevcon) {
   require_once('db_functions.php');
   global $result;
   global $link, $title, $message2;
@@ -970,7 +970,7 @@ EOD;
    $sessionid,$conid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
    IN THAT ORDER
    it displays the precis view of the data. This goes hand in hand with the retrieve_select_from_db above.*/
-function RenderPrecis($result) {
+function RenderPrecis ($result) {
   echo "<hr>\n";
   echo "<TABLE>\n";
   echo "   <COL><COL><COL><COL><COL>\n";
@@ -1103,7 +1103,7 @@ function RenderSearchSession ($track,$status,$type,$sessionid) {
   return($returnstring);
 }
 
-/* Generic insert takes five variables: link, title, Table, array of elements, array of values */
+/* Generic insert takes five variables: link, title, Table, array of elements, array of values. */
 function submit_table_element ($link, $title, $table, $element_array, $value_array) {
   foreach ($element_array as $element) {$element_string.=mysql_real_escape_string(stripslashes($element)).",";}
   foreach ($value_array as $value) {$value_string.="'".mysql_real_escape_string(stripslashes($value))."',";}
@@ -1877,7 +1877,7 @@ EOD;
   $bioinfo['biolang_array']=$biolang_array;
 
   // Get all current possible biotypenames
-  $query="SELECT DISTINCT(biotypename) FROM BioTypes";
+  $query="SELECT DISTINCT(biotypename) FROM BioTypes WHERE biotypename not in ('web','book')";
   if (($result=mysql_query($query,$link))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);

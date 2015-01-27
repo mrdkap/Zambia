@@ -69,10 +69,10 @@ $pdf->SetFont('times', '', 12, '', true);
 $query = <<<EOD
 SELECT
     DISTINCT CONCAT(title,
-	if((moderator in ("0","1","Yes")),' (moderating)',''),
-	if ((aidedecamp in ("0","1","Yes")),' (assisting)',''),
-	if((volunteer in ("0","1","Yes")),' (outside wristband checker)',''),
-	if((introducer in ("0","1","Yes")),' (announcer/inside room attendant)',''),
+	if((moderator in ("1","Yes")),' (moderating)',''),
+	if ((aidedecamp in ("1","Yes")),' (assisting)',''),
+	if((volunteer in ("1","Yes")),' (outside wristband checker)',''),
+	if((introducer in ("1","Yes")),' (announcer/inside room attendant)',''),
         ' - ',
         DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p'),
         ' - ',

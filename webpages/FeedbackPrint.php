@@ -39,7 +39,7 @@ $feedback_array=getFeedbackData("");
 /* Get class data */
 $query=<<<EOD
 SELECT
-    if ((pubsname is NULL), '', GROUP_CONCAT(DISTINCT concat(pubsname,if((moderator=1),'(m)','')) SEPARATOR ', ')) AS 'Participants',
+  if ((pubsname is NULL), '', GROUP_CONCAT(DISTINCT concat(pubsname,if((moderator in ('1','Yes')),'(m)','')) SEPARATOR ', ')) AS 'Participants',
     GROUP_CONCAT(DISTINCT DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p') SEPARATOR ', ') AS 'Start Time',
     GROUP_CONCAT(DISTINCT trackname SEPARATOR ', ') as 'Track',
     CASE
@@ -118,9 +118,9 @@ SELECT
   WHERE
     $conid_or_badgeid AND
     pubstatusname in ('Public') AND
-    (volunteer=0 OR volunteer IS NULL) AND
-    (introducer=0 OR introducer IS NULL) AND
-    (aidedecamp=0 OR aidedecamp IS NULL)
+    (volunteer in ('1','Yes') OR volunteer IS NULL) AND
+    (introducer in ('1','Yes') OR introducer IS NULL) AND
+    (aidedecamp in ('1','Yes') OR aidedecamp IS NULL)
   GROUP BY
     conid,
     sessionid

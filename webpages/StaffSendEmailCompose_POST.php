@@ -239,7 +239,7 @@ $repl_list=array($recipientinfo[0]['badgeid'],
                  $recipientinfo[0]['fullschedule'],
 		 $recipientinfo[$i]['bios'],
 		 $recipientinfo[$i]['hotelroom'],
-		 $recipientinfo[$i]['confirmnum']);g
+		 $recipientinfo[$i]['confirmnum']);
 $emailverify['body']=str_replace($subst_list,$repl_list,$email['body']);
 render_verify_email($email,$emailverify,$message_warning="");
 ?>

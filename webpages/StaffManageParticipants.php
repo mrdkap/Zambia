@@ -17,8 +17,10 @@ topofpagereport($title,$description,$additionalinfo);
    <DD>Manually create new participants in the database and enter their data</DD>
    <DT><A HREF="InviteParticipants.php">Invite a participant to a session</A></DT>
    <DD>Use this tool to put sessions marked "invited guests only" on a participant's interest list.</DD>
-   <DT><A HREF=" StaffAssignParticipants.php">Assign participants to a session</A></DT>
+   <DT><A HREF="StaffAssignParticipants.php">Assign participants to a session</A></DT>
    <DD>Use this tool to assign participants to a session and select moderator.</DD>
+   <DT><A HREF="ProgVolSchedule.php">Entered Schedule Data</A></DT>
+   <DD>Look at all the collected data to start scheduling from.</DD>
    <DT><A HREF="MaintainRoomSched.php">Maintain room schedule</A></DT>
    <DD>Assign sessions at particular times in a room.</DD>
    <DT><A HREF="NoteOnParticipant.php">Participant Notes</A></DT>
@@ -26,8 +28,10 @@ topofpagereport($title,$description,$additionalinfo);
    <DT><A HREF="CommentOnParticipants.php">Participant Comments</A></DT>
    <DD>Add comments and feedback specifically for Program Participants.</DD>
 <?php if(may_I("SendEmail")) { ?>
-   <DT><A HREF="StaffSendEmailCompose.php">Send Email to Participants</A></DT>
-   <DD>Select a set of participants and send them a form letter.</DD>
+   <DT><A HREF="StaffSendEmailCompose.php">Set up Email to be sent.</A></DT>
+   <DD>Select a set of Zambia individuals and send them a mail-merge letter.</DD>
+   <DT><A HREF="HandSendQueuedMail.php">Send Queued Emails individually</A></DT>
+   <DD>View (edit) and send an email that has been queued.</DD>
 <?php } ?>
 </DL>
 

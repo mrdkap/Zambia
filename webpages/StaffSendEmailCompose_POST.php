@@ -6,7 +6,8 @@ global $message,$link;
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 // List of replacements
-$subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","\$PUBNAME\$","\$BADGENAME\$","\$SCHEDULE\$","\$FULLSCHEDULE\$","\$BIOS\$");
+$subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","\$PUBNAME\$","\$BADGENAME\$","\$SCHEDULE\$","\$FULLSCHEDULE\$","\$BIOS\$","\$HOTELROOM\$","\$CONFIRMNUM\$");
+
 $title="Send Email (Step 2 - verify)";
 
 if (!isset($_POST['sendto'])) { // page has not been visited before
@@ -44,16 +45,54 @@ for ($i=0; $i<$recipient_count; $i++) {
 // variablized for substitution
 $individual=$recipientinfo[0]['badgeid'];
 
+/* This query pulls the compensation information for an individual,
+   and provides it in the appropriate variables for expansion later.
+*/
+$query = <<<EOD
+SELECT
+    badgeid,
+    hotelroom,
+    confirmnum
+  FROM
+      (SELECT
+          badgeid,
+          compdescription AS confirmnum
+        FROM
+            Compensation
+          JOIN CompensationTypes USING (comptypeid)
+        WHERE
+          conid=$conid AND
+          comptypename in ('Room Cost')) CFN
+    LEFT JOIN (SELECT
+          badgeid,
+          compdescription AS hotelroom
+        FROM
+            Compensation
+          JOIN CompensationTypes USING (comptypeid)
+        WHERE
+          conid=$conid AND
+          comptypename in ('Room Count')) HLR USING (badgeid)
+    WHERE
+      badgeid=$individual
+EOD;
+
+// Retrieve query
+list($comprows,$comp_header,$comp_array)=queryreport($query,$link,$title,$description,0);
+
+// Assign the values
+$recipientinfo[$i]['hotelroom']=$comp_array[1]['hotelroom'];
+$recipientinfo[$i]['confirmnum']=$comp_array[1]['confirmnum'];
+
 /* This query pulls the schedule information for an individual, and
    then collects it, and stuffs it into a single variable, for
    expansion later. */
 $query = <<<EOD
-SELECT 
-    DISTINCT CONCAT(title, 
-        if((moderator=1),' (moderating)',''), 
-        if ((aidedecamp=1),' (assisting)',''), 
-        if((volunteer=1),' (outside wristband checker)',''), 
-        if((introducer=1),' (announcer/inside room attendant)',''),
+SELECT
+    DISTINCT CONCAT(title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),
+        if((moderator in ('1','Yes')),' (moderating)',''),
+        if ((aidedecamp in ('1','Yes')),' (assisting)',''),
+        if((volunteer in ('1','Yes')),' (outside wristband checker)',''),
+        if((introducer in ('1','Yes')),' (announcer/inside room attendant)',''),
         ' - ',
         DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p'),
         ' - ',
@@ -65,8 +104,8 @@ SELECT
         ' in room ',
 	roomname) as Title,
     pubsname,
-    WEB.descriptiontext AS "description_good_web",
-    BOOK.descriptiontext AS "description_good_book"
+    desc_good_web,
+    desc_good_book
   FROM
       Sessions
     JOIN Schedule USING (sessionid,conid)
@@ -77,21 +116,36 @@ SELECT
     JOIN PermissionRoles USING (permroleid)
     JOIN ConInfo USING (conid)
     LEFT JOIN (SELECT
-	      descriptiontext,
-	      sessionid
-	    FROM
-                Descriptions
-	      JOIN DescriptionTypes USING (descriptiontypeid)
-	      JOIN BioStates USING (biostateid)
-	      JOIN BioDests USING (biodestid)
-	    WHERE
-              conid=$conid AND
-              descriptiontypename="description" AND
-	      biostatename="good" AND
-	      biodestname="web") AS WEB USING (sessionid)
+        sessionid,
+	descriptiontext as title_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+          conid=$conid AND
+	  descriptiontypename='title' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') TGW USING (sessionid)
     LEFT JOIN (SELECT
-	      descriptiontext,
-	      sessionid
+        sessionid,
+	descriptiontext as subtitle_good_web
+      FROM
+          Descriptions
+	JOIN DescriptionTypes USING (descriptiontypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+          conid=$conid AND
+	  descriptiontypename='subtitle' AND
+	  biostatename='good' AND
+	  biodestname='web' AND
+	  descriptionlang='en-us') SGW USING (sessionid)
+    LEFT JOIN (SELECT
+	      sessionid,
+	      descriptiontext AS desc_good_web
 	    FROM
                 Descriptions
 	      JOIN DescriptionTypes USING (descriptiontypeid)
@@ -101,7 +155,20 @@ SELECT
               conid=$conid AND
               descriptiontypename="description" AND
 	      biostatename="good" AND
-	      biodestname="book") AS BOOK USING (sessionid)
+	      biodestname="web") AS DGW USING (sessionid)
+    LEFT JOIN (SELECT
+	      sessionid,
+	      descriptiontext AS desc_good_book
+	    FROM
+                Descriptions
+	      JOIN DescriptionTypes USING (descriptiontypeid)
+	      JOIN BioStates USING (biostateid)
+	      JOIN BioDests USING (biodestid)
+	    WHERE
+              conid=$conid AND
+              descriptiontypename="description" AND
+	      biostatename="good" AND
+	      biodestname="book") AS DGB USING (sessionid)
   WHERE
      permrolename in ('Participant','General','Programming','SuperProgramming','SuperGeneral') AND
     conid=$conid AND
@@ -119,8 +186,8 @@ for ($j=1; $j<=$rows; $j++) {
   $recipientinfo[0]['schedule'].=$schedule_array[$j]['Title']."
 ";
     $recipientinfo[0]['fullschedule'].=$schedule_array[$j]['Title']."
-Web Description: ".$schedule_array[$j]['description_good_web']."
-Bood Description: ".$schedule_array[$j]['description_good_book']."
+Web Description: ".$schedule_array[$j]['desc_good_web']."
+Bood Description: ".$schedule_array[$j]['desc_good_book']."
 
 ";
 }
@@ -146,11 +213,11 @@ for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
     $biotype=$bioinfo['biotype_array'][$j];
     // $biolang=$bioinfo['biolang_array'][$k];
     // $biostate=$bioinfo['biostate_array'][$l];
-    $biodest=$bioinfo['biodest_array'][$l];
+    $biodest=$bioinfo['biodest_array'][$m];
     $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
     // Fold the information into the bios variable so it can be substituted below.
-    $recipientinfo[0]['bios'].=$biotype." bio: ".$bioinfo[$keyname]."
+    $recipientinfo[0]['bios'].=$biodest." ".$biotype.": ".$bioinfo[$keyname]."
 
 ";
   }
@@ -170,7 +237,9 @@ $repl_list=array($recipientinfo[0]['badgeid'],
 		 $recipientinfo[0]['badgename'],
 		 $recipientinfo[0]['schedule'],
                  $recipientinfo[0]['fullschedule'],
-		 $recipientinfo[0]['bios']);
+		 $recipientinfo[$i]['bios'],
+		 $recipientinfo[$i]['hotelroom'],
+		 $recipientinfo[$i]['confirmnum']);g
 $emailverify['body']=str_replace($subst_list,$repl_list,$email['body']);
 render_verify_email($email,$emailverify,$message_warning="");
 ?>

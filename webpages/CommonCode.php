@@ -624,9 +624,16 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
     if ($format != "sched") {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Start Time']);
     }
-    $sched.=sprintf("&mdash;%s&mdash;%s",
-		    $element_array[$i]['Duration'],
-		    $element_array[$i]['Room']);
+    $sched.=sprintf("&mdash;%s",$element_array[$i]['Duration']);
+    if ($format != "rooms") {
+      $sched.=sprintf("&mdash;%s",$element_array[$i]['Room']);
+    }
+    if ((isset($element_array[$i]['iCal'])) and ($element_array[$i]['iCal']!='')) {
+      $sched.=sprintf("&mdash;%s",$element_array[$i]['iCal']);
+    }
+    if ((isset($element_array[$i]['Feedback'])) and ($element_array[$i]['Feedback']!='')) {
+      $sched.=sprintf("&mdash;%s",$element_array[$i]['Feedback']);
+    }
     if ($single_line_p != "T") {
       $sched.=sprintf("</DT>\n<DD><P>%s",$element_array[$i]['Description']);
       if ($element_array[$i]['Participants'] != " ") {

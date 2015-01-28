@@ -106,10 +106,10 @@
      + Brainstorm email.
      + Programming email.
      + Registration email.
-     + Number of days the con will run (code works for 1-8 currently.) 
+     + Number of days the con will run (code works for 1-8 currently.)
      + Date and time the con will start (In the format of yyyy-mm-dd
        HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
-       start time.) 
+       start time.)
      + URL of the con (without the leading http:// in the URL.)
      + Logo for the con (gif, png, etc.)
      + Availabilty Records (starting number of "availability" fields
@@ -145,7 +145,7 @@
        biographical information requirements.)
      + Maximum web biography character length (Some cons have a
        different limits for what is on the web, and what is in the
-       book, 3000 characters is a good starting default for the WWW.) 
+       book, 3000 characters is a good starting default for the WWW.)
      + Minimum book biography character length (Some cons have minimum
        biographical information requirements.)
      + Maximum book biography character length (if there isn't a
@@ -168,7 +168,7 @@
        as well.)
      + Maximum book precis character length
      + Minimum precis title character length (You need a precis title
-       of at least this long to be acceptable, 5 as a good default.) 
+       of at least this long to be acceptable, 5 as a good default.)
      + Maximum precis title character length (50 as a good default.)
      + Minimum name character length (if there is a need to make sure
        all names are of at least a specifc length.)
@@ -180,7 +180,7 @@
      information currently resides.
      + Is this a bilingual event (This should probably be set to
        "FALSE" due to it's lack of complete support across the system,
-       and the next few elements in this list, ignored.) 
+       and the next few elements in this list, ignored.)
      + What the second language is.
      + Title caption in second language.
      + Description caption in second language.
@@ -239,7 +239,7 @@ suggestions you submit to evolve over time.</P>
 <P> Also, please note that we always have more suggestions than are
 physically possible with the space and time we have, so not everything
 will make it.  We do save good ideas for future conventions.</P>
-<UL> 
+<UL>
   <LI> <A HREF="BrainstormSearchSession.php">Search</A> for similar
   ideas or get inspiration.
   <LI> Email <A HREF="mailto:program@ourcon.org">
@@ -429,7 +429,7 @@ the world.  You are assisting in constructing a safe and supportive
 atmosphere that truly fosters our community.  Thank you again for your
 participation in the Ancient Order of the Spies Convention.  Your
 addition to this event is an advantage to all.
-  
+
 <P>With much gratitude,
 
 <P>Opsidec Limited Organizers
@@ -443,7 +443,7 @@ at Dream Productions do all we can to create a safe and inviting
 environment for all sleapers, but we must also rely on support from
 generous allies such as yourself.  Your effort is much appreciated,
 and is a benefit to all in this lifestyle.
-  
+
 <P>You contribution is helping us to create an event in which any and
 all people can learn and access information that they may not have
 available to them in their general life.  This process is crucial to
@@ -452,7 +452,7 @@ the world.  You are assisting in constructing a safe and supportive
 atmosphere that truly fosters our community.  Thank you again for your
 participation in the Con of your Dreams.  Your addition to this event
 is an advantage to all.
-  
+
 <P>With much gratitude,
 
 <P>The Programming Team
@@ -476,7 +476,7 @@ is an advantage to all.
   + database name: (*DBNAME*)
   + Each of the alternate database locators that will be used:
     (*BIODB*), (*REPORTDB*), (*CONGODB*), (*LIMITDB*), (*LOCALDB*),
-    (*TIMECARDDB*) 
+    (*TIMECARDDB*)
   + your host name (*MYHOST*) (If you are setting things up on the
     same machine that MySQL is running on, /localhost/ should be what
     you are using for *MYHOST*)
@@ -496,7 +496,7 @@ is an advantage to all.
    forget to replace the instances of *DBHOSTNAME*, *DBUSERNAME*,
    etc. with the proper bits of information.
 
-   + Log into the database: (it should ask you for your MySQL root password) 
+   + Log into the database: (it should ask you for your MySQL root password)
 #+begin_src html :exports both :results silent
    mysql -h*DBHOSTNAME* -p -u root
 #+end_src
@@ -572,7 +572,7 @@ is an advantage to all.
   Sharing them is as simple as, say, exporting your new report called
   /voltimepanelists/:
 #+begin_src html :exports both :results silent
-    echo "SELECT * FROM Reports WHERE reportname='voltimepanelists';" | 
+    echo "SELECT * FROM Reports WHERE reportname='voltimepanelists';" |
     mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME > ./NewReports.sql
 #+end_src
 
@@ -652,7 +652,7 @@ is an advantage to all.
   backup_mysql /your/path/to/Zambia-FFF/instance
 #+end_src
 * Quick and dirty
-  To build a quick and dirty copy on the same machine as another running version: 
+  To build a quick and dirty copy on the same machine as another running version:
   + for i in ../Zambia-FFF/* ; do ln -s $i . ; done
   + rm Local
   + rm webpages
@@ -667,10 +667,10 @@ is an advantage to all.
   To update them all do:
 #+begin_src html :exports both :results silent
 for i in FFF-[34]*
-  do 
+  do
     pushd $i/webpages
     for j in ../../Zambia-FFF/webpages/*
-      do 
+      do
         ln -s $j .
       done
     popd
@@ -770,6 +770,7 @@ for i in FFF-[34]*
    + phasetypeid: This is the phase that is being turned on or off, as
      described in the PhaseTypes table.
    + phasestate: If a phase is active.
+
    An example of phase shifting, is when you open your call for
    presenters, or you close your call for vendors, or you allow
    feedback.  This can change programatically on specific dates around
@@ -806,9 +807,10 @@ for i in FFF-[34]*
    table.  It is in the format of:
    + badgeid: The unique id of an individual in Zambia.
    + permroleid: One of the set of permissions that an individual will
-     have for this con. 
+     have for this con.
    + conid: The con that these permission are for.  This should be set
-     to whatever conid you are creating. 
+     to whatever conid you are creating.
+
    If you want to only add your particular badgeid,permroleid,conid
    information, and then use the AdminParticipants.php page to select
    them, and then the "Edit <INDIVIDUAL> Further" link at the bottom
@@ -843,8 +845,16 @@ for i in FFF-[34]*
    + conroleid: A role that an individual will have for this con.
    + conid: The con that the role is for.  This should be set to
      whatever conid you are creating.
+
    You can always go back and add to this, as the shape of your con
    fills in.
+
+   If you want to only add your particular badgeid,permroleid,conid
+   information, and then use the AdminParticipants.php page to select
+   them, and then the "Edit <INDIVIDUAL> Further" link at the bottom
+   to give each the right permissions, that will work as well.  But at
+   least you will need to be set up, so you can grant other people
+   access.
 ** HasReports
    This maps the organizational chart of your convention.  Again while
    this is not a necessary step for the start of your con, and might
@@ -862,15 +872,16 @@ for i in FFF-[34]*
         JOIN ConRoles CR USING (conroleid)
         JOIN ConRoles CRR ON (hasreport=CRR.conroleid)
       WHERE
-        conid=$conid; 
+        conid=$conid;
 #+end_src
    This will give you the list of conroleids who have conroleids
    reporting to them.  You can add them to the table as:
    + conid: The con that these reports are for.  This should be set
-     to whatever conid you are creating. 
+     to whatever conid you are creating.
    + conroleid: This is the role that has others reporting to them
    + hasreport: The conroleid of the position that reports to the
      specified original conroleid.
+
    On the other hand, if you just want to mirror them, quickly, from
    another instance of your con you could always (replacing $origconid
    with the previous con you want to model on, and $conid with the
@@ -910,7 +921,7 @@ for i in FFF-[34]*
           PublicationLimits
       WHERE
         conid=$conid;
-#+end_src   
+#+end_src
    The values are:
    + publimid: Unique key for this table (it should auto-increment).
    + conid: The con that these limits are for.  This should be set to
@@ -926,6 +937,7 @@ for i in FFF-[34]*
    + publimval: The number of characters you are limiting this type of
      entry to.
    + publimnote: Any notes you want to have about the limit.
+
    On the other hand, if you just want to mirror them, quickly, from
    another instance of your con you could always (replacing $origconid
    with the previous con you want to model on, and $conid with the
@@ -950,56 +962,12 @@ for i in FFF-[34]*
    many rooms, or different room functions depending on the time of
    day (say, needing curtains in the daytime, and dimable lights, so
    that projection will work correctly) so scheduling can happen more
-   easily.  To see what was set on a previous instance of your con,
-   you can use a query (replacing the $conid with the previous con you
-   want to model on) like:
-#+begin_src html :exports both :results silent
-    SELECT
-        *
-      FROM
-          Services
-      WHERE
-        conid=$conid;
-#+end_src
-   And: 
-#+begin_src html :exports both :results silent
-    SELECT
-        *
-      FROM
-          Features
-      WHERE
-        conid=$conid;
-#+end_src   
-   The values are:
-   + serviceid/featureid: Unique id for the entry (key).
-   + servicename/featurename: A description of the thing available.
-   + conid: The con that these things are available for .  This should
-     be set to whatever conid you are creating.
-   + display_order: For the select boxes, if you want to reorder
-     things, this forces the ordering.
-   On the other hand, if you just want to mirror them, quickly, from
-   another instance of your con you could always (replacing $origconid
-   with the previous con you want to model on, and $conid with the
-   current one) run:
-#+begin_src html :exports both :results silent
-    SELECT
-        concat("('",servicename,"',$conid,'",display_order,"'),") AS Prev
-      FROM
-          Services
-      WHERE
-        conid=$origconid;
-#+end_src
-   And:
-#+begin_src html :exports both :results silent
-    SELECT
-        concat("('",featurename,"',$conid,'",display_order,"'),") AS Prev
-      FROM
-          Features
-      WHERE
-        conid=$origconid;
-#+end_src
-   Then just massage the data slightly, and you have the insert you
-   can do to mirror the previous con.
+   easily.
+
+   To select (or update the selection) of services and features
+   available for this con-instance, use the AdminSetupServices.php
+   page.
+
 ** Rooms
    This needs to be fleshed out more.
 * Adding a year instance - Vendors
@@ -1018,7 +986,7 @@ for i in FFF-[34]*
       WHERE
         conid=$conid;
 #+end_src
-   And: 
+   And:
 #+begin_src html :exports both :results silent
     SELECT
         *
@@ -1026,11 +994,11 @@ for i in FFF-[34]*
           VendorFeatures
       WHERE
         conid=$conid;
-#+end_src   
+#+end_src
    The values are:
    + vendorspaceid/vendorfeatureid: Unique id for the entry (key).
    + vendorspacename/vendorfeaturename: A description, plus the price
-     in an easily understandable format, so the vendors know what to 
+     in an easily understandable format, so the vendors know what to
      select for their comfort and profit.
    + vendorspaceprice/vendorfeatureprice: Numeric representation of
      the cost of said item, so the invoice can be generated
@@ -1040,6 +1008,7 @@ for i in FFF-[34]*
    + display_order: For the select boxes, if you want to reorder
      possibilities, this forces the ordering to what you want it to
      be.
+
    On the other hand, if you just want to mirror them, quickly, from
    another instance of your con you could always (replacing $origconid
    with the previous con you want to model on, and $conid with the
@@ -1073,10 +1042,12 @@ for i in FFF-[34]*
    you might want to add a question type to cover it, in the
    QuestionTypes table, and then add the questions to the
    QuestionsForSurvey table.
+
    The values for QuestionTypes are:
    + questiontypeid: Unique key for this table (it should auto-increment).
    + questiontypename: A one or two word name for the type of question.
    + questiontypenotes: A more indepth description of the question type.
+
    The values for the QuestionsForSurvey are:
    + questionid: Unique key for this table (it should auto-increment).
    + questiontext: The text of the question to be asked.
@@ -1091,17 +1062,19 @@ for i in FFF-[34]*
    Once you have broken them down, this table sets up the various
    possible views.  At least one view should be set to "single class",
    so that the reference from the descriptions etc will work.
+
    The values for FeedbackPages are:
    + fpageid: Unique key for this table (it should auto-increment).
-   + conid: For which con is this page relevant.  
+   + conid: For which con is this page relevant.
    + fppagedesc: The short description of the page contents.
    + fpagestart: The start time of the schedule elements that this
-     page covers
+     page covers.
    + fpageend: The end time of the schedule elements that this page
-     covers 
+     covers.
    + fpagecols: The number of columns at the top of the printed page.
    + questiontypeid: Which type of questions will show up on this
      page, from the QuestionTypes table.
+
    The type of schedule elements included in each possible Feedback
    page is set in the FeedbackPageHasType.  This can have multiple
    mappings.  For example, if you have both classes and panels, they
@@ -1112,6 +1085,7 @@ for i in FFF-[34]*
    mapping for every element you reference, but the feedback page for
    just the classes would only have the typeid of classes mapped to
    it.
+
    The values for FeedbackPageHasType are:
    + fpageid: From the FeedbackPages table.
    + typeid: From the Types table.
@@ -1125,8 +1099,8 @@ for i in FFF-[34]*
    QuestionType, larger or more siloed events might want to break it
    down further.  Depending on what is being fed back, Divisions might
    creep into this, as well.
+
    The values for TypeHasQuestionType are:
    + typeid: From the Types table.
    + questiontypeid: From the QuestionTypes table.
    + conid: For which event is being run.
-

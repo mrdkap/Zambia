@@ -811,12 +811,13 @@ for i in FFF-[34]*
    + conid: The con that these permission are for.  This should be set
      to whatever conid you are creating.
 
-   If you want to only add your particular badgeid,permroleid,conid
-   information, and then use the AdminParticipants.php page to select
-   them, and then the "Edit <INDIVIDUAL> Further" link at the bottom
+   If you want to only add your particular badgeid, permroleid, conid
+   information, and then use the "Migrate Participant from another
+   con-instance" link under the "Manage Participants & Schedule" tab 
    to give each the right permissions, that will work as well.  But at
    least you will need to be set up, so you can grant other people
-   access.
+   access.  The use of that page is well documented in the
+   Presenter_Flow document in this directory.
 ** UserHasConRole
    This is very similar to the UserHasPermissionRole, and was split
    off, because not all Permission Roles want to necessarily be
@@ -849,12 +850,13 @@ for i in FFF-[34]*
    You can always go back and add to this, as the shape of your con
    fills in.
 
-   If you want to only add your particular badgeid,permroleid,conid
-   information, and then use the AdminParticipants.php page to select
-   them, and then the "Edit <INDIVIDUAL> Further" link at the bottom
+   If you want to only add your particular badgeid, permroleid, conid
+   information, and then use the "Migrate Participant from another
+   con-instance" link under the "Manage Participants & Schedule" tab 
    to give each the right permissions, that will work as well.  But at
    least you will need to be set up, so you can grant other people
-   access.
+   access.  The use of that page is well documented in the
+   Presenter_Flow document in this directory.
 ** HasReports
    This maps the organizational chart of your convention.  Again while
    this is not a necessary step for the start of your con, and might

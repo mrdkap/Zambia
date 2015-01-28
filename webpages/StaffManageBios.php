@@ -62,6 +62,7 @@ SELECT
   WHERE
     interestedtypename in ('Yes') AND
     conid=$conid AND
+    biotypename not in ('web','book') AND
     (permrolename in ('Participant') OR
      permrolename like '%Super%')
 EOD;

@@ -91,10 +91,16 @@ if ($genbody!="") {$description.=$genheader . $genbody . $divfooter;}
 $progbody="";
 if ($phase_array['Prog Available'] == '0' ) {
   $progbody.="      <LI><A HREF=\"Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"Descriptions.php?conid=$conid\">Class Descriptions</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"Schedule.php?conid=$conid\">Schedule</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"Tracks.php?conid=$conid\">Tracks</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"Bios.php?conid=$conid\">Presenter Bios</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"PubsSched.php?format=desc&conid=$conid\">Class Descriptions</A>\n";
+  $progbody.="        <A HREF=\"PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"PubsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
+  $progbody.="        <A HREF=\"PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"PubsSched.php?format=tracks&conid=$conid\">Tracks</A>\n";
+  $progbody.="        <A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"PubsSched.php?format=rooms&conid=$conid\">Rooms</A>\n";
+  $progbody.="        <A HREF=\"PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"PubsBios.php?conid=$conid\">Presenter Bios</A>\n";
+  $progbody.="        <A HREF=\"PubsBios.php?conid=$conid&short=Y\">(short)</A></LI>\n";
 }
 if ($phase_array['Brainstorm'] == '0' ) {
   $progbody.="      <LI>\n";

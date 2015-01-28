@@ -1,28 +1,23 @@
 <?php
-require_once('CommonCode.php');
-if (may_I("Staff")) {
-  require_once('StaffCommonCode.php');
- } else {
-  require_once('PartCommonCode.php');
- }
+require_once('PostingCommonCode.php');
 global $link;
 
 /* takes a variable, and searches across all the posible variations
    to see if said variable exists in the bios-set
  */
 function getBioDestEdit($biotype,$biolang,$bioinfo) {
-  if ((isset($bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'])) and
-      ($bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'] != "")) {
+  if ((isset($bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'])) and
+      ($bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'] != "")) {
+    $bioout=$bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'];
+  } elseif ((isset($bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'])) and
+	    ($bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'] != "")) {
     $bioout=$bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'];
-  } elseif ((isset($bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'])) and
-	    ($bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'] != "")) {
-    $bioout="***EDIT PLEASE*** ".$bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'];
-  } elseif ((isset($bioinfo[$biotype.'_'.$biolang.'_raw_book_bio']))  and
-	    ($bioinfo[$biotype.'_'.$biolang.'_raw_book_bio'] != "")) {
-    $bioout="***EDIT PLEASE*** ".$bioinfo[$biotype.'_'.$biolang.'_raw_book_bio'];
   } elseif ((isset($bioinfo[$biotype.'_'.$biolang.'_raw_web_bio']))  and
 	    ($bioinfo[$biotype.'_'.$biolang.'_raw_web_bio'] != "")) {
-    $bioout="***EDIT PLEASE*** ".$bioinfo[$biotype.'_'.$biolang.'_raw_web_bio'];
+    $bioout=$bioinfo[$biotype.'_'.$biolang.'_raw_web_bio'];
+  } elseif ((isset($bioinfo[$biotype.'_'.$biolang.'_raw_book_bio']))  and
+	    ($bioinfo[$biotype.'_'.$biolang.'_raw_book_bio'] != "")) {
+    $bioout=$bioinfo[$biotype.'_'.$biolang.'_raw_book_bio'];
   } else {
     $bioout="";
   }
@@ -43,49 +38,91 @@ if (isset($_GET['short'])) {
   }
 }
 
+/* Just setting this, in other fooBios this is passed in. Since we never want
+   to do this without pictures in public, in long form, it is just hard-coded. */
 $pic_p="T";
-if (isset($_GET['pic_p'])) {
-  if ($_GET['pic_p'] == "N") {
-    $pic_p="F";
-    $short="F";
-  }
-}
+
+// Set the conname from the conid
+$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
+list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
+$conname=$conname_array[1]['conname'];
+$connumdays=$conname_array[1]['connumdays'];
+$Grid_Spacer=$conname_array[1]['congridspacer'];
+$ConStart=$conname_array[1]['constartdate'];
+$logo=$conname_array[1]['conlogo'];
+
+// Check if feedback is allowed
+$query = <<<EOD
+SELECT
+    phasestate
+  FROM
+      PhaseTypes
+    JOIN Phase USING (phasetypeid)
+  WHERE
+    phasetypename like '%Feedback Available%' AND
+    conid=$conid
+EOD;
+    
+// Retrieve query
+list($phasestatrows,$phaseheader_array,$phase_array)=queryreport($query,$link,$title,$description,0);
 
 // LOCALIZATIONS
-$_SESSION['return_to_page']="BookBios.php";
+$_SESSION['return_to_page']="PubsBios.php&conid=$conid";
 $title="Biographical Information";
 $description="<P>Biographical Information for all Presenters.</P>\n";
 $additionalinfo="<P>See also this ";
 if ($short=="T") {
-  $additionalinfo.="<A HREF=\"BookBios.php\">full</A> or\n";
-  $additionalinfo.="<A HREF=\"BookBios.php?pic_p=N\">full without images</A>,\n";
-} elseif ($pic_p=="F") {
-  $additionalinfo.="<A HREF=\"BookBios.php\">full</A> or\n";
-  $additionalinfo.="<A HREF=\"BookBios.php?short=Y\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"PubsBios.php?conid=$conid\">full</A> or\n";
 } else {
-  $additionalinfo.="<A HREF=\"BookBios.php?pic_p=N\">without images</A> or\n";
-  $additionalinfo.="<A HREF=\"BookBios.php?short=Y\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"PubsBios.php?short=Y&conid=$conid\">short</A>,\n";
 }
-$additionalinfo.="the <A HREF=\"BookSched.php?format=desc\">description</A>\n";
-$additionalinfo.="<A HREF=\"BookSched.php?format=desc&short=Y\">(short)</A>,\n";
-$additionalinfo.="the <A HREF=\"BookSched.php?format=sched\">timeslots</A>\n";
-$additionalinfo.="<A HREF=\"BookSched.php?format=sched&short=Y\">(short)</A>,\n";
-$additionalinfo.="the <A HREF=\"BookSched.php?format=tracks\">tracks</A>\n";
-$additionalinfo.="<A HREF=\"BookSched.php?format=tracks&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=desc&conid=$conid\">description</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=sched&conid=$conid\">timeslots</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=tracks&conid=$conid\">tracks</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=rooms&conid=$conid\">rooms</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
 $additionalinfo.="or the <A HREF=\"grid.php?standard=y\">grid</A>.</P>\n";
+
+// iCal
+if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
+  $additionalinfo.="<P>To get an iCal calendar of all the classes of this Presenter, click\n";
+  $additionalinfo.="on the (Fan iCal) after their Bio entry, or the (iCal) after the\n";
+  $additionalinfo.="particular activity, to create a calendar for just that activity.</P>\n";
+ }
+
+// Feedback
+if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
+  $additionalinfo.="<P>Click on the (Feedback) tag to give us feedback on a particular\n";
+  $additionalinfo.="scheduled event.</P>\n";
+ }
 
 /* This query grabs everything necessary for the schedule to be printed.
    It is not very different from the fooSched query, but different enough. */
 
 $query = <<<EOD
 SELECT
-    trackname AS Track,
-    concat(title_good_web,
+    concat("<A HREF=\"PubsSched.php?format=tracks&conid=$conid#",
+      trackname,
+      "\"><i>",
+      trackname,
+      "</i></A>") AS Track,
+    concat("<A HREF=\"PubsSched.php?format=desc&conid=$conid#",
+      title_good_web,
       if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),
-      if((moderator in ('1','Yes')),'(m)','')) AS Title,
+      "\">",
+      title_good_web,
+      if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),
+      "</A>") AS Title,
     pubsname AS 'Participants',
     badgeid,
-    DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p') AS 'Start Time',
+    GROUP_CONCAT(DISTINCT "<A HREF=\"PubsSched.php?format=sched&conid=$conid#",
+      DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),
+      "\"><i>",
+      DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),
+      "</i></A>" SEPARATOR ", ") AS "Start Time",
     CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
@@ -94,10 +131,20 @@ SELECT
       ELSE
         concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
       END AS Duration,
-    roomname AS Room,
-    if(desc_good_book IS NULL,
-      concat("***EDIT PLEASE***",if(desc_good_web IS NULL,"",desc_good_web)),
-      desc_good_book) AS 'Description'
+    GROUP_CONCAT(DISTINCT "<A HREF=\"PubsSched.php?format=rooms&conid=$conid#",
+      roomname,
+      "\"><i>",
+      roomname,
+      "</i></A>" SEPARATOR ", ") AS Room,
+    if(DATE_ADD(constartdate,INTERVAL connumdays DAY) > NOW(),
+      concat('<A HREF=PrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>'),
+      '') AS iCal,
+    if((constartdate < NOW() AND phasestate = "0"),
+      concat('<A HREF=Feedback.php?conid=$conid&sessionid=',sessionid,'>(Feedback)</A>'),
+      '') AS Feedback,
+    if(desc_good_web IS NULL,
+      if(desc_good_book IS NULL,"",desc_good_book),
+      desc_good_web) AS 'Description'
   FROM
       Sessions
     JOIN Schedule USING (sessionid,conid)
@@ -105,6 +152,8 @@ SELECT
     JOIN Tracks USING (trackid)
     JOIN PubStatuses USING (pubstatusid)
     JOIN ConInfo USING (conid)
+    JOIN Phase USING (conid)
+    JOIN PhaseTypes USING (phasetypeid)
     LEFT JOIN ParticipantOnSession USING (sessionid,conid)
     LEFT JOIN Participants USING (badgeid)
     JOIN (SELECT
@@ -165,10 +214,13 @@ SELECT
           descriptionlang='en-us') DGB USING (sessionid,conid)
   WHERE
     conid=$conid AND
+    phasetypename like "%Feedback Available%" AND
     pubstatusname in ('Public') AND
     (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
     (introducer IS NULL OR introducer not in ('1','Yes')) AND
     (aidedecamp IS NULL OR aidedecamp not in ('1','Yes'))
+  GROUP BY
+    sessionid
   ORDER BY
     pubsname,
     starttime
@@ -207,7 +259,7 @@ if ($short == "T") {
 	if (($picturetmp != "") and ($pic_p == "T")) {
 	  $edit_p=strpos($picturetmp,"***EDIT PLEASE***");
 	  if ($edit_p === false) {
-	    $picture=sprintf("<img src=\"%s\">",$picturetmp);
+	    $picture=sprintf("<img width=300 src=\"%s\">",$picturetmp);
 	  } else {
 	    $picture=sprintf("Picture for editing at: http://%s/webpages/%s",
 			     $_SESSION['conurl'], substr($picturetmp, 18));
@@ -219,7 +271,7 @@ if ($short == "T") {
 	// Set their name
 	$name=getBioDestEdit('name',$biolang,$bioinfo);
 	if ($name == "") {
-	  $name="***EDIT PLEASE*** ".$header;
+	  $name=$header;
 	}
 
 	//If there is a bio
@@ -237,15 +289,18 @@ if ($short == "T") {
 	  }
 	  $biostring.=sprintf("%s</TD>\n    <TD>",$picture);
 	}
-	$biostring.=sprintf("<DL>\n  <DT><B>%s</B>",$name);
+	$biostring.=sprintf("<P><B>%s</B>",$name);
 	if ($bio != "") {
 	  $biostring.=$bio;
 	}
-	$biostring.="</DT>\n";
+	$biostring.="</P>\n";
 	if ($uri != "") {
-	  $biostring.=sprintf("  <DT>%s</DT>\n",$uri);
+	  $biostring.=sprintf("<P>%s</P>\n",$uri);
 	}
       } // End of Language Switch
+      if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
+	$biostring.=sprintf(" <A HREF=\"PostScheduleIcal.php?pubsname=%s\">(Fan iCal)</A></P>\n<P>",$element_array[$i]['pubsname']);
+      }
       $element_array[$i]['Bio']=$biostring;
       $element_array[$i]['istable']=$tablecount;
     } else {  // if it is the same in the 'Participants' field, just copy the result in.

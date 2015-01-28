@@ -17,6 +17,8 @@ if (isset($_GET['format'])) {
     $format="tracks";
   } elseif ($_GET['format'] == "desc") {
     $format="desc";
+  } elseif ($_GET['format'] == "rooms") {
+    $format="rooms";
   } elseif ($_GET['format'] == "sched") {
     $format="sched";
   }
@@ -31,26 +33,32 @@ if (isset($_GET['short'])) {
   }
 }
 
-// Temporarily overwriting the (m) for Tracks
+// Default
+$pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname,if(moderator in ('1','Yes'),'(m)','') SEPARATOR ', ')) AS 'Participants'";
+
 if ($format == "tracks") {
   $title="Track List";
   $description="<P>Track Schedules for all public sessions.</P>\n";
-  $pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname,if(moderator in ('1','Yes'),'(m)','') SEPARATOR ', ')) AS 'Participants'";
+  // Temporarily overwriting the (m) for Tracks
   $pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname SEPARATOR ', ')) AS 'Participants'";
   $orderby="trackname,title_good_web,starttime,R.roomname";
   $header_break="Track";
 }
+if ($format == "rooms") {
+  $title="Room List";
+  $description="<P>Room Schedules for all public sessions.</P>\n";
+  $orderby="R.roomname,starttime,title_good_web,trackname";
+  $header_break="Room";
+}
 if ($format == "desc") {
   $title="Descriptions";
   $description="<P>Descriptions for all public sessions.</P>\n";
-  $pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname,if(moderator in ('1','Yes'),'(m)','') SEPARATOR ', ')) AS 'Participants'";
   $orderby="title_good_web";
   $header_break="";
 }
 if ($format == "sched") {
   $title="Schedule";
   $description="<P>Schedule for all public sessions.</P>\n";
-  $pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname,if(moderator in ('1','Yes'),'(m)','') SEPARATOR ', ')) AS 'Participants'";
   $orderby="starttime,R.display_order,title_good_web";
   $header_break="Start Time";
 }
@@ -64,7 +72,8 @@ if ($single_line_p=="T") {
   $additionalinfo.="<A HREF=\"BookSched.php?format=$format&short=Y\">short</A>,\n";
 }
 $additionalinfo.="the <A HREF=\"BookBios.php\">bios</A>\n";
-$additionalinfo.="<A HREF=\"BookBios.php\">(short)</A>,\n";
+$additionalinfo.="<A HREF=\"BookBios.php?pic_p=N\">(without images)</A>\n";
+$additionalinfo.="<A HREF=\"BookBios.php?short=Y\">(short)</A>,\n";
 if ($format != "desc") {
   $additionalinfo.="the <A HREF=\"BookSched.php?format=desc\">description</A>\n";
   $additionalinfo.="<A HREF=\"BookSched.php?format=desc&short=Y\">(short)</A>,\n";
@@ -76,6 +85,10 @@ if ($format != "sched") {
 if ($format != "tracks") {
   $additionalinfo.="the <A HREF=\"BookSched.php?format=tracks\">tracks</A>\n";
   $additionalinfo.="<A HREF=\"BookSched.php?format=tracks&short=Y\">(short)</A>,\n";
+}
+if ($format != "rooms") {
+  $additionalinfo.="the <A HREF=\"BookSched.php?format=rooms\">rooms</A>\n";
+  $additionalinfo.="<A HREF=\"BookSched.php?format=rooms&short=Y\">(short)</A>,\n";
 }
 $additionalinfo.="or the <A HREF=\"grid.php?standard=y\">grid</A>.</P>\n";
 

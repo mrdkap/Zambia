@@ -36,6 +36,7 @@ topofpagereport($title,$description,$additionalinfo);
 <P>Some useful views for the program book:</P>
 <DL>
   <DT id="programbookdesc"><A HREF="BookBios.php">Bios</A>
+    <A HREF="BookBios.php?pic_p=N">(without images)</A>
     <A HREF="BookBios.php?short=Y">(short)</A></DT>
   <DD id="programbookdesc">An alphabetical list of the Biographical Information for the Program Book.</DD>
   <DT id="programbookdesc"><A HREF="BookSched.php?format=desc">Descriptions</A>
@@ -47,6 +48,9 @@ topofpagereport($title,$description,$additionalinfo);
   <DT id="programbooktrack"><A HREF="BookSched.php?format=tracks">Tracks list</A>
     <A HREF="BookSched.php?format=tracks&short=Y">(short)</A></DT>
   <DD id="programbooktrack">A track-sorted schedule for the Program Book.</DD>
+  <DT id="programbooktrack"><A HREF="BookSched.php?format=rooms">Rooms list</A>
+    <A HREF="BookSched.php?format=rooms&short=Y">(short)</A></DT>
+  <DD id="programbooktrack">A room-sorted schedule for the Program Book.</DD>
 </DL>
 <HR>
 <P>And one that is useful after the event feedback is done.</P>

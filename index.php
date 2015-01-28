@@ -164,16 +164,31 @@ for ($i=1; $i<=$conrows; $i++) {
   if (file_exists("Local/$conid/Program_Book.pdf")) {
     $genbody.="      <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
   }
+  if (file_exists("Local/$conid/Con_Chair_Welcome")) {
+    $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid#conchairletter\">Welcome from the Con Chair</A></LI>\n";
+  }
+  if (file_exists("Local/$conid/Org_Welcome")) {
+    $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid#orgletter\">Welcome from the Organization</A></LI>\n";
+  }
+  if (file_exists("Local/$conid/Rules")) {
+    $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid#rules\">Rules</A></LI>\n";
+  }
   if ($genbody!="") {$webstring.=$genheader . $genbody . $divfooter;}
 
   // Programming information block
   $progbody="";
   if ($phase_array[$conid]['Prog Available'] == '0' ) {
     $progbody.="      <LI><A HREF=\"webpages/Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/Descriptions.php?conid=$conid\">Class Descriptions</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/Schedule.php?conid=$conid\">Schedule</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/Tracks.php?conid=$conid\">Tracks</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/Bios.php?conid=$conid\">Presenter Bios</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=desc&conid=$conid\">Class Descriptions</A>\n";
+    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
+    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=tracks&conid=$conid\">Tracks</A>\n";
+    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid\">Rooms</A>\n";
+    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/PubsBios.php?conid=$conid\">Presenter Bios</A>\n";
+    $progbody.="        <A HREF=\"webpages/PubsBios.php?conid=$conid&short=Y\">(short)</A></LI>\n";
   }
   if ($phase_array[$conid]['Brainstorm'] == '0' ) {
     $progbody.="      <LI>\n";

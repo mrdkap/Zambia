@@ -220,7 +220,12 @@ for ($i=1; $i<=$conrows; $i++) {
   $volbody="";
   if ($phase_array[$conid]['Vol Available'] == '0' ) {
     $volbody.="      <LI><A HREF=\"webpages/Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
-    $volbody.="      <LI><A HREF=\"webpages/Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
+    $volbody.="      <LI><A HREF=\"webpages/VolsSched.php?format=desc&conid=$conid\">Job Descriptions</A>\n";
+    $volbody.="        <A HREF=\"webpages/VolsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $volbody.="      <LI><A HREF=\"webpages/VolsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
+    $volbody.="        <A HREF=\"webpages/VolsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $volbody.="      <LI><A HREF=\"webpages/VolsSched.php?format=rooms&conid=$conid\">Posts</A>\n";
+    $volbody.="        <A HREF=\"webpages/VolsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
   }
   if ($volbody!="") {$webstring.=$volheader . $volbody . $divfooter;}
 

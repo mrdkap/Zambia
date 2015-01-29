@@ -274,6 +274,8 @@ if ($short == "T") {
 	  $name=$header;
 	}
 
+	$name="<A NAME=\"$name\"></A>$name";
+
 	//If there is a bio
 	$bio=getBioDestEdit('bio',$biolang,$bioinfo);
 

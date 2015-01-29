@@ -130,7 +130,12 @@ if ($progbody!="") {$description.=$progheader . $progbody . $divfooter;}
 $volbody="";
 if ($phase_array['Vol Available'] == '0' ) {
   $volbody.="      <LI><A HREF=\"Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
-  $volbody.="      <LI><A HREF=\"Descriptions.php?volunteer=y&conid=$conid\">Volunteer Job Descriptions</A></LI>\n";
+  $volbody.="      <LI><A HREF=\"VolsSched.php?format=desc&conid=$conid\">Job Descriptions</A>\n";
+  $volbody.="        <A HREF=\"VolsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
+  $volbody.="      <LI><A HREF=\"VolsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
+  $volbody.="        <A HREF=\"VolsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
+  $volbody.="      <LI><A HREF=\"VolsSched.php?format=rooms&conid=$conid\">Posts</A>\n";
+  $volbody.="        <A HREF=\"VolsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
 }
 if ($volbody!="") {$description.=$volheader . $volbody . $divfooter;}
 $vendbody="";

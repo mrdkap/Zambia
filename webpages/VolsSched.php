@@ -8,12 +8,10 @@ if ($conid=="") {$conid=$_SESSION['conid'];}
 
 $format="desc";
 if (isset($_GET['format'])) {
-  if ($_GET['format'] == "tracks") {
-    $format="tracks";
+  if ($_GET['format'] == "rooms") {
+    $format="rooms";
   } elseif ($_GET['format'] == "desc") {
     $format="desc";
-  } elseif ($_GET['format'] == "rooms") {
-    $format="rooms";
   } elseif ($_GET['format'] == "sched") {
     $format="sched";
   }
@@ -44,38 +42,35 @@ list($phasestatrows,$phaseheader_array,$phase_array)=queryreport($query,$link,$t
 if($phase_array[1]['phasestate'] == '0') {$feedback_p=true;}
 
 // Defaults
-$_SESSION['return_to_page']="PubsSched.php?format=$format&conid=$conid";
-$track='concat("<A HREF=\"PubsSched.php?format=tracks&conid='.$conid.'#",trackname,"\"><i>",trackname,"</i></A>") AS Track';
-$sestitle='concat("<A HREF=\"PubsSched.php?format=desc&conid='.$conid.'#",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),"\">",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),"</A>") AS Title';
-$pubsname='if ((pubsname is NULL), " ", GROUP_CONCAT(DISTINCT "<A HREF=\"PubsBios?conid='.$conid.'#",pubsname,"\">",pubsname,"</A>",if(moderator in ("1","Yes"),"(m)","") SEPARATOR ", ")) AS "Participants"';
-$starttime='GROUP_CONCAT(DISTINCT "<A HREF=\"PubsSched.php?format=sched&conid='.$conid.'#",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"\"><i>",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"</i></A>" SEPARATOR ", ") AS "Start Time"';
-$room='GROUP_CONCAT(DISTINCT "<A HREF=\"PubsSched.php?format=rooms&conid='.$conid.'#",roomname,"\"><i>",roomname,"</i></A>" SEPARATOR ", ") AS Room';
+$_SESSION['return_to_page']="VolsSched.php?format=$format&conid=$conid";
+$track='trackname AS Track';
+$sestitle='concat("<A HREF=\"VolsSched.php?format=desc&conid='.$conid.'#",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),"\">",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),"</A>") AS Title';
+$pubsname='if ((pubsname is NULL), " ", GROUP_CONCAT(DISTINCT pubsname,if(moderator in ("1","Yes"),"(m)","") SEPARATOR ", ")) AS "Participants"';
+$starttime='GROUP_CONCAT(DISTINCT "<A HREF=\"VolsSched.php?format=sched&conid='.$conid.'#",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"\"><i>",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"</i></A>" SEPARATOR ", ") AS "Start Time"';
+$room='GROUP_CONCAT(DISTINCT "<A HREF=\"VolsSched.php?format=rooms&conid='.$conid.'#",roomname,"\"><i>",roomname,"</i></A>" SEPARATOR ", ") AS Room';
+$pubstatus_check="'Volunteer','Reg Staff','Sales Staff'";
+$groupby="sessionid";
 
 // LOCALIZATIONS
-if ($format == "tracks") {
-  $title="Event Track Schedule for $conname";
-  $description="<P>Track Schedules for all public sessions.</P>\n";
-  $track='concat("<A NAME=\"",trackname,"\"></A>",trackname,if((DATE_ADD(constartdate,INTERVAL connumdays DAY)>NOW()),concat(" <A HREF=TrackScheduleIcal.php?trackid=",trackid,"><I>(iCal)</I></A>"),"")) AS Track';
-  $orderby="trackname,title_good_web,starttime,R.roomname";
-  $header_break="Track";
-}
 if ($format == "rooms") {
-  $title="Event Room Schedule for $conname";
-  $description="<P>Room Schedules for all public sessions.</P>\n";
+  $title="Volunteer Job Descriptions by location for $conname";
+  $description="<P>Job Descriptions for all volunteer locations.</P>\n";
   $room='concat("<A NAME=\"",roomname,"\"></A>",roomname) AS Room';
   $orderby="R.Roomname,starttime,title_good_web";
   $header_break="Room";
+  $groupby="desc_good_web";
 }
 if ($format == "desc") {
-  $title="Session Descriptions for $conname";
-  $description="<P>Descriptions for all public sessions.</P>\n";
+  $title="Volunteer Job Descriptions for $conname";
+  $description="<P>Descriptions for all volunteer jobs.</P>\n";
   $sestitle='concat("<A NAME=\"",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),"\"></A>",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web))) AS Title';
   $orderby="title_good_web";
   $header_break="";
+  $groupby="desc_good_web";
 }
 if ($format == "sched") {
-  $title="Event Schedule for $conname";
-  $description="<P>Schedule for all public sessions.</P>\n";
+  $title="Volunteer Schedule for $conname";
+  $description="<P>Schedule for all volunteer sessions.</P>\n";
   $starttime='concat("<A NAME=\"",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"\"></A>",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p")) AS "Start Time"';
   $orderby="starttime,R.display_order,title_good_web";
   $header_break="Start Time";
@@ -84,35 +79,25 @@ if ($format == "sched") {
 // Additional info setup.
 $additionalinfo="<P>See also this ";
 if ($single_line_p=="T") {
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=$format&conid=$conid\">full</A>,\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=$format&conid=$conid\">full</A>,\n";
 } else {
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=$format&conid=$conid&short=Y\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=$format&conid=$conid&short=Y\">short</A>,\n";
 }
-$additionalinfo.="the <A HREF=\"PubsBios.php?conid=$conid\">bios</A>\n";
-$additionalinfo.="<A HREF=\"PubsBios.php?short=Y&conid=$conid\">(short)</A>,\n";
 if ($format != "desc") {
-  $additionalinfo.="the <A HREF=\"PubsSched.php?format=desc&conid=$conid\">description</A>\n";
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
+  $additionalinfo.="the <A HREF=\"VolsSched.php?format=desc&conid=$conid\">description</A>\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
 }
 if ($format != "sched") {
-  $additionalinfo.="the <A HREF=\"PubsSched.php?format=sched&conid=$conid\">timeslots</A>\n";
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
-}
-if ($format != "tracks") {
-  $additionalinfo.="the <A HREF=\"PubsSched.php?format=tracks&conid=$conid\">tracks</A>\n";
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>,\n";
+  $additionalinfo.="the <A HREF=\"VolsSched.php?format=sched&conid=$conid\">timeslots</A>\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
 }
 if ($format != "rooms") {
-  $additionalinfo.="the <A HREF=\"PubsSched.php?format=rooms&conid=$conid\">rooms</A>\n";
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
+  $additionalinfo.="the <A HREF=\"VolsSched.php?format=rooms&conid=$conid\">locations</A>\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
 }
-$additionalinfo.="or the <A HREF=\"Postgrid.php?conid=$conid\">grid</A>.</P>\n";
+$additionalinfo.="or the <A HREF=\"Postgrid.php?volunteer=y&conid=$conid\">grid</A>.</P>\n";
 if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
   $additionalinfo.="<P>Click on the ";
-  if ($format == "tracks") {
-    $additionalinfo.="<I>(iCal)</i> next to the track name to have an iCal Calendar\n";
-    $additionalinfo.=" sent to your machine for automatic inclusion, and the\n";
-  }
   $additionalinfo.="(iCal) tag to download the iCal calendar for the particular\n";
   $additionalinfo.="activity you want added to your calendar.</P>\n";
  }
@@ -212,12 +197,12 @@ SELECT
   WHERE
     conid=$conid AND
     phasetypename like "%Feedback Available%" AND
-    pubstatusname in ('Public') AND
+    pubstatusname in ($pubstatus_check) AND
     (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
     (introducer IS NULL OR introducer not in ('1','Yes')) AND
     (aidedecamp IS NULL OR aidedecamp not in ('1','Yes'))
   GROUP BY
-    sessionid
+    $groupby
   ORDER BY
     $orderby
 EOD;

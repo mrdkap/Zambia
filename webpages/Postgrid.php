@@ -30,6 +30,8 @@ $logo=$conname_array[1]['conlogo'];
 
 if (isset($_GET['volunteer'])) {
   $pubstatus_check="'Volunteer'";
+  $pubstatus_check="'Volunteer','Reg Staff','Sales Staff'";
+  $schedtype="VolsSched.php";
   $Grid_Spacer=3600;
 } elseif (isset($_GET['registration'])) {
   $pubstatus_check="'Reg Staff'";
@@ -42,6 +44,7 @@ if (isset($_GET['volunteer'])) {
   $Grid_Spacer=3600;
 } else {
   $pubstatus_check="'Public'";
+  $schedtype="PubsSched.php";
 }
 
 // LOCALIZATIONS
@@ -49,12 +52,32 @@ $_SESSION['return_to_page']="Postgrid.php";
 $title="Sessions Grid for $conname";
 $pagetitle=$title;
 $description="<P>Grid of all sessions.</P>\n";
-$additionalinfo="<P>Click on the session title to visit the session's <A HREF=\"Descriptions.php$passon\">description</A>,\n";
-$additionalinfo.="the presenter to visit their <A HREF=\"Bios.php$passon\">bio</A>, the time to visit that section of\n";
-$additionalinfo.="the <A HREF=\"Schedule.php$passon\">schedule</A>, or the track name to see all the classes\n";
-$additionalinfo.="by <A HREF=\"Tracks.php$passon\">track</A>.  (<A HREF=\"Postgrid-wide.php$passon\">Switch indices</A>)</P>\n";
-$additionalinfo.="<P>If you wish to have a copy printed, please download the <A HREF=Postgrid.php$passon_p>Rooms\n";
-$additionalinfo.="x Times</A> or <A HREF=Postgrid-wide.php$passon_p>Times x Rooms</A> version.</P>\n";
+$additionalinfo="<P>Click on ";
+if ($schedtype=="VolsSched.php") {
+  $additionalinfo.="the job title to visit the job\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=desc&conid=$conid\">description</A>\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
+  $additionalinfo.="or the time to visit that section of the\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=sched&conid=$conid\">timeslots</A>\n";
+  $additionalinfo.="<A HREF=\"VolsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>.\n";
+} else {
+  $additionalinfo.="the title to visit the session's\n";
+  $additionalinfo.="the <A HREF=\"PubsSched.php?format=desc&conid=$conid\">description</A>\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
+  $additionalinfo.="the presenter to visit their\n";
+  $additionalinfo.="<A HREF=\"PubsBios.php?conid=$conid\">bios</A>\n";
+  $additionalinfo.="<A HREF=\"PubsBios.php?short=Y&conid=$conid\">(short)</A>,\n";
+  $additionalinfo.="the time to visit that section of the\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=sched&conid=$conid\">schedule</A>\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
+  $additionalinfo.="or the track name to visit that session's\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid\">track</A>\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>.\n";
+}
+$additionalinfo.="(<A HREF=\"Postgrid-wide.php$passon\">Switch indices</A>)</P>\n";
+$additionalinfo.="<P>If you wish to have a copy printed, please download the\n";
+$additionalinfo.="<A HREF=Postgrid.php$passon_p>Rooms x Times</A> or\n";
+$additionalinfo.="<A HREF=Postgrid-wide.php$passon_p>Times x Rooms</A> version.</P>\n";
 
 /* This query returns the room names for an array, to be used as
  headers, and keys for other arrays.*/
@@ -81,21 +104,28 @@ EOD;
 // Retrieve query
 list($rooms,$unneeded_array_a,$header_array)=queryreport($query,$link,$title,$description,0);
 
+// If it is the vols, don't bother with the bios link.
+if ($schedtype=="VolsSched.php") {
+  $pubsnamelink='pubsname';
+} else {
+  $pubsnamelink='"<A HREF=\"PubsBios.php?conid='.$conid.'#",pubsname,"\">",pubsname,"</A>"';
+}
+
 /* This set of queries finds the appropriate presenters for a session element,
  based on sessionid, and produces links for them. */
 $query = <<<EOD
 SELECT
     sessionid,
-    GROUP_CONCAT(concat("<A HREF=\"Bios.php$passon#",pubsname,"\">",pubsname,"</A>",if((moderator=1),'(m)','')) SEPARATOR ", ") as allpubsnames
+    GROUP_CONCAT(concat($pubsnamelink,if(moderator in ('1','Yes'),'(m)','')) SEPARATOR ", ") as allpubsnames
   FROM
       Sessions
     JOIN ParticipantOnSession USING (sessionid,conid)
     JOIN Participants USING (badgeid)
   WHERE 
     conid=$conid AND
-    volunteer not in ("0","1","Yes") AND
-    introducer not in ("0","1","Yes") AND
-    aidedecamp not in ("0","1","Yes")
+    volunteer not in ("1","Yes") AND
+    introducer not in ("1","Yes") AND
+    aidedecamp not in ("1","Yes")
   GROUP BY
     sessionid
   ORDER BY
@@ -170,20 +200,22 @@ EOD;
     $y=$header_array[$i]["roomname"];
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),concat(title_good_web,if((subtitle_good_web IS NULL),\"\",concat(\": \",subtitle_good_web))),\"\") SEPARATOR '') as \"%s title\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),sessionid,\"\") SEPARATOR '') as \"%s sessionid\"",$x,$y);
+    $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),trackname,\"\") SEPARATOR '') as \"%s track\"",$x,$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),",$x);
     $query.="CASE WHEN HOUR(duration) < 1 THEN concat(date_format(duration,'%i'),'min')";
     $query.="     WHEN MINUTE(duration)=0 THEN concat(date_format(duration,'%k'),'hr')";
     $query.="     ELSE concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min') END";
     $query.=sprintf(",\"\") SEPARATOR '') as \"%s duration\"",$y);
     $query.=sprintf(",GROUP_CONCAT(IF((roomid=%s AND ($time = TIME_TO_SEC(starttime))),IF(estatten,estatten,\"\"),\"\") SEPARATOR '') as \"%s total\"",$x,$y);
-    $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$x,$y);
+    $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,TY.htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$x,$y);
   }
   $query.=<<<EOD
   FROM
       Schedule
     JOIN Sessions USING (sessionid,conid)
     JOIN Rooms USING (roomid)
-    JOIN Types USING (typeid)
+    JOIN Types TY USING (typeid)
+    JOIN Tracks USING (trackid)
     JOIN PubStatuses USING (pubstatusid)
     JOIN ConInfo USING (conid)
         JOIN (SELECT
@@ -263,7 +295,7 @@ EOD;
     if ($refskiprow != 0) {
       $k=$grid_array[$time]['blocktime'];
       $fk=str_replace("&nbsp;"," ",$k);
-      $grid_array[$time]['blocktime']=sprintf("<A HREF=\"Schedule.php%s#%s\">%s</A>",$passon,$fk,$k);
+      $grid_array[$time]['blocktime']=sprintf("<A HREF=\"%s?format=sched&conid=%s#%s\">%s</A>",$schedtype,$conid,$fk,$k);
     }
     array_push($header_time,$grid_array[$time]['blocktime']);
   }
@@ -294,13 +326,17 @@ for ($i = $grid_start_sec; $i < $grid_end_sec; $i = ($i + $Grid_Spacer)) {
       if ($cellclass == "") {$cellclass="border1111";}
       $sessionid=$grid_array[$i]["$header_roomname sessionid"]; //sessionid
       $title=$grid_array[$i]["$header_roomname title"]; //title
+      $track=$grid_array[$i]["$header_roomname track"]; //track
       $duration=$grid_array[$i]["$header_roomname duration"]; // duration
       $total=$grid_array[$i]["$header_roomname total"]; //total
       $presenters=$presenters_array[$sessionid]; //presenters
       if ($bgcolor!="") {
 	$element_array[$element_row][$element_col] = sprintf("<TD BGCOLOR=\"%s\" CLASS=\"%s\">",$bgcolor,$cellclass);
 	if ($title!="") {
-	  $element_array[$element_row][$element_col].= sprintf("<A HREF=\"Descriptions.php%s#%s\">%s</A>",$passon,$sessionid,$title);
+	  $element_array[$element_row][$element_col].= sprintf("<A HREF=\"%s?format=desc&conid=%s#%s\">%s</A>",$schedtype,$conid,$title,$title);
+	}
+	if (($track!="") and ($schedtype!="VolsSched.php")) {
+	  $element_array[$element_row][$element_col].= sprintf(" - <A HREF=\"%s?format=tracks&conid=%s#%s\">%s</A>",$schedtype,$conid,$track,$track);
 	}
 	if ($duration!="") {
 	  $element_array[$element_row][$element_col].= sprintf(" - %s",$duration);

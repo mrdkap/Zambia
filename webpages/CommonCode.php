@@ -589,6 +589,85 @@ function rendergridreport ($startrows,$endrows,$header_array,$element_array) {
   return($gridstring);
 }
 
+/* Produces the Precis style report of the information passed in.
+   It takes in four variables, the start row, the number of rows,
+   the header array (not yet used, but should be) and the array
+   of elements that are presented.
+   The array of elements expects (but does not require):
+   sessionid, conid, trackname, typename, title, duration,
+   estatten, desc_good_web, desc_good_book, persppartinfo, and
+   proposer
+   This goes hand in hand with the query produced in the function:
+   retrieve_select_from_db
+   This should be expanded to work with the MySchedule page as well. */
+function renderprecisreport ($startrows,$endrows,$header_array,$element_array) {
+  $printstring ="<hr>\n";
+  $printstring.="<TABLE>\n";
+  $printstring.="   <COL><COL><COL><COL><COL>\n";
+  for ($i=$startrows; $i<=$endrows; $i++) {
+    $rowspan=1;
+    if (!empty($element_array[$i]['desc_good_web'])) {$rowspan++;}
+    if (!empty($element_array[$i]['desc_good_book'])) {$rowspan++;}
+    if (!empty($element_array[$i]['persppartinfo'])) {$rowspan++;}
+    $printstring.="<TR>\n  <TD rowspan=$rowspan class=\"border0000\" id=\"sessidtcell\"><b>";
+    if ((may_I('Staff')) and (!empty($element_array[$i]['sessionid']))) {
+      $printstring.="<A HREF=\"StaffAssignParticipants.php?selsess=".$element_array[$i]['sessionid']."\">".$element_array[$i]['sessionid']."</A>";
+    }
+    $printstring.="&nbsp;&nbsp;</TD>\n";
+    if (may_I('Staff')) {
+      $printstring.="  <TD class=\"border0000\"><b>";
+      if (!empty($element_array[$i]['proposer'])) {
+	$printstring.=$element_array[$i]['proposer'];
+      }
+      if (!empty($element_array[$i]['estatten'])) {
+	$printstring.="</b> (Count: ".$element_array[$i]['estatten'].") <b>";
+      }
+      if ($element_array[$i]['conid'] != $_SESSION['conid']) {
+	$printstring.=" <A HREF=\"MyMigrations.php?sessionid=".$element_array[$i]['sessionid']."&conid=".$element_array[$i]['conid']."\">Migrate</A></b></TD>\n";
+      } else {
+	$printstring.="</b></TD>\n";
+      }
+      $printstring.="  <TD class=\"border0000\"><b>";
+    } else {
+      $printstring.="  <TD colspan=2 class=\"border0000\"><b>";
+    }
+    if (!empty($element_array[$i]['trackname'])) {
+      $printstring.=$element_array[$i]['trackname'];
+    }
+    $printstring.="</TD>\n  <TD class=\"border0000\"><b>";
+    if (!empty($element_array[$i]['typename'])) {
+      $printstring.=$element_array[$i]['typename'];
+    }
+    $printstring.="</TD>\n  <TD class=\"border0000\"><b>";
+    if (!empty($element_array[$i]['title'])) {
+      if ((may_I('Staff')) and (!empty($element_array[$i]['sessionid']))){
+	$printstring.="<A HREF=\"EditSession.php?id=".$element_array[$i]['sessionid']."\">".htmlspecialchars($element_array[$i]['title'],ENT_NOQUOTES)."</A>";
+      } else {
+	$printstring.=htmlspecialchars($element_array[$i]['title'],ENT_NOQUOTES);
+      }
+    }
+    $printstring.="&nbsp;&nbsp;</TD>\n  <TD class=\"border0000\"><b>";
+    if (!empty($element_array[$i]['duration'])) {
+      $printstring.=$element_array[$i]['duration'];
+    }
+    $printstring.="</TD>\n</TR>\n";
+    if (!empty($element_array[$i]['desc_good_web'])) {
+      $printstring.="<TR><TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($element_array[$i]['desc_good_web'],ENT_NOQUOTES)."</TD></TR>\n";
+    }
+    if (!empty($element_array[$i]['desc_good_book'])) {
+      $printstring.="<TR><TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($element_array[$i]['desc_good_book'],ENT_NOQUOTES)."</TD></TR>\n";
+    }
+    if (!empty($element_array[$i]['persppartinfo'])) {
+      $printstring.="<TR><TD colspan=6 class=\"border0010\">".htmlspecialchars($element_array[$i]['persppartinfo'],ENT_NOQUOTES)."</TD></TR>\n";
+    }
+    $printstring.="<TR><TD colspan=6 class=\"border0020\">&nbsp;</TD></TR>\n";
+    $printstring.="<TR><TD colspan=6 class=\"border0000\">&nbsp;</TD></TR>\n";
+  }
+  $printstring.="</TABLE>\n";
+
+  return($printstring);
+}
+
 /* This function renders the Schedule, Description, Tracks (and possibly Bios)
    in their various forms, for their various audiences.
    It takes 5 elements:
@@ -862,18 +941,13 @@ EOD;
 }
 
 /* This takes the trackidlist, statusidlist, typeidlist, and
-   sessionidlist, and returns information for renderprecisreport by producing:
-   $sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
-   IN THAT ORDER.
-   For the title and descriptions (these should become not hard-coded):
-   descriptiontypeid: 1=title 2=subtitle 3=description
-   biostateid: 1=raw 2=edited 3=good
-   biodestid: 1=web 2=book
-   descriptionlang: Only using "en-us" for now.*/
+   sessionidlist, and returns a query for renderprecisreport
+   by producing:
+   sessionid, trackname, typename, title, duration, estatten,
+   desc_good_web, desc_good_book, persppartinfo, and proposer
+   descriptionlang: Only using "en-us" for now. */
 function retrieve_select_from_db ($trackidlist,$statusidlist,$typeidlist,$sessionidlist,$prevcon) {
-  require_once('db_functions.php');
-  global $result;
-  global $link, $title, $message2;
+  require_once('validation_functions.php');
   $conid=$_SESSION['conid'];
 
   if (validate_conid($prevcon)) {$conid=$prevcon;}
@@ -975,61 +1049,7 @@ EOD;
   if (($sessionidlist!=0) and ($sessionidlist!='')) {$query.=" AND sessionid in ($sessionidlist)";}
   if ($_SESSION['badgeid']==100) {$query.=" ORDER BY T.display_order,title";}
 
-  //Retrieve query and fail if query fails.
-  if (($result=mysql_query($query,$link))==false) {
-    $message2.="Error retrieving data from the database<BR>\n";
-    $message2.="$query -- ".mysql_error($link);
-    RenderError($title,$message2);
-    return (-3);
-  }
-}
-
-/* renderprecisreport display requires:  a populated dataarray containing rows with
-   $sessionid,$conid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
-   IN THAT ORDER
-   it displays the precis view of the data. This goes hand in hand with the retrieve_select_from_db above.*/
-/* This will want to become more flexible and generalized.  Passing in the already created array,
-   for example, as opposed to walking the $result, so if there is later parsing to the data,
-   or other changes, they can be include. */
-function renderprecisreport ($result) {
-  echo "<hr>\n";
-  echo "<TABLE>\n";
-  echo "   <COL><COL><COL><COL><COL>\n";
-  while (list($sessionid,$conid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer)=mysql_fetch_array($result, MYSQL_NUM)) {
-    echo "<TR>\n";
-    echo "  <TD rowspan=3 class=\"border0000\" id=\"sessidtcell\"><b>";
-    if (may_I('Staff')){
-      echo "<A HREF=\"StaffAssignParticipants.php?selsess=".$sessionid."\">".$sessionid."</A>";
-    }
-    echo "&nbsp;&nbsp;</TD>\n";
-    if (may_I('Staff')) {
-      echo "  <TD class=\"border0000\"><b>".$proposer;
-      if ($conid != $_SESSION['conid']) {
-	echo " <A HREF=\"MyMigrations.php?sessionid=".$sessionid."&conid=".$conid."\">Migrate</A></TD>\n";
-      } else {
-	echo "</TD>\n";
-      }
-      echo "  <TD class=\"border0000\"><b>".$trackname."</TD>\n";
-    } else {
-      echo "  <TD colspan=2 class=\"border0000\"><b>".$trackname."</TD>\n";
-    }
-    echo "  <TD class=\"border0000\"><b>".$typename."</TD>\n";
-    echo "  <TD class=\"border0000\"><b>";
-    if (may_I('Staff')){
-      echo "<A HREF=\"EditSession.php?id=".$sessionid."\">".htmlspecialchars($title,ENT_NOQUOTES)."</A>";
-    } else {
-      echo htmlspecialchars($title,ENT_NOQUOTES);
-    }
-    echo "&nbsp;&nbsp;</TD>\n";
-    echo "  <TD class=\"border0000\"><b>".$duration."</TD>\n";
-    echo "</TR>\n";
-    echo "<TR><TD colspan=6 class=\"border0010\">Web: ".htmlspecialchars($desc_good_web,ENT_NOQUOTES)."</TD></TR>\n";
-    echo "<TR><TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($desc_good_book,ENT_NOQUOTES)."</TD></TR>\n";
-    echo "<TR><TD colspan=6 class=\"border0000\">".htmlspecialchars($persppartinfo,ENT_NOQUOTES)."</TD></TR>\n";
-    echo "<TR><TD colspan=6 class=\"border0020\">&nbsp;</TD></TR>\n";
-    echo "<TR><TD colspan=6 class=\"border0000\">&nbsp;</TD></TR>\n";
-  }
-  echo "</TABLE>\n";
+  return($query);
 }
 
 /* This function will output the page with the form to search for a session
@@ -1041,8 +1061,7 @@ function renderprecisreport ($result) {
    The output varies depending on the permissions of the caller.
    Still missing:
    Title search
-   Suggestor search
-*/
+   Suggestor search */
 function RenderSearchSession ($track,$status,$type,$sessionid) {
 
   // If staff, switch on the queries.  Else defaults to Brainstorm

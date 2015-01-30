@@ -111,14 +111,18 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   $_SESSION['return_to_page']="BrainstormReport.php?status=all";
 }
 
-if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid,$_SESSION['conid'])==0) {
-  topofpagereport($title,$description,$additionalinfo);
-  renderprecisreport($result);
-  correct_footer();
-  exit();
-}
+// Get the selected information for precis processing
+$query=retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist,$_SESSION['conid']);
 
-// Or fail.
-$message_error="Error retrieving from database. ".$message2;
-RenderError($title,$message_error);
+// Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+/* Printing body.  Uses the page-init then creates the page. */
+topofpagereport($title,$description,$additionalinfo);
+
+/* Produce the report. */
+$printstring=renderprecisreport(1,$elements,$header_array,$element_array);
+echo $printstring;
+
+correct_footer();
 ?>

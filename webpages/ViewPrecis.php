@@ -82,21 +82,26 @@ if ($conid!=$_SESSION['conid']) {
 if ($rtp!="") {$_SESSION['return_to_page'].="?$rtp";}
 
 // Get the selected information for precis processing
-if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist,$conid)==0) {
-  topofpagereport($title,$description,$additionalinfo);
-  echo "<FORM method=POST action=\"ViewPrecis.php\">\n";
-  if ($conid!=$_SESSION['conid']) {
-    echo "<INPUT type=hidden name=conid value=$conid>\n";
-  }
-  $search=RenderSearchSession($trackid,$statusid,$typeid,$sessionid);
-  echo $search;
-  echo "</FORM>\n";
-  renderprecisreport($result);
-  correct_footer();
-  exit();
-}
+$query=retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlist,$conid);
 
-// Or fail.
-$message_error="Error retrieving from database. ".$message2;
-RenderError($title,$message_error);
-?> 
+// Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+/* Printing body.  Uses the page-init then creates the page. */
+topofpagereport($title,$description,$additionalinfo);
+
+// put up the form to choose a subset of the precis
+echo "<FORM method=POST action=\"ViewPrecis.php\">\n";
+if ($conid!=$_SESSION['conid']) {
+  echo "<INPUT type=hidden name=conid value=$conid>\n";
+}
+$search=RenderSearchSession($trackid,$statusid,$typeid,$sessionid);
+echo $search;
+echo "</FORM>\n";
+
+/* Produce the report. */
+$printstring=renderprecisreport(1,$elements,$header_array,$element_array);
+echo $printstring;
+
+correct_footer();
+?>

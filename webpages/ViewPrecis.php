@@ -91,7 +91,7 @@ if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionidlis
   $search=RenderSearchSession($trackid,$statusid,$typeid,$sessionid);
   echo $search;
   echo "</FORM>\n";
-  RenderPrecis($result);
+  renderprecisreport($result);
   correct_footer();
   exit();
 }

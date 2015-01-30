@@ -593,10 +593,15 @@ function rendergridreport ($startrows,$endrows,$header_array,$element_array) {
    in their various forms, for their various audiences.
    It takes 5 elements:
    format - One of desc, bios, sched, tracks
-   header_break - If there is sectional breaks, what it breaks on
-   single_line_p - If the sched line is a single line, or includes the descriptions
+   header_break - If there is sectional breaks, what it breaks on, otherwise empty
+   single_line_p [T,F] - If the sched line is a single line, or is more full
    elements - the count of the elements to loop over
    element_array - the array of elements to loop over
+
+   element_array should at least contain Title, and whatever is set in header_break,
+   if header_break is not empty.  It may also include: Bio, Participants, Track,
+   Start Time, Duration, Room, iCal, Feedback, and Description.  Bio only needs to
+   be included if the format is set to bios.
  */
 function renderschedreport ($format,$header_break,$single_line_p,$elements,$element_array) {
   $sched="<DL>\n";
@@ -615,28 +620,34 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
     $sched.=sprintf("<DT><B>%s</B>",$element_array[$i]['Title']);
     if (($single_line_p == "T") and
 	($format != "bios") and
+	(!empty($element_array[$i]['Participants'])) and
 	($element_array[$i]['Participants'] != " ")) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Participants']);
     }
-    if ($format != "tracks") {
+    if (($format != "tracks") and (!empty($element_array[$i]['Track']))) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Track']);
     }
-    if ($format != "sched") {
+    if (($format != "sched") and (!empty($element_array[$i]['Start Time']))) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Start Time']);
     }
-    $sched.=sprintf("&mdash;%s",$element_array[$i]['Duration']);
-    if ($format != "rooms") {
+    if (!empty($element_array[$i]['Duration'])) {
+      $sched.=sprintf("&mdash;%s",$element_array[$i]['Duration']);
+    }
+    if (($format != "rooms") and (!empty($element_array[$i]['Room']))) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Room']);
     }
-    if ((isset($element_array[$i]['iCal'])) and ($element_array[$i]['iCal']!='')) {
+    if ((isset($element_array[$i]['iCal'])) and (!empty($element_array[$i]['iCal']))) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['iCal']);
     }
-    if ((isset($element_array[$i]['Feedback'])) and ($element_array[$i]['Feedback']!='')) {
+    if ((isset($element_array[$i]['Feedback'])) and (!empty($element_array[$i]['Feedback']))) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Feedback']);
     }
     if ($single_line_p != "T") {
-      $sched.=sprintf("</DT>\n<DD><P>%s",$element_array[$i]['Description']);
-      if ($element_array[$i]['Participants'] != " ") {
+      if (!empty($element_array[$i]['Description'])) {
+	$sched.=sprintf("</DT>\n<DD><P>%s",$element_array[$i]['Description']);
+      }
+      if ((!empty($element_array[$i]['Participants'])) and
+	  ($element_array[$i]['Participants'] != " ")) {
 	$sched.=sprintf("</P></DD>\n<DD><i>%s</i></DD>\n",$element_array[$i]['Participants']);
       } else {
 	$sched.="</P></DD>\n";
@@ -851,7 +862,7 @@ EOD;
 }
 
 /* This takes the trackidlist, statusidlist, typeidlist, and
-   sessionidlist, and returns information for RenderPrecis by producing:
+   sessionidlist, and returns information for renderprecisreport by producing:
    $sessionid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
    IN THAT ORDER.
    For the title and descriptions (these should become not hard-coded):
@@ -973,11 +984,14 @@ EOD;
   }
 }
 
-/* RenderPrecis display requires:  a populated dataarray containing rows with
+/* renderprecisreport display requires:  a populated dataarray containing rows with
    $sessionid,$conid,$trackname,$typename,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo,$proposer
    IN THAT ORDER
    it displays the precis view of the data. This goes hand in hand with the retrieve_select_from_db above.*/
-function RenderPrecis ($result) {
+/* This will want to become more flexible and generalized.  Passing in the already created array,
+   for example, as opposed to walking the $result, so if there is later parsing to the data,
+   or other changes, they can be include. */
+function renderprecisreport ($result) {
   echo "<hr>\n";
   echo "<TABLE>\n";
   echo "   <COL><COL><COL><COL><COL>\n";

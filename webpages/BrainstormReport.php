@@ -113,7 +113,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 
 if (retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid,$_SESSION['conid'])==0) {
   topofpagereport($title,$description,$additionalinfo);
-  RenderPrecis($result);
+  renderprecisreport($result);
   correct_footer();
   exit();
 }

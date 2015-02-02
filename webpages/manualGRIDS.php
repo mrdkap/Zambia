@@ -6,11 +6,56 @@ $title="All Grids";
 $description="<P>All the grids are listed below, in the grid. Or you can try your <A HREF=grid.php>default grid</A>.</P>\n";
 $additionalinfo="<P>The type of grid is listed as the headers and the area of interest it pertains to is listed down the side.\n";
 $additionalinfo.="The choice of color or not is inside each grid element.</P>\n";
-$additionalinfo.="<P>Also useful is the <A HREF=StaffBios.php>Bios for Presenters</A> (<A HREF=Bios.php>public version</A>),\n";
-$additionalinfo.="the <A HREF=StaffDescriptions.php>Descriptions of scheduled Precis</A> (<A HREF=Descriptions.php>public version</A>),\n";
-$additionalinfo.="the <A HREF=StaffSchedule.php>Scheduled Precis</A> (<A HREF=Schedule.php>public version</A>) in time order,\n";
-$additionalinfo.="the <A HREF=StaffTracks.php>Tracks</A> (<A HREF=Tracks.php>public version</A>) by track name,\n";
+
+$additionalinfo.="<P>Also useful is the\n";
+$additionalinfo.="<A HREF=\"StaffBios.php?conid=$conid\">bios of the people involved with their schdule</A>\n";
+$additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">(without images)</A>,\n";
+
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=desc&conid=$conid\">descriptions of scheduled precis</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=sched&conid=$conid\">schedule precis</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&feedback=Y\">(w/feedback)</A> in time order, the\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid\">Tracks</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&feedback=Y\">(w/feedback)</A> by track name,\n";
+$additionalinfo.="and the <A HREF=\"StaffSched.php?format=rooms&conid=$conid\">room's schedule</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&feedback=Y\">(w/feedback)</A>.</P>\n";
+
+$additionalinfo.="<P>There is also the public version of all of these:\n";
+$additionalinfo.="the <A HREF=\"PubsBios.php?conid=$conid\">bios</A>\n";
+$additionalinfo.="<A HREF=\"PubsBios.php?short=Y&conid=$conid\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=desc&conid=$conid\">description</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=sched&conid=$conid\">schedule</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=tracks&conid=$conid\">tracks</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=rooms&conid=$conid\">rooms</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"VolsSched.php?format=desc&conid=$conid\">volunteer description</A>\n";
+$additionalinfo.="<A HREF=\"VolsSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"VolsSched.php?format=sched&conid=$conid\">volunteer schedule</A>\n";
+$additionalinfo.="<A HREF=\"VolsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"VolsSched.php?format=rooms&conid=$conid\">volunteer locations</A>\n";
+$additionalinfo.="<A HREF=\"VolsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
 $additionalinfo.="and the <A HREF=Postgrid.php>public version</A> of the Grids.</P>\n";
+
+$additionalinfo.="<P>And there is the book versions of all of these, as well:\n";
+$additionalinfo.="the <A HREF=\"BookBios.php\">bios</A>\n";
+$additionalinfo.="<A HREF=\"BookBios.php?pic_p=N\">(without images)</A>\n";
+$additionalinfo.="<A HREF=\"BookBios.php?short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"BookSched.php?format=desc\">description</A>\n";
+$additionalinfo.="<A HREF=\"BookSched.php?format=desc&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"BookSched.php?format=sched\">schedule</A>\n";
+$additionalinfo.="<A HREF=\"BookSched.php?format=sched&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"BookSched.php?format=tracks\">tracks</A>\n";
+$additionalinfo.="<A HREF=\"BookSched.php?format=tracks&short=Y\">(short)</A>,\n";
+$additionalinfo.="and the <A HREF=\"BookSched.php?format=rooms\">rooms</A>\n";
+$additionalinfo.="<A HREF=\"BookSched.php?format=rooms&short=Y\">(short)</A>.</P>\n";
 
 // Replacement for the query
 $how_array['Description']="";

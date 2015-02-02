@@ -191,13 +191,28 @@ if ($typeprint=="") {
 // Back to the more standard piece.
 $title=$tallprint.$gohprint.$typeprint.$tsemifill.$tcolorprint."Grid";
 $description="<P>Display ".$gohprint.$typeprint."schedule with rooms on horizontal axis and ".$beginonlyprint."time on vertical".$colorprint.$semifill.". This $allprint items marked \"Do Not Print\" or \"Staff Only\".</P>\n";
-$additionalinfo="<P>Click on the room name to edit the room's schedule;\n";
-$additionalinfo.="the session id to edit the session's participants; or\n";
-$additionalinfo.="the title to edit the session.</P>\n";
-$additionalinfo="<P>Click on the session title to visit the session's <A HREF=\"StaffDescriptions.php\">description</A>,\n";
-$additionalinfo.="the presenter to visit their <A HREF=\"StaffBios.php\">bio</A>, the time to visit that section of";
-$additionalinfo.=" the <A HREF=\"StaffSchedule.php\">schedule</A>, or the track name to see all the classes\n";
-$additionalinfo.="by <A HREF=\"StaffTracks.php\">track</A>.  <A HREF=\"manualGRIDS.php\">Pick</A> another grid.</P>\n";
+$additionalinfo="<P>Click on the session id to edit the session's participants,\n";
+$additionalinfo.="the session title to edit the session's\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid\">description</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="the presenter to visit their\n";
+$additionalinfo.="<A HREF=\"StaffBios.php?conid=$conid\">bio</A>\n";
+$additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">(without images)</A>,\n";
+$additionalinfo.="the time to visit that section of the\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=sched&conid=$conid\">schedule</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="the track name to see all the classes by\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=tracks&conid=$conid\">track</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="the room name to edit the\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=rooms&conid=$conid\">room's schedule</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="or <A HREF=\"manualGRIDS.php\">pick</A> another grid.</P>\n";
 $Grid_Spacer=$_SESSION['congridspacer'];
 if (!is_numeric($Grid_Spacer)) {$Grid_Spacer=1800;}
 
@@ -429,7 +444,7 @@ EOD;
       $printrows_array[$i]=$i;
       $grid_array[$i]=mysql_fetch_array($result,MYSQL_BOTH);
       $k=$grid_array[$i]['blocktime'];
-      $grid_array[$i]['blocktime']=sprintf("<A HREF=\"StaffSchedule.php#%s\"><B>%s</B></A>",$k,$k);
+      $grid_array[$i]['blocktime']=sprintf("<A HREF=\"StaffSched.php?format=sched#%s\"><B>%s</B></A>",$k,$k);
     }
   } else {
     $grid_array[$time]=mysql_fetch_array($result,MYSQL_BOTH);
@@ -452,7 +467,7 @@ EOD;
     if ($skiprow == 0) {$grid_array[$time]['blocktime'] = "Skip";}
     if ($refskiprow != 0) {
       $k=$grid_array[$time]['blocktime'];
-      $grid_array[$time]['blocktime']=sprintf("<A HREF=\"StaffSchedule.php#%s\"><B>%s</B></A>",$k,$k);
+      $grid_array[$time]['blocktime']=sprintf("<A HREF=\"StaffSched.php?format=sched#%s\"><B>%s</B></A>",$k,$k);
     }
   }
  }
@@ -507,7 +522,7 @@ foreach ($printrows_array as $i) {
 	}
 	if ($title!="") {
 	  if ($_SESSION['role']=="Participant") {
-	    echo sprintf("<A HREF=\"StaffDescriptions.php#%s\">%s</A>",$sessionid,$title);
+	    echo sprintf("<A HREF=\"StaffSched.php?format=desc#%s\">%s</A>",$sessionid,$title);
 	  } else {
 	    echo sprintf("<A HREF=\"EditSession.php?id=%s\">%s</A>",$sessionid,$title);
 	  }

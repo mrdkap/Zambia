@@ -147,8 +147,20 @@ if (isset($selday) and ($selday!="")) {
 
 // Set standard headers across the pages.
 $title=$_SESSION['conname']." $dayname Feedback";
-$description="<P>Not sure which class?  Check the <A HREF=StaffDescriptions.php>descriptions</A>, <A HREF=StaffBios.php>bios</A>, <A HREF=StaffSchedule.php>timeslots</A>, or <A HREF=StaffTracks.php>tracks</A> pages.</P>";
-$additionalinfo="<P><A HREF=\"StaffFeedback.php?selday=$selday&print_p=y\">Printable</A> version.</P>\n";
+$description="<P>Not sure which class?</P>\n";
+$additionalinfo="<P>See ";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=desc&conid=$conid\">description</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=sched&conid=$conid\">timeslots</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=tracks&conid=$conid\">tracks</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=rooms&conid=$conid\">rooms</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="or the <A HREF=\"StaffBios.php?conid=$conid\">bios</A>\n";
+$additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">(without images)</A> pages to choose from.</P>\n";
+$additionalinfo.="<P><A HREF=\"StaffFeedback.php?selday=$selday&print_p=y\">Printable</A> version.</P>\n";
 $additionalinfo.="<P>Done with this time block?  Pick a different one:</P>\n<UL>\n";
   for ($i=1; $i<=$fpagecount; $i++) {
     if ($i!=$single_class_no) {

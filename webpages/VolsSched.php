@@ -48,8 +48,9 @@ $sestitle='concat("<A HREF=\"VolsSched.php?format=desc&conid='.$conid.'#",title_
 $pubsname='if ((pubsname is NULL), " ", GROUP_CONCAT(DISTINCT pubsname,if(moderator in ("1","Yes"),"(m)","") SEPARATOR ", ")) AS "Participants"';
 $starttime='GROUP_CONCAT(DISTINCT "<A HREF=\"VolsSched.php?format=sched&conid='.$conid.'#",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"\"><i>",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"</i></A>" SEPARATOR ", ") AS "Start Time"';
 $room='GROUP_CONCAT(DISTINCT "<A HREF=\"VolsSched.php?format=rooms&conid='.$conid.'#",roomname,"\"><i>",roomname,"</i></A>" SEPARATOR ", ") AS Room';
+$estatten='"" AS Estatten';
 $pubstatus_check="'Volunteer','Reg Staff','Sales Staff'";
-$groupby="sessionid";
+$groupby="desc_good_web";
 
 // LOCALIZATIONS
 if ($format == "rooms") {
@@ -58,7 +59,6 @@ if ($format == "rooms") {
   $room='concat("<A NAME=\"",roomname,"\"></A>",roomname) AS Room';
   $orderby="R.Roomname,starttime,title_good_web";
   $header_break="Room";
-  $groupby="desc_good_web";
 }
 if ($format == "desc") {
   $title="Volunteer Job Descriptions for $conname";
@@ -66,7 +66,6 @@ if ($format == "desc") {
   $sestitle='concat("<A NAME=\"",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),"\"></A>",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web))) AS Title';
   $orderby="title_good_web";
   $header_break="";
-  $groupby="desc_good_web";
 }
 if ($format == "sched") {
   $title="Volunteer Schedule for $conname";
@@ -74,6 +73,8 @@ if ($format == "sched") {
   $starttime='concat("<A NAME=\"",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"\"></A>",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p")) AS "Start Time"';
   $orderby="starttime,R.display_order,title_good_web";
   $header_break="Start Time";
+  $groupby="sessionid";
+  $estatten='estatten AS Estatten';
 }
 
 // Additional info setup.
@@ -120,6 +121,7 @@ SELECT
         concat("<i>",date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min</i>')
       END AS Duration,
     $room,
+    $estatten,
     if(DATE_ADD(constartdate,INTERVAL connumdays DAY) > NOW(),
       concat('<A HREF=PrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>'),
       '') AS iCal,

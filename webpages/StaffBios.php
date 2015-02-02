@@ -6,31 +6,31 @@ if (may_I("Staff")) {
   require_once('PartCommonCode.php');
  }
 global $link;
-$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
-$ConNumDays=$_SESSION['connumdays']; // make it a variable so it can be substituted
 
+// Pass in variables
 $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
-if (isset($_GET['feedback'])) {
-  $feedbackp='?feedback=y';
-} else {
-  $feedbackp='';
+$_SESSION['return_to_page']="StaffBios.php&conid=$conid";
+
+$short="F";
+if (isset($_GET['short'])) {
+  if ($_GET['short'] == "Y") {
+    $short="T";
+    $_SESSION['return_to_page']="StaffBios.php&conid=$conid&short=\"Y\"";
+  } elseif ($_GET['short'] == "N") {
+    $short="F";
+  }
 }
-// LOCALIZATIONS
-$_SESSION['return_to_page']="StaffBios.php$feedbackp";
-$title="Bios for Presenters";
-$description="<P>List of all Presenters biographical information.</P>\n";
-$additionalinfo="<P>Click on the session title to visit the session's <A HREF=\"StaffDescriptions.php$feedbackp\">description</A>,\n";
-$additionalinfo.="the time to visit the <A HREF=\"StaffSchedule.php$feedbackp\">timeslot</A>, the track name to visit the particular\n";
-$additionalinfo.="<A HREF=\"StaffTracks.php$feedbackp\">track</A>, or visit the <A HREF=\"grid.php?standard=y&unpublished=y\">grid</A>.</P>\n";
-if ((strtotime($ConStart)+(60*60*24*$ConNumDays)) > time()) {
-  $additionalinfo.="<P>To get an iCal calendar of all the classes of this Presenter, click on the (Fan iCal) after their\n";
-  $additionalinfo.="Bio entry, or the (iCal) after the particular activity, to create a calendar for just that activity.</P>\n";
- }
-if (strtotime($ConStart) < time()) {
-  $additionalinfo.="<P>Click on the (Feedback) tag to give us feedback on a particular scheduled event.</P>\n";
- }
+
+$pic_p="T";
+if (isset($_GET['pic_p'])) {
+  if ($_GET['pic_p'] == "N") {
+    $pic_p="F";
+    $short="F";
+    $_SESSION['return_to_page']="StaffBios.php&conid=$conid&pic_p=\"N\"";
+  }
+}
 
 // Generate the constraints on what is shown
 if (may_I('General')) {$pubstatus_array[]='\'Volunteer\'';}
@@ -42,20 +42,105 @@ if (may_I('Watch')) {$pubstatus_array[]='\'Watch Staff\'';}
 if (may_I('Vendor')) {$pubstatus_array[]='\'Vendor Staff\'';}
 if (may_I('Sales')) {$pubstatus_array[]='\'Sales Staff\'';}
 if (may_I('Fasttrack')) {$pubstatus_array[]='\'Fast Track\'';}
-$pubstatus_string=implode(",",$pubstatus_array);
+if (may_I('Logistics')) {$pubstatus_array[]='\'Logistics\'';}
+if (may_I('Vendor')) {$pubstatus_array[]='\'Vendor\'';}
+if (may_I('Lounge')) {$pubstatus_array[]='\'Lounge Staff\'';}
+$pubstatus_check=implode(",",$pubstatus_array);
 
-/* This complex query grabs the name, and class information.
- Most, if not all of the formatting is done within the query, as opposed to in
- the post-processing. The bio information is grabbed seperately. */
+// Set the conname from the conid
+$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
+list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
+$conname=$conname_array[1]['conname'];
+$connumdays=$conname_array[1]['connumdays'];
+$Grid_Spacer=$conname_array[1]['congridspacer'];
+$ConStart=$conname_array[1]['constartdate'];
+$logo=$conname_array[1]['conlogo'];
+
+// Check if feedback is allowed
 $query = <<<EOD
 SELECT
-    concat('<A NAME=\"',pubsname,'\"></A>',pubsname) AS 'Participants',
-    concat('<A HREF=\"StaffDescriptions.php$feedbackp#',sessionid,'\"><B>',title_good_web,'</B></A>') AS Title,
-    subtitle_good_web AS Subtitle,
-    if((moderator=1),' (m)','') AS Moderator,
-    concat('<A HREF=\"StaffTracks.php$feedbackp#',trackname,'\">',trackname,'</A>') AS Track,
-    concat('<A HREF=\"StaffSchedule.php$feedbackp#',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'\">',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'</A>') AS 'Start Time',
-    CASE 
+    phasestate
+  FROM
+      PhaseTypes
+    JOIN Phase USING (phasetypeid)
+  WHERE
+    phasetypename like '%Feedback Available%' AND
+    conid=$conid
+EOD;
+    
+// Retrieve query
+list($phasestatrows,$phaseheader_array,$phase_array)=queryreport($query,$link,$title,$description,0);
+
+// LOCALIZATIONS
+$title="Biographical Information";
+$description="<P>Biographical Information for all Presenters.</P>\n";
+$additionalinfo="<P>See also this ";
+if ($short=="T") {
+  $additionalinfo.="<A HREF=\"StaffBios.php?conid=$conid\">full</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">full without images</A>,\n";
+} elseif ($pic_p=="F") {
+  $additionalinfo.="<A HREF=\"StaffBios.php?conid=$conid\">full</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">short</A>,\n";
+} else {
+  $additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">without images</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">short</A>,\n";
+}
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=desc&conid=$conid\">description</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=sched&conid=$conid\">timeslots</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=tracks&conid=$conid\">tracks</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="the <A HREF=\"StaffSched.php?format=rooms&conid=$conid\">rooms</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+$additionalinfo.="or the <A HREF=\"grid.php?standard=y\">grid</A>.</P>\n";
+
+// iCal
+if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
+  $additionalinfo.="<P>To get an iCal calendar of all the classes of this Presenter, click\n";
+  $additionalinfo.="on the (Fan iCal) after their Bio entry, or the (iCal) after the\n";
+  $additionalinfo.="particular activity, to create a calendar for just that activity.</P>\n";
+ }
+
+// Feedback
+if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
+  $additionalinfo.="<P>Click on the (Feedback) tag to give us feedback on a particular\n";
+  $additionalinfo.="scheduled event.</P>\n";
+ }
+
+/* This query grabs everything necessary for the schedule to be printed.
+   It is not very different from the fooSched query, but different enough. */
+
+$query = <<<EOD
+SELECT
+    concat("<A HREF=\"StaffSched.php?format=tracks&conid=$conid#",
+      trackname,
+      "\"><i>",
+      trackname,
+      "</i></A>") AS Track,
+    concat("<A HREF=\"StaffSched.php?format=desc&conid=$conid#",
+      title_good_web,
+      if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),
+      "\">",
+      title_good_web,
+      if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),
+      "</A>",
+      if(moderator in ('1','Yes'),' (m)',''),
+      "<SUP><A HREF=\"EditSession.php?id=",
+      sessionid,
+      "\">(edit)</A></SUP>") AS Title,
+    pubsname AS 'Participants',
+    badgeid,
+    concat("<A HREF=\"StaffSched.php?format=sched&conid=$conid#",
+      DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),
+      "\"><i>",
+      DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),
+      "</i></A>") AS "Start Time",
+    CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
       WHEN MINUTE(duration)=0 THEN
@@ -63,50 +148,96 @@ SELECT
       ELSE
         concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
       END AS Duration,
-    roomname as Roomname,
-    estatten AS Attended,
-    sessionid AS Sessionid,
-    if((questiontypeid IS NULL),"",questiontypeid) AS questiontypeid,
-    concat('<A HREF=StaffPrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>') AS iCal,
-    concat('<A HREF=StaffFeedback.php?sessionid=',sessionid,'>(Feedback)</A>') AS Feedback,
-    badgeid
+    concat("<A HREF=\"StaffSched.php?format=rooms&conid=$conid#",
+      roomname,
+      "\"><i>",
+      roomname,
+      "</i></A>") AS Room,
+    if(estatten IS NULL,"",estatten) AS Estatten,
+    Sessionid,
+    if(DATE_ADD(constartdate,INTERVAL connumdays DAY) > NOW(),
+      concat('<A HREF=PrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>'),
+      '') AS iCal,
+    if((constartdate < NOW() AND phasestate = "0"),
+      concat('<A HREF=Feedback.php?conid=$conid&sessionid=',sessionid,'>(Feedback)</A>'),
+      '') AS Feedback,
+    if(desc_good_web IS NULL,
+      if(desc_good_book IS NULL,"",desc_good_book),
+      desc_good_web) AS 'Description'
   FROM
       Sessions
-    JOIN Schedule SCH USING (sessionid,conid)
-    JOIN Rooms USING (roomid)
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms R USING (roomid)
     JOIN Tracks USING (trackid)
+    JOIN PubStatuses USING (pubstatusid)
+    JOIN ConInfo USING (conid)
+    JOIN Phase USING (conid)
+    JOIN PhaseTypes USING (phasetypeid)
     LEFT JOIN ParticipantOnSession USING (sessionid,conid)
     LEFT JOIN Participants USING (badgeid)
-    LEFT JOIN TypeHasQuestionType USING (typeid,conid)
-    JOIN PubStatuses USING (pubstatusid)
     JOIN (SELECT
         sessionid,
+	conid,
 	descriptiontext as title_good_web
       FROM
           Descriptions
+	  JOIN DescriptionTypes USING (descriptiontypeid)
+          JOIN BioStates USING (biostateid)
+          JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=1 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
-	  descriptionlang='en-us') TGW USING (sessionid)
+	  descriptiontypename in ('title') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
+	  descriptionlang='en-us') TGW USING (sessionid,conid)
     LEFT JOIN (SELECT
         sessionid,
+	conid,
 	descriptiontext as subtitle_good_web
       FROM
           Descriptions
+	  JOIN DescriptionTypes USING (descriptiontypeid)
+          JOIN BioStates USING (biostateid)
+          JOIN BioDests USING (biodestid)
       WHERE
-          conid=$conid AND
-	  descriptiontypeid=2 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
-	  descriptionlang='en-us') SGW USING (sessionid)
+	  descriptiontypename in ('subtitle') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
+          descriptionlang='en-us') SGW USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as desc_good_web
+      FROM
+          Descriptions
+	  JOIN DescriptionTypes USING (descriptiontypeid)
+          JOIN BioStates USING (biostateid)
+          JOIN BioDests USING (biodestid)
+      WHERE
+	  descriptiontypename in ('description') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
+	  descriptionlang='en-us') DGW USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        sessionid,
+	conid,
+	descriptiontext as desc_good_book
+      FROM
+          Descriptions
+	  JOIN DescriptionTypes USING (descriptiontypeid)
+          JOIN BioStates USING (biostateid)
+          JOIN BioDests USING (biodestid)
+      WHERE
+	  descriptiontypename in ('description') AND
+	  biostatename in ('good') AND
+	  biodestname in ('book') AND
+          descriptionlang='en-us') DGB USING (sessionid,conid)
   WHERE
     conid=$conid AND
-    pubstatusname in ($pubstatus_string) AND
-    (volunteer=0 OR volunteer="0" OR volunteer IS NULL) AND
-    (introducer=0 OR introducer="0" OR introducer IS NULL) AND
-    (aidedecamp=0 OR aidedecamp="0" OR aidedecamp IS NULL)
+    phasetypename like "%Feedback Available%" AND
+    pubstatusname in ($pubstatus_check) AND
+    (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
+    (introducer IS NULL OR introducer not in ('1','Yes')) AND
+    (aidedecamp IS NULL OR aidedecamp not in ('1','Yes'))
   ORDER BY
     pubsname,
     starttime
@@ -115,148 +246,129 @@ EOD;
 // Retrieve query
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
-if (isset($_GET['feedback'])) {
-  $feedback_array=getFeedbackData("");
- }
-
-// Gather the comments offered on presenters into pcomment_array
-$query = <<<EOD
-SELECT
-    badgeid,
-    concat(conname,": ",comment) AS Comment
-  FROM
-      CommentsOnParticipants
-    JOIN ConInfo USING (conid)
-EOD;
-if (!$result=mysql_query($query,$link)) {
-  $message.=$query."<BR>Error querying database.<BR>";
-  RenderError($title,$message);
-  exit();
- }
-
-while ($row=mysql_fetch_assoc($result)) {
-  $pcomment_array[$row['badgeid']].="    <br>\n    --\n    <br>\n    <PRE>".fix_slashes($row['Comment'])."</PRE>";
- }
-
-/* Printing body.  Uses the page-init then creates the bio page. */
-topofpagereport($title,$description,$additionalinfo);
-$printparticipant="";
-for ($i=1; $i<=$elements; $i++) {
-  if ($element_array[$i]['Participants'] != $printparticipant) {
-    if ($printparticipant != "") {
-      echo "    </TD>\n  </TR>\n</TABLE>\n";
+// Establish the bios element
+if ($short == "T") {
+  $header="";
+  for ($i=1; $i<=$elements; $i++) {
+    if ($element_array[$i]['Participants'] != $header) {
+      $header=$element_array[$i]['Participants'];
+      $biostring=sprintf("<P>&nbsp;</P>\n<HR><H3>%s</H3>\n<DL>\n",$header);
     }
-    $printparticipant=$element_array[$i]['Participants'];
-    $bioinfo=getBioData($element_array[$i]['badgeid']);
-    /* Presenting all the type pieces, in whatever
-       languages we have, grouping by language, then type.
-       Currently we are using edited as the state, at some
-       point we should move to good. */
-    $namecount=0;
-    $tablecount=0;
-    $biostate='edited'; // for ($l=0; $l<count($bioinfo['biostate_array']); $l++) {
-    $biodest='web'; // for ($m=0; $m<count($bioinfo['biodest_array']); $m++) {
-    for ($k=0; $k<count($bioinfo['biolang_array']); $k++) {
-      $bioout=array();
-      for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
+    $element_array[$i]['Bio']=$biostring;
+  }
+} else {
+  $header="";
+  for ($i=1; $i<=$elements; $i++) {
+    if ($element_array[$i]['Participants'] != $header) {
+      $tablecount=0;
+      $header=$element_array[$i]['Participants'];
+      $biostring="<P>&nbsp;</P>\n";
 
-	// Setup for keyname, to collapse all four variables into one passed name.
-	$biotype=$bioinfo['biotype_array'][$j];
-	$biolang=$bioinfo['biolang_array'][$k];
-	// $biostate=$bioinfo['biostate_array'][$l];
-	// $biodest=$bioinfo['biodest_array'][$m];
-	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
+      // Get the bio information
+      $bioinfo=getBioData($element_array[$i]['badgeid']);
 
-	// Set up the useful pieces.
-	if (isset($bioinfo[$keyname])) {$bioout[$biotype]=$bioinfo[$keyname];}
-      }
+      // We are only using "edited" as our biostate
+      $biostate='edited';
 
-      // Still in the language switch, but have set the $bioout array.
-      if (isset($bioout['picture'])) {
-	if ($tablecount == 0) {
-	  echo "<TABLE>\n  <TR>\n    <TD valign=\"top\" width=310>";
-	  $tablecount++;
-	} else {
-	  echo "    </TD>\n  </TR>\n  <TR>\n    <TD width=310>";
+      // For each language in our language array
+      for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+	$biolang=$bioinfo['biolang_array'][$j];
+
+	// If there is a web or book picture
+	$picture="";
+	if ($pic_p == "T") {
+	  $webpic=$bioinfo["picture_".$biolang."_edited_web_bio"];
+	  $bookpic=$bioinfo["picture_".$biolang."_edited_book_bio"];
+	  if ($webpic != "") {
+	    $picture.=sprintf("Web:<br>\n<img width=300 src=\"%s\">",$webpic);
+	  }
+	  if ($bookpic != "") {
+	    $picture.=sprintf("Book:<br>\n<img src=\"%s\">",$bookpic);
+	  }
 	}
-	echo sprintf("<img width=300 src=\"%s\"</TD>\n<TD>",$bioout['picture']);
-      } else {
-	if ($tablecount == 0) {
-	  echo "<TABLE>\n  <TR>\n    <TD>";
-	  $tablecount++;
+
+	if ($picture != "") {
+	  if ($tablecount == 0) {
+	    $biostring.="<TABLE>\n  <TR>\n    <TD valign=\"top\" width=310>";
+	    $tablecount++;
+	  } else {
+	    $biostring.="    </TD>\n  </TR>\n  <TR>\n    <TD width=310>";
+	  }
+	  $biostring.=sprintf("%s</TD>\n    <TD>",$picture);
 	}
-      }
-      if ($_SESSION['role']=="Participant") {$preweb="";} else {$preweb="Web: ";}
-      if (isset($bioout['web'])) {
-	echo sprintf("<P>%s<B>%s</B>%s</P>\n",$preweb,$printparticipant,$bioout['web']);
-	$namecount++;
-      }
-      if (($preweb != "") and (isset($bioout['book']))) {
-	echo sprintf("<P>Book: <B>%s</B>%s</P>\n",$printparticipant,$bioout['book']);
-	$namecount++;
-      }
-      if (isset($bioout['uri'])) {
-	if ($namecount==0) {
-	  echo sprintf("<P><B>%s:</B><br>%s</P>\n",$printparticipant,$bioout['uri']);
-	} else {
-	  echo sprintf("<P>%s</P>\n",$bioout['uri']);
+
+	// For each biodest in our biodest array
+	$biodest_out=array();
+	for ($k=0; $k<count($bioinfo['biodest_array']); $k++) {
+	  $biodest=$bioinfo['biodest_array'][$k];
+
+	  // Establish a partial key to shorten the variables
+	  $partial_key=$biolang.'_'.$biostate.'_'.$biodest."_bio";
+
+	  // Set their name
+	  $name=($bioinfo['name'.$partial_key]);
+	  if ($name == "") {
+	    $name=$header;
+	  }
+
+	  $name="<A NAME=\"$name\"></A>$name";
+	  $biodest_out[$biodest].=sprintf("<P><B>%s</B>",$name);
+
+	  // Sets the bio info
+	  if ($bioinfo["bio_".$partial_key] != "") {
+	    $biodest_out[$biodest].=$bioinfo["bio_".$partial_key];
+	  }
+
+	  // Sets the URI info
+	  $biodest_out[$biodest].="</P>\n";
+	  if ($bioinfo["uri_".$partial_key] != "") {
+	    $biodest_out[$biodest].=sprintf("<P>%s</P>\n",$bioinfo["uri_".$partial_key]);
+	  }
+	} // End of biodest switch
+
+	// Hard coded for now, will have to be re-thought when there is more than web/book dests
+	if ((isset($biodest_out['web'])) and (isset($biodest_out['book']))) {
+	  if ($biodest_out['web'] == $biodest_out['book']) {
+	    $biostring.="Web/Book:<br>\n";
+	    $biostring.=$biodest_out['web'];
+	  } else {
+	    $biostring.="Web:<br>\n";
+	    $biostring.=$biodest_out['web'];
+	    $biostring.="Book:<br>\n";
+	    $biostring.=$biodest_out['book'];
+	  }
+	} elseif (isset($biodest_out['web'])) {
+	    $biostring.="Web:<br>\n";
+	    $biostring.=$biodest_out['web'];
+	} elseif (isset($biodest_out['book'])) {
+	    $biostring.="Book:<br>\n";
+	    $biostring.=$biodest_out['book'];
 	}
+	
+      } // End of language switch
+      if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
+	$biostring.=sprintf(" <A HREF=\"PostScheduleIcal.php?pubsname=%s\">(Fan iCal)</A></P>\n<P>",$element_array[$i]['pubsname']);
       }
-    }
-    // If there were no bios
-    if ($namecount==0) { echo sprintf("<P><B>%s</B>",$printparticipant);}
-    if ((isset($_GET['feedback'])) and ($pcomment_array[$element_array[$i]['badgeid']])) {
-      echo sprintf("<P> Feedback on Presenter: %s</P>\n",$pcomment_array[$element_array[$i]['badgeid']]);
-    }
-    if ((strtotime($ConStart)+(60*60*24*$ConNumDays)) > time()) {
-      echo sprintf(" <A HREF=\"MyScheduleIcal.php?badgeid=%s\">(Fan iCal)</A></P>\n<P>",$element_array[$i]['badgeid']);
-    }
-  }
-  echo sprintf("<DT>%s",$element_array[$i]['Title']);
-  if ($element_array[$i]['Subtitle'] !='') {
-    echo sprintf(": %s",$element_array[$i]['Subtitle']);
-  }
-  if ($element_array[$i]['Moderator']) {
-    echo sprintf("%s",$element_array[$i]['Moderator']);
-  }
-  if ($element_array[$i]['Track']) {
-    echo sprintf("&mdash; <i>%s</i>",$element_array[$i]['Track']);
-  }
-  if ($element_array[$i]['Start Time']) {
-    echo sprintf("&mdash; <i>%s</i>",$element_array[$i]['Start Time']);
-  }
-  if ($element_array[$i]['Duration']) {
-    echo sprintf("&mdash; <i>%s</i>",$element_array[$i]['Duration']);
-  }
-  if ($element_array[$i]['Roomname']) {
-    echo sprintf("&mdash; <i>%s</i>",$element_array[$i]['Roomname']);
-  }
-  if ((strtotime($ConStart)+(60*60*24*$ConNumDays)) > time()) {
-    echo sprintf("&mdash; %s",$element_array[$i]['iCal']);
-  }
-  if (strtotime($ConStart) < time()) {
-    if ($element_array[$i]['Attended']) {
-      echo sprintf("&mdash; About %s Attended",$element_array[$i]['Attended']);
-    }
-    echo sprintf("&mdash; %s",$element_array[$i]['Feedback']);
-  }
-  if ($_SESSION['role']=="Staff") {
-    $feedback_file=sprintf("../Local/Feedback/%s.jpg",$element_array[$i]["Sessionid"]);
-    if ((file_exists($feedback_file)) and (isset($_GET['feedback']))) {
-      echo "  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
-      echo sprintf ("<img src=\"%s\">\n<br>\n",$feedback_file);
-    }
-    if (isset($feedback_array['graph'][$element_array[$i]["Sessionid"]])) {
-      echo "  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
-      $graphstring=generateSvgString($element_array[$i]["Sessionid"]);
-      echo $graphstring;
-    }
-    if ($feedback_array[$element_array[$i]["Sessionid"]]) {
-      echo "  </DD>\n    <DD>Written feedback from surveys:\n<br>\n";
-      echo sprintf("%s<br>\n",$feedback_array[$element_array[$i]["Sessionid"]]);
+      $element_array[$i]['Bio']=$biostring;
+      $element_array[$i]['istable']=$tablecount;
+    } else {  // if it is the same in the 'Participants' field, just copy the result in.
+      $element_array[$i]['Bio']=$biostring;
+      $element_array[$i]['istable']=$tablecount;
     }
   }
 }
-echo "    </TD>\n  </TR>\n</TABLE>\n";
+
+// Variables for the format
+$format="bios";
+$header_break="Participants";
+$single_line_p="T";
+
+/* Printing body.  Uses the page-init then creates the page. */
+topofpagereport($title,$description,$additionalinfo);
+
+/* Produce the report. */
+$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
+echo $printstring;
+
 correct_footer();
 ?>

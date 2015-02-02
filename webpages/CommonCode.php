@@ -718,6 +718,9 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
     if ((isset($element_array[$i]['iCal'])) and (!empty($element_array[$i]['iCal']))) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['iCal']);
     }
+    if ((isset($element_array[$i]['Estatten'])) and (!empty($element_array[$i]['Estatten']))) {
+      $sched.=sprintf("&mdash;(Count %s)",$element_array[$i]['Estatten']);
+    }
     if ((isset($element_array[$i]['Feedback'])) and (!empty($element_array[$i]['Feedback']))) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Feedback']);
     }
@@ -2203,19 +2206,13 @@ EOD;
  Returns session_array*/
 function getFeedbackData($badgeid) {
   global $message_error,$message2,$link;
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
 
   $query = <<<EOD
 SELECT
     concat(sessionid,"-",conid) AS "Sess-Con",
     comment
   FROM
-      $ReportDB.CommentsOnSessions
+      CommentsOnSessions
 EOD;
 
   if ($badgeid!="") {
@@ -2225,7 +2222,7 @@ EOD;
 			    sessionid,
 			    conid
                     FROM
-                        $ReportDB.ParticipantOnSession
+                        ParticipantOnSession
                     WHERE badgeid='$badgeid')
 EOD;
   }
@@ -2245,7 +2242,7 @@ EOD;
 SELECT
     concat(sessionid,"-",conid) AS "Sess-Con"
   FROM
-      $ReportDB.Feedback
+      Feedback
 EOD;
 
   if ($badgeid!="") {
@@ -2255,7 +2252,7 @@ EOD;
 			    sessionid,
 			    conid
                     FROM
-                        $ReportDB.ParticipantOnSession
+                        ParticipantOnSession
                     WHERE badgeid='$badgeid')
 EOD;
   }

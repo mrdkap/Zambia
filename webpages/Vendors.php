@@ -27,6 +27,11 @@ if (file_exists("../Local/$conid/Vendor_Map.svg")) {
   $vendormap.=file_get_contents("../Local/$conid/Vendor_Map.svg");
 }
 
+$vendorpdfmap="";
+if (file_exists("../Local/$conid/Vendor_Map.pdf")) {
+  $vendorpdfmap="<A HREF=\"../Local/$conid/Vendor_Map.pdf\">Click for the Map</A>\n";
+}
+
 $vendorlist="";
 if (file_exists("../Local/$conid/Vendor_List")) {
   $vendorlist.=file_get_contents("../Local/$conid/Vendor_List");
@@ -62,8 +67,109 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 
 /* Printing body.  Uses the page-init then creates the vendor bio page. */
 topofpagereport($title,$description,$additionalinfo);
-echo $vendormap;
+if ($vendormap != "") {
+  echo "<H3><A NAME=\"VendorMapStart\"></A><B>Map</B><br>(jump to the <A HREF=\"#VendorStart\">Vendors</A>";
+  echo " or the <A HREF=\"#CommunityStart\">Community Tables</A>)</H3>\n";
+  echo $vendormap;
+}
+echo $vendorpdfmap;
 echo $vendorlist;
+
+// Heavy_handed hack!
+if (($conid == "42") or ($conid == "43") or ($conid == "44")) {
+  // Connect to Vendor Database
+  if (vendor_prepare_db()===false) {
+    $message_error="Unable to connect to database.<BR>No further execution possible.";
+    RenderError($title,$message_error);
+    exit();
+  }
+
+  // Vendors
+  $query = <<<EOD
+SELECT
+    concat("<A NAME=\"",
+      vendor_business_name,
+      "\"",
+      (if(vendor_website IS NULL,"",concat(" HREF=\"",vendor_website,"\""))),
+      ">",
+      vendor_business_name,
+      "</A>") AS Title,
+    if (vendor_space_position IS NULL,"",vendor_space_position) AS Room,
+    concat(if (vendor_description IS NULL,"",vendor_description),
+      if(vendor_website IS NULL,"",concat("<br>\n<A HREF=\"",vendor_website,"\">",vendor_website,"</A>"))) AS Description
+  FROM
+      default_vendors_$conid
+  WHERE
+    vendor_status in ('Approved')
+  ORDER BY
+    vendor_business_name
+EOD;
+  list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
+
+  //If there is multiple rooms, have to split them out, if it is empty, on to the next.
+  for($i=1; $i<=$elements; $i++) {
+    if (!empty($element_array[$i]['Room'])) {
+      $room_array=explode(", ",$element_array[$i]['Room']);
+      for ($j=0; $j<count($room_array); $j++) {
+	$room_array[$j]="<A NAME=\"".$room_array[$j]."\" HREF=\"#vendor".$room_array[$j]."\">".$room_array[$j]."</A>";
+      }
+      $element_array[$i]['Room']=implode(", ",$room_array);
+    }
+  }
+
+  echo "<H3><A NAME=\"VendorStart\"></A><B>Vendors</B><br>(jump to the <A HREF=\"#CommunityStart\">Community Tables</A>";
+  if ($vendormap != "") {
+    echo " or the <A HREF=\"#VendorMapStart\">Map</A>";
+  }
+  echo ")</H3>\n";
+  $printstring=renderschedreport("desc","","F",$elements,$element_array);
+  echo $printstring;
+
+  // Community Tables
+
+  // Fix the inconsistent where string
+  $wherestring="status in ('Approved')";
+  if ($conid == "44") {$wherestring="vendor_status in ('Approved')";}
+
+  $query = <<<EOD
+SELECT
+    concat("<A NAME=\"",
+      name,
+      "\"",
+      (if(website IS NULL,"",concat(" HREF=\"",website,"\""))),
+      ">",
+      name,
+      "</A>") AS Title,
+    if(vendor_location IS NULL,"",vendor_location) AS Room,
+    if(website IS NULL,"",concat("<A HREF=\"",website,"\">",website,"</A>")) AS Description
+  FROM
+      default_community_tables_$conid
+  WHERE
+    $wherestring
+  ORDER BY
+    name
+EOD;
+  list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
+
+  //If there is multiple rooms, have to split them out.
+  for($i=1; $i<=$elements; $i++) {
+    $room_array=explode(", ",$element_array[$i]['Room']);
+    for ($j=0; $j<count($room_array); $j++) {
+      $room_array[$j]="<A NAME=\"".$room_array[$j]."\" HREF=\"#vendor".$room_array[$j]."\">".$room_array[$j]."</A>";
+    }
+    $element_array[$i]['Room']=implode(", ",$room_array);
+  }
+
+  echo "<H3><A NAME=\"CommunityStart\"></A><B>Community Tables</B><br>(jump to the <A HREF=\"#VendorStart\">Vendors</A>";
+  if ($vendormap != "") {
+    echo " or the <A HREF=\"#VendorMapStart\">Map</A>";
+  }
+  echo ")</H3>\n";
+  $printstring=renderschedreport("desc","","F",$elements,$element_array);
+  echo $printstring;
+
+} else {
+
 $printparticipant="";
 for ($i=1; $i<=$elements; $i++) {
   if ($element_array[$i]['Participants'] != $printparticipant) {
@@ -138,5 +244,7 @@ for ($i=1; $i<=$elements; $i++) {
     if ($namecount==0) { echo sprintf("<P><B>%s</B>",$printparticipant);}
   }
 }
-correct_footer();
 
+}
+correct_footer();
+?>

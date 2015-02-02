@@ -10,6 +10,15 @@ function prepare_db() {
   return (mysql_select_db(DBDB,$link));
 }
 
+/* Function vendor_prepare_db()
+   Opens database channel. */
+function vendor_prepare_db() {
+  global $vlink;
+  $vlink = mysql_connect(VENDORHOSTNAME,VENDORUSERID,VENDORPASSWORD);
+  if ($vlink===false) return (false);
+  return (mysql_select_db(VENDORDB,$vlink));
+}
+
 /* Function record_session_history($sessionid, $badgeid, $name, $email, $editcode, $statusid)
    The table SessionEditHistory has a timestamp column which is automatically set to the
    current timestamp by MySQL. */

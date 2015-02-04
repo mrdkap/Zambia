@@ -96,7 +96,7 @@ SELECT
 EOD;
 
 if ($individual) {$query.=" and
-    POS.badgeid='$individual'";}
+    badgeid='$individual'";}
 $query.="
   ORDER BY
     pubsname, starttime";

@@ -4,12 +4,9 @@ require_once('StaffCommonCode.php');
 /* Global Variables */
 global $link;
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 
 // Tests for the substituted variables
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="LabelsPrint.php";
@@ -157,23 +154,23 @@ $positional_array[3]['col']=400;
  work from the premise of printing just one person's information. */
 $query = <<<EOD
 SELECT 
-    P.pubsname,
+    pubsname,
     GROUP_CONCAT(DISTINCT permrolename SEPARATOR ", ") AS permroles
   FROM
-      Sessions S
-    JOIN Schedule SCH USING (sessionid)
-    JOIN $ReportDB.Rooms R USING (roomid)
-    JOIN ParticipantOnSession POS USING (sessionid)
-    JOIN $ReportDB.Participants P USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      Sessions
+    JOIN Schedule USING (sessionid,conid)
+    JOIN Rooms USING (roomid)
+    JOIN ParticipantOnSession USING (sessionid,conid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
   WHERE
-    permrolename in ('Participant', 'Programming') AND
-    UHPR.conid=$conid
+  permrolename in ('Participant', 'Programming', 'SuperProgramming') AND
+    conid=$conid
   GROUP BY
-    P.badgeid
+    badgeid
   ORDER BY
-    P.pubsname
+    pubsname
 
 EOD;
 

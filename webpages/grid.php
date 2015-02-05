@@ -6,9 +6,14 @@ if (may_I("Staff")) {
   require_once('PartCommonCode.php');
  }
 global $link;
-$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
 $mybadgeid=$_SESSION['badgeid']; // make it a simple variable so it can be substituted
-$conid=$_SESSION['conid']; // make it a simple variable so it can be substituted
+
+// Test for conid being passed in and make it a simple variable so it can be substituted
+$conid=$_GET['conid'];
+
+if (($conid == "") or (!is_numeric($conid))) {
+  $conid=$_SESSION['conid'];
+}
 
 // Get the GOH list
 $query = <<<EOD
@@ -32,21 +37,22 @@ $GohBadgeList.="')";
 
 // LOCALIZATIONS
 /* unpub controls the "Do Not Print" and "Staff Only" inclusion into
- the grid it needs to be set first, because otherwise we are checking
- on a negative.  Default exclude "Do Not Print" and "Staff Only"
- filled is the switch between semi-filled (color only) and filled
- (name in each block).  Default semi-filled nocolor allows for the
- lack of background color of the cells. Default color beginonly gives
- the short version of the grid, not broken by time demarcation,
- showing start times only, with no day-breaks progselect limits to the
- programming items/rooms only volselect limits to the volunteer
- items/rooms only regselect limits to the registration items/rooms
- only saleselect limits to the sales items/rooms only vendselect
- limits to the vendor items/rooms only watchselect limits to the watch
- items/rooms only logselect limits to the logistic items/rooms only
- eventselect limits to the events items/rooms only fasttrack limits to
- the Fast Track items/rooms only (the above several should exclude each
- other) goh limits to the goh involved programs only
+   the grid it needs to be set first, because otherwise we are
+   checking on a negative.  Default exclude "Do Not Print" and "Staff
+   Only" filled is the switch between semi-filled (color only) and
+   filled (name in each block).  Default semi-filled nocolor allows
+   for the lack of background color of the cells. Default color
+   beginonly gives the short version of the grid, not broken by time
+   demarcation, showing start times only, with no day-breaks
+   progselect limits to the programming items/rooms only volselect
+   limits to the volunteer items/rooms only regselect limits to the
+   registration items/rooms only saleselect limits to the sales
+   items/rooms only vendselect limits to the vendor items/rooms only
+   watchselect limits to the watch items/rooms only logselect limits
+   to the logistic items/rooms only eventselect limits to the events
+   items/rooms only fasttrack limits to the Fast Track items/rooms
+   only (the above several should exclude each other) goh limits to
+   the goh involved programs only
 */
 $unpub="n";
 $unpub=$_GET['unpublished'];
@@ -88,7 +94,8 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   if (may_I('Lounge')) {$loungeselect="y";}
 }
 
-// If Participant, fix several of the variables, so there is only one grid displayed.
+/* If Participant, fix several of the variables, so there is only one
+   grid displayed. */
 if ($_SESSION['role']=="Participant") {
   $unpub="n";
   $staffonly="n";
@@ -213,17 +220,16 @@ $additionalinfo.="the <A HREF=\"StaffSched.php?format=rooms&conid=$conid\">room'
 $additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
 $additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
 $additionalinfo.="or <A HREF=\"manualGRIDS.php\">pick</A> another grid.</P>\n";
-$Grid_Spacer=$_SESSION['congridspacer'];
-if (!is_numeric($Grid_Spacer)) {$Grid_Spacer=1800;}
 
 /* This query returns the room names for an array.  The "unpub" still
- restricts it to the rooms this grid is about, and the "staffonly" is
- often (but not always) redundant.
+   restricts it to the rooms this grid is about, and the "staffonly"
+   is often (but not always) redundant.
 
- The pubstatus_check is somewhat complicated, but it switches on the
- appropriate group set, and allows for mini-convention information.
- Probably the most useful staff-only view is for logistics, for their
- overlay of standard classes is probably otherwise complicated. */
+   The pubstatus_check is somewhat complicated, but it switches on the
+   appropriate group set, and allows for mini-convention information.
+   Probably the most useful staff-only view is for logistics, for
+   their overlay of standard classes is probably otherwise
+   complicated. */
 
 if ($progselect=="y") {
   if ($staffonly=="y") {
@@ -277,22 +283,19 @@ list($rooms,$unneeded_array_a,$header_array)=queryreport($query,$link,$title,$de
 $header_cells="<TR><TH class=\"border2222\">&nbsp;&nbsp;Class&nbsp;&nbsp;Time&nbsp;&nbsp;</TH>";
 for ($i=1; $i<=$rooms; $i++) {
   $header_cells.="<TH class=\"border2222\">";
-  $header_cells.=sprintf("<A HREF=\"MaintainRoomSched.php?selroom=%s\"><B>%s</B></A>",$header_array[$i]["roomid"],$header_array[$i]["roomname"]);
+  $header_cells.=sprintf("<A HREF=\"MaintainRoomSched.php?selroom=%s&conid=%s\"><B>%s</B></A>",$header_array[$i]["roomid"],$conid,$header_array[$i]["roomname"]);
   $header_cells.="</TH>";
  }
 $header_cells.="</TR>";
 
 /* This set of queries finds the appropriate presenters for a class,
- based on sessionid, and produces links for them.
- To get the volunteers use the following instead/in addition to the GROUP_CONCAT line below:
- WHERE volunteer=0 AND introducer=0 AND aidedecamp=0 removed
- GROUP_CONCAT(IF((volunteer=1 OR introducer=1 OR aidedecamp=1),concat(pubsname,", "),"") SEPARATOR "") as allpubsnames
-*/
-
+   based on sessionid, and produces links for them.  This links the
+   presenters, and shows the volunteers, introducers, and aidedecamp
+   folk, marked appropriately. */
 $query = <<<EOD
 SELECT
       sessionid,
-      GROUP_CONCAT(IF((volunteer not in ('1','yes') AND introducer not in ('1','yes') AND aidedecamp not in ('1','yes')),concat("<A HREF=\"StaffBios.php#",pubsname,"\">",pubsname,"</A>",if((moderator in ('1','yes')),'(m), ',', ')),"") SEPARATOR "") as presentpubsnames,
+      GROUP_CONCAT(IF((volunteer not in ('1','yes') AND introducer not in ('1','yes') AND aidedecamp not in ('1','yes')),concat("<A HREF=\"StaffBios.php?conid=$conid#",pubsname,"\">",pubsname,"</A>",if((moderator in ('1','yes')),'(m), ',', ')),"") SEPARATOR "") as presentpubsnames,
       GROUP_CONCAT(IF((volunteer in ('1','yes')),concat(pubsname,"(v), "),"") SEPARATOR "") as volpubsnames,
       GROUP_CONCAT(IF((introducer in ('1','yes')),concat(pubsname,"(i), "),"") SEPARATOR "") as intpubsnames,
       GROUP_CONCAT(IF((aidedecamp in ('1','yes')),concat(pubsname,"(a), "),"") SEPARATOR "") as aidpubsnames
@@ -315,8 +318,14 @@ for ($i=1; $i<=$presenters; $i++) {
   $presenters_array[$presenters_tmp_array[$i]['sessionid']]=$presenters_tmp_array[$i]['presentpubsnames'].$presenters_tmp_array[$i]['volpubsnames'].$presenters_tmp_array[$i]['intpubsnames'].$presenters_tmp_array[$i]['aidpubsnames'];
  }
 
+/* Set the sizeing of the grid, from the congridspacer element
+   in the ConInfo table. */
+$query="SELECT congridspacer FROM ConInfo WHERE conid=$conid";
+list($congridrows,$congridheader_array,$congrid_array)=queryreport($query,$link,$title,$description,0);
+$grid_spacer=$congrid_array[1]['congridspacer'];
+
 /* These queries finds the first and last second that is actually
- scheduled so we don't waste grid-space. */
+   scheduled so we don't waste grid-space. */
 $query="SELECT TIME_TO_SEC(starttime) as 'beginschedule' FROM Schedule WHERE conid=$conid ORDER BY starttime ASC LIMIT 0,1";
 list($earliest,$unneeded_array_c,$grid_start_sec_array)=queryreport($query,$link,$title,$description,0);
 $grid_start_sec=$grid_start_sec_array[1]['beginschedule'];
@@ -341,8 +350,8 @@ list($latest,$unneeded_array_d,$grid_end_sec_array)=queryreport($query,$link,$ti
 $grid_end_sec=$grid_end_sec_array[1]['endschedule'];
 
 /* This sets the unpub to all the classes in the chosen rooms, if it
- isn't staffonly, and fixes the staffonly for the standard, which is
- the only one not fixed above. */
+   isn't staffonly, and fixes the staffonly for the standard, which is
+   the only one not fixed above. */
 if (($unpub=="y") AND ($staffonly!="y")) {
   $pubstatus_check=" pubstatusid > 0";
  }
@@ -351,18 +360,18 @@ if (($standard=="y") AND ($staffonly=="y")) {
  }
 
 /* This complex set of queries fills in the header_cells and then puts
- the times, associated with each room along the row seperated out by
- the determinants above, by stepping along either in time intervals or
- as a whole, again, chosen above. */
+   the times, associated with each room along the row seperated out by
+   the determinants above, by stepping along either in time intervals
+   or as a whole, again, chosen above. */
 if ($beginonly=="y") {$grid_end_sec=$grid_start_sec;}
 $printrowscount=0;
-for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) {
+for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $grid_spacer) {
   $printrowscount++;
   $printrows_array[$printrowscount]=$time;
   if ($beginonly=="y") {
-    $query="SELECT DATE_FORMAT(ADDTIME('$ConStart',SCH.starttime),'%a %l:%i %p') as 'blocktime'";
+    $query="SELECT DATE_FORMAT(ADDTIME(constartdate,SCH.starttime),'%a %l:%i %p') as 'blocktime'";
   } else {
-    $query="SELECT DATE_FORMAT(ADDTIME('$ConStart',SEC_TO_TIME('$time')),'%a %l:%i %p') as 'blocktime'";
+    $query="SELECT DATE_FORMAT(ADDTIME(constartdate,SEC_TO_TIME('$time')),'%a %l:%i %p') as 'blocktime'";
   }
   if ($filled=="y") {
     $filled_cull="roomid=%s";
@@ -390,6 +399,7 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
     JOIN Rooms R USING (roomid)
     JOIN $typeortrack
     JOIN PubStatuses USING (pubstatusid)
+    JOIN ConInfo USING (conid)
     JOIN (SELECT
         sessionid,
 	conid,
@@ -427,7 +437,7 @@ EOD;
     $query.=" SCH.sessionid = S.sessionid GROUP BY SCH.starttime ORDER BY SCH.starttime";
   } else {
     $query.=" TIME_TO_SEC(SCH.starttime) <= $time";
-    $query.=" AND (TIME_TO_SEC(SCH.starttime) + TIME_TO_SEC(S.duration)) >= ($time + $Grid_Spacer);";
+    $query.=" AND (TIME_TO_SEC(SCH.starttime) + TIME_TO_SEC(S.duration)) >= ($time + congridspacer);";
   }
 
   if (($result=mysql_query($query,$link))===false) {
@@ -449,7 +459,7 @@ EOD;
       $printrows_array[$i]=$i;
       $grid_array[$i]=mysql_fetch_array($result,MYSQL_BOTH);
       $k=$grid_array[$i]['blocktime'];
-      $grid_array[$i]['blocktime']=sprintf("<A HREF=\"StaffSched.php?format=sched#%s\"><B>%s</B></A>",$k,$k);
+      $grid_array[$i]['blocktime']=sprintf("<A HREF=\"StaffSched.php?format=sched&conid=$conid#%s\"><B>%s</B></A>",$k,$k);
     }
   } else {
     $grid_array[$time]=mysql_fetch_array($result,MYSQL_BOTH);
@@ -472,17 +482,17 @@ EOD;
     if ($skiprow == 0) {$grid_array[$time]['blocktime'] = "Skip";}
     if ($refskiprow != 0) {
       $k=$grid_array[$time]['blocktime'];
-      $grid_array[$time]['blocktime']=sprintf("<A HREF=\"StaffSched.php?format=sched#%s\"><B>%s</B></A>",$k,$k);
+      $grid_array[$time]['blocktime']=sprintf("<A HREF=\"StaffSched.php?format=sched&conid=$conid#%s\"><B>%s</B></A>",$k,$k);
     }
   }
  }
 
 /* Printing body.  Uses the page-init from above adds informational
- line then creates the grid.  skipinit kills the rogue extrat /TABLE
- and skipaccum allows for only one new tabel per set of skips.  The
- extra ifs keep the parens out of the otherwise empty blocks.  We
- switch on htmlcellcolor, because, by design, that is the only thing
- written in a continuation block. */
+   line then creates the grid.  skipinit kills the rogue extrat /TABLE
+   and skipaccum allows for only one new tabel per set of skips.  The
+   extra ifs keep the parens out of the otherwise empty blocks.  We
+   switch on htmlcellcolor, because, by design, that is the only thing
+   written in a continuation block. */
 topofpagereport($title,$description,$additionalinfo);
 $skipinit=0;
 $skipaccum=1;
@@ -523,13 +533,13 @@ foreach ($printrows_array as $i) {
 	  echo sprintf("<TD BGCOLOR=\"%s\" CLASS=\"%s\">",$bgcolor,$cellclass);
 	}
 	if (($sessionid!="") AND ($_SESSION['role']!='Participant')) {
-	  echo sprintf("(<A HREF=\"StaffAssignParticipants.php?selsess=%s\">%s</A>) ",$sessionid,$sessionid);
+	  echo sprintf("(<A HREF=\"StaffAssignParticipants.php?selsess=%s&conid=%s\">%s</A>) ",$sessionid,$conid,$sessionid);
 	}
 	if ($title!="") {
 	  if ($_SESSION['role']=="Participant") {
 	    echo sprintf("<A HREF=\"StaffSched.php?format=desc&conid=%s#%s\">%s</A>",$conid,$sessionid,$title);
 	  } else {
-	    echo sprintf("<A HREF=\"EditSession.php?id=%s\">%s</A>",$sessionid,$title);
+	    echo sprintf("<A HREF=\"EditSession.php?id=%s&conid=%s\">%s</A>",$sessionid,$conid,$title);
 	  }
 	}
 	if ($track!="") {

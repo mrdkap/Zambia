@@ -120,7 +120,7 @@ $gohprint="";
 $tcolorprint="Color ";
 $colorprint=", keyed by color";
 $typeortrackprint=", colored by type";
-$typeortrack="Types T USING (typeid)";
+$typeortrack="Types T USING (typeid) JOIN Tracks TN USING (trackid)";
 
 // Mods
 if ($unpub=="y") {
@@ -164,7 +164,7 @@ if ($loungeselect=="y") {
  }
 if ($trackselect=="y") {
   $typeortrackprint=", colored by track";
-  $typeortrack="Tracks T USING (trackid)";
+  $typeortrack="Tracks T USING (trackid) JOIN Types TN USING (typeid)";
 }
 if ($filled=="y") {
   $semifill="";
@@ -374,7 +374,12 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
     $header_roomname=$header_array[$i]["roomname"];
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,concat(title_good_web,if((subtitle_good_web IS NULL),\"\",concat(\": \",subtitle_good_web))),\"\") SEPARATOR '') as \"%s title\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,S.sessionid,\"\") SEPARATOR '') as \"%s sessionid\"",$header_roomid,$header_roomname);
-    $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,S.duration,\"\") SEPARATOR '') as \"%s duration\"",$header_roomid,$header_roomname);
+    $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,trackname,\"\") SEPARATOR '') as \"%s track\"",$header_roomid,$header_roomname);
+    $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,",$header_roomid);
+    $query.="CASE WHEN HOUR(duration) < 1 THEN concat(date_format(duration,'%i'),'min')";
+    $query.="     WHEN MINUTE(duration)=0 THEN concat(date_format(duration,'%k'),'hr')";
+    $query.="     ELSE concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min') END";
+    $query.=sprintf(",\"\") SEPARATOR '') as \"%s duration\"",$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF($filled_cull,IF(S.estatten,S.estatten,\"\"),\"\") SEPARATOR '') as \"%s total\"",$header_roomid,$header_roomname);
     $query.=sprintf(",GROUP_CONCAT(IF(roomid=%s,T.htmlcellcolor,\"\") SEPARATOR '') as \"%s htmlcellcolor\"",$header_roomid,$header_roomname);
   }
@@ -507,10 +512,10 @@ foreach ($printrows_array as $i) {
       if ($cellclass == "") {$cellclass="border1111";}
       $sessionid=$grid_array[$i]["$header_roomname sessionid"]; //sessionid
       $title=$grid_array[$i]["$header_roomname title"]; //title
-      $duration = substr($grid_array[$i]["$header_roomname duration"],0,-3); // duration; drop ":00" representing seconds off the end
+      $track=$grid_array[$i]["$header_roomname track"]; //track
+      $duration=$grid_array[$i]["$header_roomname duration"]; //duration
       $total=$grid_array[$i]["$header_roomname total"]; //total
       $presenters = substr($presenters_array[$sessionid],0,-2); //presenters, with the final ", " cut off.
-      if (substr($duration,0,1)=="0") {$duration = substr($duration,1,999);} // drop leading "0"
       if ($bgcolor!="") {
 	if ($nocolor=="y") {
 	  echo sprintf("<TD CLASS=\"%s\">",$cellclass);
@@ -522,10 +527,13 @@ foreach ($printrows_array as $i) {
 	}
 	if ($title!="") {
 	  if ($_SESSION['role']=="Participant") {
-	    echo sprintf("<A HREF=\"StaffSched.php?format=desc#%s\">%s</A>",$sessionid,$title);
+	    echo sprintf("<A HREF=\"StaffSched.php?format=desc&conid=%s#%s\">%s</A>",$conid,$sessionid,$title);
 	  } else {
 	    echo sprintf("<A HREF=\"EditSession.php?id=%s\">%s</A>",$sessionid,$title);
 	  }
+	}
+	if ($track!="") {
+	  echo sprintf(" - <A HREF=\"StaffSched.php?format=tracks&conid=%s#%s\">%s</A>",$conid,$track,$track);
 	}
 	if ($duration!="") {
 	  echo sprintf(" (%s)",$duration);

@@ -2,7 +2,6 @@
 require_once('StaffCommonCode.php');
 global $link;
 
-$ConStartDatim=$_SESSION['constartdate']; // make it a variable so it can be substituted
 $mybadgeid=$_SESSION['badgeid']; // make it a simple variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a simple variable so it can be substituted
 $ReportDB=REPORTDB; // make it a variable so it can be substituted
@@ -11,7 +10,6 @@ $ReportDB=REPORTDB; // make it a variable so it can be substituted
 $limit_array=getLimitArray();
 
 // Tests for the substituted variables
-if ($BioDB=="BIODB") {unset($BioDB);}
 if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 
 

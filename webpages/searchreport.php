@@ -1,10 +1,6 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 
 // LOCALIZATIONS
 $searchstring1=$_GET["searchstring1"];
@@ -47,7 +43,7 @@ SELECT
     DISTINCT concat("<A HREF=genreport.php?reportid=",reportid,">",reporttitle,"</A> (<A HREF=genreport.php?reportid=",reportid,"&csv=y>csv</A>)") AS Title,
     reportdescription AS Description
   FROM
-    $ReportDB.Reports
+    Reports
   WHERE
     reportid > 0
 

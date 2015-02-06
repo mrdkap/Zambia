@@ -4,14 +4,9 @@ global $link;
 
 $mybadgeid=$_SESSION['badgeid']; // make it a simple variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a simple variable so it can be substituted
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
 
 // Get the various length limits for substitution
 $limit_array=getLimitArray();
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-
 
 // LOCALIZATIONS
 $showreport=0;

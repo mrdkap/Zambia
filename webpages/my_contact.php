@@ -63,14 +63,14 @@ if (isset($_POST['update'])) {
 	if ($_POST[$keyname]!=$bioinfo[$keyname]) {
 	  if (!may_I('EditBio')) {
 	    $message_error.="You may not update your bios for publication at this time.\n";
-	  } elseif ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($_POST[$keyname])>$limit_array['max'][$biotype]['bio'])) {
+	  } elseif ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($_POST[$keyname])>$limit_array['max'][$biodest][$biotype])) {
 	    $message_error.=ucfirst($biotype)." ($biolang) Biography is too long: ".(strlen($_POST[$keyname]));
-	    $message_error.=" characters (maximum limit ".$limit_array['max'][$biotype]['bio'];
+	    $message_error.=" characters (maximum limit ".$limit_array['max'][$biodest][$biotype];
 	    $message_error.=" characters), so it isn't updated.  Please edit.";
 	    $bioinfo[$keyname]=$_POST[$keyname];
-	  } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($_POST[$keyname])<$limit_array['min'][$biotype]['bio'])) {
+	  } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($_POST[$keyname])<$limit_array['min'][$biodest][$biotype])) {
 	    $message_error.=ucfirst($biotype)." ($biolang) Biography is too short: ".(strlen($_POST[$keyname]));
-	    $message_error.=" characters (minimum limit ".$limit_array['min'][$biotype]['bio'];
+	    $message_error.=" characters (minimum limit ".$limit_array['min'][$biodest][$biotype];
 	    $message_error.=" characters), so it isn't updated.  Please edit.";
 	    $bioinfo[$keyname]=$_POST[$keyname];
 	  } else {
@@ -328,45 +328,51 @@ if (may_I('EditBio')) {
   echo "and your biography will appear immediately following your published name on the page.<BR>\n";
 }
 
-/* We are only updating the raw bios here, so only a 2-depth
- search happens on biolang and biotypename with the raw offered
- up for editing and the edited offered up for comparison.  This
- means two different keys keynameraw and keynameed are set up. */
-/* This is currently only 1-depth because we aren't searching on
- biolang, just biotypename.  When it needs to be more flexible
- for multiple languages, possibly a set list can be passed in. */
+/* We are only updating the raw bios here so only a 3-depth search
+   happens on biolang and biotypename with the raw offered up for
+   editing and the edited offered up for comparison.  This means two
+   different keys keynameraw and keynameed are set up. */
 $biostateraw='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
 $biostateed='edited'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
 for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
   for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+    for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-    // Setup for keyname, to collapse all three variables into one passed name.
-    $biotype=$bioinfo['biotype_array'][$i];
-    $biolang=$bioinfo['biolang_array'][$j];
-    // $biostate=$bioinfo['biostate_array'][$k];
-    $keynameraw=$biotype."_".$biolang."_".$biostateraw."_bio";
-    $keynameed=$biotype."_".$biolang."_".$biostateed."_bio";
+      // Setup for keyname, to collapse all three variables into one passed name.
+      $biotype=$bioinfo['biotype_array'][$i];
+      $biolang=$bioinfo['biolang_array'][$j];
+      // $biostate=$bioinfo['biostate_array'][$k];
+      $biodest=$bioinfo['biodest_array'][$l];
+      $keynameraw=$biotype."_".$biolang."_".$biostateraw."_".$biodest."_bio";
+      $keynameed=$biotype."_".$biolang."_".$biostateed."_".$biodest."_bio";
+      $keynamebio="name_".$biolang."_edited_".$biodest."_bio";
 
-    // If the edited bio exists, present it.
-    if (strlen($bioinfo[$keynameed])>0) {
-      echo "<P>".ucfirst($biotype)." ($biolang): ".$participant["pubsname"].$bioinfo[$keynameed]."</P>\n";
-  }
+      /* If the edited bio exists, present it.  Add the appropriate
+	 biotype "name" before the biotype "bio". */
+      if (strlen($bioinfo[$keynameed])>0) {
+	if ($biotype=="bio") {
+	  echo "<P>".ucfirst($biodest)." ".ucfirst($biotype)." ($biolang): ".$bioinfo[$keynamebio].$bioinfo[$keynameed]."</P>\n";
+	} else {
+	  echo "<P>".ucfirst($biodest)." ".ucfirst($biotype)." ($biolang): ".$bioinfo[$keynameed]."</P>\n";
+	}
+      }
 
-    // If the user is allowed to edit their bio, present the raw version for editing.
-    if (may_I('EditBio')) {
-      echo "<LABEL class=\"spanlabcb\" for=\"$keynameraw\">Change your $biotype ($biolang) biographical information";
-      $limit_string="";
-      if (isset($limit_array['max'][$biotype]['bio'])) {
-	$limit_string.=" maximum ".$limit_array['max'][$biotype]['bio'];
+      // If the user is allowed to edit their bio, present the raw version for editing.
+      if (may_I('EditBio')) {
+	echo "<LABEL class=\"spanlabcb\" for=\"$keynameraw\">Change your $biodest $biotype ($biolang) biographical information";
+	$limit_string="";
+	if (isset($limit_array['max'][$biodest][$biotype])) {
+	  $limit_string.=" maximum ".$limit_array['max'][$biodest][$biotype];
+	}
+	if (isset($limit_array['min'][$biodest][$biotype])) {
+	  $limit_string.=" minimum ".$limit_array['min'][$biodest][$biotype];
+	}
+	if ($limit_string !="") {
+	  echo " (Limit".$limit_string." characters)";
+	}
+	echo ":</LABEL><BR>\n";
+	echo "<TEXTAREA rows=\"5\" cols=\"72\" name=\"$keynameraw\">".htmlspecialchars($bioinfo[$keynameraw],ENT_COMPAT)."</TEXTAREA>\n<BR>\n";
       }
-      if (isset($limit_array['min'][$biotype]['bio'])) {
-	$limit_string.=" minimum ".$limit_array['min'][$biotype]['bio'];
-      }
-      if ($limit_string !="") {
-	echo " (Limit".$limit_string." characters)";
-      }
-      echo ":</LABEL><BR>\n";
-      echo "<TEXTAREA rows=\"5\" cols=\"72\" name=\"$keynameraw\">".htmlspecialchars($bioinfo[$keynameraw],ENT_COMPAT)."</TEXTAREA>\n<BR>\n";
     }
   }
 }

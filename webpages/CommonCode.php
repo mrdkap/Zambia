@@ -1374,12 +1374,12 @@ function create_participant ($participant_arr) {
 
 	// Length-check the values.
 	$biotext=stripslashes(htmlspecialchars_decode($participant_arr[$keyname]));
-	if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($biotext)>$limit_array['max'][$biotype]['bio'])) {
-	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	  $message.=" too long (".strlen($biotext)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
-	} elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($biotext)<$limit_array['min'][$biotype]['bio'])) {
-	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	  $messaage.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
+	if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($biotext)>$limit_array['max'][$biodest][$biotype])) {
+	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	  $message.=" too long (".strlen($biotext)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
+	} elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($biotext)<$limit_array['min'][$biodest][$biotype])) {
+	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	  $messaage.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
 	} else {
 	  $message.=update_bio_element($link,$title,$biotext,$newbadgeid,$biotype,$biolang,$biostate,$biodest);
 	}
@@ -1549,12 +1549,12 @@ function edit_participant ($participant_arr) {
 	$biostring=stripslashes(htmlspecialchars_decode($bioinfo[$keyname]));
 
 	if ($teststring != $biostring) {
-	  if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($teststring)>$limit_array['max'][$biotype]['bio'])) {
-	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	    $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
-	  } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($teststring)<$limit_array['min'][$biotype]['bio'])) {
-	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	    $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
+	  if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($teststring)>$limit_array['max'][$biodest][$biotype])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	    $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
+	  } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($teststring)<$limit_array['min'][$biodest][$biotype])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	    $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
 	  } else {
 	    $message.=update_bio_element($link,$title,$teststring,$participant_arr['partid'],$biotype,$biolang,$biostate,$biodest);
 	  }
@@ -2271,25 +2271,22 @@ EOD;
 }
 
 /* This function populates the various limits from the PublicationLimits table.
-Tentatively the table should be something like:
- publimid int(11), // key
- conid int(11), // which con
- publimtype enum('min','max'), // top or bottom limit
- publimdest enum('web','book'), // what medium - future 'mobile'
- publimname varchar(15), // bio, desc, name, title, picture, uri - future biotypeid/descriptiontype + name?
- publimval int(11), // what the limit is
- publimnote text // What it replaced, probably should become more useful, or go away.
+   Tentatively the table should be something like:
+     publimid int(11), // key
+     conid int(11), // which con
+     publimtype enum('min','max'), // top or bottom limit
+     publimdest enum('web','book'), // what medium - future 'mobile'
+     publimname varchar(15), // bio, description, name, title, picture, uri, title, subtitle - future?
+     publimval int(11), // what the limit is
+     publimnote text // What it replaced, probably should become more useful, or go away.
+   Language is not a consideration, whatever language it is, the size limit will still matter.
+   State is not a consideration, be it raw, edited, or good, the size limit will still matter.
  */
 function getLimitArray() {
   global $message_error,$message2,$link;
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
-
   $conid=$_SESSION['conid'];
+
+  // Get the limit
   $query = <<<EOD
 SELECT
     publimtype,
@@ -2297,7 +2294,7 @@ SELECT
     publimname,
     publimval
   FROM
-      $ReportDB.PublicationLimits
+      PublicationLimits
   WHERE
       conid=$conid
 EOD;

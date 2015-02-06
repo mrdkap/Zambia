@@ -190,11 +190,11 @@ EOD;
 		      echo "                <SPAN><LABEL for=\"$keyname\" style=\"vertical-align: top\">";
 		      echo ucfirst($biotype)." $biodest ($biolang) Biography";
 		      $limit_string="";
-		      if (isset($limit_array['max'][$biotype]['bio'])) {
-			$limit_string.=" maximum ".$limit_array['max'][$biotype]['bio'];
+		      if (isset($limit_array['max'][$biodest][$biotype])) {
+			$limit_string.=" maximum ".$limit_array['max'][$biodest][$biotype];
 		      }
-		      if (isset($limit_array['min'][$biotype]['bio'])) {
-			$limit_string.=" minimum ".$limit_array['min'][$biotype]['bio'];
+		      if (isset($limit_array['min'][$biodest][$biotype])) {
+			$limit_string.=" minimum ".$limit_array['min'][$biodest][$biotype];
 		      }
 		      if ($limit_string !="") {
 			echo "<BR>(Limit".$limit_string." characters)";

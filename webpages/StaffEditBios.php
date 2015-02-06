@@ -77,12 +77,12 @@ if (isset($_POST['update'])) {
 
 	  // Check for differences, if they exist, update the database.
 	  if ($teststring != $biostring) {
-	    if ((isset($limit_array['max'][$biotype]['bio'])) and (strlen($teststring)>$limit_array['max'][$biotype]['bio'])) {
-	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	      $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biotype]['bio']." characters.";
-	    } elseif ((isset($limit_array['min'][$biotype]['bio'])) and (strlen($teststring)<$limit_array['min'][$biotype]['bio'])) {
-	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." (".$biolang.") Biography";
-	      $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biotype]['bio']." characters.";
+	    if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($teststring)>$limit_array['max'][$biodest][$biotype])) {
+	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	      $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
+	    } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($teststring)<$limit_array['min'][$biodest][$biotype])) {
+	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	      $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
 	    } else {
 	      $message.=update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate,$biodest);
 	    }
@@ -150,11 +150,11 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
 	// Set up the LABEL.
 	echo "<LABEL for=\"$keyname\">".ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
 	$limit_string="";
-	if (isset($limit_array['max'][$biotype]['bio'])) {
-	  $limit_string.=" maximum ".$limit_array['max'][$biotype]['bio'];
+	if (isset($limit_array['max'][$biodest][$biotype])) {
+	  $limit_string.=" maximum ".$limit_array['max'][$biodest][$biotype];
 	}
-	if (isset($limit_array['min'][$biotype]['bio'])) {
-	  $limit_string.=" minimum ".$limit_array['min'][$biotype]['bio'];
+	if (isset($limit_array['min'][$biodest][$biotype])) {
+	  $limit_string.=" minimum ".$limit_array['min'][$biodest][$biotype];
 	}
 	if ($limit_string !="") {
 	  echo " (Limit".$limit_string." characters)";

@@ -1988,7 +1988,7 @@ EOD;
     exit;
   }
 
-  if (mysql_affected_rows($link) == 0) {
+  if ((mysql_affected_rows($link) == 0) and ($biotext!="")) {
 $query=<<<EOD
 INSERT INTO
     Bios (badgeid, biotypeid, biostateid, biodestid, biolang, biotext)

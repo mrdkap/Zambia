@@ -4,7 +4,7 @@ global $link;
 $title="Edit Reports";
 $description="<P>Use this page to edit reports.</P>\n";
 $additionalinfo="<P>A report has to be in a <A HREF=EditGroupFlows.php>Group</A> to work.</P>\n";
-$additionalinfo="<P>There should be some way to modify the permissions restriction.</P>\n";
+$additionalinfo.="<P>There should be some way to modify the permissions restriction.</P>\n";
 
 // Check to see if page can be displayed
 if (!may_I("Maint")) {

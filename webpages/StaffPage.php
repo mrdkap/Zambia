@@ -7,7 +7,7 @@ unlock_participant(''); // unlocks any records locked by current user
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 // To make navigation easier
-$jumpstring="<P>Jump to: <A HREF=\"#Flow\">Session Flow</A> :: <A HREF=\"#ToO\">Table of Organization</A> :: <A HREF=\"#Jobs\">Job Descriptions</A></P>\n";
+$jumpstring="<P>Jump to: <A HREF=\"#Dashboard\">Dashboard</A> :: <A HREF=\"#Flow\">Session Flow</A> :: <A HREF=\"#ToO\">Table of Organization</A> :: <A HREF=\"#Jobs\">Job Descriptions</A></P>\n";
 
 // Header variables
 $title="Staff Overview";
@@ -84,10 +84,23 @@ for ($i=1; $i<=$rows; $i++) {
 }
 $flowstring.="</UL></P>\n";
 
+//Useful reports for the dashboard line
+$dashstring="<A NAME=\"Dashboard\"></A><H2>Dashboard</H2>\n";
+$dashstring.="<P><CENTER><A HREF=\"genreport.php?reportname=myusefultimecardtabledump\">Time Card Entries</A>\n";
+$dashstring.=":: <A HREF=\"genreport.php?reportname=personalflow\">Reports</A>\n";
+$dashstring.=":: <A HREF=\"genreport.php?reportname=mytasklistdisplay\">Task List</A>\n";
+if (may_I("Liaison")) {
+  $dashstring.=":: <A HREF=\"genreport.php?reportname=myliaisonresponsibilities\">Liaison List</A>\n";
+}
+$dashstring.=":: <A HREF=\"SchedulePrint.php?individual=".$_SESSION['badgeid']."\">At Con Schedule</A></CENTER></P>\n";
+
 topofpagereport($title,$description,$additionalinfo);
 if (file_exists("../Local/Verbiage/StaffPage_1")) {
   echo file_get_contents("../Local/Verbiage/StaffPage_1");
 } else {
+  echo "<HR>\n";
+  echo $dashstring;
+  echo $jumpstring;
   echo "<HR>\n";
   echo $flowstring;
   echo $jumpstring;

@@ -397,5 +397,5 @@ if ($_GET["csv"]=="y") {
     echo rendergridreport($breakon[$i],$breakon[$i+1]-1,$header_rooms,$element_array);
     echo $additionalinfo;
   }
-  posting_footer();
+  correct_footer();
  }

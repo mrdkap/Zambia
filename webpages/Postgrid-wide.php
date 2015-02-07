@@ -344,5 +344,5 @@ if ($_GET["csv"]=="y") {
       }
     }
   }
-  posting_footer();
+  correct_footer();
  }

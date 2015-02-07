@@ -1,8 +1,9 @@
 <?php
 $title="Notes On Participant";
+$description="<P>Add a persistent note about a particular participant below.</P>\n";
 require_once('StaffCommonCode.php');
 
-staff_header($title);
+topofpagereport($title,$description,$additionalinfo);
 
 // Collaps the three choices into one
 if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
@@ -30,7 +31,7 @@ select_participant($selpartid, '', "NoteOnParticipant.php");
 
 // Stop page here if and individual has not yet been selected
 if ($selpartid==0) {
-  staff_footer();
+  correct_footer();
   exit();
  }
 

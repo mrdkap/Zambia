@@ -4,7 +4,7 @@
    $title="Participant View";
    require_once('PartCommonCode.php');
    $conid=$_SESSION['conid'];
-   participant_header($title);
+   topofpagereport($title,$description,$additionalinfo);
    getCongoData($badgeid);
 
     if ($message_error!="") { 
@@ -37,7 +37,7 @@ EOD;
 if (!$result=mysql_query($query,$link)) {
     $message=$query."<BR>Error querying database. Unable to continue.<BR>";
     echo "<P class\"errmsg\">".$message."\n";
-    staff_footer();
+    correct_footer();
     exit();
     }
 

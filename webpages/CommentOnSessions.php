@@ -1,19 +1,13 @@
 <?php
 require_once('StaffCommonCode.php');
 require_once('SubmitCommentOn.php');
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 /* Adjust conid */
 $conid=$_POST['conid'];
 if ($conid=="") {$conid=$_GET['conid'];}
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
-$query="SELECT conname FROM $ReportDB.ConInfo WHERE conid=$conid";
+$query="SELECT conname FROM ConInfo WHERE conid=$conid";
 list($coninforows,$coninfoheader_array,$coninfo_array)=queryreport($query,$link,$title,$description,0);
 $conname=$coninfo_array[1]['conname'];
 
@@ -27,7 +21,7 @@ if (isset($_POST["comment"])) {
 		       $_SESSION['badgeid'],
 		       htmlspecialchars_decode($_POST['commenter']),
 		       htmlspecialchars_decode($_POST['comment']));
-  $message.=submit_table_element($link,$title,"$ReportDB.CommentsOnSessions",$element_array, $value_array);
+  $message.=submit_table_element($link,$title,"CommentsOnSessions",$element_array, $value_array);
 }
 
 if (isset($_POST["sessionid"])) { // session was passed in, most likely from this page
@@ -44,9 +38,9 @@ SELECT
     sessionid,
     concat(trackname," - ",sessionid," - ",title) AS sessiontitle
   FROM
-      $ReportDB.Sessions
-    JOIN $ReportDB.Tracks USING (trackid)
-    JOIN $ReportDB.SessionStatuses USING (statusid)
+      Sessions
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
   WHERE
     may_be_scheduled=1 AND
     conid=$conid
@@ -80,7 +74,7 @@ echo "<P class=\"regmsg\">".$message."\n";
 <?php
 // Stop page here if a schedule element has yet to be chosen.
 if ($sessionid==0) {
-    staff_footer();
+    correct_footer();
     exit();
     }
 else
@@ -101,5 +95,5 @@ else
   <BUTTON class="SubmitButton" type="submit" name="submit" >Update</BUTTON>
 </FORM>
 <?php
-staff_footer();
+correct_footer();
 ?>

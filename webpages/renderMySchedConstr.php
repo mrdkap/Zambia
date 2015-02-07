@@ -1,5 +1,5 @@
 <?php
-participant_header($title);
+topofpagereport($title,$description,$additionalinfo);
 if (!isset($daymap)) {
     error_log("zambia-render_my_avail: \$daymap is not set.");
     }
@@ -183,4 +183,4 @@ scheduling you.</p>
     </DIV>
 </FORM>
 </DIV>
-<?php participant_footer(); ?>
+<?php correct_footer(); ?>

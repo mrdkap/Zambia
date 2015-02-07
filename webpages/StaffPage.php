@@ -1,8 +1,5 @@
 <?php
 global $link,$participant,$message_error,$message2,$congoinfo;
-require_once('db_functions.php');
-require_once('StaffHeader.php');
-require_once('StaffFooter.php');
 require_once('StaffCommonCode.php');
 unlock_participant(''); // unlocks any records locked by current user
 
@@ -101,5 +98,5 @@ if (file_exists("../Local/Verbiage/StaffPage_1")) {
   echo $descstring;
   echo $jumpstring;
 }
-staff_footer(); 
+correct_footer(); 
 ?>

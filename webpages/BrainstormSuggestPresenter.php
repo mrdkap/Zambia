@@ -4,12 +4,6 @@ require_once('BrainstormCommonCode.php');
 // Localisms
 $_SESSION['return_to_page']='BrainstormSuggestPresenter.php';
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 $title="Suggest a Presenter";
 
@@ -22,7 +16,7 @@ SELECT
     permroleid,
     permrolename
   FROM
-      $ReportDB.PermissionRoles
+      PermissionRoles
 EOD;
 if (($result=mysql_query($query,$link))===false) {
   $message_error="Error retrieving data from database<BR>\n";
@@ -49,18 +43,17 @@ $query= <<<EOD
 SELECT
     interestedtypeid
   FROM
-      $ReportDB.InterestedTypes
+      InterestedTypes
   WHERE
     interestedtypename in ('Suggested')
 EOD;
 if (!$result=mysql_query($query,$link)) {
     $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-    echo "<P class\"errmsg\">".$message."\n";
-    staff_footer();
+    RenderError($title,$message_error)
     exit();
     }
 
-list($interested)= mysql_fetch_array($result, MYSQL_NUM);
+list($interested)=mysql_fetch_array($result, MYSQL_NUM);
 
 // If the information has already been added, and we are
 // on the return loop, add the Participant to the database.
@@ -166,7 +159,7 @@ function checkSubmitButton() {
     <INPUT type="hidden" name="update" value="Yes">
     <?php foreach ($participant_arr as $key => $value) { echo "<INPUT type=\"hidden\" name=\"$key\" value=\"$value\">\n"; } ?>
     <P>Note: items in red must be completed before you can save.</P>
-    <P>Please make sure your name and email address are valid as well as the presenter's.
+    <P>Please make sure your name and email address are valid as well as that of the presenter.
        If they are not, the chance that we might invite them decreases exponentially.</P>
     <TABLE>
       <TR>

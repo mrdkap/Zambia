@@ -99,6 +99,9 @@ $navstring.="        <UL>\n";
 // Set the counter for the "Previous" break
 $onetime=0;
 
+// Setup to put the soonest at the top
+$webfinalstring="";
+
 // Walk each of the convention instances
 for ($i=1; $i<=$conrows; $i++) {
   $conid=$ConCount_array[$i];
@@ -245,6 +248,15 @@ for ($i=1; $i<=$conrows; $i++) {
   }
   if ($vendbody!="") {$webstring.=$vendheader . $vendbody . $divfooter;}
   $webstring.="</DIV>\n";
+
+  // Switch the ordering so soonest first of the Upcoming Events section
+  if ($onetime < 1) {
+      $webfinalstring=$webstring . $webfinalstring;
+      $webstring="";
+  } else {
+    $webfinalstring.=$webstring;
+    $webstring="";
+  }
 }
 $navstring.="        </UL>\n";
 
@@ -300,7 +312,7 @@ if (file_exists($HeaderTemplateFile)) {
         <DIV style="background-color: #ffdb70; display: table; width: 100%;">
 <?php echo "          <H1>$title</H1>\n" ?>
         </DIV>
-<?php echo $webstring; ?>
+<?php echo $webfinalstring; ?>
       </ARTICLE>
 <?php if (file_exists($FooterTemplateFile)) {
   readfile($FooterTemplateFile);

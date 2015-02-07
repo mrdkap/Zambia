@@ -50,17 +50,10 @@ function set_email_defaults() {
 // This function will render the entire page.
 // This page will next go to the StaffSendEmailCompose_POST page
 function render_send_email($email,$substitutions,$message_warning) {
-  $title="Send Email to Participants";
-  $conid=$_SESSION['conid'];
   require_once('StaffCommonCode.php');
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BiotDB=="BIODB") {unset($BIODB);}
-
-  staff_header($title);
+  $title="Send Email to Participants";
+  $description="<H3>Step 1 -- Compose Email</H3>\n";
+  $conid=$_SESSION['conid'];
 
   // From/CC email query
   $ccquery = <<<EOD
@@ -68,9 +61,9 @@ SELECT
     badgeid,
     badgename
   FROM
-      $ReportDB.UserHasConRole
-    JOIN $ReportDB.ConRoles USING (conroleid)
-    JOIN $ReportDB.CongoDump USING (badgeid)
+      UserHasConRole
+    JOIN ConRoles USING (conroleid)
+    JOIN CongoDump USING (badgeid)
   WHERE
     conid=$conid AND
     conrolename not like '%GOH%'
@@ -80,15 +73,17 @@ SELECT
     display_order
 EOD;
 
+  // Start the output
+  topofpagereport($title,$description,$additionalinfo);
+
   if (strlen($message_warning)>0) {
     echo "<P class=\"message_warning\">$message_warning</P>\n";
   }
-  echo "<H3>Step 1 -- Compose Email</H3>\n";
   echo "<FORM name=\"emailform\" method=POST action=\"StaffSendEmailCompose_POST.php\">\n";
   echo "<TABLE><TR>";
   echo "    <TD><LABEL for=\"sendto\">To: </LABEL></TD>\n";
   echo "    <TD><SELECT name=\"sendto\">\n";
-  populate_select_from_table("$ReportDB.EmailTo", $email['sendto'], "", false);
+  populate_select_from_table("EmailTo", $email['sendto'], "", false);
   echo "    </SELECT></TD></TR>";
   echo "<TR><TD><LABEL for=\"sendfrom\">From: </LABEL></TD>\n";
   echo "    <TD><SELECT name=\"sendfrom\">\n";
@@ -127,8 +122,12 @@ EOD;
 //
 function renderQueueEmail($goodCount,$arrayOfGood,$badCount,$arrayOfBad) {
   $title="Results of Queueing Email";
+  $description="<P>Good and bad count of messages queued.</P>\n";
+  $additionalinfo.="<P>If cron job is not enabled, the next step is to visit\n";
+  $additionalinfo.="<A HREF=AutoSendQueuedMail.php>Auto Send</A> or\n";
+  $additionalinfo.="<A HREF=HandSendQueuedMail.php>Hand Send</A> to send the email.</P>\n";
   require_once('StaffCommonCode.php');
-  staff_header($title);
+  topofpagereport($title,$description,$additionalinfo);
 
   echo "<P>$goodCount message(s) were queued for email transmission.<BR>\n";
   echo "$badCount message(s) failed.</P>\n";
@@ -164,13 +163,14 @@ function renderQueueEmail($goodCount,$arrayOfGood,$badCount,$arrayOfBad) {
 // This page will next go to the StaffSendEmailResults_POST page
 function render_verify_email($email,$email_verify,$message_warning) {
   $title="Send Email";
+  $description="<H3>Step 2 -- Verify </H3>\n";
   require_once('StaffCommonCode.php');
-  staff_header($title);
+  topofpagereport($title,$description,$additionalinfo);
 
   if (strlen($message_warning)>0) {
     echo "<P class=\"message_warning\">$message_warning</P>\n";
   }
-  echo "<H3>Step 2 -- Verify </H3>\n";
+
   echo "<FORM name=\"emailverifyform\" method=POST action=\"StaffSendEmailCompose.php\">\n";
   echo "<P>Recipient List:<BR>\n";
   echo "<TEXTAREA readonly rows=\"8\" cols=\"70\">";
@@ -190,14 +190,19 @@ function render_verify_email($email,$email_verify,$message_warning) {
 }
 
 function render_send_email_engine($email,$message_warning) {
-  $title="Pretend to actually send email.";
   require_once('StaffCommonCode.php');
-  staff_header($title);
+
+  $title="Pretend to actually send email.";
+  $description="<H3>Step 3 -- Actually Send Email </H3>\n";
+  $additionalinfo.="<P>If cron job is not enabled, the next step is to visit\n";
+  $additionalinfo.="<A HREF=AutoSendQueuedMail.php>Auto Send</A> or\n";
+  $additionalinfo.="<A HREF=HandSendQueuedMail.php>Hand Send</A> to send the email.</P>\n";
+
+  topofpagereport($title,$description,$additionalinfo);
 
   if (strlen($message_warning)>0) {
     echo "<P class=\"message_warning\">$message_warning</P>\n";
   }
-  echo "<H3>Step 3 -- Actually Send Email </H3>\n";
   correct_footer();
 }
 

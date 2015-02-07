@@ -1,7 +1,7 @@
 <?php
 function render_session_interests($badgid,$session_interest_count,$message,$message_error) {
     global $session_interests, $title;
-    participant_header($title);
+    topofpagereport($title,$description,$additionalinfo);
     if ($message_error) {
         echo "<P class=\"errmsg\">Database not updated.<BR>".$message_error."</P>";
         }
@@ -73,6 +73,6 @@ function render_session_interests($badgid,$session_interest_count,$message,$mess
     echo "    </TABLE>\n";
     echo "<DIV class=\"submit\" id=\"submit2\"><BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submitranks\">Save</BUTTON></DIV>\n";
     echo "</FORM>\n";
-    participant_footer();
+    correct_footer();
     }
 ?>

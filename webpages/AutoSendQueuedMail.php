@@ -4,13 +4,20 @@
 require_once('email_functions.php');
 require_once('StaffCommonCode.php');
 
+// For verbose purposes
+$title="Auto Send Queued Mail";
+$description="<P>Sending email now ...</P>\n";
+$additionalinfo="<P>This should only appear when the verbose flag is switched on.\n";
+$additionalinfo.="Otherwise, since this is supposed to run, quietly, out of cron,\n";
+$additionalinfo.="you should never see this.</P>\n";
+
 // For using php mail directly, otherwise will try to use mutt
 $usephpmail="True";
 
 // For test verbose=1, otherwise for silent, verbose='';
 $verbose='1';
 
-if ($verbose) {staff_header("Auto Send Queued Mail");}
+if ($verbose) {topofpagereport($title,$description,$additionalinfo);}
 
 $query="SELECT emailqueueid, emailto, emailfrom, emailcc, emailsubject, body from EmailQueue ";
 $query.="WHERE status=1 ORDER BY emailtimestamp";
@@ -18,7 +25,7 @@ if ($verbose) {echo "<P>EmailQuery Query: $query</P>\n";}
 if (!$result=mysql_query($query,$link)) {
     $message.="Zambia: AutoSendQueuedMail: ".$query." Error querying database.\n";
     error_log($message);
-    //RenderError($title,$message);
+    if ($verbose) {RenderError($title,$message);}
     exit();
     }
 $rows=mysql_num_rows($result);
@@ -65,7 +72,7 @@ for ($i=1; $i<=$rows; $i++) {
     if (!$result=mysql_query($query,$link)) {
       $message.="Zambia: AutoSendQueuedMail: ".$query." Error querying database.\n";
       error_log($message);
-      //RenderError($title,$message);
+      if ($verbose) {RenderError($title,$message);}
       exit();
     }
     $goodList.=sprintf("%d,",$email_array[$i]['emailqueueid']);
@@ -76,7 +83,7 @@ for ($i=1; $i<=$rows; $i++) {
     if (!$result=mysql_query($query,$link)) {
       $message.="Zambia: AutoSendQueuedMail: ".$query." Error querying database.\n";
       error_log($message);
-      //RenderError($title,$message);
+      if ($verbose) {RenderError($title,$message);}
       exit();
     }
     $badList.=sprintf("%d,",$email_array[$i]['emailqueueid']);
@@ -90,5 +97,6 @@ $badList=substr($badList,0,-1); //remove final trailing comma
 if ($verbose) {echo "Num good: $numGood. Num bad: $numBad.<BR>\n";}
 if ($verbose) {echo "Good list: $goodList <BR>\n";}
 if ($verbose) {echo "Bad list: $badList <BR>\n";}
+if ($verbose) {correct_footer());}
 exit();
 ?>

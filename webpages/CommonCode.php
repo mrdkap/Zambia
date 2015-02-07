@@ -407,49 +407,6 @@ function vendor_header ($title) {
   echo "</table>\n\n<H2 class=\"head\">$title</H2>\n";
 }
 
-function posting_footer () {
-  $FooterTemplateFile="../Local/FooterTemplate.html";
-
-  if (file_exists($FooterTemplateFile)) {
-    readfile($FooterTemplateFile);
-  } else {
-    echo "<hr>\n<P>If you have questions or wish to communicate an idea, please contact ";
-    echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
-  }
-  include ('google_analytics.php');
-  echo "\n\n</body>\n</html>\n";
-}
-
-function staff_footer () {
-  echo "<hr>\n<P>If you would like assistance using this tool or you would like to communicate an";
-  echo " idea that you cannot fit into this form, please contact ";
-  echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
-  include ('google_analytics.php');
-  echo "\n\n</body>\n</html>\n";
-}
-
-function participant_footer () {
-  echo "<hr>\n<P>If you need help or to tell us something that doesn't fit here, please email ";
-  echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
-  include('google_analytics.php');
-  echo "\n\n</body>\n</html>\n";
-}
-
-function brainstorm_footer () {
-  echo "<hr>\n<P>If you would like assistance using this tool, or ";
-  echo "if you would like to communicate an idea that you cannot fit into this form, please contact ";
-  echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.</P>";
-  include('google_analytics.php');
-  echo "\n\n</body>\n</html>\n";
-}
-
-function vendor_footer () {
-  echo "<hr>\n<P>If you would like assistance using this tool, please contact ";
-  echo "<A HREF=\"mailto:".$_SESSION['vendoremail']."\">".$_SESSION['vendoremail']."</A>.  ";
-  include('google_analytics.php');
-  echo "\n\n</body>\n</html>\n";
-}
-
 /* Top of page reporting, simplified by the foo_header functions
  for HTML pages.  It takes the title, description and any
  additional information, and puts it all in the right place
@@ -474,6 +431,12 @@ function topofpagereport ($title,$description,$info) {
   echo "<P align=center> Generated: ".date("D M j G:i:s T Y")."</P>\n";
   echo $description;
   echo $info;
+  if ($message_error!="") {
+    echo "<P class=\"errmsg\">$message_error</P>\n";
+  }
+  if ($message!="") {
+    echo "<P class=\"regmsg\">$message</P>\n";
+  }
 }
 
 /* Top of page reporting, for CSV pages.  It takes only the filename
@@ -492,19 +455,38 @@ function topofpagecsv ($filename) {
  functions, rolled into this, for simplicity sake. */
 function correct_footer () {
   if ($_SESSION['role'] == "Brainstorm") {
-    brainstorm_footer();
-  }
-  elseif ($_SESSION['role'] == "Vendor") {
-    vendor_footer();
-  }
-  elseif ($_SESSION['role'] == "Participant") {
-    participant_footer();
-  }
-  elseif ($_SESSION['role'] == "Staff") {
-    staff_footer();
-  }
-  elseif ($_SESSION['role'] == "Posting") {
-    posting_footer();
+    echo "<hr>\n<P>If you would like assistance using this tool, or ";
+    echo "if you would like to communicate an idea that you cannot fit into this form, please contact ";
+    echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.</P>";
+    include('google_analytics.php');
+    echo "\n\n</body>\n</html>\n";
+  } elseif ($_SESSION['role'] == "Vendor") {
+    echo "<hr>\n<P>If you would like assistance using this tool, please contact ";
+    echo "<A HREF=\"mailto:".$_SESSION['vendoremail']."\">".$_SESSION['vendoremail']."</A>.  ";
+    include('google_analytics.php');
+    echo "\n\n</body>\n</html>\n";
+  } elseif ($_SESSION['role'] == "Participant") {
+    echo "<hr>\n<P>If you need help or to tell us something that doesn't fit here, please email ";
+    echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
+    include('google_analytics.php');
+    echo "\n\n</body>\n</html>\n";
+  } elseif ($_SESSION['role'] == "Staff") {
+    echo "<hr>\n<P>If you would like assistance using this tool or you would like to communicate an";
+    echo " idea that you cannot fit into this form, please contact ";
+    echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
+    include ('google_analytics.php');
+    echo "\n\n</body>\n</html>\n";
+  } elseif ($_SESSION['role'] == "Posting") {
+    $FooterTemplateFile="../Local/FooterTemplate.html";
+
+    if (file_exists($FooterTemplateFile)) {
+      readfile($FooterTemplateFile);
+    } else {
+      echo "<hr>\n<P>If you have questions or wish to communicate an idea, please contact ";
+      echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
+    }
+    include ('google_analytics.php');
+    echo "\n\n</body>\n</html>\n";
   }
 }
 

@@ -6,41 +6,31 @@ function RenderError($title,$message) {
   $HeaderTemplateFile="../Local/HeaderTemplate.html";
   $FooterTemplateFile="../Local/FooterTemplate.html";
 
-  if ($_SESSION['role'] == "Brainstorm") {
-    brainstorm_header($title);
-    echo "<P id=\"errmsg\">".$message."</P>\n";
-  } elseif ($_SESSION['role'] == "Vendor") {
-    vendor_header($title);
-    echo "<P id=\"errmsg\">".$message."</P>\n";
-  } elseif ($_SESSION['role'] == "Participant") {
-    participant_header($title);
-    echo "<P id=\"errmsg\">".$message."</P>\n";
-  } elseif ($_SESSION['role'] == "Staff") {
+  if ($_SESSION['role'] == "Staff") {
     global $debug;
-    staff_header($title);
+    topofpagereport($title,"","");
     if (isset($debug)) echo $debug."<BR>\n";
     echo "<P id=\"errmsg\">".$message."</P>\n";
-  } elseif ($_SESSION['role'] == "Posting") {
-    posting_header($title);
+  } elseif (($_SESSION['role'] == "Brainstorm") or
+	    ($_SESSION['role'] == "Vendor") or
+	    ($_SESSION['role'] == "Participant") or
+	    ($_SESSION['role'] == "Posting")) {
+    topofpagereport($title,"","");
     echo "<P id=\"errmsg\">".$message."</P>\n";
   } else {
     // do something generic here (though this might be way too generic)
     // better to output some error message reliably than none at all
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<HTML xmlns="http://www.w3.org/1999/xhtml">
-  <HEAD>
-    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=latin-1\">
-<?php
+    echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
+    echo "<HTML xmlns=\"http://www.w3.org/1999/xhtml\">\n";
+    echo "  <HEAD>\n";
+    echo "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=latin-1\">\n";
     echo "    <TITLE>$title</TITLE>\n";
     if (file_exists($HeaderTemplateFile)) {
       readfile($HeaderTemplateFile);
     } else {
-?>
-    <link rel="stylesheet" href="Common.css" type="text/css">
-  </HEAD>
-  <BODY>
-<?php
+      echo "    <link rel=\"stylesheet\" href=\"Common.css\" type=\"text/css\">\n";
+      echo "  </HEAD>\n";
+      echo "  <BODY>\n";
     }
     echo "    <H1>Zambia &ndash; ".$_SESSION['conname']." </H1>\n";
     echo "    <H2>$title</H2>\n";

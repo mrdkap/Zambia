@@ -239,7 +239,7 @@ for ($i=1; $i<=$classcount; $i++) {
  }
 
 if ($print_p == "") {
-  staff_footer();
+  correct_footer();
  } else {
   if ($individual != "") {
     $pdf->Output('ClassIntro'.$name.'.pdf', 'I');

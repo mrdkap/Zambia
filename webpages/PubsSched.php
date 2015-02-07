@@ -47,7 +47,7 @@ if($phase_array[1]['phasestate'] == '0') {$feedback_p=true;}
 $_SESSION['return_to_page']="PubsSched.php?format=$format&conid=$conid";
 $track='concat("<A HREF=\"PubsSched.php?format=tracks&conid='.$conid.'#",trackname,"\"><i>",trackname,"</i></A>") AS Track';
 $sestitle='concat("<A HREF=\"PubsSched.php?format=desc&conid='.$conid.'#",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),"\">",title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),"</A>") AS Title';
-$pubsname='if ((pubsname is NULL), " ", GROUP_CONCAT(DISTINCT "<A HREF=\"PubsBios?conid='.$conid.'#",pubsname,"\">",pubsname,"</A>",if(moderator in ("1","Yes"),"(m)","") SEPARATOR ", ")) AS "Participants"';
+$pubsname='if ((pubsname is NULL), " ", GROUP_CONCAT(DISTINCT "<A HREF=\"PubsBios.php?conid='.$conid.'#",pubsname,"\">",pubsname,"</A>",if(moderator in ("1","Yes"),"(m)","") SEPARATOR ", ")) AS "Participants"';
 $starttime='GROUP_CONCAT(DISTINCT "<A HREF=\"PubsSched.php?format=sched&conid='.$conid.'#",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"\"><i>",DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),"</i></A>" SEPARATOR ", ") AS "Start Time"';
 $room='GROUP_CONCAT(DISTINCT "<A HREF=\"PubsSched.php?format=rooms&conid='.$conid.'#",roomname,"\"><i>",roomname,"</i></A>" SEPARATOR ", ") AS Room';
 

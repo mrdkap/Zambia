@@ -18,9 +18,12 @@ $additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&feedback=Y\"
 $additionalinfo.="the <A HREF=\"StaffSched.php?format=sched&conid=$conid\">schedule precis</A>\n";
 $additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&short=Y\">(short)</A>\n";
 $additionalinfo.="<A HREF=\"StaffSched.php?format=sched&conid=$conid&feedback=Y\">(w/feedback)</A> in time order, the\n";
-$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid\">Tracks</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid\">tracks sorted by name</A>\n";
 $additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>\n";
-$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&feedback=Y\">(w/feedback)</A> by track name,\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&feedback=Y\">(w/feedback)</A>, the\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=trtime&conid=$conid\">tracks sorted by start time</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=trtime&conid=$conid&short=Y\">(short)</A>\n";
+$additionalinfo.="<A HREF=\"StaffSched.php?format=trtime&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
 $additionalinfo.="and the <A HREF=\"StaffSched.php?format=rooms&conid=$conid\">room's schedule</A>\n";
 $additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
 $additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&feedback=Y\">(w/feedback)</A>.</P>\n";
@@ -34,6 +37,8 @@ $additionalinfo.="the <A HREF=\"PubsSched.php?format=sched&conid=$conid\">schedu
 $additionalinfo.="<A HREF=\"PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
 $additionalinfo.="the <A HREF=\"PubsSched.php?format=tracks&conid=$conid\">tracks</A>\n";
 $additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"PubsSched.php?format=trtime&conid=$conid\">tracks by time</A>\n";
+$additionalinfo.="<A HREF=\"PubsSched.php?format=trtime&conid=$conid&short=Y\">(short)</A>,\n";
 $additionalinfo.="the <A HREF=\"PubsSched.php?format=rooms&conid=$conid\">rooms</A>\n";
 $additionalinfo.="<A HREF=\"PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
 $additionalinfo.="the <A HREF=\"VolsSched.php?format=desc&conid=$conid\">volunteer description</A>\n";
@@ -54,6 +59,8 @@ $additionalinfo.="the <A HREF=\"BookSched.php?format=sched\">schedule</A>\n";
 $additionalinfo.="<A HREF=\"BookSched.php?format=sched&short=Y\">(short)</A>,\n";
 $additionalinfo.="the <A HREF=\"BookSched.php?format=tracks\">tracks</A>\n";
 $additionalinfo.="<A HREF=\"BookSched.php?format=tracks&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"BookSched.php?format=trtime\">tracks by time</A>\n";
+$additionalinfo.="<A HREF=\"BookSched.php?format=trtime&short=Y\">(short)</A>,\n";
 $additionalinfo.="and the <A HREF=\"BookSched.php?format=rooms\">rooms</A>\n";
 $additionalinfo.="<A HREF=\"BookSched.php?format=rooms&short=Y\">(short)</A>.</P>\n";
 

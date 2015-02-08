@@ -650,10 +650,10 @@ function renderprecisreport ($startrows,$endrows,$header_array,$element_array) {
   return($printstring);
 }
 
-/* This function renders the Schedule, Description, Tracks (and possibly Bios)
+/* This function renders the Schedule, Description, Tracks, Rooms, and Bios
    in their various forms, for their various audiences.
    It takes 5 elements:
-   format - One of desc, bios, sched, tracks
+   format - One of desc, bios, sched, tracks, trtime, rooms
    header_break - If there is sectional breaks, what it breaks on, otherwise empty
    single_line_p [T,F] - If the sched line is a single line, or is more full
    elements - the count of the elements to loop over
@@ -685,7 +685,7 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
 	($element_array[$i]['Participants'] != " ")) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Participants']);
     }
-    if (($format != "tracks") and (!empty($element_array[$i]['Track']))) {
+    if (($format != "tracks") and ($format != "trtime") and (!empty($element_array[$i]['Track']))) {
       $sched.=sprintf("&mdash;%s",$element_array[$i]['Track']);
     }
     if (($format != "sched") and (!empty($element_array[$i]['Start Time']))) {

@@ -97,6 +97,8 @@ if ($phase_array['Prog Available'] == '0' ) {
   $progbody.="        <A HREF=\"PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
   $progbody.="      <LI><A HREF=\"PubsSched.php?format=tracks&conid=$conid\">Tracks</A>\n";
   $progbody.="        <A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"PubsSched.php?format=trtime&conid=$conid\">Tracks by Time</A>\n";
+  $progbody.="        <A HREF=\"PubsSched.php?format=trtime&conid=$conid&short=Y\">(short)</A></LI>\n";
   $progbody.="      <LI><A HREF=\"PubsSched.php?format=rooms&conid=$conid\">Rooms</A>\n";
   $progbody.="        <A HREF=\"PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
   $progbody.="      <LI><A HREF=\"PubsBios.php?conid=$conid\">Presenter Bios</A>\n";

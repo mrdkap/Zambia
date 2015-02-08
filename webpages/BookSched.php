@@ -15,6 +15,8 @@ $format="desc";
 if (isset($_GET['format'])) {
   if ($_GET['format'] == "tracks") {
     $format="tracks";
+  } elseif ($_GET['format'] == "trtime") {
+    $format="trtime";
   } elseif ($_GET['format'] == "desc") {
     $format="desc";
   } elseif ($_GET['format'] == "rooms") {
@@ -37,11 +39,17 @@ if (isset($_GET['short'])) {
 $pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname,if(moderator in ('1','Yes'),'(m)','') SEPARATOR ', ')) AS 'Participants'";
 
 if ($format == "tracks") {
-  $title="Track List";
-  $description="<P>Track Schedules for all public sessions.</P>\n";
+  $title="Track List by Name";
+  $description="<P>Track Schedules for all public sessions orderd by their name.</P>\n";
   // Temporarily overwriting the (m) for Tracks
-  $pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname SEPARATOR ', ')) AS 'Participants'";
+  //$pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname SEPARATOR ', ')) AS 'Participants'";
   $orderby="trackname,title_good_web,starttime,R.roomname";
+  $header_break="Track";
+}
+if ($format == "trtime") {
+  $title="Track List by Time";
+  $description="<P>Track Schedules for all public sessions orderd by when they are.</P>\n";
+  $orderby="trackname,starttime,title_good_web,R.roomname";
   $header_break="Track";
 }
 if ($format == "rooms") {
@@ -85,6 +93,10 @@ if ($format != "sched") {
 if ($format != "tracks") {
   $additionalinfo.="the <A HREF=\"BookSched.php?format=tracks\">tracks</A>\n";
   $additionalinfo.="<A HREF=\"BookSched.php?format=tracks&short=Y\">(short)</A>,\n";
+}
+if ($format != "trtime") {
+  $additionalinfo.="the <A HREF=\"BookSched.php?format=trtime\">tracks by time</A>\n";
+  $additionalinfo.="<A HREF=\"BookSched.php?format=trtime&short=Y\">(short)</A>,\n";
 }
 if ($format != "rooms") {
   $additionalinfo.="the <A HREF=\"BookSched.php?format=rooms\">rooms</A>\n";

@@ -72,6 +72,8 @@ $additionalinfo.="the <A HREF=\"BookSched.php?format=sched\">timeslots</A>\n";
 $additionalinfo.="<A HREF=\"BookSched.php?format=sched&short=Y\">(short)</A>,\n";
 $additionalinfo.="the <A HREF=\"BookSched.php?format=tracks\">tracks</A>\n";
 $additionalinfo.="<A HREF=\"BookSched.php?format=tracks&short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"BookSched.php?format=trtime\">tracks by time</A>\n";
+$additionalinfo.="<A HREF=\"BookSched.php?format=trtime&short=Y\">(short)</A>,\n";
 $additionalinfo.="or the <A HREF=\"grid.php?standard=y\">grid</A>.</P>\n";
 
 /* This query grabs everything necessary for the schedule to be printed.

@@ -72,9 +72,12 @@ if ($schedtype=="VolsSched.php") {
   $additionalinfo.="<A HREF=\"PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A>,\n";
   $additionalinfo.="or the track name to visit that session's\n";
   $additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid\">track</A>\n";
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>.\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>,\n";
+  $additionalinfo.="or look at the\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=trtime&conid=$conid\">tracks by time</A>\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=trtime&conid=$conid&short=Y\">(short)</A>.\n";
 }
-$additionalinfo.="(<A HREF=\"Postgrid-wide.php$passon\">Switch indices</A>)</P>\n";
+$additionalinfo.="(<A HREF=\"Postgrid.php$passon\">Switch indices</A>)</P>\n";
 $additionalinfo.="<P>If you wish to have a copy printed, please download the\n";
 $additionalinfo.="<A HREF=Postgrid.php$passon_p>Rooms x Times</A> or\n";
 $additionalinfo.="<A HREF=Postgrid-wide.php$passon_p>Times x Rooms</A> version.</P>\n";

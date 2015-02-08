@@ -16,6 +16,8 @@ $format="desc";
 if (isset($_GET['format'])) {
   if ($_GET['format'] == "tracks") {
     $format="tracks";
+  } elseif ($_GET['format'] == "trtime") {
+    $format="trtime";
   } elseif ($_GET['format'] == "desc") {
     $format="desc";
   } elseif ($_GET['format'] == "rooms") {
@@ -92,10 +94,17 @@ $room='GROUP_CONCAT(DISTINCT "<A HREF=\"StaffSched.php?format=rooms&conid='.$con
 
 // LOCALIZATIONS
 if ($format == "tracks") {
-  $title="Event Track Schedule for $conname";
-  $description="<P>Track Schedules for all public sessions.</P>\n";
+  $title="Event Track Schedule for $conname by Name";
+  $description="<P>Track Schedules for all public sessions sorted by session name.</P>\n";
   $track='concat("<A NAME=\"",trackname,"\"></A>",trackname,if((DATE_ADD(constartdate,INTERVAL connumdays DAY)>NOW()),concat(" <A HREF=TrackScheduleIcal.php?trackid=",trackid,"><I>(iCal)</I></A>"),"")) AS Track';
   $orderby="trackname,title_good_web,starttime,R.roomname";
+  $header_break="Track";
+}
+if ($format == "trtime") {
+  $title="Event Track Schedule for $conname by Time";
+  $description="<P>Track Schedules for all public sessions sorted by time.</P>\n";
+  $track='concat("<A NAME=\"",trackname,"\"></A>",trackname,if((DATE_ADD(constartdate,INTERVAL connumdays DAY)>NOW()),concat(" <A HREF=TrackScheduleIcal.php?trackid=",trackid,"><I>(iCal)</I></A>"),"")) AS Track';
+  $orderby="trackname,starttime,title_good_web,R.roomname";
   $header_break="Track";
 }
 if ($format == "rooms") {
@@ -150,6 +159,11 @@ if ($format != "tracks") {
   $additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&short=Y\">(short)</A>\n";
   $additionalinfo.="<A HREF=\"StaffSched.php?format=tracks&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
 }
+if ($format != "trtime") {
+  $additionalinfo.="the <A HREF=\"StaffSched.php?format=trtime&conid=$conid\">tracks by time</A>\n";
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=trtime&conid=$conid&short=Y\">(short)</A>\n";
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=trtime&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
+}
 if ($format != "rooms") {
   $additionalinfo.="the <A HREF=\"StaffSched.php?format=rooms&conid=$conid\">rooms</A>\n";
   $additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&short=Y\">(short)</A>,\n";
@@ -158,7 +172,7 @@ if ($format != "rooms") {
 $additionalinfo.="or the <A HREF=\"Postgrid.php?conid=$conid\">grid</A>.</P>\n";
 if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
   $additionalinfo.="<P>Click on the ";
-  if ($format == "tracks") {
+  if (($format == "tracks") or ($format == "trtime")) {
     $additionalinfo.="<I>(iCal)</i> next to the track name to have an iCal Calendar\n";
     $additionalinfo.=" sent to your machine for automatic inclusion, and the\n";
   }

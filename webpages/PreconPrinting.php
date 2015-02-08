@@ -45,9 +45,12 @@ topofpagereport($title,$description,$additionalinfo);
   <DT id="programbooksched"><A HREF="BookSched.php?format=sched">Schedule</A>
     <A HREF="BookSched.php?format=sched&short=Y">(short)</A></DT>
   <DD id="programbooksched">A time-sorted schedule for the Program Book.</DD>
-  <DT id="programbooktrack"><A HREF="BookSched.php?format=tracks">Tracks list</A>
+  <DT id="programbooktrack"><A HREF="BookSched.php?format=tracks">Tracks list by Name</A>
     <A HREF="BookSched.php?format=tracks&short=Y">(short)</A></DT>
-  <DD id="programbooktrack">A track-sorted schedule for the Program Book.</DD>
+  <DD id="programbooktrack">A track then name sorted schedule for the Program Book.</DD>
+  <DT id="programbooktrack"><A HREF="BookSched.php?format=trtime">Tracks list by Time</A>
+    <A HREF="BookSched.php?format=trtime&short=Y">(short)</A></DT>
+  <DD id="programbooktrack">A track then time sorted schedule for the Program Book.</DD>
   <DT id="programbooktrack"><A HREF="BookSched.php?format=rooms">Rooms list</A>
     <A HREF="BookSched.php?format=rooms&short=Y">(short)</A></DT>
   <DD id="programbooktrack">A room-sorted schedule for the Program Book.</DD>

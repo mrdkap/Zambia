@@ -295,7 +295,8 @@ echo "<P>You can also take a look at all that is going on by\n";
 echo "<A HREF=\"StaffSched.php?format=sched\">timeslot</A>,\n";
 echo "<A HREF=\"StaffSched.php?format=desc\">descriptions</A>,\n";
 echo "<A HREF=\"StaffSched.php?format=rooms\">rooms</A>,\n";
-echo "<A HREF=\"StaffSched?format=tracks.php\">tracks</A>, visit the\n";
+echo "<A HREF=\"StaffSched?format=tracks.php\">tracks</A>\n";
+echo "<A HREF=\"StaffSched?format=trtime.php\">(by time)</A>, visit the\n";
 echo "<A HREF=\"grid.php?programming=y&unpublished=y\">grid</A>,\n";
 echo "or see everyone's <A HREF=\"StaffBios.php\">bios and classes</A>.</P>\n";
 

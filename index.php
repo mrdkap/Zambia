@@ -188,6 +188,8 @@ for ($i=1; $i<=$conrows; $i++) {
     $progbody.="        <A HREF=\"webpages/PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
     $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=tracks&conid=$conid\">Tracks</A>\n";
     $progbody.="        <A HREF=\"webpages/PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=trtime&conid=$conid\">Tracks by Time</A>\n";
+    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=trtime&conid=$conid&short=Y\">(short)</A></LI>\n";
     $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid\">Rooms</A>\n";
     $progbody.="        <A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
     $progbody.="      <LI><A HREF=\"webpages/PubsBios.php?conid=$conid\">Presenter Bios</A>\n";

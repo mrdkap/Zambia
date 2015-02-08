@@ -199,12 +199,14 @@ for ($i=1; $i<=$conrows; $i++) {
     $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
     $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
     $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+    $progbody.="        <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
     $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"Class/Presenter Submission\">\n";
     $progbody.="      </FORM>\n";
     $progbody.="      <FORM name=\"brainstormviewform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
     $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
     $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
     $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+    $progbody.="        <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
     $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"View Suggested Classes\">\n";
     $progbody.="      </FORM>\n";
     $progbody.="      </LI>\n";

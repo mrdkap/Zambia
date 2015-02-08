@@ -1,7 +1,12 @@
 <?php
 $logging_in=true;
+
+// Set the conid
+if ((!empty($_POST['newconid'])) and (is_numeric($_POST['newconid']))) {
+  define("CON_KEY",$_POST['newconid']);
+}
+
 require_once ('CommonCode.php');
-require_once ('error_functions.php');
 
 $title="Submit Password";
 $badgeid = $_POST['badgeid'];

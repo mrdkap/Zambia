@@ -6,9 +6,10 @@ $_SESSION['return_to_page']='BrainstormSuggestPresenter.php';
 $conid=$_SESSION['conid'];
 
 $title="Suggest a Presenter";
-
-// Begin the display
-brainstorm_header($title);
+$description="<P>Note: items in red must be completed before you can save.</P>\n";
+$additionalinfo="<P>Please make sure your name and email address are valid as well\n";
+$additionalinfo.="as that of the presenter. If they are not, the chance that we might\n";
+$additionalinfo.="invite them decreases exponentially.</P>\n";
 
 // Get the permroleid and name for assigning as Participant
 $query= <<<EOD
@@ -49,7 +50,7 @@ SELECT
 EOD;
 if (!$result=mysql_query($query,$link)) {
     $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-    RenderError($title,$message_error)
+    RenderError($title,$message_error);
     exit();
     }
 
@@ -76,6 +77,8 @@ global $youremail, $yourname;
 
 get_name_and_email($yourname, $youremail);
 
+// Begin the display
+topofpagereport($title,$description,$additionalinfo);
 ?>
 
 <script language="javascript" type="text/javascript">
@@ -158,9 +161,6 @@ function checkSubmitButton() {
     <INPUT type="submit" ID="sButtonTop" value="Save">&nbsp;
     <INPUT type="hidden" name="update" value="Yes">
     <?php foreach ($participant_arr as $key => $value) { echo "<INPUT type=\"hidden\" name=\"$key\" value=\"$value\">\n"; } ?>
-    <P>Note: items in red must be completed before you can save.</P>
-    <P>Please make sure your name and email address are valid as well as that of the presenter.
-       If they are not, the chance that we might invite them decreases exponentially.</P>
     <TABLE>
       <TR>
         <TD class="form1">

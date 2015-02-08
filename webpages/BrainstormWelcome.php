@@ -1,9 +1,14 @@
 <?php
-global $participant,$message,$message_error,$message2,$congoinfo;
-$title="Class/Presenter Submission";
 require_once('BrainstormCommonCode.php');
+global $participant,$message,$message_error,$message2,$congoinfo;
 $conid=$_SESSION['conid'];
-brainstorm_header($title);
+
+// LOCALIZATIONS
+$title="Class/Presenter Submission";
+$description="";
+$additionalinfo="";
+
+topofpagereport($title,$description,$additionalinfo);
 
 ?>
 

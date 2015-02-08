@@ -1,20 +1,20 @@
 <?php
-global $participant,$message,$message_error,$message2,$congoinfo;
-$title="Vendor View";
 require_once('VendorCommonCode.php');
-Vendor_header($title);
+global $participant,$message,$message_error,$message2,$congoinfo;
+
+// LOCALIZATIONS
+$title="Vendor View";
+$description="";
+$additionalinfo="";
+
+topofpagereport($title,$description,$additionalinfo);
 
 if ($message_error!="") {
   echo "<P class=\"errmsg\">$message_error</P>";
 }
-
 if ($message!="") {
   echo "<P class=\"regmsg\">$message</P>";
 }					
-
-/* echo "<hr>\n";
-print_r($_SESSION);
-echo "<hr>\n"; */
 
 if (may_I('BrainstormSubmit') or may_I('Vendor')) {
   if (file_exists("../Local/Verbiage/VendorWelcome_0")) {

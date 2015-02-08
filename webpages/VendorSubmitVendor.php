@@ -1,17 +1,15 @@
 <?php
 require_once('VendorCommonCode.php');
-// Localisms
 global $message,$message_error,$message2;
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
+// LOCALIZATIONS
 $_SESSION['return_to_page']='VendorWelcome.php';
 $title="Submit Vendor Application";
+$description="<P>Note: items in red must be completed before you can save.</P>\n";
+$additionalinfo="<P>Please make sure all your information is valid, there are no double checks.\n";
+$additionalinfo.="If they are not valid they are not going to resolve properly the chance that we might\n";
+$additionalinfo.="see you at the event decreases exponentially.</P>\n";
 
 // Get the permroleid and name for assigning as Vendor
 $query= <<<EOD
@@ -19,7 +17,7 @@ SELECT
     permroleid,
     permrolename
   FROM
-      $ReportDB.PermissionRoles
+      PermissionRoles
 EOD;
 if (($result=mysql_query($query,$link))===false) {
   $message_error="Error retrieving data from database<BR>\n";
@@ -70,7 +68,7 @@ if ((isset ($_POST['update'])) and ($_POST['update']=="Yes")) {
 }
 
 // Begin the display
-vendor_header($title);
+topofpagereport($title,$description,$additionalinfo);
 
 if (strlen($message)>0) {
   echo "<P id=\"message\"><font color=green>".$message."</font></P>\n";
@@ -110,9 +108,9 @@ SELECT
     P.password,
     group_concat(UHPR.permroleid) as 'permroleid_list'
   FROM 
-      $ReportDB.CongoDump CD
-    JOIN $ReportDB.Participants P USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
+      CongoDump CD
+    JOIN Participants P USING (badgeid)
+    JOIN UserHasPermissionRole UHPR USING (badgeid)
   WHERE
     CD.badgeid='$selpartid'
 EOD;
@@ -230,10 +228,6 @@ function checkSubmitButton() {
     <INPUT type="hidden" name="prognotes" <?php echo "value=\"".$part_arr[1]['prognotes']."\""; ?> >
     <INPUT type="hidden" name="regtype" <?php echo "value=\"".$part_arr[1]['regtype']."\""; ?> >
     <?php foreach ($participant_arr as $key => $value) { echo "<INPUT type=\"hidden\" name=\"$key\" value=\"$value\">\n"; } ?>
-    <P>Note: items in red must be completed before you can save.</P>
-    <P>Please make sure all your information is valid, there are no double checks.
-       If they are not valid they are not going to resolve properly the chance that we might
-       see you at the event decreases exponentially.</P>
     <TABLE>
       <TR>
         <TD class="form1">

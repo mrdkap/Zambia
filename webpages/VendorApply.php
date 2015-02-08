@@ -1,12 +1,12 @@
 <?php
 require_once('VendorCommonCode.php');
 $_SESSION['return_to_page']='VendorApply.php';
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$title="Vendor Application";
 $badgeid=$_SESSION['badgeid'];
 
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
+// LOCALIZATIONS
+$title="Vendor Application";
+$description="";
+$additionalinfo="";
 
 if (may_I('SuperVendor')) {
   // Collaps the three choices into one
@@ -22,7 +22,7 @@ if (may_I('SuperVendor')) {
 }
   
 /* Get the pubsname from the badgeid */
-$namequery="SELECT pubsname FROM $ReportDB.Participants WHERE badgeid=$badgeid";
+$namequery="SELECT pubsname FROM Participants WHERE badgeid=$badgeid";
 if (($result=mysql_query($namequery,$link)) === false) {
   $message_error.="<BR>".$namequery."Cannot find the name to go with the badgeid.";
 }
@@ -54,8 +54,8 @@ if ($_POST['update']=="New") {
   }
 }
 
-vendor_header($title);
-    
+topofpagereport($title,$description,$additionalinfo);
+
 if (strlen($message)>0) {
   echo "<P id=\"message\"><font color=green>".$message."</font></P>\n";
 }
@@ -99,7 +99,7 @@ SELECT
     statusid AS status
   FROM
       Sessions S
-    JOIN $ReportDB.SessionStatuses USING (statusid)
+    JOIN SessionStatuses USING (statusid)
     JOIN (SELECT
 	      sessionid,
 	      vendorspaceid,
@@ -107,8 +107,8 @@ SELECT
 	      vendorspaceprice
 	    FROM
 	        Sessions
-	      JOIN $ReportDB.SessionHasVendorSpace USING (sessionid)
-	      JOIN $ReportDB.VendorSpaces USING (vendorspaceid)) X USING (sessionid)
+	      JOIN SessionHasVendorSpace USING (sessionid)
+	      JOIN VendorSpaces USING (vendorspaceid)) X USING (sessionid)
     LEFT JOIN (SELECT
 	           sessionid,
 	           SUM(vendorfeatureprice) AS 'vendorfeaturetotal',
@@ -116,8 +116,8 @@ SELECT
 	           GROUP_CONCAT(DISTINCT vendorfeatureid SEPARATOR ', ') as 'vendfeatureid'
 	         FROM
 	             Sessions
-	           JOIN $ReportDB.SessionHasVendorFeature USING (sessionid)
-	           JOIN $ReportDB.VendorFeatures USING (vendorfeatureid)
+	           JOIN SessionHasVendorFeature USING (sessionid)
+	           JOIN VendorFeatures USING (vendorfeatureid)
                  GROUP BY
 	           sessionid) Y USING (sessionid)
   WHERE
@@ -161,12 +161,12 @@ SELECT
     pubstatusid,
     statusid AS status
   FROM
-      $ReportDB.Divisions,
-      $ReportDB.Tracks,
-      $ReportDB.Types,
-      $ReportDB.RoomSets,
-      $ReportDB.PubStatuses,
-      $ReportDB.SessionStatuses
+      Divisions,
+      Tracks,
+      Types,
+      RoomSets,
+      PubStatuses,
+      SessionStatuses
   WHERE
     divisionname='Vendor' and
     trackname='Vendor' and
@@ -227,7 +227,7 @@ if ($session['statusname']=="Vendor Approved") {
         <TD>
           <SPAN><LABEL for="vendorspace">Space Requested: </LABEL>
             <SELECT name="vendorspace">
-              <?php $query="SELECT vendorspaceid, vendorspacename from $ReportDB.VendorSpaces WHERE conid=".$_SESSION['conid']." ORDER BY display_order";
+              <?php $query="SELECT vendorspaceid, vendorspacename from VendorSpaces WHERE conid=".$_SESSION['conid']." ORDER BY display_order";
               populate_select_from_query($query, $session["vendorspaceid"], "SELECT", FALSE); ?>
             </SELECT><br><br>
           </SPAN>
@@ -247,7 +247,7 @@ if ($session['statusname']=="Vendor Approved") {
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                              <SELECT class="selectfwidth" id="featsrc" name="featsrc" size=6 multiple>
-                                <?php populate_multisource_from_table("$ReportDB.VendorFeatures", $session["vendfeatdest"]); ?></SELECT>
+                                <?php populate_multisource_from_table("VendorFeatures", $session["vendfeatdest"]); ?></SELECT>
                              </SPAN>
                         <SPAN class="thickobject">
                             <BUTTON onclick="fadditems(document.sessform.featsrc,document.sessform.featdest)"
@@ -258,7 +258,7 @@ if ($session['statusname']=="Vendor Approved") {
                     <DIV class="tab-row">
                         <SPAN class="tab-cell">
                             <SELECT class="selectfwidth" id="featdest" name="vendfeatdest[]" size=6 multiple >
-                                <?php populate_multidest_from_table("$ReportDB.VendorFeatures", $session["vendfeatdest"]); ?></SELECT>
+                                <?php populate_multidest_from_table("VendorFeatures", $session["vendfeatdest"]); ?></SELECT>
                             </SPAN>
                         </DIV>
                 </DIV> <!-- VendorFeatures --> 
@@ -267,7 +267,7 @@ if ($session['statusname']=="Vendor Approved") {
         <TD>
           <SPAN><LABEL for="vendfeatdest">Extras (Use the Control-Click to select multiple extras.):</LABEL><BR>
             <SELECT name="vendfeatdest[]" size=8 multiple >
-              <?php populate_multiselect_from_table("$ReportDB.VendorFeatures", $session["vendfeatdest"]); ?>
+              <?php populate_multiselect_from_table("VendorFeatures", $session["vendfeatdest"]); ?>
             </SELECT><br><br>
           </SPAN>
         </TD>
@@ -276,7 +276,7 @@ if ($session['statusname']=="Vendor Approved") {
         <TD>
           <SPAN><LABEL for="vendorloadin">What time do you prefer for load in?  Note: You are not guaranteed a requested load-in time.</LABEL><BR>
             <SELECT name="vendorloadin">
-              <?php $query="SELECT vendorloadinid, vendorloadinname from $ReportDB.VendorLoadin WHERE conid=".$_SESSION['conid']." ORDER BY display_order";
+              <?php $query="SELECT vendorloadinid, vendorloadinname from VendorLoadin WHERE conid=".$_SESSION['conid']." ORDER BY display_order";
               populate_select_from_query($query, $session["vendorloadinid"], "SELECT", FALSE); ?>
             </SELECT><br>
             &nbsp;&nbsp; * Are arriving after 7:30pm on Friday and will be responsible for own load-in.  The function rooms will be locked at 8pm on Friday, and will not open again until 9am on Saturday.<br><br>

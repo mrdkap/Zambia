@@ -245,6 +245,7 @@ for ($i=1; $i<=$conrows; $i++) {
     $vendbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
     $vendbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
     $vendbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"vendor\">\n";
+    $vendbody.="        <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
     $vendbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"New Vendor Application\">\n";
     $vendbody.="      </FORM>\n</LI>\n";
   }

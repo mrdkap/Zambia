@@ -33,7 +33,7 @@ if (may_I("Vendor")) {
   echo "  <LI> <A HREF=\"VendorSearch.php\">List </A>the known vendors.\n";
   echo "  <LI> <A HREF=\"VendorSubmitVendor.php\">Update</A> your contact (vendor) information.\n";
   if (may_I("vendor_apply")) {
-    echo "  <LI> <A HREF=\"VendorApply.php\">Check, update, or apply</A> to be a vendor for ".CON_NAME.".\n";
+    echo "  <LI> <A HREF=\"VendorApply.php\">Check, update, or apply</A> to be a vendor for ".$_SESSION['conname'].".\n";
   }
   echo "</UL>\n";
 } else { 
@@ -52,7 +52,7 @@ if (may_I("Vendor")) {
   echo "  <LI> If you remember your Login number, and password, <A HREF=\"login.php\">log\n";
   echo "    in</A> to the system.</LI>\n";
   echo "  <LI> If you remember your Login number, but not your password, please email\n";
-  echo "    <A HREF=mailto:".VENDOR_EMAIL.">".VENDOR_EMAIL."</A> for assistance.</LI>\n";
+  echo "    <A HREF=mailto:".$_SESSION['vendoremail'].">".$_SESSION['vendoremail']."</A> for assistance.</LI>\n";
   echo "</OL>\n";
 }
   } // end of local words
@@ -60,7 +60,7 @@ if (may_I("Vendor")) {
   if (file_exists("../Local/Verbiage/VendorWelcome_1")) {
     echo file_get_contents("../Local/Verbiage/VendorWelcome_1");
   } else { 
-    echo "<P>We are not accepting new vendors at this time for ".CON_NAME.".</P>\n";
+    echo "<P>We are not accepting new vendors at this time for ".$_SESSION['conname'].".</P>\n";
     echo "<P>You may still use the \"Search\" tab to view the vendors who might be attending and/or those that have been accepted.</P>\n";
   }
 } //end of brainstorm/vendor not permitted

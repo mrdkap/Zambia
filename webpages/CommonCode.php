@@ -89,12 +89,7 @@ foreach ($ConInfo_array_keys as $element) {
   if ($_SESSION["$element"]=="") {$_SESSION["$element"]=$ConInfo_array["$element"];}
 }
 
-// Find the instances of the below, and, if few enough, call there, instead of here.
 // Somewhere DOUBLE_SCHEDULE dissapeared.  Find it, and fix it.
-define("CON_NAME",$ConInfo_array['conname']);
-define("VENDOR_EMAIL",$ConInfo_array['vendoremail']);
-define("PROGRAM_EMAIL",$ConInfo_array['programemail']);
-
 // ADD newroomslots to coninfo
 define("newroomslots",5); // number of rows at bottom of page for new schedule entries
 $_SESSION['newroomslots']=5;

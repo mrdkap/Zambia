@@ -48,7 +48,7 @@ if ((isset ($_POST['update'])) and ($_POST['update']=="Yes")) {
     if (($_POST['password']!="") and ($_POST['password']==$_POST['cpassword'])) {
       $_POST['password']=md5($_POST['cpassword']);
     } else {
-      $message_error.="Passwords do not match each other.  Please contact the ".VENDOR_EMAIL." for further help.";
+      $message_error.="Passwords do not match each other.  Please contact the ".$_SESSION['vendoremail']." for further help.";
     }
     list($message,$message_error)=create_participant ($_POST,$permrole_arr);
     $message.="Account Created.  Click on the Login Number on the <A HREF=\"VendorSearch.php\">List</A> page, to login with your new password.";

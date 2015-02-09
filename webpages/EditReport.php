@@ -1,6 +1,8 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
+
+// LOCALIZATIONS
 $title="Edit Reports";
 $description="<P>Use this page to edit reports.</P>\n";
 $additionalinfo="<P>A report has to be in a <A HREF=EditGroupFlows.php>Group</A> to work.</P>\n";
@@ -17,13 +19,13 @@ if (!may_I("Maint")) {
 // Submit the report, if there was one, when this is called
 if ((isset($_POST["reportupdate"])) and ($_POST["reportupdate"]!="")) {
   if ($_POST["selreport"] == "-1") {
-    $element_array=array('reportname','reporttitle','reportdescription','reportadditionalinfo','reportquery','reportrestrictions');
+    $element_array=array('reportname','reporttitle','reportdescription','reportadditionalinfo','reportrestrictions','reportquery');
     $value_array=array(htmlspecialchars_decode($_POST["reportname"]),
 		       htmlspecialchars_decode($_POST["reporttitle"]),
 		       htmlspecialchars_decode($_POST["reportdescription"]),
 		       htmlspecialchars_decode($_POST["reportadditionalinfo"]),
-		       htmlspecialchars_decode(refrom($_POST["reportquery"])),
-                       "NULL");
+		       htmlspecialchars_decode($_POST["reportrestrictions"]),
+		       htmlspecialchars_decode(refrom($_POST["reportquery"])));
     $message.=submit_table_element($link, $title, "Reports", $element_array, $value_array);
   } else {
     $pairedvalue_array=array("reportdescription='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportdescription"])))."'",
@@ -159,7 +161,7 @@ EOD;
   <SPAN><LABEL for="reporttitle"><BR><B>Title:</B><BR></LABEL>
   <INPUT type="text" size=72 name="reporttitle" id="reporttitle" value="<?php echo htmlspecialchars($reporttitle) ?>"></SPAN>
 <?php } else { ?>
-  <P>Edit <?php echo htmlspecialchars($reporttitle)?> for <?php echo CON_NAME; ?>:
+  <P>Edit <?php echo htmlspecialchars($reporttitle)?> for <?php echo $_SESSION['conname']; ?>:
 <DIV class="titledtextarea">
 <?php } ?>
   <LABEL for="reportdescription">Description:</LABEL>

@@ -1,16 +1,7 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
-$ConName=CON_NAME;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
-// LOCALIZATIONS
-$_SESSION['return_to_page']="ConStaffBios.php";
 $conid=$_GET['conid'];
 
 // Test for conid being passed in
@@ -19,10 +10,12 @@ if ($conid == "") {
 }
 
 // Set the conname from the conid
-$query="SELECT conname from $ReportDB.ConInfo where conid=$conid";
+$query="SELECT conname from ConInfo where conid=$conid";
 list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
 $conname=$conname_array[1]['conname'];
 
+// LOCALIZATIONS
+$_SESSION['return_to_page']="ConStaffBios.php";
 $title="Organizational Chart for $conname";
 $description="<P>List of all organizers, their roles, who reports to them, and who they report to.</P>\n";
 $additionalinfo="";
@@ -35,13 +28,13 @@ SELECT
     group_concat(DISTINCT '    <LI><A HREF="#',CRB.conrolename,'">',CRB.conrolenotes,'</A></LI>' SEPARATOR '\n') AS Reports,
   concat('  <DT><A NAME="',CRA.conrolename,'.desc" HREF="#',CRA.conrolename,'">',CRA.conrolenotes,'</A></DT>\n   <DD>',CRA.conroledescription,'</DD>\n') AS Description
   FROM
-      $ReportDB.ConRoles CRA
-    LEFT JOIN $ReportDB.UserHasConRole UHCR ON (UHCR.conroleid=CRA.conroleid AND UHCR.conid=$conid)
-    LEFT JOIN $ReportDB.Participants USING (badgeid)
-    LEFT JOIN $ReportDB.HasReports HRA ON (HRA.conroleid=CRA.conroleid AND HRA.conid=$conid)
-    LEFT JOIN $ReportDB.ConRoles CRB ON (CRB.conroleid=HRA.hasreport)
-    LEFT JOIN $ReportDB.HasReports HRB ON (HRB.hasreport=CRA.conroleid AND HRB.conid=$conid)
-    LEFT JOIN $ReportDB.ConRoles CRC ON (CRC.conroleid=HRB.conroleid)
+      ConRoles CRA
+    LEFT JOIN UserHasConRole UHCR ON (UHCR.conroleid=CRA.conroleid AND UHCR.conid=$conid)
+    LEFT JOIN Participants USING (badgeid)
+    LEFT JOIN HasReports HRA ON (HRA.conroleid=CRA.conroleid AND HRA.conid=$conid)
+    LEFT JOIN ConRoles CRB ON (CRB.conroleid=HRA.hasreport)
+    LEFT JOIN HasReports HRB ON (HRB.hasreport=CRA.conroleid AND HRB.conid=$conid)
+    LEFT JOIN ConRoles CRC ON (CRC.conroleid=HRB.conroleid)
   WHERE
     HRA.conid=$conid
   GROUP BY

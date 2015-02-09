@@ -25,7 +25,7 @@ topofpagereport($title,$description,$additionalinfo);
    <DD>Assign sessions at particular times in a room.</DD>
    <DT><A HREF="NoteOnParticipant.php">Participant Notes</A></DT>
    <DD>Add flow notes and notes on out of band communications with Program Participants.</DD>
-   <DT><A HREF="CommentOnParticipants.php">Participant Comments</A></DT>
+   <DT><A HREF="StaffCommentOnParticipants.php">Participant Comments</A></DT>
    <DD>Add comments and feedback specifically for Program Participants.</DD>
 <?php if(may_I("SendEmail")) { ?>
    <DT><A HREF="StaffSendEmailCompose.php">Set up Email to be sent.</A></DT>

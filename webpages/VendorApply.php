@@ -196,8 +196,8 @@ EOD;
    event, or update your requirements.  During different phases of this
    process, you might or might not be able to change what you have bid.
   If there is something you need to change, but cannot change here,
-  please, use the email us at <A HREF="mailto: <?php echo VENDOR_EMAIL ?>">
-  <?php echo VENDOR_EMAIL ?></A> post-haste, to see if your adjustments
+  please, use the email us at <A HREF="mailto: <?php echo $_SESSION['vendoremail'] ?>">
+  <?php echo $_SESSION['vendoremail'] ?></A> post-haste, to see if your adjustments
   can be made.</P>
 
 <P>Your current status is: 

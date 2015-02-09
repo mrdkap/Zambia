@@ -2,14 +2,7 @@
 $title="Administer Participants";
 require_once('StaffCommonCode.php');
 require_once('SubmitAdminParticipants.php');
-
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // Collaps the three choices into one
 if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
@@ -51,7 +44,7 @@ $query = <<<EOD
 SELECT
     pubsname
   FROM
-      $ReportDB.Participants
+      Participants
   WHERE
     badgeid=$selpartid
 EOD;
@@ -69,11 +62,11 @@ $query = <<<EOD
 SELECT
     interestedtypeid
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.Interested I USING (badgeid)
+      Participants
+    JOIN Interested USING (badgeid)
   WHERE
     badgeid=$selpartid AND
-    I.conid=$conid
+    conid=$conid
 EOD;
 
 if (!$result=mysql_query($query,$link)) {
@@ -93,9 +86,9 @@ list($interested)= mysql_fetch_array($result, MYSQL_NUM);
   <INPUT type="hidden" name="partid" value="<?php echo $selpartid; ?>">
   <INPUT type="hidden" name="update" value="please">
   <LABEL for="interested">Participant is interested and available to participate in 
-  <?php echo CON_NAME; ?>:</LABEL>
+  <?php echo $_SESSION['conname']; ?>:</LABEL>
   <SELECT name="interested">
-  <?php populate_select_from_table("$ReportDB.InterestedTypes", $interested, " ", FALSE); ?>
+  <?php populate_select_from_table("InterestedTypes", $interested, " ", FALSE); ?>
   </SELECT>
   <B>*** Changing this to no will remove the particpant from all sessions. ***</B><BR>
   <div class="password">

@@ -4,7 +4,7 @@ global $link;
 
 $title=$_SESSION['conname'] . " - Precis";
 $description="<P>If you have any questions, please contact: ";
-$description.="<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A></P>\n";
+$description.="<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A></P>\n";
 
 $_SESSION['return_to_page']="ViewPrecis.php";
 

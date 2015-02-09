@@ -193,7 +193,7 @@ if ($message!="") {
 <?php /*  This should not (necessarily) be modifiable by the user.  See Welocme page for more info
     <div class="divlistbox">
       <span class="spanlabcb">I am interested and able to participate in
-        programming for <?php echo CON_NAME; ?>&nbsp;</span>
+        programming for <?php echo $_SESSION['conname']; ?>&nbsp;</span>
       <?php $int=$participant['interested']; ?>
       <span class="spanvalcb"><SELECT name=interested class="yesno">
             <OPTION value=0 <?php if ($int==0) {echo "selected";} ?> >&nbsp</OPTION>

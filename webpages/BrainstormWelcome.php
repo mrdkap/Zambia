@@ -36,14 +36,14 @@ physically possible with the space and time we have, so not
 everything will make it.   We do save good ideas for future conventions. 
 <UL> 
   <LI> <A HREF="BrainstormReport.php?status=search">Search </A> for similar ideas or get inspiration.
-  <LI> Email <?php echo "<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A> ";?> to suggest modifications on existing suggestion.
+  <LI> Email <?php echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A> ";?> to suggest modifications on existing suggestion.
   <LI> <A HREF="BrainstormCreateSession.php">Enter a new suggestion.</A>
   <LI> See the list of <A HREF="BrainstormReport.php?status=all">All</A> suggestions (we have seen some and not see others).
   <LI> See the list of <A HREF="BrainstormReport.php?status=unseen">New</A> suggestions that have been entered recently (may not be fit for young eyes, we have not see these yet). 
   <LI> See the list of <A HREF="BrainstormReport.php?status=reviewed">Reviewed</A> suggestions we are currently working through.
   <LI> See the list of <A HREF="BrainstormReport.php?status=likely">Likely to Occur</A> suggestions we are or will allow participants to sign up for. 
   <LI> See the list of <A HREF="BrainstormReport.php?status=scheduled">Scheduled</A> suggestions.  These are very likely to happen at con.
-  <LI> Email <?php echo "<A HREF=\"mailto:".PROGRAM_EMAIL."\">".PROGRAM_EMAIL."</A> ";?> to volunteer to help process these ideas.
+  <LI> Email <?php echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A> ";?> to volunteer to help process these ideas.
 <?php 
       if(may_I('Participant')) {
            echo '<li> <a href="welcome.php">Return To Participant View</a>';
@@ -55,7 +55,7 @@ everything will make it.   We do save good ideas for future conventions.
      if (file_exists("../Local/Verbiage/BrainstormWelcome_1")) {
        echo file_get_contents("../Local/Verbiage/BrainstormWelcome_1");
      } else { ?>
-<P> We are not accepting suggestions at this time for <?php echo CON_NAME;?>.
+<P> We are not accepting suggestions at this time for <?php echo $_SESSION['conname'];?>.
 <P> You may still use the "Search Sessions" tab to view the sessions which have been selected and to read their precis.  Note,
  many of these sessions will still not be scheduled if there is too little participant interest or if a suitable location and time
  slot is not available. </P> 
@@ -63,5 +63,5 @@ everything will make it.   We do save good ideas for future conventions.
      } // end of local words
    } //end of if brainstorming not permitted ?>
 <P>Thank you and we look forward to reading your suggestions,<br>
-<A HREF="mailto: <?php echo PROGRAM_EMAIL."\">".PROGRAM_EMAIL; ?></A></P>
+<A HREF="mailto: <?php echo $_SESSION['programemail']."\">".$_SESSION['programemail']; ?></A></P>
 <?php correct_footer(); ?>

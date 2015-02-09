@@ -7,6 +7,8 @@ if (may_I("Staff")) {
  }
 require_once('SubmitCommentOn.php');
 global $link;
+
+// LOCALIZATIONS
 $title="Comment On Programming";
 $description="<P>Please add your comments about programming in the box, below</P>";
 
@@ -19,7 +21,7 @@ if (isset($_POST["comment"])) {
 
 ?>
 <FORM name="programcommentform" method=POST action="CommentOnProgramming.php">
-  <P>Comment on <?php echo CON_NAME; ?>:
+  <P>Comment on <?php echo $_SESSION['conname']; ?>:
 <DIV class="titledtextarea">
   <LABEL for="comment">Comment:</LABEL>
   <TEXTAREA name="comment" rows=6 cols=72></TEXTAREA>

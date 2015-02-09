@@ -120,11 +120,11 @@ SELECT
       "</A>") AS Title,
     pubsname AS 'Participants',
     badgeid,
-    GROUP_CONCAT(DISTINCT "<A HREF=\"PubsSched.php?format=sched&conid=$conid#",
+    concat("<A HREF=\"PubsSched.php?format=sched&conid=$conid#",
       DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),
       "\"><i>",
       DATE_FORMAT(ADDTIME(constartdate,starttime),"%a %l:%i %p"),
-      "</i></A>" SEPARATOR ", ") AS "Start Time",
+      "</i></A>") AS "Start Time",
     CASE
       WHEN HOUR(duration) < 1 THEN
         concat(date_format(duration,'%i'),'min')
@@ -133,11 +133,11 @@ SELECT
       ELSE
         concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
       END AS Duration,
-    GROUP_CONCAT(DISTINCT "<A HREF=\"PubsSched.php?format=rooms&conid=$conid#",
+    concat("<A HREF=\"PubsSched.php?format=rooms&conid=$conid#",
       roomname,
       "\"><i>",
       roomname,
-      "</i></A>" SEPARATOR ", ") AS Room,
+      "</i></A>") AS Room,
     if(DATE_ADD(constartdate,INTERVAL connumdays DAY) > NOW(),
       concat('<A HREF=PrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>'),
       '') AS iCal,
@@ -221,8 +221,6 @@ SELECT
     (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
     (introducer IS NULL OR introducer not in ('1','Yes')) AND
     (aidedecamp IS NULL OR aidedecamp not in ('1','Yes'))
-  GROUP BY
-    sessionid
   ORDER BY
     pubsname,
     starttime

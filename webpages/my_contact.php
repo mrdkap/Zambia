@@ -1,9 +1,13 @@
 <?php
-global $participant,$message,$message_error,$message2,$congoinfo;
 // initialize db, check login, set $badgeid from session
 require_once('PartCommonCode.php');
+global $participant,$message,$message_error,$message2,$congoinfo;
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
+
+// LOCALIZATIONS
 $title="My Profile";
+$description="<P>This is the informaton we have for you</P>\n";
+$additionalinfo="<P>Please, read, and if necessary update the below.</P>\n";
 
 //Get the reg email (switched to brainstorm coordinator)
 //     conrolename like '%Registration%' AND
@@ -171,7 +175,7 @@ if (strlen($participant["pubsname"])<1) {
 }
 
 // Begin the page display.
-participant_header($title);
+topofpagereport($title,$description,$additionalinfo);
 
 // Illuminate any errors.
 if ($message_error!="") {

@@ -1,16 +1,21 @@
 <?php 
-$title="Login";
-$description="";
-$additionalinfo="";
-global $link, $message;
-
 /* Adjust conid */
 $newconid=$_POST['newconid'];
 if ($newconid=="") {$newconid=$_GET['newconid'];}
 if ($newconid!="") {define("CON_KEY",$newconid);}
 
 require_once('PartCommonCode.php');
+global $link, $message;
 
+// LOCALIZATIONS
+$title="Login";
+$description="";
+$additionalinfo="";
+
+// Default role is Participant, so at least something familiar shows.
+if (empty($_SESSION['role'])) {$_SESSION['role']="Participant";}
+
+// Blank return string to start with
 $webstring="";
 
 /* For passed in login ids */
@@ -52,7 +57,7 @@ if (file_exists("../Local/Verbiage/login_0")) {
  }
 
 if ($included!="YES") {
-  participant_header($title);
+  topofpagereport($title,$description,$additionalinfo);
   echo $webstring;
   correct_footer();
 }

@@ -1,16 +1,13 @@
 <?php
 require_once('PartCommonCode.php');
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
-
 global $message,$message_error,$message2;
-$title="My General Interests";
 $badgeid=$_SESSION['badgeid'];
 $conid=$_SESSION['conid'];
+
+// LOCALIZATIONS
+$title="My General Interests";
+$description="";
+$additionalinfo="";
 
 // ParticipantInterests
 $query = <<<EOD
@@ -21,7 +18,7 @@ SELECT
     nopeople,
     otherroles
   FROM
-      $ReportDB.ParticipantInterests
+      ParticipantInterests
   WHERE
     conid=$conid AND
     badgeid="$badgeid"
@@ -59,7 +56,7 @@ SELECT
     roleid,
     rolename
   FROM
-      $ReportDB.Roles
+      Roles
   ORDER BY
     display_order
 EOD;
@@ -72,7 +69,7 @@ $query = <<<EOD
 SELECT
     roleid
   FROM 
-      $ReportDB.ParticipantHasRole
+      ParticipantHasRole
   WHERE
     badgeid="$badgeid" AND
     conid=$conid
@@ -104,7 +101,7 @@ if ($_POST['update']=="YES") {
 		       mysql_real_escape_string($yespeople,$link),
 		       mysql_real_escape_string($nopeople,$link),
 		       mysql_real_escape_string($otherroles,$link));
-    $message.=submit_table_element($link,$title,"$ReportDB.ParticipantInterests",$element_array,$value_array);
+    $message.=submit_table_element($link,$title,"ParticipantInterests",$element_array,$value_array);
   } else {
     $pairedvalue_array=array("yespanels='".mysql_real_escape_string($yespanels,$link)."'",
 			      "nopanels='".mysql_real_escape_string($nopanels,$link)."'",
@@ -112,7 +109,7 @@ if ($_POST['update']=="YES") {
 			      "nopeople='".mysql_real_escape_string($nopeople,$link)."'",
 			      "otherroles='".mysql_real_escape_string($otherroles,$link)."'");
     $match_string="badgeid='".$_SESSION['badgeid']."' AND conid='".$_SESSION['conid']."'";
-    $message.=update_table_element_extended_match ($link,$title,"$ReportDB.ParticipantInterests",$pairedvalue_array, $match_string);
+    $message.=update_table_element_extended_match ($link,$title,"ParticipantInterests",$pairedvalue_array, $match_string);
   }
 
   // Participant Has Role
@@ -122,13 +119,13 @@ if ($_POST['update']=="YES") {
       if ($parthasroleid_array[$role_array[$i]['roleid']]!="yes") {
 	$element_array=array('conid','badgeid','roleid');
 	$value_array=array($_SESSION['conid'],$_SESSION['badgeid'],$role_array[$i]['roleid']);
-	$message.=submit_table_element($link,$title,"$ReportDB.ParticipantHasRole",$element_array,$value_array);
+	$message.=submit_table_element($link,$title,"ParticipantHasRole",$element_array,$value_array);
 	$parthasroleid_array[$role_array[$i]['roleid']]="yes";
       }
     } else {
       if ($parthasroleid_array[$role_array[$i]['roleid']]=="yes") {
 	$match_string="badgeid='".$_SESSION['badgeid']."' AND conid='".$_SESSION['conid']."' AND roleid='".$role_array[$i]['roleid']."'";
-	$message.=delete_table_element($link,$title,"$ReportDB.ParticipantHasRole",$match_string);
+	$message.=delete_table_element($link,$title,"ParticipantHasRole",$match_string);
 	unset($parthasroleid_array[$role_array[$i]['roleid']]);
       }
     }
@@ -136,7 +133,7 @@ if ($_POST['update']=="YES") {
 }
 
 // Begin Display
-participant_header($title);
+topofpagereport($title,$description,$additionalinfo);
 if ($message_error!="") { 
   echo "<P class=\"errmsg\">$message_error</P>";
 }

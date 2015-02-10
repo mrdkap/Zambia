@@ -89,6 +89,7 @@ $dashstring="<A NAME=\"Dashboard\"></A><H2>Dashboard</H2>\n";
 $dashstring.="<P><CENTER><A HREF=\"genreport.php?reportname=myusefultimecardtabledump\">Time Card Entries</A>\n";
 $dashstring.=":: <A HREF=\"genreport.php?reportname=personalflow\">Reports</A>\n";
 $dashstring.=":: <A HREF=\"genreport.php?reportname=mytasklistdisplay\">Task List</A>\n";
+$dashstring.=":: <A HREF=\"gantt_relative.php\">Gantt Chart</A>\n";
 if (may_I("Liaison")) {
   $dashstring.=":: <A HREF=\"genreport.php?reportname=myliaisonresponsibilities\">Liaison List</A>\n";
 }

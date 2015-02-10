@@ -2,12 +2,6 @@
 require_once('StaffCommonCode.php');
 global $link;
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="gantt_absolute.php";
@@ -42,14 +36,23 @@ SELECT
     CONCAT("<A HREF=TaskListUpdate.php?activityid=",activityid,">",activity,"</A>") as task,
     UNIX_TIMESTAMP(activitystart) as date_start,
     UNIX_TIMESTAMP(targettime) as date_end,
-    donestate
+    donestate,
+    depends
   FROM
-    $ReportDB.TaskList
+      TaskList
+  LEFT JOIN (SELECT
+        H.activityid,
+	H.conid,
+        GROUP_CONCAT(activity SEPARATOR ", ") AS depends
+      FROM
+	  HasDependencies H
+	JOIN TaskList T ON (H.hasdependency=T.activityid and H.conid=T.conid)
+      GROUP BY
+        H.activityid) HD USING (activityid,conid)
   WHERE
     conid=$conid
   ORDER BY
     activitystart
-
 EOD;
 
 list($rows,$nonheader_array,$events_array)=queryreport($query,$link,$title,$description,0);
@@ -105,6 +108,7 @@ $event_list = <<<EOD
     <TH align="center">Start Date</TH>
     <TH align="center">End Date</TH>
     <TH align="center">Done?</TH>
+    <TH aling="center">Depends On</TH>
   </TR>
 
 EOD;
@@ -124,9 +128,11 @@ foreach ( $events_array as $key => $value ) {
   $postwidth = $chart_width_in_px - $position_right;
 	
   // Body of the key
-  $event_list.="  <TR class=\"event_text\">\n    <TD>$task_name</td>\n    <TD align=\"right\">".date('n/j',$value['date_start'])."</TD>\n";
+  $event_list.="  <TR class=\"event_text\">\n    <TD>$task_name</TD>\n";
+  $event_list.="    <TD align=\"right\">".date('n/j',$value['date_start'])."</TD>\n";
   $event_list.="    <TD align=\"right\">".date('n/j',$value['date_end'])."</TD>\n";
-  $event_list.="    <TD align=\"center\" style=\"background: #{$background};\">".$value['donestate']."</TD>\n  </TR>\n";
+  $event_list.="    <TD align=\"center\" style=\"background: #{$background};\">".$value['donestate']."</TD>\n";
+  $event_list.="    <TD align=\"left\">".$value['depends']."</TD>\n  </TR>\n";
 	
   // Body of the Gantt chart
   // add to the display, 

@@ -6,10 +6,18 @@ $_SESSION['return_to_page']='BrainstormSuggestPresenter.php';
 $conid=$_SESSION['conid'];
 
 $title="Suggest a Presenter";
-$description="<P>Note: items in red must be completed before you can save.</P>\n";
-$additionalinfo="<P>Please make sure your name and email address are valid as well\n";
+$description="<P><B>Please\n";
+$description.="<A HREF=\"BrainstormReturningPresenter.php\">check here first</A></B>\n";
+$description.="to see if you can propose simply by clicking on an existing name.</P>\n";
+$additionalinfo="<P>Note: items in red must be completed before you can save.</P>\n";
+$additionalinfo.="<P>Please make sure your name and email address are valid as well\n";
 $additionalinfo.="as that of the presenter. If they are not, the chance that we might\n";
 $additionalinfo.="invite them decreases exponentially.</P>\n";
+$additionalinfo.="<P>If they are\n";
+$additionalinfo.="<A HREF=\"BrainstormReturningPresenter.php\">already in our system</A>\n";
+$additionalinfo.="we will already have all their contact information, and it is likely\n";
+$additionalinfo.="they will be invited back.</P>\n";
+
 
 // Get the permroleid and name for assigning as Participant
 $query= <<<EOD

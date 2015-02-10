@@ -2,7 +2,7 @@
 require_once('VendorCommonCode.php');
 $conid=$_SESSION['conid'];
 
-// Localisms
+// LOCALIZATIONS
 $_SESSION['return_to_page']='VendorWelcome.php';
 $title="Submit Vendor Application";
 

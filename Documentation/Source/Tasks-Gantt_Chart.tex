@@ -1,0 +1,190 @@
+\documentclass[captions=tablesignature]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{booktabs}
+\usepackage[scaled]{beraserif}
+\usepackage[scaled]{berasans}
+\usepackage[scaled]{beramono}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{fancyhdr}
+\usepackage{subfig}
+\usepackage{listings}
+\lstnewenvironment{common-lispcode}
+{\lstset{language={HTML},basicstyle={\ttfamily\footnotesize},frame=single,breaklines=true}}
+{}
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\description\compactdesc
+\let\enumerate\compactenum
+\usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
+\pagestyle{fancy}
+\setcounter{secnumdepth}{3}
+\author{Percy\thanks{NELA.Percy@gmail.com}}
+\date{July 2012}
+\title{Task List and Gantt Chart Usage}
+\hypersetup{
+  pdfkeywords={Zambia, Documentation, FFF branch},
+  pdfsubject={Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.},
+  pdfcreator={}}
+\begin{document}
+
+\maketitle
+\pagenumbering{roman}
+\thispagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{}
+\rhead{}
+\chead{}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+\begin{abstract}
+\vspace{5cm}
+{\LARGE{\textbf{Abstract:\\}}}
+
+\end{abstract}
+\newpage
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+\chead{
+Task List and Gantt Chart Usage
+}
+\lfoot{
+Percy <NELA.Percy@gmail.com>
+}
+\rfoot{\thepage}
+\setcounter{tocdepth}{3}
+\tableofcontents
+\listoftables
+\listoffigures
+\newpage
+\pagenumbering{arabic}
+\section{Introduction}
+\label{sec-1}
+The Task List and the \href{http://en.wikipedia.org/wiki/Gantt_chart}{Gant Chart} are two important tools in running
+your convention.  Zambia provides both with more emphasis on the
+Task List but both are available for use.
+
+\section{My Task List}
+\label{sec-2}
+The task list can be viewed in several different ways.  The easiest
+way to start looking at it is to go to the Staff Overview page, find
+the Dashboard, and click on the "Task List" link, and that will take
+you to your tasks.  You might not have any tasks at this time,
+which, if this is your first exposure to the task list, and you have
+not had anyone else assigning tasks to you, is perfectly
+understandable.  Also, across the top of the page are links to New
+Task, This Event's Tasks, and All Tasks. If you do have tasks, there
+will be several columns.  There is:
+\begin{itemize}
+\item Tasks: the short name of the task, which is a clickable link to
+the update page for that task.
+\item Notes: All information about that task, this field can have
+standard HTML markup in it.
+\item Assigned: Should all be you.
+\item Start Date: When this task should be started by.
+\item Due Date: When this task should be completed by.
+\item Complete?: Shows the state of the task as one of, ("N", "P", "Y")
+which map respectively to not started, partially done, and, yes it
+is complete.
+\item Finished On: This is the date you clicked that it was finished.
+\end{itemize}
+This report can also be found under:
+genreport.php?reportname=mytasklistdisplay
+
+\section{This Events Task List}
+\label{sec-3}
+This report is findable in a number of ways.  It can be found under:
+genreport.php?reportname=tasklistdisplay
+and is in many of the departmental report lists, under the Available
+Reports tab.  This is the list of all the tasks relevant to this
+particular con instance.  Across the top it should have links to
+create a new task, to your personal task list, to the Gantt Chart
+for this event, and to all the tasks from all the cons.  There are
+several columns to this report:
+\begin{itemize}
+\item Tasks: the short name of the task, which is a clickable link to
+the update page for that task.
+\item Notes: All information about that task, this field can have
+standard HTML markup in it.
+\item Assigned: Who the task is assigned to, or who is the one person in
+charge of making sure it is complete.
+\item Start Date: When this task should be started by.
+\item Due Date: When this task should be completed by.
+\item Complete?: Shows the state of the task as one of, ("N", "P", "Y")
+which map respectively to not started, partially done, and, yes it
+is complete.
+\item Finished On: This is the date that it was indicated that it was
+finished. (Note, this might not be the actual finish date,
+depending on how diligently people check their tasks.)
+\end{itemize}
+
+\section{All Tasks}
+\label{sec-4}
+This report is findable in a number of ways.  It can be found under:
+genreport.php?reportname=alltasklistdisplay
+and from the header of other task list reports.  This is mostly
+useful for a look back at other task lists to see if tasks assigned
+then are useful to replicate for tasks assigned now.
+
+\section{Task List Update}
+\label{sec-5}
+Most references to the task name can be clicked on, to allow you to
+update the task.
+The fields are:
+\begin{itemize}
+\item Person assigned: a pull-down list of all the people you have
+permission to assign to the task.  If the person assigned is not
+you, nor someone you can assign tasks to, the chances are, you
+should not be updating this task.  This will give you the "Outside
+your assignment list" message in the "Person assigned:" box.
+\item Task: The task name (fixed)
+\item Note: This is where most of the updating goes, adding or changing
+the "Note:" section of the task.  It can take standard HTML
+markup.
+\item Dependencies: The "[update]" will take you to the add/drop page
+for dependencies, and list the (clickable) dependencies already
+associated with this task.
+\item Targeted Start Time: a RFC-standard date (YYYY-MM-DD) of when
+activities on this task should start.
+\item Targeted Completion Time: a RFC-standard date (YYYY-MM-DD) of when
+activities on this task should be done.
+\item The last field either will have the "Is it done?" with the
+possible states of:
+\begin{itemize}
+\item Yes, it is finished.
+\item It is partially done.
+\item It has not yet been begun.
+\end{itemize}
+or the date upon which it was completed under a "Finished at:"
+field.
+\item The "Update" button.
+\end{itemize}
+It should be fairly straight-forward how to fill this out.
+
+\section{New Task}
+\label{sec-6}
+This just takes you to a blank task list update form, so you can
+fill out all the information.  The additional field is for the task
+name, and you cannot set the completion state, or add dependencies
+here.
+
+\section{Task Replication}
+\label{sec-7}
+Future enhancement.  Nothing further at this time.
+\end{document}

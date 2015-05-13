@@ -154,7 +154,14 @@ Percy, Bendyogagirl &lt;NELA.Percy@gmail.com&gt;
 <li><a href="#sec-1">1. Before beginning</a>
 <ul>
 <li><a href="#sec-1-1">1.1. Definitions</a></li>
-<li><a href="#sec-1-2">1.2. Decisions</a></li>
+<li><a href="#sec-1-2">1.2. Decisions</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1. Standalone/Combination</a></li>
+<li><a href="#sec-1-2-2">1.2.2. Single/Multiple installation</a></li>
+<li><a href="#sec-1-2-3">1.2.3. Webserver</a></li>
+<li><a href="#sec-1-2-4">1.2.4. db_name.php file</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#sec-2">2. Downloading</a></li>
@@ -164,7 +171,18 @@ Percy, Bendyogagirl &lt;NELA.Percy@gmail.com&gt;
 <li><a href="#sec-3-2">3.2. FooterTemplate.html</a></li>
 <li><a href="#sec-3-3">3.3. HeaderTemplate.html</a></li>
 <li><a href="#sec-3-4">3.4. Participant_Images</a></li>
-<li><a href="#sec-3-5">3.5. Verbiage</a></li>
+<li><a href="#sec-3-5">3.5. Verbiage</a>
+<ul>
+<li><a href="#sec-3-5-1">3.5.1. BrainstormWelcome_0</a></li>
+<li><a href="#sec-3-5-2">3.5.2. Introduction_Blurb_0</a></li>
+<li><a href="#sec-3-5-3">3.5.3. Schedule_Blurb_0</a></li>
+<li><a href="#sec-3-5-4">3.5.4. StaffPage_0</a></li>
+<li><a href="#sec-3-5-5">3.5.5. Volunteer_Jobs_0</a></li>
+<li><a href="#sec-3-5-6">3.5.6. Welcome_Letter_Presenters_0</a></li>
+<li><a href="#sec-3-5-7">3.5.7. Welcome_Letter_Presenters_and_Volunteers_0</a></li>
+<li><a href="#sec-3-5-8">3.5.8. Welcome_Letter_Volunteers_0</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#sec-4">4. Database setup</a>
@@ -262,7 +280,7 @@ there) you must also have:
 <div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Definitions</h3>
 <div class="outline-text-3" id="text-1-1">
-<table id="tbl:acronymsdefinitions" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="tbl:acronymsdefinitions" border="1" cellspacing="0" cellpadding="6" rules="all" frame="border">
 <caption align="above"><span class="table-number">Table 1:</span> Acronyms and Definitions</caption>
 
 <colgroup>
@@ -413,11 +431,11 @@ would all be candidtates to be inthe Localization database.
 </li>
 <li>Registration email.
 </li>
-<li>Number of days the con will run (code works for 1-8 currently.) 
+<li>Number of days the con will run (code works for 1-8 currently.)
 </li>
 <li>Date and time the con will start (In the format of yyyy-mm-dd
 HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
-start time.) 
+start time.)
 </li>
 <li>URL of the con (without the leading <a href="http://">http://</a> in the URL.)
 </li>
@@ -477,7 +495,7 @@ biographical information requirements.)
 </li>
 <li>Maximum web biography character length (Some cons have a
 different limits for what is on the web, and what is in the
-book, 3000 characters is a good starting default for the WWW.) 
+book, 3000 characters is a good starting default for the WWW.)
 </li>
 <li>Minimum book biography character length (Some cons have minimum
 biographical information requirements.)
@@ -511,7 +529,7 @@ as well.)
 <li>Maximum book precis character length
 </li>
 <li>Minimum precis title character length (You need a precis title
-of at least this long to be acceptable, 5 as a good default.) 
+of at least this long to be acceptable, 5 as a good default.)
 </li>
 <li>Maximum precis title character length (50 as a good default.)
 </li>
@@ -534,7 +552,7 @@ information currently resides.
 <ul class="org-ul">
 <li>Is this a bilingual event (This should probably be set to
 "FALSE" due to it's lack of complete support across the system,
-and the next few elements in this list, ignored.) 
+and the next few elements in this list, ignored.)
 </li>
 <li>What the second language is.
 </li>
@@ -658,7 +676,7 @@ suggestions you submit to evolve over time.&lt;/P&gt;
 &lt;P&gt; Also, please note that we always have more suggestions than are
 physically possible with the space and time we have, so not everything
 will make it.  We do save good ideas for future conventions.&lt;/P&gt;
-&lt;UL&gt; 
+&lt;UL&gt;
   &lt;LI&gt; &lt;A HREF="BrainstormSearchSession.php"&gt;Search&lt;/A&gt; for similar
   ideas or get inspiration.
   &lt;LI&gt; Email &lt;A HREF="mailto:program@ourcon.org"&gt;
@@ -960,7 +978,7 @@ what you are using for <b>DBHOSTNAME</b>).
 </li>
 <li>Each of the alternate database locators that will be used:
 (<b>BIODB</b>), (<b>REPORTDB</b>), (<b>CONGODB</b>), (<b>LIMITDB</b>), (<b>LOCALDB</b>),
-(<b>TIMECARDDB</b>) 
+(<b>TIMECARDDB</b>)
 </li>
 <li>your host name (<b>MYHOST</b>) (If you are setting things up on the
 same machine that MySQL is running on, <i>localhost</i> should be what
@@ -1004,7 +1022,7 @@ etc. with the proper bits of information.
 </p>
 
 <ul class="org-ul">
-<li>Log into the database: (it should ask you for your MySQL root password) 
+<li>Log into the database: (it should ask you for your MySQL root password)
 </li>
 </ul>
 <div class="org-src-container">
@@ -1148,7 +1166,7 @@ Sharing them is as simple as, say, exporting your new report called
 </p>
 <div class="org-src-container">
 
-<pre class="src src-html">echo "SELECT * FROM Reports WHERE reportname='voltimepanelists';" | 
+<pre class="src src-html">echo "SELECT * FROM Reports WHERE reportname='voltimepanelists';" |
 mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME &gt; ./NewReports.sql
 </pre>
 </div>
@@ -1303,7 +1321,7 @@ The script is invoked as:
 <h2 id="sec-10"><span class="section-number-2">10</span> Quick and dirty</h2>
 <div class="outline-text-2" id="text-10">
 <p>
-To build a quick and dirty copy on the same machine as another running version: 
+To build a quick and dirty copy on the same machine as another running version:
 </p>
 <ul class="org-ul">
 <li>for i in ../Zambia-FFF/* ; do ln -s $i . ; done
@@ -1334,10 +1352,10 @@ To update them all do:
 <div class="org-src-container">
 
 <pre class="src src-html">for i in FFF-[34]*
-  do 
+  do
     pushd $i/webpages
     for j in ../../Zambia-FFF/webpages/*
-      do 
+      do
 	ln -s $j .
       done
     popd
@@ -1486,6 +1504,7 @@ described in the PhaseTypes table.
 <li>phasestate: If a phase is active.
 </li>
 </ul>
+
 <p>
 An example of phase shifting, is when you open your call for
 presenters, or you close your call for vendors, or you allow
@@ -1540,19 +1559,21 @@ table.  It is in the format of:
 <li>badgeid: The unique id of an individual in Zambia.
 </li>
 <li>permroleid: One of the set of permissions that an individual will
-have for this con. 
+have for this con.
 </li>
 <li>conid: The con that these permission are for.  This should be set
-to whatever conid you are creating. 
+to whatever conid you are creating.
 </li>
 </ul>
+
 <p>
-If you want to only add your particular badgeid,permroleid,conid
-information, and then use the AdminParticipants.php page to select
-them, and then the "Edit &lt;INDIVIDUAL&gt; Further" link at the bottom
+If you want to only add your particular badgeid, permroleid, conid
+information, and then use the "Migrate Participant from another
+con-instance" link under the "Manage Participants &amp; Schedule" tab 
 to give each the right permissions, that will work as well.  But at
 least you will need to be set up, so you can grant other people
-access.
+access.  The use of that page is well documented in the
+Presenter_Flow document in this directory.
 </p>
 </div>
 </div>
@@ -1592,15 +1613,26 @@ table.  It is in the format of:
 <ul class="org-ul">
 <li>badgeid: The unique id of an individual in Zambia.
 </li>
-<li>permroleid: A role that an individual will have for this con.
+<li>conroleid: A role that an individual will have for this con.
 </li>
 <li>conid: The con that the role is for.  This should be set to
 whatever conid you are creating.
 </li>
 </ul>
+
 <p>
 You can always go back and add to this, as the shape of your con
 fills in.
+</p>
+
+<p>
+If you want to only add your particular badgeid, permroleid, conid
+information, and then use the "Migrate Participant from another
+con-instance" link under the "Manage Participants &amp; Schedule" tab 
+to give each the right permissions, that will work as well.  But at
+least you will need to be set up, so you can grant other people
+access.  The use of that page is well documented in the
+Presenter_Flow document in this directory.
 </p>
 </div>
 </div>
@@ -1636,7 +1668,7 @@ reporting to them.  You can add them to the table as:
 </p>
 <ul class="org-ul">
 <li>conid: The con that these reports are for.  This should be set
-to whatever conid you are creating. 
+to whatever conid you are creating.
 </li>
 <li>conroleid: This is the role that has others reporting to them
 </li>
@@ -1644,6 +1676,7 @@ to whatever conid you are creating.
 specified original conroleid.
 </li>
 </ul>
+
 <p>
 On the other hand, if you just want to mirror them, quickly, from
 another instance of your con you could always (replacing $origconid
@@ -1731,6 +1764,7 @@ entry to.
 <li>publimnote: Any notes you want to have about the limit.
 </li>
 </ul>
+
 <p>
 On the other hand, if you just want to mirror them, quickly, from
 another instance of your con you could always (replacing $origconid
@@ -1767,84 +1801,16 @@ room, there might not be much there to choose between, but, with
 many rooms, or different room functions depending on the time of
 day (say, needing curtains in the daytime, and dimable lights, so
 that projection will work correctly) so scheduling can happen more
-easily.  To see what was set on a previous instance of your con,
-you can use a query (replacing the $conid with the previous con you
-want to model on) like:
+easily.
 </p>
-<div class="org-src-container">
 
-<pre class="src src-html">SELECT
-    *
-  FROM
-      Services
-  WHERE
-    conid=$conid;
-</pre>
-</div>
 <p>
-And: 
-</p>
-<div class="org-src-container">
-
-<pre class="src src-html">SELECT
-    *
-  FROM
-      Features
-  WHERE
-    conid=$conid;
-</pre>
-</div>
-<p>
-The values are:
-</p>
-<ul class="org-ul">
-<li>serviceid/featureid: Unique id for the entry (key).
-</li>
-<li>servicename/featurename: A description of the thing available.
-</li>
-<li>conid: The con that these things are available for .  This should
-be set to whatever conid you are creating.
-</li>
-<li>display_order: For the select boxes, if you want to reorder
-things, this forces the ordering.
-</li>
-</ul>
-<p>
-On the other hand, if you just want to mirror them, quickly, from
-another instance of your con you could always (replacing $origconid
-with the previous con you want to model on, and $conid with the
-current one) run:
-</p>
-<div class="org-src-container">
-
-<pre class="src src-html">SELECT
-    concat("('",servicename,"',$conid,'",display_order,"'),") AS Prev
-  FROM
-      Services
-  WHERE
-    conid=$origconid;
-</pre>
-</div>
-<p>
-And:
-</p>
-<div class="org-src-container">
-
-<pre class="src src-html">SELECT
-    concat("('",featurename,"',$conid,'",display_order,"'),") AS Prev
-  FROM
-      Features
-  WHERE
-    conid=$origconid;
-</pre>
-</div>
-<p>
-Then just massage the data slightly, and you have the insert you
-can do to mirror the previous con.
+To select (or update the selection) of services and features
+available for this con-instance, use the AdminSetupServices.php
+page.
 </p>
 </div>
 </div>
-
 <div id="outline-container-sec-13-3" class="outline-3">
 <h3 id="sec-13-3"><span class="section-number-3">13.3</span> Rooms</h3>
 <div class="outline-text-3" id="text-13-3">
@@ -1880,7 +1846,7 @@ with the previous con you want to model on) like:
 </pre>
 </div>
 <p>
-And: 
+And:
 </p>
 <div class="org-src-container">
 
@@ -1899,7 +1865,7 @@ The values are:
 <li>vendorspaceid/vendorfeatureid: Unique id for the entry (key).
 </li>
 <li>vendorspacename/vendorfeaturename: A description, plus the price
-in an easily understandable format, so the vendors know what to 
+in an easily understandable format, so the vendors know what to
 select for their comfort and profit.
 </li>
 <li>vendorspaceprice/vendorfeatureprice: Numeric representation of
@@ -1914,6 +1880,7 @@ possibilities, this forces the ordering to what you want it to
 be.
 </li>
 </ul>
+
 <p>
 On the other hand, if you just want to mirror them, quickly, from
 another instance of your con you could always (replacing $origconid
@@ -1972,6 +1939,9 @@ If your questions are not appropriate for this particular event,
 you might want to add a question type to cover it, in the
 QuestionTypes table, and then add the questions to the
 QuestionsForSurvey table.
+</p>
+
+<p>
 The values for QuestionTypes are:
 </p>
 <ul class="org-ul">
@@ -1982,6 +1952,7 @@ The values for QuestionTypes are:
 <li>questiontypenotes: A more indepth description of the question type.
 </li>
 </ul>
+
 <p>
 The values for the QuestionsForSurvey are:
 </p>
@@ -2010,20 +1981,23 @@ it down by time period, another is to break it down by class type.
 Once you have broken them down, this table sets up the various
 possible views.  At least one view should be set to "single class",
 so that the reference from the descriptions etc will work.
+</p>
+
+<p>
 The values for FeedbackPages are:
 </p>
 <ul class="org-ul">
 <li>fpageid: Unique key for this table (it should auto-increment).
 </li>
-<li>conid: For which con is this page relevant.  
+<li>conid: For which con is this page relevant.
 </li>
 <li>fppagedesc: The short description of the page contents.
 </li>
 <li>fpagestart: The start time of the schedule elements that this
-page covers
+page covers.
 </li>
 <li>fpageend: The end time of the schedule elements that this page
-covers 
+covers.
 </li>
 <li>fpagecols: The number of columns at the top of the printed page.
 </li>
@@ -2031,6 +2005,7 @@ covers
 page, from the QuestionTypes table.
 </li>
 </ul>
+
 <p>
 The type of schedule elements included in each possible Feedback
 page is set in the FeedbackPageHasType.  This can have multiple
@@ -2042,6 +2017,9 @@ mapping the typeid to that fpageid.  "single class" should have a
 mapping for every element you reference, but the feedback page for
 just the classes would only have the typeid of classes mapped to
 it.
+</p>
+
+<p>
 The values for FeedbackPageHasType are:
 </p>
 <ul class="org-ul">
@@ -2066,6 +2044,9 @@ Smaller events might want all the schedule Types to have the same
 QuestionType, larger or more siloed events might want to break it
 down further.  Depending on what is being fed back, Divisions might
 creep into this, as well.
+</p>
+
+<p>
 The values for TypeHasQuestionType are:
 </p>
 <ul class="org-ul">

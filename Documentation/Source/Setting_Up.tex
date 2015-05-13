@@ -97,19 +97,21 @@ there) you must also have:
 \end{itemize}
 \subsection{Definitions}
 \label{sec-1-1}
-\begin{table}[htb]
+\begin{longtable}{|p{3.5cm}|p{13.4cm}|}
 \caption{\label{tbl:acronymsdefinitions}Acronyms and Definitions}
-\centering
-\begin{tabular}{ll}
+\\
 \hline
 Acronym or Term & Definition\\
 \hline
+\endhead
+\hline\multicolumn{2}{r}{Continued on next page} \\
+\endfoot
+\endlastfoot
 precis & An element in your schedule.  Could be a class, panel, gathering, party, room-coverage, lounge, or whatever else you might have on your schedule\\
 LAMP & Linux + Apache + MySQL + PHP/Perl/Python\\
 WAMP & Windows + Apache + MySQL + PHP/Perl/Python\\
 \hline
-\end{tabular}
-\end{table}
+\end{longtable}
 \subsection{Decisions}
 \label{sec-1-2}
 You will need to decide the following before you install initially:
@@ -349,7 +351,7 @@ suggestions you submit to evolve over time.</P>
 <P> Also, please note that we always have more suggestions than are
 physically possible with the space and time we have, so not everything
 will make it.  We do save good ideas for future conventions.</P>
-<UL> 
+<UL>
   <LI> <A HREF="BrainstormSearchSession.php">Search</A> for similar
   ideas or get inspiration.
   <LI> Email <A HREF="mailto:program@ourcon.org">
@@ -719,7 +721,7 @@ mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./NewReports.sql
 Sharing them is as simple as, say, exporting your new report called
 \emph{voltimepanelists}:
 \begin{verbatim}
-echo "SELECT * FROM Reports WHERE reportname='voltimepanelists';" | 
+echo "SELECT * FROM Reports WHERE reportname='voltimepanelists';" |
 mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME > ./NewReports.sql
 \end{verbatim}
 \section{Account creation}
@@ -811,7 +813,7 @@ backup_mysql /your/path/to/Zambia-FFF/instance
 
 \section{Quick and dirty}
 \label{sec-10}
-To build a quick and dirty copy on the same machine as another running version: 
+To build a quick and dirty copy on the same machine as another running version:
 \begin{itemize}
 \item for i in ../Zambia-FFF/* ; do ln -s \$i . ; done
 \item rm Local
@@ -828,10 +830,10 @@ Finally, copy over, and modify the db\_name.php as appropraite
 To update them all do:
 \begin{verbatim}
 for i in FFF-[34]*
-  do 
+  do
     pushd $i/webpages
     for j in ../../Zambia-FFF/webpages/*
-      do 
+      do
 	ln -s $j .
       done
     popd
@@ -940,6 +942,7 @@ whatever conid you are creating.
 described in the PhaseTypes table.
 \item phasestate: If a phase is active.
 \end{itemize}
+
 An example of phase shifting, is when you open your call for
 presenters, or you close your call for vendors, or you allow
 feedback.  This can change programatically on specific dates around
@@ -984,12 +987,14 @@ have for this con.
 \item conid: The con that these permission are for.  This should be set
 to whatever conid you are creating.
 \end{itemize}
-If you want to only add your particular badgeid,permroleid,conid
-information, and then use the AdminParticipants.php page to select
-them, and then the "Edit <INDIVIDUAL> Further" link at the bottom
+
+If you want to only add your particular badgeid, permroleid, conid
+information, and then use the "Migrate Participant from another
+con-instance" link under the "Manage Participants \& Schedule" tab 
 to give each the right permissions, that will work as well.  But at
 least you will need to be set up, so you can grant other people
-access.
+access.  The use of that page is well documented in the
+Presenter\_Flow document in this directory.
 
 \subsection{UserHasConRole}
 \label{sec-12-2}
@@ -1018,12 +1023,21 @@ This will give you the badgeids and conroleids to add to the
 table.  It is in the format of:
 \begin{itemize}
 \item badgeid: The unique id of an individual in Zambia.
-\item permroleid: A role that an individual will have for this con.
+\item conroleid: A role that an individual will have for this con.
 \item conid: The con that the role is for.  This should be set to
 whatever conid you are creating.
 \end{itemize}
+
 You can always go back and add to this, as the shape of your con
 fills in.
+
+If you want to only add your particular badgeid, permroleid, conid
+information, and then use the "Migrate Participant from another
+con-instance" link under the "Manage Participants \& Schedule" tab 
+to give each the right permissions, that will work as well.  But at
+least you will need to be set up, so you can grant other people
+access.  The use of that page is well documented in the
+Presenter\_Flow document in this directory.
 
 \subsection{HasReports}
 \label{sec-12-3}
@@ -1054,6 +1068,7 @@ to whatever conid you are creating.
 \item hasreport: The conroleid of the position that reports to the
 specified original conroleid.
 \end{itemize}
+
 On the other hand, if you just want to mirror them, quickly, from
 another instance of your con you could always (replacing \$origconid
 with the previous con you want to model on, and \$conid with the
@@ -1114,6 +1129,7 @@ is the specific field that is being limited.
 entry to.
 \item publimnote: Any notes you want to have about the limit.
 \end{itemize}
+
 On the other hand, if you just want to mirror them, quickly, from
 another instance of your con you could always (replacing \$origconid
 with the previous con you want to model on, and \$conid with the
@@ -1140,59 +1156,11 @@ room, there might not be much there to choose between, but, with
 many rooms, or different room functions depending on the time of
 day (say, needing curtains in the daytime, and dimable lights, so
 that projection will work correctly) so scheduling can happen more
-easily.  To see what was set on a previous instance of your con,
-you can use a query (replacing the \$conid with the previous con you
-want to model on) like:
-\begin{verbatim}
-SELECT
-    *
-  FROM
-      Services
-  WHERE
-    conid=$conid;
-\end{verbatim}
-And: 
-\begin{verbatim}
-SELECT
-    *
-  FROM
-      Features
-  WHERE
-    conid=$conid;
-\end{verbatim}
-The values are:
-\begin{itemize}
-\item serviceid/featureid: Unique id for the entry (key).
-\item servicename/featurename: A description of the thing available.
-\item conid: The con that these things are available for .  This should
-be set to whatever conid you are creating.
-\item display\_order: For the select boxes, if you want to reorder
-things, this forces the ordering.
-\end{itemize}
-On the other hand, if you just want to mirror them, quickly, from
-another instance of your con you could always (replacing \$origconid
-with the previous con you want to model on, and \$conid with the
-current one) run:
-\begin{verbatim}
-SELECT
-    concat("('",servicename,"',$conid,'",display_order,"'),") AS Prev
-  FROM
-      Services
-  WHERE
-    conid=$origconid;
-\end{verbatim}
-And:
-\begin{verbatim}
-SELECT
-    concat("('",featurename,"',$conid,'",display_order,"'),") AS Prev
-  FROM
-      Features
-  WHERE
-    conid=$origconid;
-\end{verbatim}
-Then just massage the data slightly, and you have the insert you
-can do to mirror the previous con.
+easily.
 
+To select (or update the selection) of services and features
+available for this con-instance, use the AdminSetupServices.php
+page.
 \subsection{Rooms}
 \label{sec-13-3}
 This needs to be fleshed out more.
@@ -1215,7 +1183,7 @@ SELECT
   WHERE
     conid=$conid;
 \end{verbatim}
-And: 
+And:
 \begin{verbatim}
 SELECT
     *
@@ -1228,7 +1196,7 @@ The values are:
 \begin{itemize}
 \item vendorspaceid/vendorfeatureid: Unique id for the entry (key).
 \item vendorspacename/vendorfeaturename: A description, plus the price
-in an easily understandable format, so the vendors know what to 
+in an easily understandable format, so the vendors know what to
 select for their comfort and profit.
 \item vendorspaceprice/vendorfeatureprice: Numeric representation of
 the cost of said item, so the invoice can be generated
@@ -1239,6 +1207,7 @@ be set to whatever conid you are creating.
 possibilities, this forces the ordering to what you want it to
 be.
 \end{itemize}
+
 On the other hand, if you just want to mirror them, quickly, from
 another instance of your con you could always (replacing \$origconid
 with the previous con you want to model on, and \$conid with the
@@ -1277,12 +1246,14 @@ If your questions are not appropriate for this particular event,
 you might want to add a question type to cover it, in the
 QuestionTypes table, and then add the questions to the
 QuestionsForSurvey table.
+
 The values for QuestionTypes are:
 \begin{itemize}
 \item questiontypeid: Unique key for this table (it should auto-increment).
 \item questiontypename: A one or two word name for the type of question.
 \item questiontypenotes: A more indepth description of the question type.
 \end{itemize}
+
 The values for the QuestionsForSurvey are:
 \begin{itemize}
 \item questionid: Unique key for this table (it should auto-increment).
@@ -1301,19 +1272,21 @@ it down by time period, another is to break it down by class type.
 Once you have broken them down, this table sets up the various
 possible views.  At least one view should be set to "single class",
 so that the reference from the descriptions etc will work.
+
 The values for FeedbackPages are:
 \begin{itemize}
 \item fpageid: Unique key for this table (it should auto-increment).
 \item conid: For which con is this page relevant.
 \item fppagedesc: The short description of the page contents.
 \item fpagestart: The start time of the schedule elements that this
-page covers
+page covers.
 \item fpageend: The end time of the schedule elements that this page
-covers
+covers.
 \item fpagecols: The number of columns at the top of the printed page.
 \item questiontypeid: Which type of questions will show up on this
 page, from the QuestionTypes table.
 \end{itemize}
+
 The type of schedule elements included in each possible Feedback
 page is set in the FeedbackPageHasType.  This can have multiple
 mappings.  For example, if you have both classes and panels, they
@@ -1324,6 +1297,7 @@ mapping the typeid to that fpageid.  "single class" should have a
 mapping for every element you reference, but the feedback page for
 just the classes would only have the typeid of classes mapped to
 it.
+
 The values for FeedbackPageHasType are:
 \begin{itemize}
 \item fpageid: From the FeedbackPages table.
@@ -1341,6 +1315,7 @@ Smaller events might want all the schedule Types to have the same
 QuestionType, larger or more siloed events might want to break it
 down further.  Depending on what is being fed back, Divisions might
 creep into this, as well.
+
 The values for TypeHasQuestionType are:
 \begin{itemize}
 \item typeid: From the Types table.

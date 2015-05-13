@@ -1,0 +1,108 @@
+#+TITLE: Task List and Gantt Chart Usage
+#+EMAIL: NELA.Percy@gmail.com
+#+AUTHOR: Percy
+#+DATE: July 2012
+#+DESCRIPTION: Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.
+#+KEYWORDS: Zambia, Documentation, FFF branch
+#+LANGUAGE: en
+#+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:3 num:3 toc:nil @:t ::nil |:t -:t todo:nil tasks:nil tags:nil <:t *:t author:t email:t skip:nil d:t f:t pri:t
+#+STARTUP: fninline
+#+SETUPFILE: "Headers/setupfile.org"
+#+INCLUDE: "Headers/include.org"
+#+TOC: headlines 3
+#+LaTeX: \listoftables
+#+LaTeX: \listoffigures
+#+LaTeX: \newpage
+#+LaTeX: \pagenumbering{arabic}
+* Introduction
+  The Task List and the [[http://en.wikipedia.org/wiki/Gantt_chart][Gant Chart]] are two important tools in running
+  your convention.  Zambia provides both with more emphasis on the
+  Task List but both are available for use.
+* My Task List
+  The task list can be viewed in several different ways.  The easiest
+  way to start looking at it is to go to the Staff Overview page, find
+  the Dashboard, and click on the "Task List" link, and that will take
+  you to your tasks.  You might not have any tasks at this time,
+  which, if this is your first exposure to the task list, and you have
+  not had anyone else assigning tasks to you, is perfectly
+  understandable.  Also, across the top of the page are links to New
+  Task, This Event's Tasks, and All Tasks. If you do have tasks, there
+  will be several columns.  There is:
+  + Tasks: the short name of the task, which is a clickable link to
+    the update page for that task.
+  + Notes: All information about that task, this field can have
+    standard HTML markup in it.
+  + Assigned: Should all be you.
+  + Start Date: When this task should be started by.
+  + Due Date: When this task should be completed by.
+  + Complete?: Shows the state of the task as one of, ("N", "P", "Y")
+    which map respectively to not started, partially done, and, yes it
+    is complete.
+  + Finished On: This is the date you clicked that it was finished.
+  This report can also be found under:
+  genreport.php?reportname=mytasklistdisplay
+* This Events Task List
+  This report is findable in a number of ways.  It can be found under:
+  genreport.php?reportname=tasklistdisplay
+  and is in many of the departmental report lists, under the Available
+  Reports tab.  This is the list of all the tasks relevant to this
+  particular con instance.  Across the top it should have links to
+  create a new task, to your personal task list, to the Gantt Chart
+  for this event, and to all the tasks from all the cons.  There are
+  several columns to this report:
+  + Tasks: the short name of the task, which is a clickable link to
+    the update page for that task.
+  + Notes: All information about that task, this field can have
+    standard HTML markup in it.
+  + Assigned: Who the task is assigned to, or who is the one person in
+    charge of making sure it is complete.
+  + Start Date: When this task should be started by.
+  + Due Date: When this task should be completed by.
+  + Complete?: Shows the state of the task as one of, ("N", "P", "Y")
+    which map respectively to not started, partially done, and, yes it
+    is complete.
+  + Finished On: This is the date that it was indicated that it was
+    finished. (Note, this might not be the actual finish date,
+    depending on how diligently people check their tasks.)
+* All Tasks
+  This report is findable in a number of ways.  It can be found under:
+  genreport.php?reportname=alltasklistdisplay
+  and from the header of other task list reports.  This is mostly
+  useful for a look back at other task lists to see if tasks assigned
+  then are useful to replicate for tasks assigned now.
+* Task List Update
+  Most references to the task name can be clicked on, to allow you to
+  update the task.
+  The fields are:
+  + Person assigned: a pull-down list of all the people you have
+    permission to assign to the task.  If the person assigned is not
+    you, nor someone you can assign tasks to, the chances are, you
+    should not be updating this task.  This will give you the "Outside
+    your assignment list" message in the "Person assigned:" box.
+  + Task: The task name (fixed)
+  + Note: This is where most of the updating goes, adding or changing
+    the "Note:" section of the task.  It can take standard HTML
+    markup.
+  + Dependencies: The "[update]" will take you to the add/drop page
+    for dependencies, and list the (clickable) dependencies already
+    associated with this task.
+  + Targeted Start Time: a RFC-standard date (YYYY-MM-DD) of when
+    activities on this task should start.
+  + Targeted Completion Time: a RFC-standard date (YYYY-MM-DD) of when
+    activities on this task should be done.
+  + The last field either will have the "Is it done?" with the
+    possible states of:
+    - Yes, it is finished.
+    - It is partially done.
+    - It has not yet been begun.
+    or the date upon which it was completed under a "Finished at:"
+    field.
+  + The "Update" button.
+  It should be fairly straight-forward how to fill this out.
+* New Task
+  This just takes you to a blank task list update form, so you can
+  fill out all the information.  The additional field is for the task
+  name, and you cannot set the completion state, or add dependencies
+  here.
+* Task Replication
+  Future enhancement.  Nothing further at this time.

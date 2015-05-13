@@ -28,10 +28,10 @@ if ((isset($_GET['badgeids'])) and ($_GET['badgeids'] != '')) {
 $header=<<<EOD
 %!PS-Adobe-3.0
 
-/insertlogo ($ConLogo) def
-/deffont {
-  findfont exch scalefont def
-} bind def
+%/insertlogo ($ConLogo) def
+%/deffont {
+%  findfont exch scalefont def
+%} bind def
 
 /deffont {
   findfont exch scalefont def
@@ -157,7 +157,7 @@ $header=<<<EOD
   picwidth 4 div neg -5 translate                       % Attempt at centering
 } bind def
 /rect { % llx lly w h			Lower Left X&Y Width and Height inputs
-  4 2 roll moveto			% mv llx and lly to top and go there 
+  4 2 roll moveto			% mv llx and lly to top and go there
   1 index 0 rlineto			% gets and copies width, lineto w,0
   0 exch rlineto			% switches 0 for hight, lineto 0,h
   neg 0 rlineto				% negs width, lineto -w,0
@@ -178,8 +178,8 @@ $header=<<<EOD
   BeginEPSF
   scale_height scale_height scale                        %figured from BoundingBox
   bi_llx neg bi_lly neg translate       %-llx -lly to lower corner justify
-  bi_llx bi_lly 
-  picwidth scale_width div 
+  bi_llx bi_lly
+  picwidth scale_width div
   picheight scale_height div rect               %playspace
   clip newpath
 } bind def
@@ -210,7 +210,7 @@ $positional_array[2]['col']=252;
 
 /* This query grabs all the schedule elements to be rated, for the selected time period. */
 $query=<<<EOD
-SELECT 
+SELECT
   DISTINCT badgeid,
   pubsname,
   if ((permrolename='Participant'),concat("Presenter"),concat("Volunteer")) AS Role
@@ -248,7 +248,7 @@ while ($k <= $rows) {
 	echo " ";
 	echo $positional_array[$j]['row'];
 	echo "\ntranslate\n";
-	echo "3 28 translate\n".$BoundingBox." picinsert\ngsave\ninsertlogo run\ngrestore\n%%Trailer\nEndEPSF\n-3 -28 translate\n";    
+#	echo "3 28 translate\n".$BoundingBox." picinsert\ngsave\ninsertlogo run\ngrestore\n%%Trailer\nEndEPSF\n-3 -28 translate\n";
         echo "labelclip\nnewpath\nISOArial 16 scalefont setfont\n3.000000 75.000000 moveto\n( ";
 	echo $participant_array[$k]['Role'];
 	echo ") show\n";

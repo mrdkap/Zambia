@@ -5,9 +5,15 @@ require_once('db_functions.php');
 require_once('validation_functions.php');
 require_once('php_functions.php');
 require_once('error_functions.php');
-
 global $link;
-$ConKey=CON_KEY; // make it a variable so it can be substituted
+
+// make it a variable so it can be substituted
+if ((empty($conid)) and (is_numeric($_SESSION['conid']))) {
+  $conid=$_SESSION['conid'];
+}
+if ((empty($_SESSION['conid'])) and (is_numeric($conid))) {
+  $_SESSION['conid']=$conid;
+}
 
 //set_session_timeout();
 session_start();
@@ -16,6 +22,15 @@ if (prepare_db()===false) {
   RenderError($title,$message_error);
   exit();
  };
+
+
+// make it a variable so it can be substituted
+if ((empty($conid)) and (is_numeric($_SESSION['conid']))) {
+  $conid=$_SESSION['conid'];
+}
+if ((empty($_SESSION['conid'])) and (is_numeric($conid))) {
+  $_SESSION['conid']=$conid;
+}
 
 // Establish the con info
 $query= <<<EOF
@@ -47,7 +62,7 @@ SELECT
           JOIN CongoDump USING (badgeid)
         WHERE
           conrolename like '%Vending%' AND
-          conid=$ConKey) AS X USING (conid)
+          conid=$conid) AS X USING (conid)
     LEFT JOIN (
       SELECT
           conid,
@@ -58,9 +73,9 @@ SELECT
           JOIN CongoDump USING (badgeid)
         WHERE
           conrolename like '%BrainstormCoord%' AND
-          conid=$ConKey) AS Y USING (conid)
+          conid=$conid) AS Y USING (conid)
   WHERE
-      conid=$ConKey
+      conid=$conid
 EOF;
 
 // Retrieve query fail if database can't be found, and if there isn't just one result

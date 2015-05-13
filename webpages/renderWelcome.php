@@ -72,7 +72,7 @@ to your participation again next year.</P>
 <?php } ?>
 
 <P> Dear
-<?php echo $congoinfo["firstname"]; echo " "; echo $congoinfo["lastname"]; ?>,
+<?php /* echo $congoinfo["firstname"]; echo " "; echo $congoinfo["lastname"]; */ echo $congoinfo["badgename"];?>,
 
 <P> Welcome to the <?php echo $_SESSION['conname']; ?> website.</P>
 

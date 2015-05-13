@@ -43,7 +43,7 @@ SELECT
   LEFT JOIN (SELECT
         H.activityid,
 	H.conid,
-        GROUP_CONCAT(activity SEPARATOR ", ") AS depends
+	GROUP_CONCAT("<A HREF=TaskListUpdate.php?activityid=",T.activityid,">",activity,"</A>" SEPARATOR ", ") AS depends
       FROM
 	  HasDependencies H
 	JOIN TaskList T ON (H.hasdependency=T.activityid and H.conid=T.conid)

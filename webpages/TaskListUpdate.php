@@ -1,15 +1,14 @@
 <?php
 require_once('StaffCommonCode.php');
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 
 // Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 $title="Task List Update";
-$description="Return to <A HREF=\"genreport.php?reportname=alltasklistdisplay\">all events</A>, <A HREF=\"genreport.php?reportname=tasklistdisplay\">this event's</A> or <A HREF=\"genreport.php?reportname=mytasklistdisplay\">my</A> task list report</P>";
+$description="Return to <A HREF=\"genreport.php?reportname=alltasklistdisplay\">all events</A>,\n";
+$description.="<A HREF=\"genreport.php?reportname=tasklistdisplay\">this event's</A>,\n";
+$description.="the <A HREF=\"gantt_relative.php\">Gantt Chart</A>, or\n";
+$description.="<A HREF=\"genreport.php?reportname=mytasklistdisplay\">my</A> task list report</P>\n";
 
 // Submit the task, if there was one, when this was called
 if (isset($_POST["activitynotes"])) {
@@ -17,7 +16,7 @@ if (isset($_POST["activitynotes"])) {
     $element_array=array('conid','activity','activitynotes','badgeid','activitystart','targettime','donestate');
     $value_array=array($_SESSION['conid'],$_POST['activity'],$_POST['activitynotes'],$_POST['assignedid'],$_POST['activitystart'],$_POST['targettime'],"N");
     //    $value_array=array($_POST['activity'],$_POST['activitynotes'],"123",$_POST['activitystart'],$_POST['targettime'],"N");
-    $message.=submit_table_element($link, $title, "$ReportDB.TaskList", $element_array, $value_array);
+    $message.=submit_table_element($link, $title, "TaskList", $element_array, $value_array);
   } else {
     if ($_POST['donestate']=="Y") {
       if (isset($_POST['donetime'])) {
@@ -29,7 +28,7 @@ if (isset($_POST["activitynotes"])) {
     $pairedvalue_array=array("conid='".$_SESSION['conid']."'","activitynotes='".$_POST['activitynotes']."'","badgeid='".$_POST['assignedid']."'","activitystart='".$_POST['activitystart']."'","targettime='".$_POST['targettime']."'","donestate='".$_POST['donestate']."'".$donetime);
     $match_field="activityid";
     $match_value=$_POST['activityid'];
-    $message.=update_table_element($link, $title, "$ReportDB.TaskList", $pairedvalue_array, $match_field, $match_value);
+    $message.=update_table_element($link, $title, "TaskList", $pairedvalue_array, $match_field, $match_value);
   }
  }
 
@@ -49,8 +48,8 @@ SELECT
     activityid,
     concat(activity," (",conname,")") AS Activity
   FROM
-      $ReportDB.TaskList
-    JOIN $ReportDB.ConInfo USING (conid)
+      TaskList
+    JOIN ConInfo USING (conid)
   ORDER BY
      activityid
 
@@ -87,7 +86,7 @@ SELECT
     permrolename,
     notes
   FROM
-      $ReportDB.PermissionRoles
+      PermissionRoles
   WHERE
     permroleid > 1
 EOD;
@@ -110,9 +109,9 @@ SELECT
     badgeid,
   CONCAT(pubsname, " (", GROUP_CONCAT(permrolename SEPARATOR ", "), ")") AS Participant
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      Participants
+    JOIN UserHasPermissionRole UHPR USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
   WHERE
     UHPR.conid=$conid AND
     permrolename in ($permrolecheck_string)
@@ -156,10 +155,20 @@ SELECT
     activitystart,
     targettime,
     donestate,
-    donetime
+    donetime,
+    depends
   FROM
-      $ReportDB.TaskList
-    JOIN $ReportDB.ConInfo USING (conid)
+      TaskList
+  LEFT JOIN (SELECT
+	H.activityid,
+	H.conid,
+	GROUP_CONCAT("<A HREF=TaskListUpdate.php?activityid=",T.activityid,">",activity,"</A>" SEPARATOR ", ") AS depends
+      FROM
+	  HasDependencies H
+	JOIN TaskList T ON (H.hasdependency=T.activityid and H.conid=T.conid)
+      GROUP BY
+        H.activityid) HD USING (activityid,conid)
+    JOIN ConInfo USING (conid)
   WHERE
     activityid='$activityid'
 
@@ -174,6 +183,11 @@ EOD;
   $targettime=$task_array[1]['targettime'];
   $donestate=$task_array[1]['donestate'];
   $donetime=$task_array[1]['donetime'];
+  if (!empty($task_array[1]['depends'])) {
+    $depends=$task_array[1]['depends'];
+  } else {
+    $depends="None Listed";
+  }
 
   // Update note through form below
 ?>
@@ -188,6 +202,8 @@ EOD;
     <LABEL for"activity">Task:</LABEL><?php echo $activity ?>
     <LABEL for="activitynotes">Note:</LABEL>
     <TEXTAREA name="activitynotes" rows=6 cols=72><?php echo $activitynotes ?></TEXTAREA>
+    [<A HREF="TaskDependency.php?activityid=$activityid">update</A>]
+    <B>Dependencies:</B> <?php echo $depends ?><br>
     <LABEL for="activitystart">Targeted Start Time: (eg: 2038-10-12)</LABEL>
     <INPUT type="text" size=10 name="activitystart" id="activitystart" value="<?php echo htmlspecialchars($activitystart) ?>">
     <LABEL for="targettime">Targeted Completion Time: (eg: 2038-12-12)</LABEL>

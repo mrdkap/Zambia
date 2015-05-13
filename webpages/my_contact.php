@@ -325,7 +325,7 @@ current information. This data is downloaded periodically from the registration 
  so they can be seen. */
 if (may_I('EditBio')) {
   echo "<HR>\n<BR>\n";
-  echo "Your name as you wish to have it published&nbsp;&nbsp;";
+  echo "Your name as you wish us to refer to you&nbsp;&nbsp;";
   echo "<INPUT type=\"text\" size=\"20\" name=\"pubsname\" ";
   echo "value=\"".htmlspecialchars($participant["pubsname"],ENT_COMPAT)."\">\n";
   echo "<P>Note: When you update your bio, please give us a few days for our editors to get back to you.\n";

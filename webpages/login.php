@@ -1,11 +1,19 @@
 <?php 
 /* Adjust conid */
 $newconid=$_POST['newconid'];
-if ($newconid=="") {$newconid=$_GET['newconid'];}
-if ($newconid!="") {define("CON_KEY",$newconid);}
+if ($newconid=="") {
+  $newconid=$_GET['newconid'];
+}
+if ((!empty($newconid)) and (is_numeric($newconid))) {
+  $_SESSION['conid']=$newconid;
+}
 
 require_once('PartCommonCode.php');
 global $link, $message;
+
+if ((!empty($newconid)) and (is_numeric($newconid))) {
+  $_SESSION['conid']=$newconid;
+}
 
 // LOCALIZATIONS
 $title="Login";

@@ -113,10 +113,11 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
     $value_array = array($badgeid,$conid,$badgename,htmlspecialchars_decode($_POST['progcomment']));
     $message.=submit_table_element($link,$title,"CommentsOnProgramming",$element_array, $value_array);
   }
-
-  // Collect up the responses for printing.
-  $formstring.="<P class=\"regmsg\">".$message."\n";
 }
+
+// Collect up the responses for printing.
+$formstring.="<P class=\"regmsg\">".$message."\n";
+
 
 $sessionid=$_GET['sessionid'];
 $selday=$_GET['selday'];
@@ -258,14 +259,15 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 // Fix the questiontypeid for a single page
 if ($sessionid!="") {$questiontypeid=$element_array[1]['questiontypeid'];}
   
+/* Printing body. */
+$printstring="<TABLE border=\"0\" cellpadding=\"4\"><TR><TD colspan=\"$NumOfColumns\" align=\"center\">Please, indicate the $dayname class you are offering feedback on.</TD></TR>";
+$printstring.="<TR><TD>";
+$formstring.="<FORM name=\"feedbackform\" method=POST action=\"Feedback.php?conid=$conid&selday=$selday\">\n";
+
 if ($elements > 0) {
   /* Get the number of elements into $NumOfColumns rows */
   $NumPerColumn=ceil($elements/$NumOfColumns);
 
-  /* Printing body. */
-  $printstring="<TABLE border=\"0\" cellpadding=\"4\"><TR><TD colspan=\"$NumOfColumns\" align=\"center\">Please, indicate the $dayname class you are offering feedback on.</TD></TR>";
-  $printstring.="<TR><TD>";
-  $formstring.="<FORM name=\"feedbackform\" method=POST action=\"Feedback.php?conid=$conid&selday=$selday\">\n";
   if ($sessionid!="") {
     $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"".$element_array[1]['sessionid']."\">\n";
     $formstring.="<P>Feedback on ".$element_array[1]['title']." (".$element_array[1]['time'].")</P>\n";
@@ -299,8 +301,9 @@ $formheaders.="<TH>Somewhat Disagree</TH><TH>Totally Disagree</TH></TR>";
 
 $printstring.="<TABLE border=\"1\">";
 $printstring.="<TR><TD colspan=\"7\" align=\"center\">Please answer the following questions where 5 = totally agree, 1 = totally disagree.</TD></TR>";
-$formstring.="<P>&nbsp;&nbsp;Please answer the following questions from totally agree to totally disagree.";
-$formstring.="<TABLE border=1>";
+$formstring.="<P>&nbsp;&nbsp;Please answer the following questions from totally agree to totally disagree.\n";
+$formstring.="If the question does not apply to you, feel free to leave it blank.\n";
+$formstring.="<TABLE border=1>\n";
 $printstring.=$printheaders;
 $formstring.=$formheaders."\n";
 for ($i=1; $i<=$questioncount; $i++) {
@@ -322,10 +325,16 @@ for ($i=1; $i<=$questioncount; $i++) {
 }
 $printstring.="</TABLE></P><hr>";
 $formstring.="</TABLE></P>\n";
-$formstring.="<LABEL for=\"classcomment\">Other comments on this class:</LABEL>\n<br>\n";
-$formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
-$formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
-$formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
+if ($elements > 0) {
+  $formstring.="<LABEL for=\"classcomment\">Other comments on this class:</LABEL>\n<br>\n";
+  $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
+  $formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
+  $formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
+} else {
+  $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"437\">\n";
+  $formstring.="<LABEL for=\"classcomment\">Other Comments: (The more you give us, the better we can meet your desires.)</LABEL>\n<br>\n";
+  $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
+}
 $formstring.="<BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Send Feedback</BUTTON>\n";
 $formstring.="</FORM>\n";
 $printstring.="<P>Other comments/ideas/questions/feedback about the class or the flea (feel free to use the back):";

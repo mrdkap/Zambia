@@ -80,6 +80,7 @@ EOF;
 
 // Retrieve query fail if database can't be found, and if there isn't just one result
 if (($result=mysql_query($query,$link))===false) {
+  require_once("logout.php");
   $message_error="Error retrieving data from database<BR>\n";
   $message_error.=$query;
   RenderError($title,$message_error);

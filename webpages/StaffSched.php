@@ -228,6 +228,7 @@ SELECT
     if(estatten IS NULL,'',estatten) AS Estatten,
     Sessionid,
     conid,
+    conname,
     if(DATE_ADD(constartdate,INTERVAL connumdays DAY) > NOW(),
       concat('<A HREF=PrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>'),
       '') AS iCal,
@@ -322,6 +323,9 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 
 // Add the feedback
 for ($i=1; $i<=$elements; $i++) {
+  if ($_SESSION["conid"] != $element_array[$i]["conid"]) {
+    $element_array[$i]['Description']=$element_array[$i]["conname"]."<br>".$element_array[$i]['Description'];
+  }
   $feedback_file=sprintf("../Local/%s/Feedback/%s.jpg",$conid,$element_array[$i]["Sessionid"]);
   if ((file_exists($feedback_file)) and ($feedback_p="T")) {
     $element_array[$i]['Description'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";

@@ -11,6 +11,12 @@ global $link;
 $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
+$conid_or_badgeid="conid=$conid";
+if ((!empty($_GET['badgeid'])) and (is_numeric($_GET['badgeid']))) {
+  $checkbadgeid=$_GET['badgeid'];
+  $conid_or_badgeid="badgeid=$checkbadgeid";
+}
+
 // Format to print in, and modifications to the query and the additionalinfo
 $format="desc";
 if (isset($_GET['format'])) {
@@ -24,6 +30,10 @@ if (isset($_GET['format'])) {
     $format="rooms";
   } elseif ($_GET['format'] == "sched") {
     $format="sched";
+  } elseif ($_GET['format'] == "feedback") {
+    $format="desc";
+    $_GET['feedback']="Y";
+    $_GET['short']="N";
   }
 }
 
@@ -48,9 +58,13 @@ if (isset($_GET['feedback'])) {
     $single_line_p="F";
     $_SESSION['return_to_page'].="StaffSched.php?format=$format&conid=$conid&feedback=\"Y\"";
     if (may_I("Staff")) {
-      $feedback_array=getFeedbackData("");
+      if (empty($checkbadgeid)) {
+        $feedback_array=getFeedbackData("");
+      } else {
+        $feedback_array=getFeedbackData($checkbadgeid);
+      }
     } else {
-      $feedback_array_getFeedbackData($_SESSION['badgeid']);
+      $feedback_array=getFeedbackData($_SESSION['badgeid']);
     }
   } elseif ($_GET['feedback'] == "N") {
     $feedback_p='F';
@@ -70,7 +84,11 @@ if (may_I('Fasttrack')) {$pubstatus_array[]='\'Fast Track\'';}
 if (may_I('Logistics')) {$pubstatus_array[]='\'Logistics\'';}
 if (may_I('Vendor')) {$pubstatus_array[]='\'Vendor\'';}
 if (may_I('Lounge')) {$pubstatus_array[]='\'Lounge Staff\'';}
+if (may_I('Staff')) {$pubstatus_array[]='\'For Feedback\'';}
 $pubstatus_check=implode(",",$pubstatus_array);
+
+// Hack to force feedback for the feedback page
+if ($_GET['format']=="feedback") {$pubstatus_check="'Public','For Feedback'";}
 
 // Set the conname from the conid
 $query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
@@ -170,6 +188,8 @@ if ($format != "rooms") {
   $additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&feedback=Y\">(w/feedback)</A>,\n";
 }
 $additionalinfo.="or the <A HREF=\"Postgrid.php?conid=$conid\">grid</A>.</P>\n";
+
+// Add the ical tag if the time is right.
 if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
   $additionalinfo.="<P>Click on the ";
   if (($format == "tracks") or ($format == "trtime")) {
@@ -179,9 +199,16 @@ if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
   $additionalinfo.="(iCal) tag to download the iCal calendar for the particular\n";
   $additionalinfo.="activity you want added to your calendar.</P>\n";
  }
+
+// Further feedback-only hackery
+//if ($_GET['format']=="feedback") {$additionalinfo=print_r($feedback_array,t);}
+if ($_GET['format']=="feedback") {$additionalinfo="";}
+
+// Add the feedback tag if the time is right and the phase allows for it.
 if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
   $additionalinfo.="<P>Click on the (Feedback) tag to give us feedback on a particular scheduled event.</P>\n";
  }
+
 /* This query grabs everything necessary for the schedule to be printed. */
 $query = <<<EOD
 SELECT
@@ -200,6 +227,7 @@ SELECT
     $room,
     if(estatten IS NULL,'',estatten) AS Estatten,
     Sessionid,
+    conid,
     if(DATE_ADD(constartdate,INTERVAL connumdays DAY) > NOW(),
       concat('<A HREF=PrecisScheduleIcal.php?sessionid=',sessionid,'>(iCal)</A>'),
       '') AS iCal,
@@ -277,7 +305,7 @@ SELECT
 	  biodestname in ('book') AND
           descriptionlang='en-us') DGB USING (sessionid,conid)
   WHERE
-    conid=$conid AND
+    $conid_or_badgeid AND
     phasetypename like "%Feedback Available%" AND
     pubstatusname in ($pubstatus_check) AND
     (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
@@ -299,13 +327,13 @@ for ($i=1; $i<=$elements; $i++) {
     $element_array[$i]['Description'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
     $element_array[$i]['Description'].=sprintf("<img src=\"%s\">\n<br>\n",$feedback_file);
   }
-  if (isset($feedback_array['graph'][$element_array[$i]["Sessionid"]."-".$conid])) {
+  if (isset($feedback_array['graph'][$element_array[$i]["Sessionid"]."-".$element_array[$i]["conid"]])) {
     $element_array[$i]['Description'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
-    $element_array[$i]['Description'].=generateSvgString($element_array[$i]["Sessionid"],$conid);
+    $element_array[$i]['Description'].=generateSvgString($element_array[$i]["Sessionid"],$element_array[$i]["conid"]);
   }
-  if ($feedback_array[$element_array[$i]["Sessionid"]."-".$conid]) {
+  if ($feedback_array[$element_array[$i]["Sessionid"]."-".$element_array[$i]["conid"]]) {
     $element_array[$i]['Description'].="  </DD>\n    <DD>Written feedback from surveys:\n<br>\n";
-    $element_array[$i]['Description'].=sprintf("%s<br>\n",$feedback_array[$element_array[$i]["Sessionid"]."-".$conid]);
+    $element_array[$i]['Description'].=sprintf("%s<br>\n",$feedback_array[$element_array[$i]["Sessionid"]."-".$element_array[$i]["conid"]]);
   }
 }
 

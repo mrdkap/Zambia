@@ -97,6 +97,6 @@ $badList=substr($badList,0,-1); //remove final trailing comma
 if ($verbose) {echo "Num good: $numGood. Num bad: $numBad.<BR>\n";}
 if ($verbose) {echo "Good list: $goodList <BR>\n";}
 if ($verbose) {echo "Bad list: $badList <BR>\n";}
-if ($verbose) {correct_footer());}
+if ($verbose) {correct_footer();}
 exit();
 ?>

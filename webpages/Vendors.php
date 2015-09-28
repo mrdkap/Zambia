@@ -76,7 +76,15 @@ echo $vendorpdfmap;
 echo $vendorlist;
 
 // Heavy_handed hack!
-if (($conid == "42") or ($conid == "43") or ($conid == "44")) {
+if (($conid == "42") or ($conid == "43") or ($conid == "44") or ($conid == "45")) {
+  $vstatus="vendor_status";
+  $vloc="vendor_space_position";
+  // Fix for inconsistencies in the database
+  if ($conid == "45") {
+    $vstatus="status";
+    $vloc="vendor_location";
+  }
+
   // Connect to Vendor Database
   if (vendor_prepare_db()===false) {
     $message_error="Unable to connect to database.<BR>No further execution possible.";
@@ -94,17 +102,18 @@ SELECT
       ">",
       vendor_business_name,
       "</A>") AS Title,
-    if (vendor_space_position IS NULL,"",vendor_space_position) AS Room,
+    if ($vloc IS NULL,"",$vloc) AS Room,
     concat(if (vendor_description IS NULL,"",vendor_description),
       if(vendor_website IS NULL,"",concat("<br>\n<A HREF=\"",vendor_website,"\">",vendor_website,"</A>"))) AS Description
   FROM
       default_vendors_$conid
   WHERE
-    vendor_status in ('Approved')
+    $vstatus in ('Approved')
   ORDER BY
     vendor_business_name
 EOD;
   list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
+  $vendorquery=$query;
 
   //If there is multiple rooms, have to split them out, if it is empty, on to the next.
   for($i=1; $i<=$elements; $i++) {
@@ -118,6 +127,7 @@ EOD;
   }
 
   echo "<H3><A NAME=\"VendorStart\"></A><B>Vendors</B><br>(jump to the <A HREF=\"#CommunityStart\">Community Tables</A>";
+  // echo "<P>Query=$vendorquery</P>";
   if ($vendormap != "") {
     echo " or the <A HREF=\"#VendorMapStart\">Map</A>";
   }
@@ -128,29 +138,38 @@ EOD;
   // Community Tables
 
   // Fix the inconsistent where string
-  $wherestring="status in ('Approved')";
-  if ($conid == "44") {$wherestring="vendor_status in ('Approved')";}
+  $wherestring="WHERE status in ('Approved')";
+  $website="website";
+  $vendorloc="if(vendor_location IS NULL,\"\",vendor_location) AS Room";
+  $desc="if(website IS NULL,\"\",concat(\"<A HREF=\\\"\",website,\"\\\">\",website,\"</A>\")) AS Description";
+  if ($conid == "44") {$wherestring="WHERE vendor_status in ('Approved')";}
+  if ($conid == "45") {
+    $wherestring="";
+    $website="vendor_website";
+    $vendorloc="concat('Outside Hallway') AS Room";
+    $desc="concat(if(vendor_description IS NULL,\"\",vendor_description), if(vendor_website IS NULL,\"\",concat(\"<br>\n<A HREF=\\\"\",vendor_website,\"\\\">\",vendor_website,\"</A>\"))) AS Description";
+  }
 
   $query = <<<EOD
 SELECT
     concat("<A NAME=\"",
       name,
       "\"",
-      (if(website IS NULL,"",concat(" HREF=\"",website,"\""))),
+      (if($website IS NULL,"",concat(" HREF=\"",$website,"\""))),
       ">",
       name,
       "</A>") AS Title,
-    if(vendor_location IS NULL,"",vendor_location) AS Room,
-    if(website IS NULL,"",concat("<A HREF=\"",website,"\">",website,"</A>")) AS Description
+    $vendorloc,
+    $desc
   FROM
       default_community_tables_$conid
-  WHERE
-    $wherestring
+  $wherestring
   ORDER BY
     name
 EOD;
-  list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
 
+  list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
+  $communityquery=$query;
   //If there is multiple rooms, have to split them out.
   for($i=1; $i<=$elements; $i++) {
     $room_array=explode(", ",$element_array[$i]['Room']);
@@ -161,6 +180,7 @@ EOD;
   }
 
   echo "<H3><A NAME=\"CommunityStart\"></A><B>Community Tables</B><br>(jump to the <A HREF=\"#VendorStart\">Vendors</A>";
+  // echo "<P>Query=$communityquery</P>";
   if ($vendormap != "") {
     echo " or the <A HREF=\"#VendorMapStart\">Map</A>";
   }

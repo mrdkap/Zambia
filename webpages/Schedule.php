@@ -71,9 +71,9 @@ if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) 
 /* This query grabs everything necessary for the schedule to be printed. */
 $query = "SELECT ";
 if (strtoupper(DOUBLE_SCHEDULE)=="TRUE") {
-  $query.="  if ((pubsname is NULL), ' ', concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator=1),'(m)',''))) as 'Participants',";
+  $query.="  if ((pubsname is NULL), ' ', concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator in ('1','Yes')),'(m)',''))) as 'Participants',";
 } else {
-  $query.="  if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator=1),'(m)','')) SEPARATOR ', ')) as 'Participants',";
+  $query.="  if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator in ('1','Yes')),'(m)','')) SEPARATOR ', ')) as 'Participants',";
 }
 $query.= <<<EOD
     concat('<A NAME=\"',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'\"></A>',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p')) as 'Start Time',

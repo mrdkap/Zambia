@@ -73,7 +73,7 @@ if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) 
 /* This query grabs everything necessary for the descriptions to be printed. */
 $query = <<<EOD
 SELECT
-    if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator=1),'(m)','')) SEPARATOR ', ')) as 'Participants',
+    if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator in ('1','Yes')),'(m)','')) SEPARATOR ', ')) as 'Participants',
     GROUP_CONCAT(DISTINCT concat('<A HREF=\"Schedule.php$passon#',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'\">',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'</A>') SEPARATOR ', ') as 'Start Time',
     GROUP_CONCAT(DISTINCT $trackname SEPARATOR ', ') as 'Track',
     CASE

@@ -77,7 +77,7 @@ SELECT
     concat('<A NAME=\"',pubsname,'\"></A>',pubsname) as 'Participants',
     concat('<A HREF=\"Descriptions.php$passon#',sessionid,'\"><B>',title_good_web,'</B></A>') AS Title,
     subtitle_good_web AS Subtitle,
-    if((moderator=1),' (m)','') AS Moderator,
+    if((moderator in ('1','Yes')),' (m)','') AS Moderator,
     $trackname AS Track,
     concat('<A HREF=\"Schedule.php$passon#',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'\">',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'</A>') AS 'Start Time',
     CASE 
@@ -179,7 +179,7 @@ for ($i=1; $i<=$elements; $i++) {
 	} else {
 	  echo "    </TD>\n  </TR>\n  <TR>\n    <TD valign=top width=310>";
 	}
-	echo sprintf("<img width=300 src=\"%s\"</TD>\n<TD>",$bioout['picture']);
+	echo sprintf("<img width=300 src=\"%s\"></TD>\n<TD>",$bioout['picture']);
       } else {
 	if ($tablecount == 0) {
 	  echo "<TABLE>\n  <TR>\n    <TD>";

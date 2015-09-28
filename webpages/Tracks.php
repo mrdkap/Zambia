@@ -23,7 +23,7 @@ $Grid_Spacer=$conname_array[1]['congridspacer'];
 $ConStart=$conname_array[1]['constartdate'];
 $logo=$conname_array[1]['conlogo'];
 
-$roomname="concat('<A NAME=\"',roomname,'\">',roomname,'</A>')";
+$roomname="concat('<A NAME=\"',roomname,'\"></A>',roomname)";
 $trackname="trackname";
 $orderby="roomname";
 if (isset($_GET['volunteer'])) {
@@ -37,7 +37,7 @@ if (isset($_GET['volunteer'])) {
 } else {
   $pubstatus_check="'Public'";
   $roomname="roomname";
-  $trackname="concat('<A NAME=\"',trackname,'\">',trackname,'</A>',if((DATE_ADD('$ConStart',INTERVAL $connumdays DAY)>NOW()),concat(' <A HREF=TrackScheduleIcal.php?trackid=',trackid,'><I>(iCal)</I></A>'),''))";
+  $trackname="concat('<A NAME=\"',trackname,'\"></A>',trackname,if((DATE_ADD('$ConStart',INTERVAL $connumdays DAY)>NOW()),concat(' <A HREF=TrackScheduleIcal.php?trackid=',trackid,'><I>(iCal)</I></A>'),''))";
   $orderby="trackname";
 }
 
@@ -74,7 +74,7 @@ if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) 
 /* This query grabs everything necessary for the schedule to be printed. */
 $query = <<<EOD
 SELECT
-    if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator=1),'(m)','')) SEPARATOR ', ')) as 'Participants',
+  if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"Bios.php$passon#',pubsname,'\">',pubsname,'</A>',if((moderator in ('1','Yes')),'(m)','')) SEPARATOR ', ')) as 'Participants',
     concat('<A HREF=\"Schedule.php$passon#',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'\">',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'</A>') as 'Start Time',
     CASE
       WHEN HOUR(duration) < 1 THEN

@@ -42,12 +42,15 @@ if (may_I('Watch')) {$pubstatus_array[]='\'Watch Staff\'';}
 if (may_I('Vendor')) {$pubstatus_array[]='\'Vendor Staff\'';}
 if (may_I('Sales')) {$pubstatus_array[]='\'Sales Staff\'';}
 if (may_I('Fasttrack')) {$pubstatus_array[]='\'Fast Track\'';}
+if (may_I('Logistics')) {$pubstatus_array[]='\'Logistics\'';}
+if (may_I('Vendor')) {$pubstatus_array[]='\'Vendor\'';}
+if (may_I('Lounge')) {$pubstatus_array[]='\'Lounge Staff\'';}
 $pubstatus_string=implode(",",$pubstatus_array);
 
 /* This query grabs everything necessary for the descriptions to be printed. */
 $query = <<<EOD
 SELECT
-    if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"StaffBios.php$feedbackp#',pubsname,'\">',pubsname,'</A>',if((moderator=1),'(m)','')) SEPARATOR ', ')) AS 'Participants',
+    if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT concat('<A HREF=\"StaffBios.php$feedbackp#',pubsname,'\">',pubsname,'</A>',if((moderator in ('1','Yes')),'(m)','')) SEPARATOR ', ')) AS 'Participants',
     GROUP_CONCAT(DISTINCT concat('<A HREF=\"StaffSchedule.php$feedbackp#',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'\">',DATE_FORMAT(ADDTIME('$ConStart',starttime),'%a %l:%i %p'),'</A>') SEPARATOR ', ') AS 'Start Time',
     GROUP_CONCAT(DISTINCT concat('<A HREF=\"StaffTracks.php$feedbackp#',trackname,'\">',trackname,'</A>')) as 'Track',
     CASE

@@ -116,6 +116,7 @@ list($interested)= mysql_fetch_array($result, MYSQL_NUM);
 <?php
   $printname=htmlspecialchars($pubsname);
 echo "<A HREF=StaffEditCreateParticipant.php?action=edit&partid=$selpartid>Edit $printname Further</A> ::\n";
+echo "<A HREF=StaffSched.php?format=desc&conid=$conid&feedback=Y&badgeid=$selpartid>Show feedback for $printname</A> :: \n";
 if (may_I(SuperLiaison)) {
   echo "<A HREF=StaffEditCompensation.php?partid=$selpartid>Set Compensation for $printname</A> ::\n";
 }

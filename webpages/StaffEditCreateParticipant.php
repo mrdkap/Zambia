@@ -211,6 +211,7 @@ EOD;
   echo "<DIV class=\"sectionheader\">\n";
   $printname=htmlspecialchars($participant_arr['pubsname']);
   echo "<A HREF=AdminParticipants.php?partid=$selpartid>Edit password for $printname</A> ::\n";
+echo "<A HREF=StaffSched.php?format=desc&conid=$conid&feedback=Y&badgeid=$selpartid>Show feedback for $printname</A> :: \n";
   if (may_I(SuperLiaison)) {
     echo "<A HREF=StaffEditCompensation.php?partid=$selpartid>Set Compensation for $printname</A> ::\n";
   }

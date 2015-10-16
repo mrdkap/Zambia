@@ -51,7 +51,7 @@ if (isset($_GET['volunteer'])) {
 $_SESSION['return_to_page']="Postgrid-wide.php";
 $title="Sessions Grid for $conname";
 $pagetitle=$title;
-$description="<P>Grid of all sessions.</P>\n";
+$description="<P>Grid of all sessions. (Program details subject to change prior to the event.)</P>\n";
 $additionalinfo="<P>Click on ";
 if ($schedtype=="VolsSched.php") {
   $additionalinfo.="the job title to visit the job\n";

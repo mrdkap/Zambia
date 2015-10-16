@@ -127,6 +127,7 @@ for ($i=1; $i<=$conrows; $i++) {
     }
   } else {
     $condate=date("M jS Y",$constart);
+    $offset=0;
   }
 
   // Set the con name

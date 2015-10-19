@@ -160,7 +160,7 @@ $event_list.="</TABLE>\n";
 $event_display.="        </TABLE>\n      </TD>\n    </TR>\n  </TABLE>\n</DIV>\n";
 
 // Page Rendering
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo "<P>$event_display<br>\n";
 echo "$event_list</P>\n";
 correct_footer();

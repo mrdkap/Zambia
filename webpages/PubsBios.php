@@ -318,7 +318,7 @@ $header_break="Participants";
 $single_line_p="T";
 
 /* Printing body.  Uses the page-init then creates the page. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 /* Produce the report. */
 $printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);

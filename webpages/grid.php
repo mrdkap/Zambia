@@ -496,7 +496,7 @@ EOD;
    extra ifs keep the parens out of the otherwise empty blocks.  We
    switch on htmlcellcolor, because, by design, that is the only thing
    written in a continuation block. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 $skipinit=0;
 $skipaccum=1;
 if (empty($printrows_array)) {

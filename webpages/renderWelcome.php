@@ -1,19 +1,13 @@
 <?php
-   global $participant,$message,$message_error,$message2,$congoinfo;
-   //error_log("Zambia: Reached renderWelcome.php"); 
-   $title="Participant View";
-   require_once('PartCommonCode.php');
-   $conid=$_SESSION['conid'];
-   topofpagereport($title,$description,$additionalinfo);
-   getCongoData($badgeid);
+global $participant,$message,$message_error,$message2,$congoinfo;
+require_once('PartCommonCode.php');
 
-    if ($message_error!="") { 
-        echo "<P class=\"errmsg\">$message_error</P>\n";
-        }
-    if ($message!="") {
-        echo "<P class=\"regmsg\">$message</P>\n";
-        }
-    $chpw=($participant["password"]=="4cb9c8a8048fd02294477fcb1a41191a");
+$title="Participant View";
+$conid=$_SESSION['conid'];
+$message_error.=$message2;
+
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+getCongoData($badgeid);
 
 /* Get interested state from table.  Below the full table isn't
    generated, because we _only_ want to give them a limited set of
@@ -36,8 +30,7 @@ EOD;
 
 if (!$result=mysql_query($query,$link)) {
     $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-    echo "<P class\"errmsg\">".$message."\n";
-    correct_footer();
+    RenderError($title,$message);
     exit();
     }
 

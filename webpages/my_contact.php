@@ -8,6 +8,7 @@ $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $title="My Profile";
 $description="<P>This is the informaton we have for you</P>\n";
 $additionalinfo="<P>Please, read, and if necessary update the below.</P>\n";
+$message_error.=$message2;
 
 //Get the reg email (switched to brainstorm coordinator)
 //     conrolename like '%Registration%' AND
@@ -175,15 +176,7 @@ if (strlen($participant["pubsname"])<1) {
 }
 
 // Begin the page display.
-topofpagereport($title,$description,$additionalinfo);
-
-// Illuminate any errors.
-if ($message_error!="") {
-  echo "<P class=\"errmsg\">$message_error</P>";
-}
-if ($message!="") {
-  echo "<P class=\"regmsg\">$message</P>";
-}
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Begin the form.
 ?>

@@ -17,13 +17,13 @@ if (isset($_POST["comment"])) {
 
 // Stop page here if individual has not been selected
 if ((!isset($partid)) or ($partid==0)) {
-  topofpagereport($title,"<P>Please, indicate which presenter you wish to comment on, properly.  Thank you.</P>",$additionalinfo);
+  topofpagereport($title,"<P>Please, indicate which presenter you wish to comment on, properly.  Thank you.</P>",$additionalinfo,$message,$message_error);
   correct_footer();
   exit();
  }
 
 // Start the page properly
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Query to get the pubsname of the individuals in question.
 $query="SELECT pubsname FROM Participants WHERE badgeid='$partid'";

@@ -163,7 +163,7 @@ EOD;
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
 /* Printing body.  Uses the page-init then creates the Schedule. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo "<DL>\n";
 $printtime="";
 for ($i=1; $i<=$elements; $i++) {

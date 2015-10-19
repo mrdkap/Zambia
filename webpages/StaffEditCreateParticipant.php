@@ -26,8 +26,6 @@ if ($action=="create") { //initialize participant array
   $description.="<A HREF=\"StaffEditCreateParticipant.php?action=migrate\">Migrate Participant</A> ";
   $description.="and they are not there.</P>\n";
 
-  topofpagereport($title,$description,$additionalinfo);
-
   // If the information has already been added, and we are
   // on the return loop, add the Participant to the database.
   if ((isset ($_POST['update'])) and ($_POST['update']=="Yes")) {
@@ -76,6 +74,8 @@ if ($action=="create") { //initialize participant array
   $participant_arr['postcity']="";
   $participant_arr['poststate']="";
   $participant_arr['postzip']="";
+
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);
   correct_footer();
  } else {
@@ -86,8 +86,6 @@ if ($action=="create") { //initialize participant array
     $title="Migrate Participant";
     $description="<P>Locate someone who already exists, and migrate them to ".$_SESSION['conname']." so they can be appropriately utilized.</P>\n";
   }
-  topofpagereport($title,$description,$additionalinfo);
-
   // Collapse the three choices into one
   if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
   if ($_POST["partidf"]!=0) {$_POST["partid"]=$_POST["partidf"];}
@@ -101,6 +99,8 @@ if ($action=="create") { //initialize participant array
   } else {
     $selpartid=0;
   }
+
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
   //Choose the individual from the database
   if ($action=="migrate") {

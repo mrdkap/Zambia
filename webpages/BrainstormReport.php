@@ -99,7 +99,7 @@ if ((isset($_POST['status'])) OR ($_GET['status']=='search')) {
   // Stop here if there wasn't a previous search using the "issearch" variable.
   if (!isset($_POST["issearch"])) {
     // Header, followed by search
-    topofpagereport($title,$description,$additionalinfo);
+    topofpagereport($title,$description,$additionalinfo,$message,$message_error);
     correct_footer();
     exit();
   }
@@ -118,7 +118,7 @@ $query=retrieve_select_from_db($trackidlist,$statusidlist,$typeidlist,$sessionid
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
 /* Printing body.  Uses the page-init then creates the page. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 /* Produce the report. */
 $printstring=renderprecisreport(1,$elements,$header_array,$element_array);

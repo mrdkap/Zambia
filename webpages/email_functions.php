@@ -49,7 +49,7 @@ function set_email_defaults() {
 // $message_warning will be displayed at the top, only if set
 // This function will render the entire page.
 // This page will next go to the StaffSendEmailCompose_POST page
-function render_send_email($email,$substitutions,$message_warning) {
+function render_send_email($email,$substitutions,$message_error) {
   require_once('StaffCommonCode.php');
   $title="Send Email to Participants";
   $description="<H3>Step 1 -- Compose Email</H3>\n";
@@ -74,11 +74,8 @@ SELECT
 EOD;
 
   // Start the output
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-  if (strlen($message_warning)>0) {
-    echo "<P class=\"message_warning\">$message_warning</P>\n";
-  }
   echo "<FORM name=\"emailform\" method=POST action=\"StaffSendEmailCompose_POST.php\">\n";
   echo "<TABLE><TR>";
   echo "    <TD><LABEL for=\"sendto\">To: </LABEL></TD>\n";
@@ -127,7 +124,7 @@ function renderQueueEmail($goodCount,$arrayOfGood,$badCount,$arrayOfBad) {
   $additionalinfo.="<A HREF=AutoSendQueuedMail.php>Auto Send</A> or\n";
   $additionalinfo.="<A HREF=HandSendQueuedMail.php>Hand Send</A> to send the email.</P>\n";
   require_once('StaffCommonCode.php');
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
   echo "<P>$goodCount message(s) were queued for email transmission.<BR>\n";
   echo "$badCount message(s) failed.</P>\n";
@@ -161,15 +158,11 @@ function renderQueueEmail($goodCount,$arrayOfGood,$badCount,$arrayOfBad) {
 //   recipient_list, emailfrom, body
 // This function will render the entire page.
 // This page will next go to the StaffSendEmailResults_POST page
-function render_verify_email($email,$email_verify,$message_warning) {
+function render_verify_email($email,$email_verify,$message_error) {
   $title="Send Email";
   $description="<H3>Step 2 -- Verify </H3>\n";
   require_once('StaffCommonCode.php');
-  topofpagereport($title,$description,$additionalinfo);
-
-  if (strlen($message_warning)>0) {
-    echo "<P class=\"message_warning\">$message_warning</P>\n";
-  }
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
   echo "<FORM name=\"emailverifyform\" method=POST action=\"StaffSendEmailCompose.php\">\n";
   echo "<P>Recipient List:<BR>\n";
@@ -189,7 +182,7 @@ function render_verify_email($email,$email_verify,$message_warning) {
   correct_footer();
 }
 
-function render_send_email_engine($email,$message_warning) {
+function render_send_email_engine($email,$message_error) {
   require_once('StaffCommonCode.php');
 
   $title="Pretend to actually send email.";
@@ -198,11 +191,7 @@ function render_send_email_engine($email,$message_warning) {
   $additionalinfo.="<A HREF=AutoSendQueuedMail.php>Auto Send</A> or\n";
   $additionalinfo.="<A HREF=HandSendQueuedMail.php>Hand Send</A> to send the email.</P>\n";
 
-  topofpagereport($title,$description,$additionalinfo);
-
-  if (strlen($message_warning)>0) {
-    echo "<P class=\"message_warning\">$message_warning</P>\n";
-  }
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   correct_footer();
 }
 

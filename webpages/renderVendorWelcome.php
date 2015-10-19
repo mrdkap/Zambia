@@ -6,15 +6,9 @@ global $participant,$message,$message_error,$message2,$congoinfo;
 $title="Vendor View";
 $description="";
 $additionalinfo="";
+$message_error.=$message2;
 
-topofpagereport($title,$description,$additionalinfo);
-
-if ($message_error!="") {
-  echo "<P class=\"errmsg\">$message_error</P>";
-}
-if ($message!="") {
-  echo "<P class=\"regmsg\">$message</P>";
-}					
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (may_I('BrainstormSubmit') or may_I('Vendor')) {
   if (file_exists("../Local/Verbiage/VendorWelcome_0")) {

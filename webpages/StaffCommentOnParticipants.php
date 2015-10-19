@@ -13,7 +13,7 @@ $title="Comment On Participant";
 $description="<P>Please add a comment about a presenter, below.</P>";
 
 // Start the page properly
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Collaps the three choices into one
 if ($_POST["partidl"]!=0) {$partid=$_POST["partidl"];}

@@ -44,13 +44,7 @@ if (isset($_POST["emailtoid"])) {
  }
 
 // Begin page
-topofpagereport($title,$description,$additionalinfo);
-if ($message_error!="") { 
-  echo "<P class=\"errmsg\">$message_error</P>\n";
-}
-if ($message!="") {
-  echo "<P class=\"regmsg\">$message</P>\n";
-}
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 ?>
 <FORM name="emailtolistselect" method=POST action="StaffEmailToUpdate.php">

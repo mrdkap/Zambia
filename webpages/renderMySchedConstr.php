@@ -1,16 +1,10 @@
 <?php
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 if (!isset($daymap)) {
     error_log("zambia-render_my_avail: \$daymap is not set.");
     }
 ?>
 
-<?php if ($message_error!="") { ?>
-    <P class="errmsg"><?php echo $message_error; ?></P>
-    <?php } ?>
-<?php if ($message!="") { ?>
-    <P class="regmsg"><?php echo $message; ?></P>
-    <?php } ?>
 <DIV id=constraint>
 <//?php print_r($partAvail);?>
 <FORM name="constrform" method=POST action="SubmitMySchedConstr.php">

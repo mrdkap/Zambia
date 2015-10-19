@@ -4,7 +4,7 @@ require_once('StaffCommonCode.php');
 $title="Staff - Useful Printing Links";
 $description="<P>On this page you will find the tools for printing what is needful before the event.</P>\n";
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>
 
 <HR>

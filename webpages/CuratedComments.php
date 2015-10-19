@@ -29,7 +29,7 @@ if (file_exists("../Local/$conid/Curated_Comments")) {
 }
 
 /* Printing body.  Uses the page-init then creates the comments/feedback page. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo $feedbackfile;
 correct_footer();
 

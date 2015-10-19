@@ -171,7 +171,7 @@ if (file_exists("../Local/Verbiage/Volunteer_Jobs_0")) {
 
 // setup for viewing instead of printing
 if ($print_p =="") {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "$roles<hr>";
  }
 

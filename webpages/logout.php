@@ -39,6 +39,6 @@ if (empty($_SESSION['conurl'])) {$_SESSION['conurl']=$relogin;}
 if (empty($_SESSION['conurl'])) {$_SESSION['conurl']=$url;}
 
 $conid=$_SESSION['conid'];
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 correct_footer();
 ?>

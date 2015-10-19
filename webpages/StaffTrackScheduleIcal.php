@@ -41,7 +41,7 @@ if (isset($_GET['trackid'])) {
  } elseif (isset($_POST['trackid'])) {
   $trackid=$_POST['trackid'];
  } else {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo renderhtmlreport(1,$rows,$header_array,$report_array);
   correct_footer();
   exit();
@@ -73,7 +73,7 @@ EOD;
 list($schdrows,$schdheader_array,$schdarray)=queryreport($query,$link,$title,$description,0);
 
 if ($schdrows==0) {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo renderhtmlreport(1,$rows,$header_array,$report_array);
   correct_footer();
   exit();

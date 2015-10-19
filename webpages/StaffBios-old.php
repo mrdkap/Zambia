@@ -139,7 +139,7 @@ while ($row=mysql_fetch_assoc($result)) {
  }
 
 /* Printing body.  Uses the page-init then creates the bio page. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 $printparticipant="";
 for ($i=1; $i<=$elements; $i++) {
   if ($element_array[$i]['Participants'] != $printparticipant) {

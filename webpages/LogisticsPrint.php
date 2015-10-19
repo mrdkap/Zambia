@@ -132,7 +132,7 @@ if ($_GET["csv"]=="y") {
   }
   $pdf->Output($_SESSION['conname'].'-grid.pdf', 'I');
  } else {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   for ($i=0; $i<$newtableline; $i++) {
     echo renderhtmlreport($breakon[$i],$breakon[$i+1]-1,$header_array,$roomset_array);
   }

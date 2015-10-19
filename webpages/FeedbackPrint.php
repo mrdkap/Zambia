@@ -289,7 +289,7 @@ $printstring.=$workstring;
 $pdf->writeHTML($workstring, true, false, true, false, "");
 
 if ($print_p =="") {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "$printstring\n</hr>\n";
   correct_footer();
   } elseif ($print_p =="Template") {

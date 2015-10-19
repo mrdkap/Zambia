@@ -139,7 +139,7 @@ foreach ($participant_array as $participant) {
 
 // Display, with the option of printing.
 if ($print_p == "") {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "$printstring";
   correct_footer();
 } else {

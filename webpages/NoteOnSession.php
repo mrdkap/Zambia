@@ -73,10 +73,8 @@ SELECT
 EOD;
 
 
-  topofpagereport($title,$description,$additionalinfo);
-  if (isset($message_error)) {
-    echo "<P class=\"errmsg\">$message_error</P>\n";
-   }
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+
   echo "<FORM name=\"idform\" method=POST action=\"NoteOnSession.php\">\n";
   echo "<DIV><LABEL for=\"id\">Select Session</LABEL>\n";
   echo "<SELECT name=\"id\">\n";
@@ -103,8 +101,7 @@ if (isset($_POST["note"])) {
 $description="<P><B>This is outdated.  Don't use this until NotesOnSessions have been fully migrated to VotesOnSessions.</B></P>\n";
 $description.="<P>The system knows who you are, so please, don't put your name in the \"Note\" field.  Simply put the number in the Note field, and then hit update.  Once that's done, please hit the \"Return To Report\" link, below.</P>";
 
-topofpagereport($title,$description,$additionalinfo);
-echo "<P class=\"regmsg\">$message</P>";
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (isset($_SESSION['return_to_page'])) {
   echo "<A HREF=\"".$_SESSION['return_to_page']."#$id\">Return to report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</A>";

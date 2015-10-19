@@ -107,7 +107,7 @@ $query.="
 // Retrieve query
 list($rows,$participant_header,$participant_array)=queryreport($query,$link,$title,$description,0);
 
-// if ($print_p =="") {topofpagereport($title,$description,$additionalinfo);}
+// if ($print_p =="") {topofpagereport($title,$description,$additionalinfo,$message,$message_error);}
 
 foreach ($participant_array as $participant) {
   $workstring = "<P>&nbsp;</P><P>Dear ".$participant['pubsname'].",</P>";
@@ -141,7 +141,7 @@ foreach ($participant_array as $participant) {
 
 // Display, with the option of printing.
 if ($print_p == "") {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "$printstring";
   correct_footer();
 } else {

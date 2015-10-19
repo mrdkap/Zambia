@@ -25,14 +25,13 @@ if (isset($_POST["selsess"])) { // room was selected by a form
   $selsessionid=0; // room was not yet selected.
 }
 
-topofpagereport($title,$description,$additionalinfo);
-
 if (($selpartid!=0) && ($selsessionid!=0)) {
   $element_array = array('badgeid', 'sessionid', 'conid','ibadgeid');
   $value_array = array($asgnpart, $selsessionid, $conid, $_SESSION['badgeid']);
   $message.=submit_table_element($link, $title, "ParticipantSessionInterest", $element_array, $value_array);
-  echo $message;
 }
+
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if ($selsessionid==0) {
   select_participant($selpartid, "'Yes'", "InviteParticipants.php");

@@ -10,6 +10,7 @@ $description="<P>Note: items in red must be completed before you can save.</P>\n
 $additionalinfo="<P>Please make sure all your information is valid, there are no double checks.\n";
 $additionalinfo.="If they are not valid they are not going to resolve properly the chance that we might\n";
 $additionalinfo.="see you at the event decreases exponentially.</P>\n";
+$message_error.=$message2;
 
 // Get the permroleid and name for assigning as Vendor
 $query= <<<EOD
@@ -68,15 +69,7 @@ if ((isset ($_POST['update'])) and ($_POST['update']=="Yes")) {
 }
 
 // Begin the display
-topofpagereport($title,$description,$additionalinfo);
-
-if (strlen($message)>0) {
-  echo "<P id=\"message\"><font color=green>".$message."</font></P>\n";
-}
-if (strlen($message_error)>0) {
-  echo "<P id=\"message2\"><font color=red>".$message_error."</font></P>\n";
-  exit(); // If there is a message2, then there is a fatal error.
-}
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Set the values.
 if (may_I('BrainstormSubmit')) {

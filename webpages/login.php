@@ -9,7 +9,7 @@ if ((!empty($newconid)) and (is_numeric($newconid))) {
 }
 
 require_once('PartCommonCode.php');
-global $link, $message;
+global $link, $message, $message_error;
 
 if ((!empty($newconid)) and (is_numeric($newconid))) {
   $_SESSION['conid']=$newconid;
@@ -19,6 +19,7 @@ if ((!empty($newconid)) and (is_numeric($newconid))) {
 $title="Login";
 $description="";
 $additionalinfo="";
+$message_error.=$message;
 
 // Default role is Participant, so at least something familiar shows.
 if (empty($_SESSION['role'])) {$_SESSION['role']="Participant";}
@@ -28,11 +29,6 @@ $webstring="";
 
 /* For passed in login ids */
 $badgeid=$_GET['login'];
-
-$message_error=$message;
-if (isset($message)) {
-  $webstring.= "<P class=\"errmsg\">".$message_error."</P>\n";
-}
 
 $webstring.= <<<EOD
 <form name="loginform" method="POST" action="doLogin.php">
@@ -65,7 +61,7 @@ if (file_exists("../Local/Verbiage/login_0")) {
  }
 
 if ($included!="YES") {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo $webstring;
   correct_footer();
 }

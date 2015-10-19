@@ -115,10 +115,6 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
   }
 }
 
-// Collect up the responses for printing.
-$formstring.="<P class=\"regmsg\">".$message."\n";
-
-
 $sessionid=$_GET['sessionid'];
 $selday=$_GET['selday'];
 
@@ -136,7 +132,7 @@ if (isset($selday) and ($selday!="")) {
 } else {
   $title="Feedback Page";
   $description="<P>Please select the day/type you wish to generate the feedback form for:</P>\n";
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<UL>\n";
   for ($i=1; $i<=$fpagecount; $i++) {
     if ($i!=$single_class_no) {
@@ -340,7 +336,7 @@ $formstring.="</FORM>\n";
 $printstring.="<P>Other comments/ideas/questions/feedback about the class or the flea (feel free to use the back):";
 
 if ($print_p =="") {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo $formstring;
   correct_footer();
  } else {

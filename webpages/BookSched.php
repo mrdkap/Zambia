@@ -204,7 +204,7 @@ EOD;
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
 /* Printing body.  Uses the page-init then creates the page. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 /* Produce the report. */
 $printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);

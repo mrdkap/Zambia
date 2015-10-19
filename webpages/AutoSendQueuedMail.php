@@ -17,7 +17,7 @@ $usephpmail="True";
 // For test verbose=1, otherwise for silent, verbose='';
 $verbose='1';
 
-if ($verbose) {topofpagereport($title,$description,$additionalinfo);}
+if ($verbose) {topofpagereport($title,$description,$additionalinfo,$message,$message_error);}
 
 $query="SELECT emailqueueid, emailto, emailfrom, emailcc, emailsubject, body from EmailQueue ";
 $query.="WHERE status=1 ORDER BY emailtimestamp";

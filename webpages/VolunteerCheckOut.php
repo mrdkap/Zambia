@@ -55,7 +55,7 @@ if (isset($_POST['voltimeid'])) {
   $voltimeid=$_GET['voltimeid'];
  } else {
   $_SESSION['return_to_page']="VolunteerCheckIn.php";
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<FORM name=\"whichvol\" method=POST action=\"VolunteerCheckOut.php\">";
   echo "  <DIV style=\"text-align:center\">\n    <LABEL for=\"voltimeid\">Volunteer: </LABEL>\n";
   echo "    <SELECT name=\"voltimeid\">\n";
@@ -104,7 +104,7 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 $pubsname=$element_array[1]['pubsname'];
 $inat="<B>".$element_array[1]['inat']."</B> for $pubsname";
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>
 <FORM name="volcheckout" method=POST action="VolunteerCheckOut.php">
   <INPUT type="hidden" name="voltimeid" value="<?php echo $voltimeid; ?>">

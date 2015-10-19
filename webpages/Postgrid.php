@@ -395,7 +395,7 @@ if ($_GET["csv"]=="y") {
   }
   $pdf->Output($conname.'-grid.pdf', 'I');
  } else {
-  topofpagereport($pagetitle,$description,$additionalinfo);
+  topofpagereport($pagetitle,$description,$additionalinfo,$message,$message_error);
   for ($i=1; $i<$newtableline-1; $i++) {
     echo rendergridreport($breakon[$i],$breakon[$i+1]-1,$header_rooms,$element_array);
     echo $additionalinfo;

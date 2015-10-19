@@ -69,7 +69,7 @@ EOD;
   list($rows,$header_array,$report_array)=queryreport($query,$link,$title,$description,0);
 
   // Page Rendering
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo renderhtmlreport(1,$rows,$header_array,$report_array);
   correct_footer();
  } else {
@@ -270,7 +270,7 @@ EOD;
 	$pdf->writeHTML($htmlstring, true, false, true, false, '');
 	$pdf->Output($_SESSION['conname'].'-'.$report_array[$i]['reportname'].'-grid.pdf', 'I');
     } else {
-      topofpagereport($report_array[$i]['reporttitle'],$report_array[$i]['reportdescription'],$report_array[$i]['reportadditionalinfo']);
+      topofpagereport($report_array[$i]['reporttitle'],$report_array[$i]['reportdescription'],$report_array[$i]['reportadditionalinfo'],$message,$message_error);
       echo renderhtmlreport(1,$rows,$header_array,$class_array);
       if ($i==$returned_reports) {
 	correct_footer();

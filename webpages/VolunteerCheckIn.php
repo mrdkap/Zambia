@@ -63,7 +63,7 @@ if (isset($_POST['badgeid'])) {
   $badgeid=$_GET['badgeid'];
  } else {
   $_SESSION['return_to_page']="VolunteerCheckIn.php";
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<FORM name=\"whichvol\" method=POST action=\"VolunteerCheckIn.php\">";
   echo "  <DIV style=\"text-align:center\">\n    <LABEL for=\"badgeid\">Volunteer: </LABEL>\n";
   echo "    <SELECT name=\"badgeid\">\n";
@@ -89,7 +89,7 @@ if (isset($_POST['voltimein'])) {
   } else {
     header("Location: VolunteerCheckIn.php"); // Redirect back to here, with a blank slate
   }
-  /* topofpagereport($title,$description,$additionalinfo);
+  /* topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<P>Database: $ReportDB.TimeCard</P>\n";
   correct_footer(); */
   exit();
@@ -109,7 +109,7 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 
 $pubsname=$element_array[1]['pubsname'];
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>
 <FORM name="volcheckin" method=POST action="VolunteerCheckIn.php">
   <INPUT type="hidden" name="badgeid" value="<?php echo $badgeid; ?>">

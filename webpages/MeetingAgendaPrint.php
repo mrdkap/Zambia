@@ -15,7 +15,7 @@ if (isset($_GET['agendaid'])) {
   $agendaid=$_POST['agendaid'];
  } else {
   $description="<P>Please select which agenda you wish to be able to print.</P>\n";
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 $query=<<<EOD
 SELECT
@@ -98,7 +98,7 @@ EOD;
 // Retrieve query
 list($rows,$agenda_header,$agenda_array)=queryreport($query,$link,$title,$description,0);
 
-if ($print_p =="") {topofpagereport($title,$description,$additionalinfo);}
+if ($print_p =="") {topofpagereport($title,$description,$additionalinfo,$message,$message_error);}
 
 
 // Generic header info, including name and time.

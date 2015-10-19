@@ -1,11 +1,12 @@
 <?php
-global $participant,$message_error,$message2,$congoinfo;
+global $participant,$message,$message_error,$message2,$congoinfo;
 require_once('PartCommonCode.php');
 
 // Localizations
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
 $title="Show Search Session Results";
+$message_error.=$message2;
 
 $trackid=0;
 $typeid=0;
@@ -161,7 +162,7 @@ if (!$result=mysql_query($query,$link)) {
 }
 
 require ('RenderMySessions1.php');
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo "<FORM method=POST action=\"SearchMySessionsScheduled.php\">\n";
 $search=RenderSearchSession($trackid,$statusid,$typeid,$sessionid);
 echo $search;

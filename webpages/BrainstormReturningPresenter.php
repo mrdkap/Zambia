@@ -105,8 +105,7 @@ EOD;
 list($rows,$header_array,$vendor_array)=queryreport($query,$link,$title,$description,0);
 
 // Display the page
-topofpagereport($title,$description,$additionalinfo);
-echo $message;
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo renderhtmlreport(1,$rows,$header_array,$vendor_array);
 correct_footer();
 ?>

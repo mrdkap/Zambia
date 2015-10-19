@@ -107,7 +107,7 @@ EOD;
 list($rows,$header_array,$report_array)=queryreport($query,$link,$title,$description,0);
 
 // Page Rendering
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo renderhtmlreport(1,$phaserows,$phaseheader_array,$phasereport_array);
 echo renderhtmlreport(1,$rows,$header_array,$report_array);
 correct_footer();

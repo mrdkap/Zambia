@@ -10,6 +10,7 @@ if ($LanguageList=="LANGUAGE_LIST") {unset($LanguageList);}
 $title="Staff - Manage Participant Biographies";
 $description="<P>Report of status of Participant Biographies.</P>";
 $additionalinfo ="<P>This report is limited to participants who are currently listed as attending and interested in particpating.</P>\n";
+$message_error.=$message2;
 
 if ((isset($_GET['badgeids'])) AND ($_GET['badgeids']!='')) {
   $additionalinfo.="<P>Click on the participant name in the table below to edit their biography or";
@@ -101,7 +102,7 @@ while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
  }
 
 //Start the page
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Set up the necessary switches so we can know what exactly is being operated on.
 $col_keys=array_keys($count_col);

@@ -163,7 +163,7 @@ $conid_array=array("26","28","30","32","34","36","38","39","40");
 
 
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo "<P>$query</P>\n";
 echo "<P>";
 print_r ($header_array);

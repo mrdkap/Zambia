@@ -29,7 +29,7 @@ if (isset($_POST["partid"])) {
  else { $selpartid=0; }
 
 // Begin page
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Choose the individual from the database
 select_participant($selpartid, '', "AdminParticipants.php");

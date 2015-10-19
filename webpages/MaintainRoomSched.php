@@ -7,7 +7,7 @@ $newroomslots=$_SESSION['newroomslots']; // make it a variable so it can be subs
 
 $title="Maintain Room Schedule";
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 echo "<P>newroomslots=$newroomslots</P>\n";
 $topsectiononly=true; // no room selected -- flag indicates to display only the top section of the page

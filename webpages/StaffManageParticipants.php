@@ -3,7 +3,7 @@ require_once('StaffCommonCode.php');
 $title="Staff - Manage Participants";
 $description="<P>On this page you will find the online tools for managing Participants.</P>\n";
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>
 <hr>
 <DL>

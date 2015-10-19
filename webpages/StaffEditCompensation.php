@@ -49,7 +49,7 @@ if (($typename=='') AND ($selpartid==0)) {
   //Choose the individual from the database
   $description ="<P>Choose the appropriate individual to set their compensation, or see the";
   $description.=" <A HREF=\"PresenterCompensation.php\">Presenter Compensation</A> table.</P>\n";
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   select_participant($selpartid, "'Yes'", "StaffEditCompensation.php");
   correct_footer();
   exit();
@@ -145,8 +145,8 @@ if ($_POST['update']=="please") {
 // Get the pubsname, to make things more readable
 $query="SELECT pubsname from $ReportDB.Participants where badgeid=$selpartid";
 if (!$result=mysql_query($query,$link)) {
-  $message="Badgeid does not exist in Participants, please try again:".$query;
-  RenderError($title,$message);
+  $message_error="Badgeid does not exist in Participants, please try again:".$query;
+  RenderError($title,$message_error);
   exit();
 }
 $pubsname=mysql_result($result,0);
@@ -166,9 +166,9 @@ SELECT
 EOD;
 
 if (($result=mysql_query($query,$link))===false) {
-  $message="<P>Error reading Compensation table.</P>\n<P>";
-  $message.=$query;
-  RenderError($title,$message);
+  $message_error="<P>Error reading Compensation table.</P>\n<P>";
+  $message_error.=$query;
+  RenderError($title,$message_error);
   exit ();
 }
 
@@ -206,8 +206,7 @@ $description.=" <A HREF=\"PresenterCompensation.php\">Presenter Compensation</A>
    to the field, and passed as a hidden to be compaired against) and
    the descriptions (done the same way) I tried to pull things out so
    they were more readable. */
-topofpagereport($title,$description,$additionalinfo);
-echo "<P>$message</P>\n";
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo "<FORM name=\"updatecomp\" method=POST action=\"StaffEditCompensation.php\">\n";
 echo "<INPUT type=submit name=submit class=SubmitButton value=Update>\n";
 echo "<INPUT type=hidden name=partid value=$selpartid>\n";

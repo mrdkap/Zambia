@@ -7,24 +7,14 @@ $conid=$_SESSION['conid'];
 $title="Class/Presenter Submission";
 $description="";
 $additionalinfo="";
+$message.=$message2;
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-?>
-
-<?php if ($message_error!="") { ?>
-	<P class="errmsg"><?php echo $message_error; ?></P>
-	<?php } ?>
-<?php if ($message!="") { ?>
-	<P class="regmsg"><?php echo $message; ?></P>
-	<?php } ?>
-<?php
-  //  $mayi=(in_array('BrainstormSubmit',$_SESSION['permission_set']));
-  //echo "<P>mayi ".$mayi.":<PRE>".Print_r($_SESSION['permission_set'])."</PRE></P>\n";
-    if (may_I('BrainstormSubmit')) {
-      if (file_exists("../Local/Verbiage/BrainstormWelcome_0")) {
-	echo file_get_contents("../Local/Verbiage/BrainstormWelcome_0");
-      } else { ?>
+if (may_I('BrainstormSubmit')) {
+  if (file_exists("../Local/Verbiage/BrainstormWelcome_0")) {
+    echo file_get_contents("../Local/Verbiage/BrainstormWelcome_0");
+  } else { ?>
 <p> Here you can submit new suggestions or look at existing ideas for 
 panels, events, movies, films, presentations, speeches, concerts, etc.  
 <p> As suggestions come in and we read through them, we will rework 

@@ -25,6 +25,7 @@ $additionalinfo.="\">Return</A> to the selected list.</P>\n";
 $additionalinfo.="<P>Please edit the bios below.  We don't currently edit the raw bios here.";
 $additionalinfo.="  If you really need to, please click on their name, and edit it there.</P>\n";
 $additionalinfo.="<P>We are currently not using the \"Good\" field.</P>\n";
+$message_error.=$message2;
 
 if (!isset($badgeid)) {
   $message="Required argument 'badgeid' missing from URL.<BR>\n";
@@ -106,11 +107,7 @@ $description ="<H2 class=\"head\"><A HREF=\"StaffEditCreateParticipant.php?actio
 $description.=htmlspecialchars($participant_info_array['name'])."</A></H2>\n";
 
 // Begin the presenations
-topofpagereport($title,$description,$additionalinfo);
-
-// Any messages
-echo "<P class=\"errmsg\">$message_error</P>\n";
-echo "<P class=\"regmsg\">$message</P>\n";
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 //Build the self-referential form.
 echo "<FORM name=\"bioeditform\" method=POST action=\"StaffEditBios.php\">\n";

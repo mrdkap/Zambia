@@ -11,7 +11,7 @@ $title="Vendor Load In Schedule";
 $description="";
 $additionalinfo="";
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (isset($_POST["numrows"])) {
   $ignore_conflicts=(isset($_POST['override']))?true:false;
@@ -66,8 +66,8 @@ SELECT
 EOD;
 
 if (!$result=mysql_query($query,$link)) {
-  $message=$query."<BR>Error querying database. Unable to continue.<BR>";
-  RenderError($title,$message);
+  $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
+  RenderError($title,$message_error);
   exit();
 }
 echo "<H2>$selroomid - ".htmlspecialchars(mysql_result($result,0,"roomname"))."</H2>";

@@ -76,13 +76,8 @@ SELECT
 EOD;
 
 
-topofpagereport($title,$description,$additionalinfo);
-if (isset($message_error)) {
-  echo "<P class=\"errmsg\">$message_error</P>\n";
-}
-if (isset($message)) {
-  echo "<P class=\"regmsg\">$message</P>\n";
-}
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+
 echo "<FORM name=\"suggestorform\" method=POST action=\"VoteOnSession.php\">\n";
 echo "<DIV><LABEL for=\"suggestor\">Select Presenter</LABEL>\n";
 echo "<SELECT name=\"suggestor\">\n";

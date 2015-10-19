@@ -2,21 +2,19 @@
 require_once('CommonCode.php');
 
 // Render Error reporting
-function RenderError($title,$message) {
+function RenderError($title,$message_error) {
   $HeaderTemplateFile="../Local/HeaderTemplate.html";
   $FooterTemplateFile="../Local/FooterTemplate.html";
 
   if ($_SESSION['role'] == "Staff") {
     global $debug;
-    topofpagereport($title,"","");
+    topofpagereport($title,"","","",$message_error);
     if (isset($debug)) echo $debug."<BR>\n";
-    echo "<P id=\"errmsg\">".$message."</P>\n";
   } elseif (($_SESSION['role'] == "Brainstorm") or
 	    ($_SESSION['role'] == "Vendor") or
 	    ($_SESSION['role'] == "Participant") or
 	    ($_SESSION['role'] == "Posting")) {
-    topofpagereport($title,"","");
-    echo "<P id=\"errmsg\">".$message."</P>\n";
+    topofpagereport($title,"","","",$message_error);
   } else {
     // do something generic here (though this might be way too generic)
     // better to output some error message reliably than none at all

@@ -333,7 +333,7 @@ if ($_GET["csv"]=="y") {
   }
   $pdf->Output($conname.'-grid-wide.pdf', 'I');
  } else {
-  topofpagereport($pagetitle,$description,$additionalinfo);
+  topofpagereport($pagetitle,$description,$additionalinfo,$message,$message_error);
   for ($i=1; $i<$newtableline; $i++) {
     for ($j=$breakon[$i]; $j<=$breakon[$i+1]; $j = ($j + 11)) {
       if ($breakon[$i+1]-$j >= 11) {

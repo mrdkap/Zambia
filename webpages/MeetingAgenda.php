@@ -61,12 +61,7 @@ if (!$agendaresult=mysql_query($query,$link)) {
  }
 
 // Begin the page
-topofpagereport($title,$description,$additionalinfo);
-
-// Any messages
-echo "<P class=\"errmsg\">$message_error</P>\n";
-echo "<P class=\"regmsg\">$message</P>\n";
-
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>
 
 <FORM name="agendalistselect" method=POST action="MeetingAgenda.php">

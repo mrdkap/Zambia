@@ -144,7 +144,7 @@ if (isset($_GET['feedback'])) {
  }
 
 /* Printing body.  Uses the page-init then creates the Descriptions. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 //echo "<P>Query: $query</P>\n";
 //print_r($feedback_array);
 echo "<DL>\n";

@@ -422,7 +422,7 @@ function vendor_header ($title) {
  for HTML pages.  It takes the title, description and any
  additional information, and puts it all in the right place
  depending on the SESSION variable.*/
-function topofpagereport ($title,$description,$info) {
+function topofpagereport ($title,$description,$info,$message,$message_error) {
   if ($_SESSION['role'] == "Brainstorm") {
     brainstorm_header($title);
   }
@@ -442,10 +442,10 @@ function topofpagereport ($title,$description,$info) {
   echo "<P align=center> Generated: ".date("D M j G:i:s T Y")."</P>\n";
   echo $description;
   echo $info;
-  if ($message_error!="") {
+  if (!empty($message_error)) {
     echo "<P class=\"errmsg\">$message_error</P>\n";
   }
-  if ($message!="") {
+  if (!empty($message)) {
     echo "<P class=\"regmsg\">$message</P>\n";
   }
 }

@@ -66,7 +66,7 @@ EOD;
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
 /* Printing body.  Uses the page-init then creates the vendor bio page. */
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 if ($vendormap != "") {
   echo "<H3><A NAME=\"VendorMapStart\"></A><B>Map</B><br>(jump to the <A HREF=\"#VendorStart\">Vendors</A>";
   echo " or the <A HREF=\"#CommunityStart\">Community Tables</A>)</H3>\n";

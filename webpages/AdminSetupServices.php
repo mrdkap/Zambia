@@ -102,16 +102,7 @@ if (in_array("This report retrieved no results matching the criteria.",array_key
 }
 
 // Begin the page
-topofpagereport($title,$description,$additionalinfo);
-
-// Messages (should probably be part of topofpage ...)
-if (strlen($message)>0) {
-  echo "<P id=\"message1\"><font color=green>Message: ".$message."</font></P>\n";
-}
-if (strlen($error_message)>0) {
-  echo "<P id=\"message2\"><font color=red>Message: ".$error_message."</font></P>\n";
-  exit(); // If there is a message2, then there is a fatal error.
-}
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 /* Start form.  Any button will update all of the lists.  Since they
    only change if there is something different selected, hence the

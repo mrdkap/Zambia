@@ -8,6 +8,7 @@ $conid=$_SESSION['conid'];
 $title="My General Interests";
 $description="";
 $additionalinfo="";
+$message_error.=$message2;
 
 // ParticipantInterests
 $query = <<<EOD
@@ -26,8 +27,7 @@ EOD;
 
 $result=mysql_query($query,$link);
 if (!$result) {
-  $message2=mysql_error($link);
-  $message=$query."<BR>".$message2."<BR>Error querying database. Unable to continue.<BR>";
+  $message=$query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message);
   exit();
 }
@@ -133,13 +133,7 @@ if ($_POST['update']=="YES") {
 }
 
 // Begin Display
-topofpagereport($title,$description,$additionalinfo);
-if ($message_error!="") { 
-  echo "<P class=\"errmsg\">$message_error</P>";
-}
-if ($message!="") {
-  echo"<P class=\"regmsg\">$message</P>";
-}
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Begin the form
 echo "<FORM name=\"addform\" method=POST action=\"my_interests.php\">\n";

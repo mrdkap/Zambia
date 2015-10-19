@@ -3,9 +3,9 @@
    Variables
    action: "create"/"edit"/"brainstorm"/"propose"
    session: array with all data of record to edit or defaults for create
-   message1: a string to display before the form
-   message2: an urgent string to display before the form and after m1 */
-function RenderEditCreateSession ($action, $session, $message1, $message2) {
+   message: a string to display before the form
+   message_error: an urgent string to display before the form */
+function RenderEditCreateSession ($action, $session, $message, $message_error) {
   global $link, $name, $email, $debug;
   $conid=$_SESSION['conid'];
   $badgeid=$_SESSION['badgeid'];
@@ -92,17 +92,8 @@ EOD;
   $limit_array=getLimitArray();
 
   // Begin the output
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-  // Any passed messages
-  if (strlen($message1)>0) {
-    echo "<P id=\"message1\"><font color=red>".$message1."</font></P>\n";
-  }
-  if (strlen($message2)>0) {
-    echo "<P id=\"message2\"><font color=red>".$message2."</font></P>\n";
-    exit(); // If there is a message2, then there is a fatal error.
-  }
-  //error_log("Zambia: ".print_r($session,TRUE));
   if (isset($debug)) {
     echo $debug."<BR>\n";
   }

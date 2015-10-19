@@ -73,12 +73,12 @@ if (!$result=mysql_query($query,$link)) {
 list($poscount,$intro_p)=mysql_fetch_array($result, MYSQL_NUM);
 
 // Message about state of registration, (on more than 3 pannels programming will ask for a comp).
-if (!$regmessage) {
-  if ($poscount>=3) {
-    $regmessage="not registered.</span><span>  Programming has requested a comp membership for you";
+if ((!$regmessage or is_numeric($regmessage))) {
+  if ($poscount>=$regmessage) {
+    $regmessage="Programming has requested a comp entrance for you";
   }
   else {
-    $regmessage="not registered.</span><span>  Panelists on 3 or more panels receive complementary memberships from Programming.  If you are interested in increasing your number of panels to take advantage of this, please contact us and we will work with you to see if it is possible.  If you are expecting a comp from helping another division, that will show up here shortly after registration processes it.  Please contact that division or registration with questions";
+    $regmessage="not registered.</span><span>  Being on a panel or leading a BOF/SIG/MnG counts as volunteer hours.  You have to volunteer for $regmessage or more shifts to receive complementary entrance.  If you are interested in increasing your number of volunteer shifts to take advantage of this, please contact us and we will work with you to see if it is possible.  If you are expecting a comp from helping another division, that will show up here shortly after registration processes it.  Please contact that division or registration with questions";
   }
  }
 
@@ -270,7 +270,7 @@ for ($i=1; $i<=$schd_rows; $i++) {
 
 
 // Begin the presentation of the information
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 if (file_exists("../Local/Verbiage/MySchedule_0")) {
   echo file_get_contents("../Local/Verbiage/MySchedule_0");
  } else {

@@ -62,7 +62,7 @@ $webstring.="</DL>\n$descstring\n</DL>\n";
 // Start page
 
 if ($included!="YES") {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   if (file_exists("../Local/Verbiage/ConStaffBios_1")) {
     echo file_get_contents("../Local/Verbiage/ConStaffBios_1");
   } else {

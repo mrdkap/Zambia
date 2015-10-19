@@ -181,7 +181,7 @@ if ($_GET["csv"]=="y") {
   $pdf->writeHTML($htmlstring, true, false, true, false, '');
   $pdf->Output($_SESSION['conname'].'-Presenter_Compensation.pdf', 'I');
 } else {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo renderhtmlreport(1,$rows,$header_array,$report_array);
   echo renderhtmlreport(1,$comptypecount,$key_header_array,$key_array);
   correct_footer();

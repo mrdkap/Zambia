@@ -117,13 +117,8 @@ for ($i=1; $i<=$presentercount; $i++) {
   }
 }
 
-topofpagereport($title,$description,$additionalinfo);
-if ($message_error!="") { 
-  echo "<P class=\"errmsg\">$message_error</P>";
-}
-if ($message!="") {
-  echo"<P class=\"regmsg\">$message</P>";
-}
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+
 echo "<P>Tasks to be replicated:</P>\n";
 echo renderhtmlreport(1,$taskscount,$tasks_headers,$tasks_array);
 echo "<P>Presenter/Liaison mapping</P>\n";

@@ -5,7 +5,7 @@ $conid=$_SESSION['conid'];
 $title="Staff - Assign Participants";
 $description="<P>Assign a participant to a Session Element.  Click on the element name to modify the element.</P>\n";
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (isset($_POST["numrows"])) {
   SubmitAssignParticipants();

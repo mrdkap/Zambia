@@ -50,9 +50,7 @@ SELECT
     title
 EOD;
 
-topofpagereport($title,$description,$additionalinfo);
-
-echo "<P class=\"regmsg\">".$message."\n";
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 ?>
 

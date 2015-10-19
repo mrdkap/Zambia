@@ -130,7 +130,7 @@ EOD;
 list($fullrows,$fullheader_array,$fullreport_array)=queryreport($query,$link,$title,$description,0);
 
 // Page Rendering
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo renderhtmlreport(1,$phaserows,$phaseheader_array,$phasereport_array);
 echo renderhtmlreport(1,$rows,$header_array,$report_array);
 echo renderhtmlreport(1,$unrows,$unheader_array,$unreport_array);

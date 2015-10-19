@@ -20,7 +20,7 @@ if ($fromconid=='') {
   //Choose the con from the database
   $description ="<P>Choose the appropriate convention from which to migrate the participants.</P>\n";
   $query = "SELECT conid, conname from $ReportDB.ConInfo";
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<FORM name=\"fromconid\" method=POST action=\"MigrateParticipants.php\">\n";
   echo "<DIV><LABEL for=\"fromconid\">Select Convention to migrate from:</LABEL>\n";
   echo "<SELECT name=\"fromconid\">\n";
@@ -127,8 +127,7 @@ list($rows,$header_array,$participant_array)=queryreport($query,$link,$title,$de
    Selection of another con to migrate from.
    Verbiage that presents the "from"
 */
-topofpagereport($title,$description,$additionalinfo);
-echo "<P>$message</P>\n";
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo "<FORM name=\"fromconid\" method=POST action=\"MigrateParticipants.php\">\n";
 echo "<DIV><LABEL for=\"fromconid\">Select another Convention to migrate from:</LABEL>\n";
 echo "<SELECT name=\"fromconid\">\n";

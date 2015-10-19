@@ -8,6 +8,7 @@ get_name_and_email($name,$email);
 $error=false;
 $title="Edit Session";
 $description="<P>Please, select the session you wish to edit.</P>";
+$message_error.=$message2;
 
 if (isset($_GET["id"])) { // Sets the "id" from the GET string
   $id=$_GET["id"];
@@ -69,10 +70,7 @@ SELECT
     title
 EOD;
 
-  topofpagereport($title,$description,$additionalinfo);
-  if (isset($message_error)) {
-    echo "<P class=\"errmsg\">$message_error</P>\n";
-   }
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<FORM name=\"idform\" method=POST action=\"EditSession.php\">\n";
   echo "<DIV><LABEL for=\"id\">Select Session</LABEL>\n";
   echo "<SELECT name=\"id\">\n";
@@ -90,10 +88,10 @@ EOD;
  }
 
 // Set up for Rendering
-$message_warn=$message2;
+$message_error.=$message2;
 $action="edit";
 
 // Actually do the rendering work
-RenderEditCreateSession($action,$session,$message_warn,$message_error);
+RenderEditCreateSession($action,$session,$message,$message_error);
 exit();
 ?>

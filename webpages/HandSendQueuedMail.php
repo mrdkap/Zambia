@@ -22,9 +22,7 @@ $query.="WHERE status in (1) ORDER BY emailtimestamp";
 // Retrieve query
 list($rows,$header_array,$email_array)=queryreport($query,$link,$title,$description,0);
 
-topofpagereport($title,$description,$additionalinfo);
-echo "<P class=\"errmsg\">$message_error</P>\n";
-echo "<P class=\"regmsg\">$message</P>\n";
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Build the table of the email to be sent.
 echo "<TABLE>\n";

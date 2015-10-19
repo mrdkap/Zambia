@@ -17,7 +17,7 @@ $additionalinfo.="participant view.  Another will allow you to manage Sessions. 
 $additionalinfo.="\"Sessions\" is the generic term we are using for all Events, Films, Panels, ";
 $additionalinfo.="Anime, Video, etc. and \"Precis\" is used for the description of same.</P>\n";
 $additionalinfo.="<P>There is always the somewhat-spotty <A HREF=\"../Documentation\">documentation</A></P>\n";
-
+$message_error.=$message2;
 
 $query= <<<EOD
 SELECT
@@ -95,7 +95,7 @@ if (may_I("Liaison")) {
 }
 $dashstring.=":: <A HREF=\"SchedulePrint.php?individual=".$_SESSION['badgeid']."\">At Con Schedule</A></CENTER></P>\n";
 
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 if (file_exists("../Local/Verbiage/StaffPage_1")) {
   echo file_get_contents("../Local/Verbiage/StaffPage_1");
 } else {

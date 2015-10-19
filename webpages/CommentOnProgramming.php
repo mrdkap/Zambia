@@ -13,7 +13,7 @@ $title="Comment On Programming";
 $description="<P>Please add your comments about programming in the box, below</P>";
 
 // Start page properly
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (isset($_POST["comment"])) {
     SubmitCommentOnProgramming();

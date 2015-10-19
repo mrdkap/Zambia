@@ -54,15 +54,7 @@ if ($_POST['update']=="New") {
   }
 }
 
-topofpagereport($title,$description,$additionalinfo);
-
-if (strlen($message)>0) {
-  echo "<P id=\"message\"><font color=green>".$message."</font></P>\n";
-}
-if (strlen($message_error)>0) {
-  echo "<P id=\"message2\"><font color=red>".$message_error."</font></P>\n";
-  exit(); // If there is a message2, then there is a fatal error.
-}
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (may_I('SuperVendor')) {
   //Choose the individual from the database

@@ -107,7 +107,7 @@ foreach ($body_array as $y_element) {
 }
 
 // Page Rendering
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo renderhtmlreport(1,$rows,$header_array,$grid_array);
 correct_footer();
 ?>

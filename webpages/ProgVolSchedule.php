@@ -196,7 +196,7 @@ if ($_GET["csv"]=="y") {
   topofpagecsv("Schedule_Programming_Volunteers.csv");
   echo rendercsvreport(1,$sessionsrows,$sessionsheader_array,$sessions_array);
 } else {
-  topofpagereport($title,$description,$additionalinfo);
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo renderhtmlreport(1,$sessionsrows,$sessionsheader_array,$sessions_array);
   correct_footer();
 }

@@ -1,13 +1,8 @@
 <?php
 function render_session_interests($badgid,$session_interest_count,$message,$message_error) {
     global $session_interests, $title;
-    topofpagereport($title,$description,$additionalinfo);
-    if ($message_error) {
-        echo "<P class=\"errmsg\">Database not updated.<BR>".$message_error."</P>";
-        }
-    if ($message) {
-        echo "<P class=\"regmsg\">".$message."</P>";
-        }
+    topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+
     /*
       removing this until I can figure out the validate function fixes
 
@@ -23,6 +18,7 @@ function render_session_interests($badgid,$session_interest_count,$message,$mess
     echo "    </FORM>\n";
     echo "<HR>\n";
     */
+
     // "Update Ranks" Section
     echo "<FORM name=\"sessionform\" method=POST action=\"PartPanelInterests_POST2.php\">\n";
     echo "<DIV class=\"submit\" id=\"submit\"><BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submitranks\">Save</BUTTON></DIV>\n";

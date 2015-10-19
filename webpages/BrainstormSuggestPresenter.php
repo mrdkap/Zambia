@@ -57,7 +57,7 @@ SELECT
     interestedtypename in ('Suggested')
 EOD;
 if (!$result=mysql_query($query,$link)) {
-    $message=$query."<BR>Error querying database. Unable to continue.<BR>";
+    $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message_error);
     exit();
     }
@@ -86,7 +86,7 @@ global $youremail, $yourname;
 get_name_and_email($yourname, $youremail);
 
 // Begin the display
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>
 
 <script language="javascript" type="text/javascript">

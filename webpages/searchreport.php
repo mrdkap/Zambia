@@ -19,7 +19,7 @@ $additionalinfo="<P>Please put in the field you want to search for (\"ANDed\"), 
 $additionalinfo.="<P>If there is a report to be tweaked or added, email <A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A> and let us know.</P>\n";
 
 // Page Rendering
-topofpagereport($title,$description,$additionalinfo);
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 ?>
 <FORM name="searchform" method=GET action="searchreport.php">

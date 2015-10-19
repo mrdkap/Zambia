@@ -309,7 +309,7 @@ if ($short == "T") {
 	  $partial_key=$biolang.'_'.$biostate.'_'.$biodest."_bio";
 
 	  // Set their name
-	  $name=($bioinfo['name'.$partial_key]);
+	  $name=($bioinfo['name_'.$partial_key]);
 	  if ($name == "") {
 	    $name=$header;
 	  }

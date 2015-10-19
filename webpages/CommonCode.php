@@ -1888,6 +1888,8 @@ SELECT
     JOIN BioDests USING (biodestid)
   WHERE
     badgeid="$badgeid"
+  ORDER BY
+    BioTypes.display_order
 EOD;
   $result=mysql_query($query,$link);
   if (!$result) {

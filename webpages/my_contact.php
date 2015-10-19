@@ -268,12 +268,12 @@ if (strlen($congoinfo['phone'])>0) {
       <span class="label">Last Name&nbsp;</span>
       <span class="value"><?php echo $congoinfo["lastname"]; ?></span>
       </div>
-    <div class="congo_data">
-      <span class="label">Badge Name&nbsp;</span>
+<!--    <div class="congo_data">
+      <span class="label">How We Know You&nbsp;</span>
       <span class="value"><?php echo $congoinfo["badgename"]; ?></span>
-      </div>
+      </div> -->
     <div class="congo_data">
-      <span class="label">Publications Name&nbsp;</span>
+      <span class="label">How We Know You&nbsp;</span>
       <span class="value"><?php echo $participant["pubsname"]; ?></span>
       </div>
     <div class="congo_data">
@@ -328,6 +328,7 @@ if (may_I('EditBio')) {
   echo "Your name as you wish us to refer to you&nbsp;&nbsp;";
   echo "<INPUT type=\"text\" size=\"20\" name=\"pubsname\" ";
   echo "value=\"".htmlspecialchars($participant["pubsname"],ENT_COMPAT)."\">\n";
+  echo " (Your web and book name are set below.)\n";
   echo "<P>Note: When you update your bio, please give us a few days for our editors to get back to you.\n";
   echo "and your biography will appear immediately following your published name on the page.<BR>\n";
 }

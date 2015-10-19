@@ -602,6 +602,10 @@ function renderprecisreport ($startrows,$endrows,$header_array,$element_array) {
     if (!empty($element_array[$i]['desc_good_web'])) {$rowspan++;}
     if (!empty($element_array[$i]['desc_good_book'])) {$rowspan++;}
     if (!empty($element_array[$i]['persppartinfo'])) {$rowspan++;}
+    if (!empty($element_array[$i]['notesforpart'])) {$rowspan++;}
+    if (!empty($element_array[$i]['notesforprog'])) {$rowspan++;}
+    if (!empty($element_array[$i]['Needed'])) {$rowspan++;}
+    if (!empty($element_array[$i]['partlist'])) {$rowspan++;}
     $printstring.="<TR>\n  <TD rowspan=$rowspan class=\"border0000\" id=\"sessidtcell\"><b>";
     if ((may_I('Staff')) and (!empty($element_array[$i]['sessionid']))) {
       $printstring.="<A HREF=\"StaffAssignParticipants.php?selsess=".$element_array[$i]['sessionid']."\">".$element_array[$i]['sessionid']."</A>";
@@ -651,7 +655,19 @@ function renderprecisreport ($startrows,$endrows,$header_array,$element_array) {
       $printstring.="<TR><TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($element_array[$i]['desc_good_book'],ENT_NOQUOTES)."</TD></TR>\n";
     }
     if (!empty($element_array[$i]['persppartinfo'])) {
-      $printstring.="<TR><TD colspan=6 class=\"border0010\">".htmlspecialchars($element_array[$i]['persppartinfo'],ENT_NOQUOTES)."</TD></TR>\n";
+      $printstring.="<TR><TD colspan=6 class=\"border0010\">Perspective Participants: ".htmlspecialchars($element_array[$i]['persppartinfo'],ENT_NOQUOTES)."</TD></TR>\n";
+    }
+    if (!empty($element_array[$i]['notesforpart'])) {
+      $printstring.="<TR><TD colspan=6 class=\"border0010\">Participant notes: ".htmlspecialchars($element_array[$i]['notesforpart'],ENT_NOQUOTES)."</TD></TR>\n";
+    }
+    if (!empty($element_array[$i]['notesforprog'])) {
+      $printstring.="<TR><TD colspan=6 class=\"border0010\">Programming notes: ".htmlspecialchars($element_array[$i]['notesforprog'],ENT_NOQUOTES)."</TD></TR>\n";
+    }
+    if (!empty($element_array[$i]['Needed'])) {
+      $printstring.="<TR><TD colspan=6 class=\"border0010\">Tech/Hotel notes: ".htmlspecialchars($element_array[$i]['Needed'],ENT_NOQUOTES)."</TD></TR>\n";
+    }
+    if (!empty($element_array[$i]['partlist'])) {
+      $printstring.="<TR><TD colspan=6 class=\"border0010\">Scheduled Participants:<br>\n".$element_array[$i]['partlist']."</TD></TR>\n";
     }
     $printstring.="<TR><TD colspan=6 class=\"border0020\">&nbsp;</TD></TR>\n";
     $printstring.="<TR><TD colspan=6 class=\"border0000\">&nbsp;</TD></TR>\n";
@@ -967,7 +983,15 @@ SELECT
     desc_good_web,
     desc_good_book,
     persppartinfo,
-    pubsname as proposer
+    notesforpart,
+    notesforprog,
+    partlist,
+    pubsname as proposer,
+    concat(if((servicenotes!=''),servicenotes,""),
+           if(((servicenotes!='') AND (servicelist!='')),", ",""),
+           if((servicelist!=''),servicelist,''),
+           if((((servicenotes!='') OR (servicelist!='')) AND (featurelist!='')),", ",""),
+           if((featurelist!=''),featurelist,'')) AS Needed
   FROM
       Sessions
     JOIN Tracks T USING (trackid)
@@ -988,6 +1012,36 @@ SELECT
 	  biostatename='good' AND
 	  biodestname='web' AND
 	  descriptionlang='en-us') TGW USING (sessionid)
+    LEFT JOIN (SELECT
+           sessionid,
+           GROUP_CONCAT(DISTINCT servicename SEPARATOR ', ') as 'servicelist'
+         FROM
+             SessionHasService
+	   JOIN Services USING (serviceid,conid)
+         WHERE
+           conid=$conid
+         GROUP BY
+	       sessionid) SL USING (sessionid)
+    LEFT JOIN (SELECT
+           sessionid,
+           GROUP_CONCAT(DISTINCT featurename SEPARATOR ', ') as 'featurelist'
+         FROM
+             SessionHasFeature
+	   JOIN Features USING (featureid,conid)
+         WHERE
+           conid=$conid
+         GROUP BY
+	    sessionid) FL USING (sessionid)
+    LEFT JOIN (SELECT
+            sessionid,
+            GROUP_CONCAT(pubsname, if(moderator IN('1','Yes')," <I>mod</I> ",""), if(volunteer IN('1','Yes')," <I>volunteer</I> ",""), if(introducer IN('1','Yes')," <I>introducer</I> ",""), if(aidedecamp IN('1','Yes')," <I>assistant</I> ","") SEPARATOR "<br>\n") AS partlist
+          FROM
+              ParticipantOnSession
+            JOIN Participants USING (badgeid)
+	  WHERE
+            conid=$conid
+          GROUP BY
+	    sessionid) PL USING (sessionid)
     LEFT JOIN (SELECT
         sessionid,
 	descriptiontext as subtitle_good_web

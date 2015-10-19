@@ -115,6 +115,7 @@ SELECT
     persppartinfo,
     notesforpart,
     partlist,
+    suggestor,
     concat(if((servicenotes!=''),servicenotes,""),
            if(((servicenotes!='') AND (servicelist!='')),", ",""),
            if((servicelist!=''),servicelist,''),
@@ -372,10 +373,12 @@ for ($i=1; $i<=$schd_rows; $i++) {
     echo "    <TD colspan=6 class=\"border0010\">Support requests: ".htmlspecialchars($schd_array[$i]["Needed"])."</TD>\n";
     echo "  </TR>\n";
   }
-  echo "  <TR>\n";
-  echo "    <TD>&nbsp;</TD>\n";
-  echo "    <TD colspan=6 class=\"border0010\">Propose <A HREF=MyMigrations.php?sessionid=".$schd_array[$i]['sessionid']."&conid=".$schd_array[$i]['conid'].">".$schd_array[$i]['title']."</A> for ".$_SESSION['conname'].".</TD>\n";
-  echo "  </TR>\n";
+  if ($schd_array[$i]["suggestor"] == $badgeid) {
+    echo "  <TR>\n";
+    echo "    <TD>&nbsp;</TD>\n";
+    echo "    <TD colspan=6 class=\"border0010\">Propose <A HREF=MyMigrations.php?sessionid=".$schd_array[$i]['sessionid']."&conid=".$schd_array[$i]['conid'].">".$schd_array[$i]['title']."</A> for ".$_SESSION['conname'].".</TD>\n";
+    echo "  </TR>\n";
+  }
   echo "  <TR>\n";
   echo "    <TD colspan=7 class=\"smallspacer\">&nbsp;</TD></TR>\n";
   echo "  <TR>\n";

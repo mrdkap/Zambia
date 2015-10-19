@@ -195,7 +195,7 @@ EOD;
 ";
     $recipientinfo[$i]['fullschedule'].=$schedule_array[$j]['Title']."
 Web Description: ".$schedule_array[$j]['desc_good_web']."
-Bood Description: ".$schedule_array[$j]['desc_good_book']."
+Book Description: ".$schedule_array[$j]['desc_good_book']."
 
 ";
   }

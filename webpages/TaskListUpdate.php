@@ -2,8 +2,6 @@
 require_once('StaffCommonCode.php');
 $conid=$_SESSION['conid'];
 
-// Tests for the substituted variables
-
 $title="Task List Update";
 $description="Return to <A HREF=\"genreport.php?reportname=alltasklistdisplay\">all events</A>,\n";
 $description.="<A HREF=\"genreport.php?reportname=tasklistdisplay\">this event's</A>,\n";

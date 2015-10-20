@@ -15,7 +15,7 @@ if ((isset($_POST["agendaupdate"])) and ($_POST["agendaupdate"]!="")) {
 		       htmlspecialchars_decode($_POST['agendanotes']),
 		       $_SESSION['conid'],
 		       htmlspecialchars_decode($_POST['meetingtime']));
-    $message.=submit_table_element($link, $title, "$ReportDB.AgendaList", $element_array, $value_array);
+    $message.=submit_table_element($link, $title, "AgendaList", $element_array, $value_array);
    } else {
     $pairedvalue_array=array("agendanotes='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['agendanotes'])))."'",
 			     "agendaname='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['agendaname'])))."'",
@@ -24,7 +24,7 @@ if ((isset($_POST["agendaupdate"])) and ($_POST["agendaupdate"]!="")) {
 			     "meetingtime='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['meetingtime'])))."'");
     $match_field="agendaid";
     $match_value=$_POST['agendaid'];
-    $message.=update_table_element($link, $title, "$ReportDB.AgendaList", $pairedvalue_array, $match_field, $match_value);
+    $message.=update_table_element($link, $title, "AgendaList", $pairedvalue_array, $match_field, $match_value);
    }
  }
 
@@ -45,9 +45,9 @@ SELECT
     agendaid,
     concat(permrolename,": ",agendaname," for ",conname) as aname
   FROM
-      $ReportDB.AgendaList
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN $ReportDB.ConInfo USING (conid)
+      AgendaList
+    JOIN PermissionRoles USING (permroleid)
+    JOIN ConInfo USING (conid)
   ORDER BY
     permrolename,
     conid,
@@ -99,7 +99,7 @@ SELECT
     agendanotes,
     meetingtime
   FROM
-      $ReportDB.AgendaList
+      AgendaList
   WHERE
     agendaid='$agendaid'
 
@@ -132,7 +132,7 @@ EOD;
 <INPUT type="text" size=10 name="meetingtime" id="meetingtime" value="<?php echo htmlspecialchars($meetingtime); ?>">
 <LABEL for="permroleid">Select Meeting Group:</LABEL>
 <SELECT name="permroleid">
-<?php $query="SELECT permroleid, permrolename FROM $ReportDB.PermissionRoles" ; populate_select_from_query($query, $permroleid, "Select Meeting Group", false); ?>
+<?php $query="SELECT permroleid, permrolename FROM PermissionRoles" ; populate_select_from_query($query, $permroleid, "Select Meeting Group", false); ?>
 </SELECT>
 </DIV>
 

@@ -1,11 +1,7 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 
 // LOCALIZATIONS
 $gflowname=$_GET["gflowname"];

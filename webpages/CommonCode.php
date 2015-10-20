@@ -1289,7 +1289,7 @@ function submit_participant_note ($note, $partid) {
 
 /* Pull the notes for a participant, in reverse order. */
 // I'm no longer sure why the below is here ...
-//"SELECT PR.pubsname, PB.pubsname, N.timestamp, N.note FROM NotesOnParticipants N, $ReportDB.Participants PR, $ReportDB.Participants PB WHERE N.rbadgeid=PR.badgeid AND N.badgeid=PB.badgeid;
+//"SELECT PR.pubsname, PB.pubsname, N.timestamp, N.note FROM NotesOnParticipants N, Participants PR, Participants PB WHERE N.rbadgeid=PR.badgeid AND N.badgeid=PB.badgeid;
 function show_participant_notes ($partid) {
   global $link;
 
@@ -1681,22 +1681,15 @@ function send_fixed_email_info($emailto,$subject,$body,$link,$title,$description
      emailto, if it is a permrolename, use the default from, and no
      cc, and add an entry to the email queue. */
   global $link;
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
-
   $conid=$_SESSION['conid'];
 
   $query = <<<EOD
 SELECT
     email
   FROM
-      $ReportDB.ConRoles
-    JOIN $ReportDB.UserHasConRole USING (conroleid)
-    JOIN $ReportDB.CongoDump USING (badgeid)
+      ConRoles
+    JOIN UserHasConRole USING (conroleid)
+    JOIN CongoDump USING (badgeid)
   WHERE
     conrolename like '%ZambiaCoord%' AND
     conid=$conid
@@ -2064,12 +2057,6 @@ EOD;
 function generateSvgString($sessionid,$conid) {
   /* Global Variables */
   global $message_error,$message,$link;
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BioDB=="BIODB") {unset($BIODB);}
 
   /* Local Variables */
   // Number of values offered
@@ -2115,7 +2102,7 @@ SELECT
     questionid,
     questionvalue
   FROM
-      $ReportDB.Feedback
+      Feedback
   WHERE
     sessionid=$sessionid AND
     conid=$conid
@@ -2139,8 +2126,8 @@ SELECT
     count(*) AS tot,
     questiontext
   FROM
-      $ReportDB.Feedback
-    JOIN $ReportDB.QuestionsForSurvey USING (questionid)
+      Feedback
+    JOIN QuestionsForSurvey USING (questionid)
   WHERE
     sessionid=$sessionid AND
     conid=$conid
@@ -2171,7 +2158,7 @@ EOD;
 SELECT
     concat(title, if(secondtitle,concat(": ",secondtitle),"")) as Title
   FROM
-      $ReportDB.Sessions
+      Sessions
   WHERE
     sessionid=$sessionid AND
     conid=$conid

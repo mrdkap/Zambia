@@ -1,12 +1,6 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 $title="EmailTo Update";
 $description="<P>Return to the <A HREF=\"genreport.php?reportname=emailtolist\">Possible EmailTo Recipients</A></P>\n";
@@ -20,14 +14,14 @@ if ((isset($_POST["emailtoupdate"])) and ($_POST["emailtoupdate"]!="")) {
     $value_array=array(htmlspecialchars_decode($_POST['emailtodescription']),
 		       htmlspecialchars_decode($_POST['display_order']),
 		       htmlspecialchars_decode(refrom($_POST['emailtoquery'])));
-   $message.= submit_table_element($link, $title, "$ReportDB.EmailTo", $element_array, $value_array);
+   $message.= submit_table_element($link, $title, "EmailTo", $element_array, $value_array);
    } else {
     $pairedvalue_array=array("emailtodescription='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['emailtodescription'])))."'",
 			     "display_order='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['display_order'])))."'",
 			     "emailtoquery='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode(refrom($_POST['emailtoquery']))))."'");
     $match_field="emailtoid";
     $match_value=$_POST['emailtoid'];
-    $message.=update_table_element($link, $title, "$ReportDB.EmailTo", $pairedvalue_array, $match_field, $match_value);
+    $message.=update_table_element($link, $title, "EmailTo", $pairedvalue_array, $match_field, $match_value);
    }
 }
 
@@ -49,7 +43,7 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>
 <FORM name="emailtolistselect" method=POST action="StaffEmailToUpdate.php">
   <DIV><LABEL for="emailtoid">Select EmailTo Query</LABEL>
-    <SELECT name="emailtoid"><?php populate_select_from_table("$ReportDB.EmailTo",$emailtoid,"Select EmailTo query",false); ?>
+    <SELECT name="emailtoid"><?php populate_select_from_table("EmailTo",$emailtoid,"Select EmailTo query",false); ?>
     </SELECT>
   </DIV>
   <DIV class="SubmitDiv">
@@ -77,7 +71,7 @@ SELECT
     display_order,
     emailtoquery
   FROM
-      $ReportDB.EmailTo
+      EmailTo
   WHERE
     emailtoid='$emailtoid'
 

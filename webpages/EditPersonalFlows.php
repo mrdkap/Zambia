@@ -1,10 +1,6 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="EditPersonalFlows.php";
@@ -14,24 +10,24 @@ $additionalinfo="<P><A HREF=genreport.php?reportname=personalflow>Return</A> to 
 $mybadgeid=$_SESSION['badgeid'];
 
 if (isset($_POST['addto'])) {
-  add_flow_report($_POST['addto'],$_POST['addphase'],"$ReportDB.Personal","",$title,$description);
+  add_flow_report($_POST['addto'],$_POST['addphase'],"Personal","",$title,$description);
  }
 
 if (isset($_POST['unrank'])) {
-  remove_flow_report($_POST['unrank'],"$ReportDB.Personal",$title,$description);
+  remove_flow_report($_POST['unrank'],"Personal",$title,$description);
  }
 
 if (isset($_POST['upfrom'])) {
-  deltarank_flow_report($_POST['upfrom'],"$ReportDB.Personal","Up",$title,$description);
+  deltarank_flow_report($_POST['upfrom'],"Personal","Up",$title,$description);
  }
 
 if (isset($_POST['downfrom'])) {
-  deltarank_flow_report($_POST['downfrom'],"$ReportDB.Personal","Down",$title,$description);
+  deltarank_flow_report($_POST['downfrom'],"Personal","Down",$title,$description);
  }
 
 if (isset($_POST['newnote'])) {
   $note_array=array("pflownote='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['newnote'])))."'");
-  update_table_element ($link, $title, "$ReportDB.PersonalFlow", $note_array, "pflowid", $_POST['noteid']);
+  update_table_element ($link, $title, "PersonalFlow", $note_array, "pflowid", $_POST['noteid']);
 }
 
 // Forms inserted into the query
@@ -66,8 +62,8 @@ SELECT
     phasetypeid,
     concat(phasetypename,if ((phasestate=TRUE),' (c)',' ')) AS Phases
   FROM
-    $ReportDB.PhaseTypes
-  JOIN $ReportDB.Phase USING (phasetypeid)
+    PhaseTypes
+  JOIN Phase USING (phasetypeid)
   WHERE
     conid=$conid
   ORDER BY
@@ -92,10 +88,10 @@ SELECT
   if((phasetypeid IS NULL),'ALL',concat("(",phasetypeid,") ",phasetypename)) AS Phase,
     $note_query
   FROM
-      $ReportDB.PersonalFlow
-    JOIN $ReportDB.Reports USING (reportid)
-    LEFT JOIN $ReportDB.PhaseTypes USING (phasetypeid)
-    LEFT JOIN $ReportDB.Phase USING (phasetypeid)
+      PersonalFlow
+    JOIN Reports USING (reportid)
+    LEFT JOIN PhaseTypes USING (phasetypeid)
+    LEFT JOIN Phase USING (phasetypeid)
   WHERE
     badgeid=$mybadgeid AND
     (conid is NULL or conid=$conid)

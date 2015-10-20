@@ -3,12 +3,8 @@ require_once ('StaffCommonCode.php');
 global $link;
 $title="Migrate Participants";
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
 
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
+// This is not called from anywhere, it might be depreciated.
 
 // Assign the fromconid if it was passed in
 $fromconid='';
@@ -19,7 +15,7 @@ elseif (isset($_GET['fromconid']) AND ($_GET['fromdconid'] != '')) {$typename=$_
 if ($fromconid=='') {
   //Choose the con from the database
   $description ="<P>Choose the appropriate convention from which to migrate the participants.</P>\n";
-  $query = "SELECT conid, conname from $ReportDB.ConInfo";
+  $query = "SELECT conid, conname from ConInfo";
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<FORM name=\"fromconid\" method=POST action=\"MigrateParticipants.php\">\n";
   echo "<DIV><LABEL for=\"fromconid\">Select Convention to migrate from:</LABEL>\n";
@@ -49,7 +45,7 @@ if (isset($_POST['updateinterest']) AND ($_POST['updateinterest'] != '')) {
   $workbadgeids_string=implode(",",$workbadgeids_array);
   $element_array = array('conid', 'badgeid', 'interestedtypeid');
   foreach ($workbadgeids_array as $workbadgeid) {
-    $query = "SELECT interestedtypeid FROM $ReportDB.Interested WHERE conid=$conid AND badgeid=$workbadgeid";
+    $query = "SELECT interestedtypeid FROM Interested WHERE conid=$conid AND badgeid=$workbadgeid";
     if (($result=mysql_query($query,$link))===false) {
       $message.="<P>Error retrieving data from database.</P>\n<P>";
       $message.=$query;
@@ -59,7 +55,7 @@ if (isset($_POST['updateinterest']) AND ($_POST['updateinterest'] != '')) {
     if (0==($rows=mysql_num_rows($result))) {
       $value_array = array($conid,$workbadgeid,$invited);
       print_r($value_array);
-      $message.=submit_table_element($link, $title, "$ReportDB.Interested", $element_array, $value_array);
+      $message.=submit_table_element($link, $title, "Interested", $element_array, $value_array);
     } else {
       $message.="<P>$workbadgeid has an interested state already.</P>";
     }
@@ -95,23 +91,23 @@ SELECT
 			 )
 		     ) SEPARATOR " ") AS 'Note'
   FROM
-      $ReportDB.UserHasPermissionRole UHPR
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
-    JOIN $ReportDB.CongoDump USING (badgeid)
+      UserHasPermissionRole UHPR
+    JOIN PermissionRoles USING (permroleid)
+    JOIN CongoDump USING (badgeid)
     LEFT JOIN $NoteDB.NotesOnParticipants USING (badgeid)
-    JOIN $ReportDB.Interested USING (badgeid)
-    JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
+    JOIN Interested USING (badgeid,conid)
+    JOIN InterestedTypes USING (interestedtypeid)
     LEFT JOIN (
       SELECT
           badgeid,
           interestedtypename AS 'Interested'
         FROM
-            $ReportDB.Interested
-          JOIN $ReportDB.InterestedTypes USING (interestedtypeid)
+            Interested
+          JOIN InterestedTypes USING (interestedtypeid)
         WHERE
           conid=$conid) X USING (badgeid)
   WHERE
-    UHPR.conid=$fromconid AND
+    onid=$fromconid AND
     interestedtypename="Yes" AND
     (permrolename='Programming' OR
      permrolename='SuperProgramming')
@@ -131,7 +127,7 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 echo "<FORM name=\"fromconid\" method=POST action=\"MigrateParticipants.php\">\n";
 echo "<DIV><LABEL for=\"fromconid\">Select another Convention to migrate from:</LABEL>\n";
 echo "<SELECT name=\"fromconid\">\n";
-$query = "SELECT conid, conname from $ReportDB.ConInfo";
+$query = "SELECT conid, conname from ConInfo";
 populate_select_from_query($query, $fromconid, " ", false);
 echo "</SELECT></DIV>\n";
 echo "<DIV><BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Submit</BUTTON></DIV>\n";

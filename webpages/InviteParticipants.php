@@ -3,6 +3,7 @@ require_once('StaffCommonCode.php');
 global $link;
 $title="Invite Participants";
 $description="<P>Use this tool to put sessions marked \"invited guests only\" on a participant's interest list.</P>\n";
+$conid=$_SESSION['conid'];
 
 // Collaps the three choices into one
 if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
@@ -65,12 +66,13 @@ SELECT
     concat(trackname,' - ',sessionid,' - ',title) as sname
   FROM
       Sessions
-    JOIN $ReportDB.Tracks USING (trackid)
-    JOIN $ReportDB.SessionStatuses USING (statusid)
-    JOIN $ReportDB.PubStatuses USING (pubstatusid)
+    JOIN Tracks USING (trackid)
+    JOIN SessionStatuses USING (statusid)
+    JOIN PubStatuses USING (pubstatusid)
   WHERE
     may_be_scheduled=1 AND
-    pubstatusname in ($pubstatus_string)
+    pubstatusname in ($pubstatus_string) AND
+    conid=$conid
   ORDER BY
     trackname,
     sessionid,

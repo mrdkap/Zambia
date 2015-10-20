@@ -5,12 +5,6 @@
     // still the initial password.
     require ('PartCommonCode.php');
     global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
     $title="Welcome";
     $password = $_POST['password'];
@@ -18,7 +12,7 @@ if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // If interested is changed.
 if ($_POST['interested']!=$participant['interested']) {
-  $query ="UPDATE $ReportDB.Interested SET ";
+  $query ="UPDATE Interested SET ";
   $query.="interestedtypeid=".$_POST['interested']." ";
   $query.="WHERE badgeid=\"".$badgeid."\" AND conid=".$_SESSION['conid'];
   if (!mysql_query($query,$link)) {
@@ -30,7 +24,7 @@ if ($_POST['interested']!=$participant['interested']) {
   if ($r_matched[1]==0) {
     $element_array=array('conid','badgeid','interestedtypeid');
     $value_array=array($_SESSION['conid'], $badgeid, mysql_real_escape_string(stripslashes($_POST['interested'])));
-    $message.=submit_table_element($link,$title,"$ReportDB.Interested", $element_array, $value_array);
+    $message.=submit_table_element($link,$title,"Interested", $element_array, $value_array);
   } elseif ($r_matched[1]>1) {
     $message.="There might be something wrong with the table, there are multiple interested elements for this year.";
   }
@@ -56,7 +50,7 @@ if ($_POST['interested']!=$participant['interested']) {
                     exit();
                     }
             }
-	$query = "UPDATE $ReportDB.Participants SET ";
+	$query = "UPDATE Participants SET ";
 	if ($update_password==true) {
 		$query=$query."password=\"".md5($password)."\", ";
 		}
@@ -79,7 +73,7 @@ if ($_POST['interested']!=$participant['interested']) {
             RenderError($title,$message);
             exit();
             }
-    $result=mysql_query("Select password from $ReportDB.Participants where badgeid='".$badgeid."'",$link);
+    $result=mysql_query("Select password from Participants where badgeid='".$badgeid."'",$link);
     if (!$result) {
     	$message="Incorrect badgeid or password.";
         require ('login.php');
@@ -95,7 +89,7 @@ if ($_POST['interested']!=$participant['interested']) {
 	exit(0);
 	}
 /*
-    $result=mysql_query("Select badgename from $ReportDB.Participants where badgeid='".$badgeid."'",$link);
+    $result=mysql_query("Select badgename from Participants where badgeid='".$badgeid."'",$link);
     if ($result) {
     		$dbobject=mysql_fetch_object($result);
     		$badgename=$dbobject->badgename;

@@ -5,9 +5,6 @@ require_once('StaffCommonCode.php');
 global $link;
 $conid=$_SESSION['conid'];
 
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-
 // LOCALIZATIONS
 $_SESSION['return_to_page']="LabelsPrint.php";
 $title="Labels Print";

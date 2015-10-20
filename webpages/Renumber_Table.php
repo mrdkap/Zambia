@@ -1,12 +1,6 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables.
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 $title="Renumbering Table";
 
@@ -17,12 +11,6 @@ $title="Renumbering Table";
    key. */
 function straight_renumber_with_key($renumber_table,$renumber_key,$title,$description) {
   global $link;
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables.
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BiotDB=="BIODB") {unset($BIODB);}
 
   // Get everything from the database, and put into useable arrays.
   $query = "SELECT * from $renumber_table";
@@ -83,12 +71,6 @@ function straight_renumber_with_key($renumber_table,$renumber_key,$title,$descri
 
 function renumber_with_key_plus_conid($renumber_table,$renumber_key,$conid_array,$title,$description) {
   global $link;
-  $ReportDB=REPORTDB; // make it a variable so it can be substituted
-  $BioDB=BIODB; // make it a variable so it can be substituted
-
-  // Tests for the substituted variables.
-  if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-  if ($BiotDB=="BIODB") {unset($BIODB);}
 
   // Get everything from the database, and put into useable arrays.
   $query = "SELECT * from $renumber_table";
@@ -148,14 +130,14 @@ function renumber_with_key_plus_conid($renumber_table,$renumber_key,$conid_array
 }
 
 // Key to not use (pflowid) in the re-buiding of the table (PersonalFlow).
-$renumber_table="$ReportDB.PersonalFlow";
+$renumber_table="PersonalFlow";
 $renumber_key="pflowid";
 
 // straight_renumber_with_key($renumber_table,$renumber_key,$title,$renumber_table);
 
 // Key to not use (featureid) in the re-building of the table (Features) with
 // the conid attached.
-$renumber_table="$ReportDB.Features";
+$renumber_table="Features";
 $renumber_key="featureid";
 $conid_array=array("26","28","30","32","34","36","38","39","40");
 

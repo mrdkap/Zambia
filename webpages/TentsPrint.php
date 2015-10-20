@@ -4,12 +4,6 @@ require_once('StaffCommonCode.php');
 /* Global Variables */
 global $link;
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="TentsPrint.php";
@@ -150,15 +144,18 @@ SELECT
     DISTINCT pubsname
   FROM
     ParticipantOnSession
-    JOIN Sessions USING (sessionid)
-    JOIN $ReportDB.Types USING (typeid)
-    JOIN $ReportDB.Participants USING (badgeid)
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+    JOIN Sessions USING (sessionid,conid)
+    JOIN Types USING (typeid)
+    JOIN Participants USING (badgeid)
+    JOIN UserHasPermissionRole UHPR USING (badgeid,conid)
+    JOIN PermissionRoles USING (permroleid)
   WHERE
-    UHPR.conid=$conid AND
+    conid=$conid AND
     permrolename in ('Participant') AND
-    typename IN ('Panel')
+    typename IN ('Panel') AND
+    volunteer not in ('1','Yes') AND
+    introducer not in ('1','Yes') AND
+    aidedecamp not in ('1','Yes')
   ORDER BY
     pubsname
 EOD;

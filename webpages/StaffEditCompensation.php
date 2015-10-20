@@ -2,12 +2,6 @@
 require_once('StaffCommonCode.php');
 global $link;
 $title="Compensation Update";
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 // Check to see if page can be displayed
 if (!may_I("SuperLiaison") AND !may_I("Treasurer")) {
@@ -67,7 +61,7 @@ SELECT
     comptypename,
     comptypedescription
   FROM
-      $ReportDB.CompensationTypes
+      CompensationTypes
   $wherestring
   ORDER BY
     comptypeid;
@@ -108,7 +102,7 @@ if ($_POST['update']=="please") {
 
       // Do the update, if there is anything to update.
       if (!empty($pairedvalue_array)) {
-	$message.=update_table_element($link,$title,"$ReportDB.Compensation",$pairedvalue_array,"compid",$compid);
+	$message.=update_table_element($link,$title,"Compensation",$pairedvalue_array,"compid",$compid);
       }
     }
   }
@@ -137,13 +131,13 @@ if ($_POST['update']=="please") {
 
     // Do the insert if there is anything to insert.
     if (!empty($value_array)) {
-      $message.=submit_table_element($link, $title, "$ReportDB.Compensation", $element_array, $value_array);
+      $message.=submit_table_element($link, $title, "Compensation", $element_array, $value_array);
     }
   }
 }
 
 // Get the pubsname, to make things more readable
-$query="SELECT pubsname from $ReportDB.Participants where badgeid=$selpartid";
+$query="SELECT pubsname from Participants where badgeid=$selpartid";
 if (!$result=mysql_query($query,$link)) {
   $message_error="Badgeid does not exist in Participants, please try again:".$query;
   RenderError($title,$message_error);
@@ -159,7 +153,7 @@ SELECT
     compamount,
     compdescription
   FROM
-      $ReportDB.Compensation
+      Compensation
   WHERE
     conid=$conid AND
     badgeid=$selpartid

@@ -2,12 +2,6 @@
 require_once('StaffCommonCode.php');
 global $link;
 $conid=$_SESSION['conid'];
-$ReportDB=REPORTDB; // make it a variable so it can be substituted
-$BioDB=BIODB; // make it a variable so it can be substituted
-
-// Tests for the substituted variables
-if ($ReportDB=="REPORTDB") {unset($ReportDB);}
-if ($BiotDB=="BIODB") {unset($BIODB);}
 
 $title="Volunteer Check In";
 $description="<P align=\"center\">Check in the Volunteer in question.</P>";
@@ -20,7 +14,7 @@ SELECT
     permrolename,
     notes
   FROM
-      $ReportDB.PermissionRoles
+      PermissionRoles
   WHERE
     permroleid > 1
 EOD;
@@ -47,11 +41,11 @@ SELECT
     DISTINCT badgeid,
     pubsname 
   FROM
-      $ReportDB.Participants
-    JOIN $ReportDB.UserHasPermissionRole UHPR USING (badgeid)
-    JOIN $ReportDB.PermissionRoles USING (permroleid)
+      Participants
+    JOIN UserHasPermissionRole UHPR USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
   WHERE
-    UHPR.conid=$conid AND
+    conid=$conid AND
     permrolename in ($permrolecheck_string)
   ORDER BY
     pubsname
@@ -79,7 +73,7 @@ if (isset($_POST['badgeid'])) {
 if (isset($_POST['voltimein'])) {
   $element_array = array('conid', 'badgeid', 'voltimein', 'volinbadgeid');
   $value_array=array($_SESSION['conid'],$badgeid,$_POST['voltimein'],$_SESSION['badgeid']);
-  $message.=submit_table_element($link, $title, "$ReportDB.TimeCard", $element_array, $value_array);
+  $message.=submit_table_element($link, $title, "TimeCard", $element_array, $value_array);
   if (isset($_POST['onepageprog'])) {
     header("Location: genreport.php?reportname=progvolexpected"); // Redirect back to the progvolexpected report
   } elseif (isset($_POST['onepagegen'])) {
@@ -90,7 +84,7 @@ if (isset($_POST['voltimein'])) {
     header("Location: VolunteerCheckIn.php"); // Redirect back to here, with a blank slate
   }
   /* topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-  echo "<P>Database: $ReportDB.TimeCard</P>\n";
+  echo "<P>Database: TimeCard</P>\n";
   correct_footer(); */
   exit();
  }
@@ -99,7 +93,7 @@ $query=<<<EOD
 SELECT
     pubsname 
   FROM
-      $ReportDB.Participants
+      Participants
   WHERE
     badgeid='$badgeid'
 EOD;

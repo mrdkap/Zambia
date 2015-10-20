@@ -19,6 +19,10 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
    <DD>Use this tool to put sessions marked "invited guests only" on the interest list for a participant.</DD>
    <DT><A HREF="StaffAssignParticipants.php">Assign participants to a session</A></DT>
    <DD>Use this tool to assign participants to a session and select moderator.</DD>
+<?php if (may_I("SuperLiaison") OR may_I("Treasurer")) { ?>
+   <DT><A HREF="PresenterCompensation.php">Presenter Compensation Table</A></DT>
+   <DD>Read and update the Presenter Compensation.  PLEASE only change with the permission of the Div Head.</DD>
+<?php } ?>
    <DT><A HREF="PopulateLiaisonTasks.php">Populate Liaison Tasks</A></DT>
    <DD>Populate the generic task set for all of the Presenter Liaisons, with the appropriate presenters.</DD>
    <DT><A HREF="ProgVolSchedule.php">Entered Schedule Data</A></DT>

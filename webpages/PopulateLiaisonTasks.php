@@ -6,6 +6,8 @@ $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_POST['conid'];}
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
+unset($doit);
+
 // LOCALIZATIONS
 $_SESSION['return_to_page']="PopulateLiaisonTasks.php";
 $title="Populate Liaison Tasks";
@@ -18,34 +20,13 @@ $additionalinfo.="  <LI><A HREF=genreport.php?reportname=myliaisonresponsibiliti
 $additionalinfo.="  <LI><A HREF=genreport.php?reportname=mytasklistdisplay>My Task List</A></LI>\n";
 $additionalinfo.="  <LI><A HREF=genreport.php?reportname=conflictassignednocompensation>Missing from Compensation table</A></LI>\n";
 $additionalinfo.="</UL></P>\n";
+$additionalinfo.="<P>There still needs to be an editor for the Generic Liaison Tasks, to be linked in the list above.</P>\n";
 
 /* Get the form information */
-if ((isset ($_POST["presenterbadgeid"])) and (is_numeric($_POST["presenterbadgeid"]))) {
-  $update_badgeid=$_POST["presenterbadgeid"];
+if (isset ($_POST["doit"])) {
+  $message.="Done:<br>";
+  $doit=1;
 }
-
-if ((isset ($_POST["comliactivityid"])) and (is_numeric ($_POST["comliactivityid"]))) {
-  $update_activityid=$_POST["comliactivityid"];
-}
-
-if (isset ($update_badgeid)) {
-  $element_array=array('conid','badgeid','comliactivityid','completedate');
-  $value_array=array($_SESSION['conid'],
-		     $update_badgeid,
-		     $update_activityid,
-		     date('Y-m-d'));
-  $message.=submit_table_element($link,$title,"ComLiTasksStatus",$element_array,$value_array);
-  $message.="<P>Update: $update_badgeid and $update_activityid</P>\n";
-}
-
-/* Submission format
-activityid, conid, badgeid, timestamp, activity, activitynotes, activitystart, targettime, donestate, donetime
-Autoset: activityid, timestamp, donestate, donetime
-conid comes from $conid
-badgeid comes from $presenter_array['Liaison Badgeid']
-activity, activitynotes, activitystart, and targetttime comes from $tasks
-Activity, or activitynotes should start with $preseenter_array['Presenter']
-*/
 
 /* Get the common tasks */
 $query = <<<EOD
@@ -68,8 +49,8 @@ list($taskscount,$tasks_headers,$tasks_array)=queryreport($query,$link,$title,$d
 $query = <<<EOD
 SELECT
     compamount as Liaison,
-    badgename as Presenter,
-    badgeid as PresenterBadgeid,
+    GROUP_CONCAT("<LI>",badgename,"</LI>\n" SEPARATOR "") as Presenters,
+    GROUP_CONCAT(badgeid SEPARATOR ", ") as "Presenters Badgeid",
     compdescription as "Liaison Badgeid"
   FROM
       Compensation
@@ -78,76 +59,52 @@ SELECT
   WHERE
     conid=$conid and
     comptypename in ("Liaison")
+  GROUP BY
+    compdescription
   ORDER BY
     compamount
 EOD;
 
 // Retrieve query
-list($presentercount,$presenter_headers,$presenter_array)=queryreport($query,$link,$title,$description,0);
+list($liaisoncount,$liaison_headers,$liaison_array)=queryreport($query,$link,$title,$description,0);
 
-$query = <<<EOD
-SELECT 
-    badgeid,
-    comliactivityid,
-    completedate
-  FROM
-      ComLiTasksStatus
-  WHERE
-    conid=$conid;
-EOD;
+/* Submission format
+activityid, conid, badgeid, timestamp, activity, activitynotes, activitystart, targettime, donestate, donetime
+Autoset: activityid, timestamp, donestate, donetime
+conid comes from $conid
+badgeid comes from $presenter_array['Liaison Badgeid']
+activity, activitynotes, activitystart, and targetttime comes from $tasks
+activitynotes postpended with $liaison_array['Presenters']
+*/
 
-// Retrieve query
-list($completioncount,$completion_headers,$completion_array)=queryreport($query,$link,$title,$description,0);
+$element_array = array('conid','badgeid','activity','activitynotes','activitystart','targettime');
 
-for ($i=1; $i<=$completioncount; $i++) {
-  $isdone[$completion_array[$i]['badgeid']][$completion_array[$i]['comliactivityid']]=$completion_array[$i]['completedate'];
-}
-
-for ($i=1; $i<=$presentercount; $i++) {
+for ($i=1; $i<=$liaisoncount; $i++) {
   for ($j=1; $j<=$taskscount; $j++) {
-    if (isset ($isdone[$presenter_array[$i]['PresenterBadgeid']][$tasks_array[$j]['Generic Activity ID']])) {
-      $donestate[$i][$j]=$isdone[$presenter_array[$i]['PresenterBadgeid']][$tasks_array[$j]['Generic Activity ID']];
-    } else {
-      $donestate[$i][$j]="<FORM name=\"LiaisonTask$i$j\" method=POST action=\"PopulateLiaisonTasks.php\">\n";
-      $donestate[$i][$j].="<INPUT type=\"hidden\" name=\"presenterbadgeid\" value=\"".$presenter_array[$i]["PresenterBadgeid"]."\">\n";
-      $donestate[$i][$j].="<INPUT type=\"hidden\" name=\"comliactivityid\" value=\"".$tasks_array[$j]["Generic Activity ID"]."\">\n";
-      $donestate[$i][$j].="<INPUT type=\"submit\" name=\"submit\" value=\"No\">\n";
-      $donestate[$i][$j].="</FORM>\n";
+    $value_array=array($_SESSION['conid'],
+		       $liaison_array[$i]['Liaison Badgeid'],
+		       $tasks_array[$j]['Generic Activity List'],
+		       $tasks_array[$j]['Generic Activity Notes'] . "<UL>\n" . $liaison_array[$i]['Presenters'] . "\n</UL>\n",
+		       $tasks_array[$j]['Activity Start Time'],
+		       $tasks_array[$j]['Activity Completion Time']);
+    if (isset($doit)) {
+      $message.=$liasion_array[$i]['Liaison'] . " - " . $tasks_array[$j]['Generic Activity List'] . " - ";
+      $message.=submit_table_element($link,$title,"TaskList",$element_array, $value_array);
     }
   }
 }
+													  
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-echo "<P>Tasks to be replicated:</P>\n";
+echo "<P>Tasks to be replicated: ";
+echo "<FORM name=\"populateliaisiontasksabove\" method=POST action=\"PopulateLiaisonTasks.php\">\n";
+echo "<BUTTON type=\"submit\" name=\"doit\" value=\"doit\">Do It</BUTTON>\n";
+echo "</FORM></P>\n";
 echo renderhtmlreport(1,$taskscount,$tasks_headers,$tasks_array);
-echo "<P>Presenter/Liaison mapping</P>\n";
-/*echo renderhtmlreport(1,$presentercount,$presenter_headers,$presenter_array); */
-$liaison="NONE";
-echo "<TABLE>\n";
-for ($i=1; $i<=$presentercount; $i++) {
-  if ($liaison!=$presenter_array[$i]["Liaison"]) {
-    $liaison=$presenter_array[$i]["Liaison"];
-    echo "</TABLE>\n";
-    echo "<P>Liaison: $liaison</P>\n";
-    echo "<TABLE border=1>\n";
-    echo "  <TR><TH>$liaison</TH>\n";
-    for ($j=1; $j<=$taskscount; $j++) {
-      echo "    <TH>";
-      echo $tasks_array[$j]["Generic Activity List"];
-      echo "</TH>\n";
-    }
-    echo "  </TR>\n";
-  }
-  echo "  <TR><TH>";
-  echo $presenter_array[$i]["Presenter"];
-  echo "</TH>";
-  for ($j=1; $j<=$taskscount; $j++) {
-    echo "    <TD>";
-    echo $donestate[$i][$j];
-    echo "</TD>\n";
-  }
-}
-echo "</TABLE>\n";
+echo "<FORM name=\"populateliaisiontasksbelow\" method=POST action=\"PopulateLiaisonTasks.php\">\n";
+echo "<BUTTON type=\"submit\" name=\"doit\" value=\"doit\">Do It</BUTTON>\n";
+echo "</FORM>\n";
+
 correct_footer();
 ?>

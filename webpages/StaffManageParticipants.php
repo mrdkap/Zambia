@@ -8,17 +8,19 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 <hr>
 <DL>
    <DT id="managebios"><A HREF="StaffManageBios.php">Manage biographies.</A></DT>
-   <DD id="managebios">Manage and edit participants' biographies.</DD>
+   <DD id="managebios">Manage and edit participant biographies.</DD>
    <DT><A HREF="AdminParticipants.php">Administer participants</A></DT>
-   <DD>Use this tool to modify a participant's "interested" flag, change his password, or delete him from all sessions.</DD>
+   <DD>Use this tool to modify the "interested" flag for a participant, change a password for a participant, or delete a participant from all sessions.</DD>
    <DT><A HREF="StaffEditCreateParticipant.php?action=migrate">Migrate Participant from another con-instance.</A></DT> 
    <DD>Pick a participant from the list of all possible participants across all the years, and set them for this year.</DD>
    <DT><A HREF="StaffEditCreateParticipant.php?action=create">Enter Participants</A></DT> 
    <DD>Manually create new participants in the database and enter their data</DD>
    <DT><A HREF="InviteParticipants.php">Invite a participant to a session</A></DT>
-   <DD>Use this tool to put sessions marked "invited guests only" on a participant's interest list.</DD>
+   <DD>Use this tool to put sessions marked "invited guests only" on the interest list for a participant.</DD>
    <DT><A HREF="StaffAssignParticipants.php">Assign participants to a session</A></DT>
    <DD>Use this tool to assign participants to a session and select moderator.</DD>
+   <DT><A HREF="PopulateLiaisonTasks.php">Populate Liaison Tasks</A></DT>
+   <DD>Populate the generic task set for all of the Presenter Liaisons, with the appropriate presenters.</DD>
    <DT><A HREF="ProgVolSchedule.php">Entered Schedule Data</A></DT>
    <DD>Look at all the collected data to start scheduling from.</DD>
    <DT><A HREF="MaintainRoomSched.php">Maintain room schedule</A></DT>

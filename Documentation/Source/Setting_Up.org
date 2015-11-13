@@ -749,11 +749,12 @@ for i in FFF-[34]*
    happen.  The phase of the convention will shift, over time, as
    deadlines approach and pass.  Not all of the phasetypeids from the
    PhaseTypes table need to be there, but, it is easier if they are,
-   so all you have to do is change the phasestate, and the appropriate
-   phase is available.  If you wish to see what values were set for a
-   previous instance of your con (to make sure you have the right
-   values), you might want to use a query (replacing the $conid with
-   the previous con you want to model on) like:
+   so all you have to do is change the phasestate, using the
+   AdminPhases.php page and the appropriate phase changes state.  If
+   you wish to see what values were set for a previous instance of
+   your con (to make sure you have the right values), you might want
+   to use a query (replacing the $conid with the previous con you want
+   to model on) like:
 #+begin_src html :exports both :results silent
     SELECT
         *
@@ -770,6 +771,16 @@ for i in FFF-[34]*
    + phasetypeid: This is the phase that is being turned on or off, as
      described in the PhaseTypes table.
    + phasestate: If a phase is active.
+
+   You might wish to simply populate your phases with (replacing
+   $conid with the appropriate conid, and the last "," with ";"):
+   INSERT INTO Phase (conid, phasetypeid, phasestate) VALUES
+#+begin_src html :exports both :results silent
+    SELECT
+        concat("($conid,",phasetypeid,",0),") AS ValueSet
+      FROM
+          PhaseTypes;
+#+end_src
 
    An example of phase shifting, is when you open your call for
    presenters, or you close your call for vendors, or you allow

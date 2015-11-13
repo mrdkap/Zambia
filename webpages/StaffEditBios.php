@@ -17,10 +17,30 @@ if (isset($_POST['badgeid'])) {
    $badgeid=$_GET['badgeid'];
  }
 
+if (isset($_POST['qno'])) {
+  $qno=$_POST['qno'];
+} elseif (isset($_GET['qno'])) {
+  $qno=$_GET['qno'];
+}
+
 $title="Edit Participant Biography";
 $additionalinfo ="<P><A HREF=\"StaffManageBios.php";
-if (isset($badgeids)) {$additionalinfo.="?badgeids=$badgeids";}
-if (isset($_POST['unlock'])) {$additionalinfo.="&unlock=".$_POST['unlock'];}
+if ((isset($qno)) or (isset($badgeids)) or (isset($_POST['unlock']))) {
+  $additionalinfo.="?";
+  if (isset($qno)) {
+    $additionalinfo.="qno=$qno";
+    if ((isset($badgeids)) or (isset($_POST['unlock']))) {
+      $additionalinfo.="&";
+    }
+  }
+  if (isset($badgeids)) {
+    $additionalinfo.="badgeids=$badgeids";
+    if (isset($_POST['unlock'])) {
+      $additionalinfo.="&";
+    }
+  }
+  if (isset($_POST['unlock'])) {$additionalinfo.="unlock=".$_POST['unlock'];}
+}
 $additionalinfo.="\">Return</A> to the selected list.</P>\n";
 $additionalinfo.="<P>Please edit the bios below.  We don't currently edit the raw bios here.";
 $additionalinfo.="  If you really need to, please click on their name, and edit it there.</P>\n";
@@ -111,6 +131,7 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 //Build the self-referential form.
 echo "<FORM name=\"bioeditform\" method=POST action=\"StaffEditBios.php\">\n";
+echo "<INPUT type=hidden name=\"qno\" value=\"$qno\">\n";
 echo "<INPUT type=hidden name=\"badgeid\" value=\"$badgeid\">\n";
 echo "<INPUT type=hidden name=\"badgeids\" value=\"$badgeids\">\n";
 echo "<INPUT type=hidden name=\"update\" value=\"Yes\">\n";

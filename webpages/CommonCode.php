@@ -760,6 +760,136 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
   return($sched);
 }
 
+/* This function renders the matrix or list of Bios that need editing
+   It takes 8 elements:
+   badgeid_list - a comma-separated collection of badgeids for the list view
+   qno - the query number so more than one query can be referenced properly
+   check_element - array of [badgeid][col][biostatename] mapped to the biotext
+   numrows - number of rows
+   count_badgeid - number of badgeids
+   count_col - number of columns
+   pubsname - map of badgeid to pubsname
+   lockedby - map of badgeid to who has it locked
+
+   The check_element is what we are comparing across
+
+   If the badgeid_list is empty, it produces a matrix of possibilities.
+   If it is not empty, it produces a list of all the names that meet the qualification.
+ */
+function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_badgeid,$count_col,$pubsname,$lockedby) {
+  $col_keys=array_keys($count_col);
+  $badgeid_keys=array_keys($count_badgeid);
+
+  if ($badgeid_list!="") {
+    if ($numrows==0) {
+      $printstring.="<P>There are no biographies to edit which match your selection.</P>\n";
+      $printstring.="<P><A HREF=\"StaffManageBios.php\">Reload the Manage Biographies page.</A></P>\n";
+      correct_footer();
+      exit();
+    }
+    $printstring.="<TABLE class=\"grid\" border=1>\n";
+    $printstring.="    <TR>\n";
+    $printstring.="        <TH>Participant</TH>\n";
+    $printstring.="        <TH>Edit Full</TH>\n";
+    $printstring.="        <TH>Currently being edited by</TH>\n";
+    $printstring.="        </TR>\n";
+    for ($i=0; $i<count($count_badgeid); $i++) {
+      $printstring.="    <TR>\n";
+      $b=$badgeid_keys[$i];
+      $p=$pubsname[$badgeid_keys[$i]];
+      $bs=$_GET['badgeids'];
+      $printstring.="        <TD><A HREF=\"StaffEditBios.php?qno=$qno&badgeid=$b&badgeids=$bs\">$p</A></TD>\n";
+      $printstring.="        <TD><A HREF=\"StaffEditCreateParticipant.php?action=edit&partid=$b\">$p</A></TD>\n";
+      $printstring.="        <TD>".$lockedby[$badgeid_keys[$i]]."</TD>\n";
+      $printstring.="        </TR>\n";
+    }
+    $printstring.="    </TABLE>\n";
+  } else {
+
+    // Build the matrix, with approrpriate headers.
+    // Not doing "good" state for the time being.
+    //$possible_states=array('noraw','noedited','nogood','rawvedited','editedvgood','allmatch');
+    $possible_states=array('noraw','noedited','rawvedited','allmatch');
+    $possible_statename['noraw']="Missing raw bio";
+    $possible_statename['noedited']="Missing edited bio";
+    $possible_statename['nogood']="Missing good bio";
+    $possible_statename['rawvedited']="Raw bio doesn't match edited bio";
+    $possible_statename['editedvgood']="Edited bio does't match good bio";
+    $possible_statename['allmatch']="All bios match";
+
+    for ($i=0; $i<count($count_badgeid); $i++ ) {
+      $k=$badgeid_keys[$i];
+      $all_bios.=",$k";
+      for ($j=0; $j<count($count_col); $j++) {
+	$l=$col_keys[$j];
+	if (!isset($check_element[$k][$l]['raw'])) {
+	  $matrix_count[$l]['noraw']++;
+	  $matrix_badgeid[$l]['noraw'].=",$k";
+	}
+	if (!isset($check_element[$k][$l]['edited'])) {
+	  $matrix_count[$l]['noedited']++;
+	  $matrix_badgeid[$l]['noedited'].=",$k";
+	}
+	if (!isset($check_element[$k][$l]['good'])) {
+	  $matrix_count[$l]['nogood']++;
+	  $matrix_badgeid[$l]['nogood'].=",$k";
+	}
+	if ((isset($check_element[$k][$l]['raw'])) and
+	    (isset($check_element[$k][$l]['edited'])) and
+	    ($check_element[$k][$l]['raw'] != $check_element[$k][$l]['edited'])) {
+	  $matrix_count[$l]['rawvedited']++;
+	  $matrix_badgeid[$l]['rawvedited'].=",$k";
+	}
+	if ((isset($check_element[$k][$l]['edited'])) and
+	    (isset($check_element[$k][$l]['good'])) and
+	    ($check_element[$k][$l]['edited'] != $check_element[$k][$l]['good'])) {
+	  $matrix_count[$l]['editedvgood']++;
+	  $matrix_badgeid[$l]['editedvgood'].=",$k";
+	}
+	// Changed to reflect the missing "good" fields.
+	if ((isset($check_element[$k][$l]['raw'])) and
+	    (isset($check_element[$k][$l]['edited'])) and
+	    /* (isset($check_element[$k][$l]['good'])) and */
+	    ($check_element[$k][$l]['raw'] == $check_element[$k][$l]['edited']) /*and
+            ($check_element[$k][$l]['edited'] == $check_element[$k][$l]['good']) */) {
+	  $matrix_count[$l]['allmatch']++;
+	  $matrix_badgeid[$l]['allmatch'].=",$k";
+	}
+      }
+    }
+
+    // Table header
+    $printstring.="<TABLE class=\"grid\" border=1>\n";
+    $printstring.="  <TR>\n";
+    $printstring.="    <TH>Count of the States of the bios</TH>\n";
+    for ($i=0; $i<count($count_col); $i++) {
+      $printstring.="    <TH>".$col_keys[$i]."</TH>\n";
+    }
+    $printstring.="  </TR>\n";
+
+    $fixed_all=trim($all_bios,",");
+    // Table body, with links to the editing groups, reflecting back here
+    for ($i=0; $i<count($possible_states); $i++) {
+      $printstring.="  <TR>\n    <TH>".$possible_statename[$possible_states[$i]]."</TH>\n";
+      $k=$possible_states[$i];
+      for ($j=0; $j<count($count_col); $j++) {
+	$l=$col_keys[$j];
+	if (isset($matrix_count[$l][$k])) {
+	  $badgelist=$matrix_badgeid[$l][$k];
+	  $fixedbadgelist=trim($badgelist,",");
+	  $printstring.="    <TD align=\"center\">";
+	  $printstring.="<A HREF=StaffManageBios.php?qno=$qno&badgeids=".$fixedbadgelist.">".$matrix_count[$l][$k]."</A></TD>\n";
+	} else {
+	  $printstring.="    <TD></TD>\n";
+	}
+      }
+      $printstring.="  </TR>\n";
+    }
+    $printstring.="</TABLE><P><A HREF=StaffManageBios.php?qno=$qno&badgeids=$fixed_all>All</A></P>";
+  }
+  return ($printstring);
+}
+
 /* Pull the information from the database for a report.  This should be
  checked with, and possibly unified with other functions in db_functions
  file.  It takes the query and link to do the pull, title and description

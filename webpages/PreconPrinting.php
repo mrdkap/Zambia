@@ -35,10 +35,14 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 <HR>
 <P>Some useful views for the program book:</P>
 <DL>
-  <DT id="programbookdesc"><A HREF="BookBios.php">Bios</A>
+  <DT id="programbookbio"><A HREF="BookBios.php">Bios</A>
     <A HREF="BookBios.php?pic_p=N">(without images)</A>
     <A HREF="BookBios.php?short=Y">(short)</A></DT>
-  <DD id="programbookdesc">An alphabetical list of the Biographical Information for the Program Book.</DD>
+  <DD id="programbookbio">An alphabetical list of the Biographical Information for the Program Book.</DD>
+  <DT id="programbookstaffbio"><A HREF="BookStaffBios.php">Staff Bios</A>
+    <A HREF="BookStaffBios.php?pic_p=N">(without images)</A>
+    <A HREF="BookStaffBios.php?short=Y">(short)</A></DT>
+  <DD id="programbookstaffbio">An alphabetical list of the Biographical Information of the Staff members for the Program Book.</DD>
   <DT id="programbookdesc"><A HREF="BookSched.php?format=desc">Descriptions</A>
     <A HREF="BookSched.php?format=desc&short=Y">(short)</A></DT>
   <DD id="programbookdesc">An alphabetical list of the descriptions for the Program Book.</DD>

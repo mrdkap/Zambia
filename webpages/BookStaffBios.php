@@ -57,18 +57,18 @@ $title="Biographical Information";
 $description="<P>Biographical Information for all Presenters.</P>\n";
 $additionalinfo="<P>See also this ";
 if ($short=="T") {
-  $additionalinfo.="<A HREF=\"BookBios.php\">full</A> or\n";
-  $additionalinfo.="<A HREF=\"BookBios.php?pic_p=N\">full without images</A>,\n";
+  $additionalinfo.="<A HREF=\"BookStaffBios.php\">full</A> or\n";
+  $additionalinfo.="<A HREF=\"BookStaffBios.php?pic_p=N\">full without images</A>,\n";
 } elseif ($pic_p=="F") {
-  $additionalinfo.="<A HREF=\"BookBios.php\">full</A> or\n";
-  $additionalinfo.="<A HREF=\"BookBios.php?short=Y\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"BookStaffBios.php\">full</A> or\n";
+  $additionalinfo.="<A HREF=\"BookStaffBios.php?short=Y\">short</A>,\n";
 } else {
-  $additionalinfo.="<A HREF=\"BookBios.php?pic_p=N\">without images</A> or\n";
-  $additionalinfo.="<A HREF=\"BookBios.php?short=Y\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"BookStaffBios.php?pic_p=N\">without images</A> or\n";
+  $additionalinfo.="<A HREF=\"BookStaffBios.php?short=Y\">short</A>,\n";
 }
-$additionalinfo.="the <A HREF=\"BookStaffBios.php\">Staff Bios</A>\n";
-$additionalinfo.="<A HREF=\"BookStaffBios.php?pic_p=N\">(without images)</A>\n";
-$additionalinfo.="<A HREF=\"BookStaffBios.php?short=Y\">(short)</A>,\n";
+$additionalinfo.="the <A HREF=\"BookBios.php\">Bios</A>\n";
+$additionalinfo.="<A HREF=\"BookBios.php?pic_p=N\">(without images)</A>\n";
+$additionalinfo.="<A HREF=\"BookBios.php?short=Y\">(short)</A>,\n";
 $additionalinfo.="the <A HREF=\"BookSched.php?format=desc\">description</A>\n";
 $additionalinfo.="<A HREF=\"BookSched.php?format=desc&short=Y\">(short)</A>,\n";
 $additionalinfo.="the <A HREF=\"BookSched.php?format=sched\">timeslots</A>\n";
@@ -79,104 +79,36 @@ $additionalinfo.="the <A HREF=\"BookSched.php?format=trtime\">tracks by time</A>
 $additionalinfo.="<A HREF=\"BookSched.php?format=trtime&short=Y\">(short)</A>,\n";
 $additionalinfo.="or the <A HREF=\"grid.php?standard=y\">grid</A>.</P>\n";
 
-/* This query grabs everything necessary for the schedule to be printed.
-   It is not very different from the fooSched query, but different enough. */
+/* This query grabs everything necessary for the jobs to be printed. */
 
 $query = <<<EOD
 SELECT
-    trackname AS Track,
-    concat(title_good_web,
-      if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web)),
-      if((moderator in ('1','Yes')),'(m)','')) AS Title,
+    DISTINCT conrolenotes AS 'Title',
     pubsname AS 'Participants',
-    badgeid,
-    DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p') AS 'Start Time',
-    CASE
-      WHEN HOUR(duration) < 1 THEN
-        concat(date_format(duration,'%i'),'min')
-      WHEN MINUTE(duration)=0 THEN
-        concat(date_format(duration,'%k'),'hr')
-      ELSE
-        concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
-      END AS Duration,
-    roomname AS Room,
-    if(desc_good_book IS NULL,
-      concat("***EDIT PLEASE***",if(desc_good_web IS NULL,"",desc_good_web)),
-      desc_good_book) AS 'Description'
+    badgeid
   FROM
-      Sessions
-    JOIN Schedule USING (sessionid,conid)
-    JOIN Rooms R USING (roomid)
-    JOIN Tracks USING (trackid)
-    JOIN PubStatuses USING (pubstatusid)
+      UserHasConRole
+    JOIN Participants USING (badgeid)
+    JOIN ConRoles USING (conroleid)
     JOIN ConInfo USING (conid)
-    LEFT JOIN ParticipantOnSession USING (sessionid,conid)
-    LEFT JOIN Participants USING (badgeid)
-    JOIN (SELECT
-        sessionid,
-	conid,
-	descriptiontext as title_good_web
-      FROM
-          Descriptions
-	  JOIN DescriptionTypes USING (descriptiontypeid)
-          JOIN BioStates USING (biostateid)
-          JOIN BioDests USING (biodestid)
-      WHERE
-	  descriptiontypename in ('title') AND
-	  biostatename in ('good') AND
-	  biodestname in ('web') AND
-	  descriptionlang='en-us') TGW USING (sessionid,conid)
+    JOIN HasReports USING (conroleid,conid)
     LEFT JOIN (SELECT
-        sessionid,
-	conid,
-	descriptiontext as subtitle_good_web
+	badgeid,
+	biotext as name_edited_book
       FROM
-          Descriptions
-	  JOIN DescriptionTypes USING (descriptiontypeid)
-          JOIN BioStates USING (biostateid)
-          JOIN BioDests USING (biodestid)
+	  Bios
+        JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
       WHERE
-	  descriptiontypename in ('subtitle') AND
-	  biostatename in ('good') AND
-	  biodestname in ('web') AND
-          descriptionlang='en-us') SGW USING (sessionid,conid)
-    LEFT JOIN (SELECT
-        sessionid,
-	conid,
-	descriptiontext as desc_good_web
-      FROM
-          Descriptions
-	  JOIN DescriptionTypes USING (descriptiontypeid)
-          JOIN BioStates USING (biostateid)
-          JOIN BioDests USING (biodestid)
-      WHERE
-	  descriptiontypename in ('description') AND
-	  biostatename in ('good') AND
-	  biodestname in ('web') AND
-	  descriptionlang='en-us') DGW USING (sessionid,conid)
-    LEFT JOIN (SELECT
-        sessionid,
-	conid,
-	descriptiontext as desc_good_book
-      FROM
-          Descriptions
-	  JOIN DescriptionTypes USING (descriptiontypeid)
-          JOIN BioStates USING (biostateid)
-          JOIN BioDests USING (biodestid)
-      WHERE
-	  descriptiontypename in ('description') AND
-	  biostatename in ('good') AND
-	  biodestname in ('book') AND
-          descriptionlang='en-us') DGB USING (sessionid,conid)
+        biotypename in ('name') and
+        biostatename in ('edited') and
+        biodestname in ('book') and
+	biolang='en-us') NEB USING (badgeid)
   WHERE
-    conid=$conid AND
-    pubstatusname in ('Public') AND
-    (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
-    (introducer IS NULL OR introducer not in ('1','Yes')) AND
-    (aidedecamp IS NULL OR aidedecamp not in ('1','Yes'))
+    conid=$conid
   ORDER BY
-    pubsname,
-    starttime
+    name_edited_book
 EOD;
 
 // Retrieve query

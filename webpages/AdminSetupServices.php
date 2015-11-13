@@ -29,7 +29,7 @@ if (in_array("This report retrieved no results matching the criteria.",array_key
 $query="SELECT basefeatureid, basefeaturename FROM BaseFeatures";
 list($basefeaturerows,$basefeatureheader_array,$basefeature_array)=queryreport($query,$link,$title,$description,0);
 if (in_array("This report retrieved no results matching the criteria.",array_keys($basefeature_array))) {
-  $baseservice_array=array();
+  $basefeature_array=array();
 } else {
   for ($i=1; $i<=$basefeaturerows; $i++) {
     $basefeature[$basefeature_array[$i]['basefeatureid']]=$basefeature_array[$i]['basefeaturename'];

@@ -23,7 +23,7 @@ $additionalinfo="";
 $query= <<<EOD
 SELECT
     concat('  <DT><A NAME="',CRA.conrolename,'"><B>',CRA.conrolenotes,'</B></A> (<A HREF="#',CRA.conrolename,'.desc">Job Description</A>)</DT>\n') AS Role,
-    group_concat(DISTINCT pubsname SEPARATOR '/') AS Who,
+    group_concat(DISTINCT "<A HREF=\"PubsStaffBios.php?conid=$conid#",pubsname,"\">",pubsname,"</A>" SEPARATOR '/') AS Who,
     concat('Reports To: <A HREF="#',CRC.conrolename,'">',CRC.conrolenotes,'</A><br>\n') AS 'ReportsTo',
     group_concat(DISTINCT '    <LI><A HREF="#',CRB.conrolename,'">',CRB.conrolenotes,'</A></LI>' SEPARATOR '\n') AS Reports,
   concat('  <DT><A NAME="',CRA.conrolename,'.desc" HREF="#',CRA.conrolename,'">',CRA.conrolenotes,'</A></DT>\n   <DD>',CRA.conroledescription,'</DD>\n') AS Description

@@ -19,7 +19,6 @@ if ((!empty($newconid)) and (is_numeric($newconid))) {
 $title="Login";
 $description="";
 $additionalinfo="";
-$message_error.=$message;
 
 // Default role is Participant, so at least something familiar shows.
 if (empty($_SESSION['role'])) {$_SESSION['role']="Participant";}

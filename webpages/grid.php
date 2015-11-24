@@ -362,6 +362,19 @@ if (($standard=="y") AND ($staffonly=="y")) {
   $pubstatus_check=" pubstatusname NOT IN ('Public')";
  }
 
+/* lasttime0, lasttime1, lasttime2, and setting the skipcount for the
+   grid_array allows us to have a blank (or two) between things,
+   before breaking the grid.  Currently set to 2 blanks (seen at the
+   bottom of each grid as a check).  To set it to two, use lasttime2,
+   to set it to one, use lasttime1 and to set it to current time (the
+   original behaviour) set it to lasttime0 in the below if:
+
+   if (!empty($grid_array[$lasttimeN]['skipcount']))
+*/
+$lasttime1="-1";
+$lasttime2="-1";
+$grid_array["-1"]['skipcount']=1;
+
 /* This complex set of queries fills in the header_cells and then puts
    the times, associated with each room along the row seperated out by
    the determinants above, by stepping along either in time intervals
@@ -369,6 +382,7 @@ if (($standard=="y") AND ($staffonly=="y")) {
 if ($beginonly=="y") {$grid_end_sec=$grid_start_sec;}
 $printrowscount=0;
 for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $grid_spacer) {
+  $lasttime0=$time;
   $printrowscount++;
   $printrows_array[$printrowscount]=$time;
   if ($beginonly=="y") {
@@ -482,13 +496,21 @@ EOD;
 	$grid_array[$time]["$j cellclass"]="border1111";
       }
     }
-    if ($skiprow == 0) {$grid_array[$time]['blocktime'] = "Skip";}
+    //if ($skiprow == 0) {$grid_array[$time]['blocktime'] = "Skip";}
+    if ($skiprow == 0) {
+      $grid_array[$time]['skipcount']=1;
+      if (!empty($grid_array[$lasttime2]['skipcount'])) {
+	$grid_array[$time]['blocktime'] = "Skip";
+      }
+    }
     if ($refskiprow != 0) {
       $k=$grid_array[$time]['blocktime'];
       $grid_array[$time]['blocktime']=sprintf("<A HREF=\"StaffSched.php?format=sched&conid=$conid#%s\"><B>%s</B></A>",$k,$k);
     }
   }
- }
+  $lasttime2=$lasttime1;
+  $lasttime1=$time;
+}
 
 /* Printing body.  Uses the page-init from above adds informational
    line then creates the grid.  skipinit kills the rogue extrat /TABLE

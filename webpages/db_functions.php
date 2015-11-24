@@ -275,6 +275,18 @@ function update_session() {
   // Fix secondtitle to subtitle
   $session["subtitle"]=$session["secondtitle"];
 
+  // Fix submitable characters
+  $checklist=array("title","subtitle","secondtitle","description_good_web","description_good_book");
+  foreach ($checklist as $i) {
+    $workstring=$session[$i];
+    $desctext0=iconv('UTF-8', 'ISO-8859-1//TRANSLIT',$workstring);
+    $desctext1=mb_convert_encoding($workstring, 'ISO-8859-1', 'UTF-8');
+    $donestring=$desctext0;
+    if (empty($donestring)) {$donestring=$desctext1;}
+    if (empty($donestring)) {$donestring=$workstring;}
+    $session[$i]=$donestring;
+  }
+
   $pairedvalue_array=array("trackid=".$session["track"],
 			   "typeid=".$session["type"],
 			   "divisionid=".$session["divisionid"],
@@ -346,10 +358,10 @@ function update_session() {
 	  $element_array=array('sessionid','conid','descriptiontypeid','biostateid',
 			       'biodestid','descriptionlang','descriptiontext');
 	  $value_array=array($session['sessionid'],$_SESSION['conid'],$i,$j,$k,$l,
-			     htmlspecialchars_decode(stripfancy($desc_array[$i][$j][$k][$l])));
+			     htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
 	  $message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
 	} else {
-	  $pairedvalue_array=array("descriptiontext='".mysql_real_escape_string(stripfancy($desc_array[$i][$j][$k][$l]))."'");
+	  $pairedvalue_array=array("descriptiontext='".mysql_real_escape_string($desc_array[$i][$j][$k][$l])."'");
 	  $match_string=$wherestring;
 	  $message.=update_table_element_extended_match ($link,$title,"Descriptions",$pairedvalue_array, $match_string);
 	}
@@ -436,6 +448,18 @@ function insert_session() {
   // Fix secondtitle to subtitle
   $session["subtitle"]=$session["secondtitle"];
 
+  // Fix submitable characters
+  $checklist=array("title","subtitle","secondtitle","description_good_web","description_good_book");
+  foreach ($checklist as $i) {
+    $workstring=$session[$i];
+    $desctext0=iconv('UTF-8', 'ISO-8859-1//TRANSLIT',$workstring);
+    $desctext1=mb_convert_encoding($workstring, 'ISO-8859-1', 'UTF-8');
+    $donestring=$desctext0;
+    if (empty($donestring)) {$donestring=$desctext1;}
+    if (empty($donestring)) {$donestring=$workstring;}
+    $session[$i]=$donestring;
+  }
+
   $query="INSERT into Sessions set ";
   $query.="sessionid=".$session['sessionid'].',';
   $query.="conid=".$_SESSION['conid'].", ";
@@ -519,7 +543,7 @@ function insert_session() {
 	$element_array=array('sessionid','conid','descriptiontypeid','biostateid',
 			     'biodestid','descriptionlang','descriptiontext');
 	$value_array=array($id,$_SESSION['conid'],$i,$j,$k,$l,
-			   htmlspecialchars_decode(stripfancy($desc_array[$i][$j][$k][$l])));
+			   htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
 	$message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
       }
     }

@@ -5,8 +5,8 @@
      participant_arr: array with all data of record to edit or defaults for create
      permrole_arr: array with possible permission roles
      conrole_arr: array with possilbe con roles
-     message1: a string to display before the form
-     message2: an urgent string to display before the form and after m1 */
+     message1: a string to display before the form - no longer used
+     message2: an urgent string to display before the form and after m1  - no longer used*/
 function RenderEditCreateParticipant ($title, $action, $participant_arr, $message1, $message2) {
   global $link;
   $conid=$_SESSION['conid']; // make it a variable so it can be substituted
@@ -56,13 +56,14 @@ EOD;
     // Get the various length limits
     $limit_array=getLimitArray();
 
+    /* This should now be done in topofform
     if (strlen($message1)>0) {
       echo "<P id=\"message1\"><font color=red>Message: ".$message1."</font></P>\n";
     }
     if (strlen($message2)>0) {
       echo "<P id=\"message2\"><font color=red>Message: ".$message2."</font></P>\n";
       exit(); // If there is a message2, then there is a fatal error.
-    }
+    }  */
     //error_log("Zambia: ".print_r($participant_arr,TRUE));
 
     //Get the bioinfo, not for the info, but for the arrays.

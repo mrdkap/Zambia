@@ -1444,7 +1444,7 @@ EOD;
 
 /* create_participant and edit_participant functions.  Need more doc. */
 function create_participant ($participant_arr) {
-  global $link;
+  global $link,$message,$message_error;
 
   // Get the various length limits
   $limit_array=getLimitArray();
@@ -1558,7 +1558,7 @@ function create_participant ($participant_arr) {
 	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
 	  $messaage.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
 	} else {
-	  $message.=update_bio_element($link,$title,$biotext,$newbadgeid,$biotype,$biolang,$biostate,$biodest);
+	  update_bio_element($link,$title,$biotext,$newbadgeid,$biotype,$biolang,$biostate,$biodest);
 	}
       }
     }
@@ -1628,7 +1628,7 @@ function create_participant ($participant_arr) {
 }
 
 function edit_participant ($participant_arr) {
-  global $link;
+  global $link,$message,$message_error;
 
   // Get the various length limits
   $limit_array=getLimitArray();
@@ -1645,8 +1645,6 @@ function edit_participant ($participant_arr) {
 	(strlen($participant_arr['badgename']) < $namemin) OR
 	(strlen($participant_arr['pubsname']) < $namemin)) {
       $message_error="All name fields are required and minimum length is $namemin characters.  <BR>\n";
-      echo "<P class=\"errmsg\">".$message_error."\n";
-      return;
     }
   }
   if (isset($limit_array['max']['web']['name'])) {
@@ -1655,16 +1653,12 @@ function edit_participant ($participant_arr) {
 	(strlen($participant_arr['badgename']) > $namemax) OR
 	(strlen($participant_arr['pubsname']) > $namemax)) {
       $message_error="All name fields are required and maximum length is $namemax characters.  <BR>\n";
-      echo "<P class=\"errmsg\">".$message_error."\n";
-      return;
     }
   }
 
   // Invalid email.
   if (!is_email($participant_arr['email'])) {
     $message_error="Email address: ".$participant_arr['email']." is not valid.  <BR>\n";
-    echo "<P class=\"errmsg\">".$message_error."\n";
-    return;
   }
 
   // Update Participants entry.
@@ -1733,7 +1727,7 @@ function edit_participant ($participant_arr) {
 	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
 	    $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
 	  } else {
-	    $message.=update_bio_element($link,$title,$teststring,$participant_arr['partid'],$biotype,$biolang,$biostate,$biodest);
+	    update_bio_element($link,$title,$teststring,$participant_arr['partid'],$biotype,$biolang,$biostate,$biodest);
 	  }
 	}
       }
@@ -1782,7 +1776,6 @@ function edit_participant ($participant_arr) {
 
   // Make $message additive (.=) to get all the information
   $message="Database updated successfully.<BR>";
-  echo "<P class=\"regmsg\">".$message."\n";
 }
 
 function get_emailto_from_permrole($permrolename,$link,$title,$description) {
@@ -2134,10 +2127,17 @@ EOD;
    badgeid, biotypename, biolang, biostatename, and biodestname, and returns
    the success message */
 function update_bio_element ($link, $title, $newbio, $badgeid, $biotypename, $biolang, $biostatename, $biodestname) {
+  global $link,$message,$message_error;
 
   // make sure it's clean
-  $biotext=mysql_real_escape_string($newbio,$link);
+  $biotext0=mysql_real_escape_string(iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $newbio),$link);
+  $biotext1=mysql_real_escape_string(mb_convert_encoding($newbio, 'ISO-8859-1', 'UTF-8'),$link);
+  $biotext2=mysql_real_escape_string($newbio,$link);
+  $biotext=$biotext0;
+  if (empty($biotext)) {$biotext=$biotext1;}
+  if (empty($biotext)) {$biotext=$biotext2;}
 
+  // Update query
   $query=<<<EOD
 UPDATE
       Bios
@@ -2161,7 +2161,8 @@ EOD;
   }
 
   if ((mysql_affected_rows($link) == 0) and ($biotext!="")) {
-$query=<<<EOD
+    // Insert query
+    $query=<<<EOD
 INSERT INTO
     Bios (badgeid, biotypeid, biostateid, biodestid, biolang, biotext)
   VALUES
@@ -2180,8 +2181,7 @@ EOD;
     }
   }
 
-  $message.="Database updated successfully with bio.<BR>";
-  return ($message);
+  $message.="Database updated successfully with $biostatename $biotypename $biodestname.<BR>";
 }
 
 function generateSvgString($sessionid,$conid) {

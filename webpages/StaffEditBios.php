@@ -105,7 +105,7 @@ if (isset($_POST['update'])) {
 	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
 	      $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
 	    } else {
-	      $message.=update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate,$biodest);
+	      update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate,$biodest);
 	    }
 	    $bioinfo[$keyname]=$teststring;
 	  }

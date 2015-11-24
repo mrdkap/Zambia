@@ -10,18 +10,6 @@ function conv_min2hrsmin($mininput) {
     return (sprintf("%02d:%02d:00",$hrs,$minr));
     }
 //
-// Function stripfancy()
-// returns a string with many non-7-bit ASCII characters
-// removed from input string and replaced with similar
-// 7-bit ones
-//
-// set constants stripfancy_from and stripfancy_to in
-// file db_name.php to configure
-//
-function stripfancy($input) {
-    return(strtr($input,stripfancy_from,stripfancy_to));
-    }
-//
 // Function get_nameemail_from_post($name, $email)
 // Reads the data posted by the browser form and populates
 // the variables from the arguments.  Also stores them in

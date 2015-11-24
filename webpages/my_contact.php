@@ -61,7 +61,7 @@ if (isset($_POST['update'])) {
 	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
 	// clean up the passed information
-	$_POST[$keyname] = stripfancy(stripslashes($_POST[$keyname]));
+	$_POST[$keyname] = stripslashes($_POST[$keyname]);
 
 	/* If the bios are changed first reject the change if user is not allowed to edit bios now
 	   and reject submitted bios that are too long otherwise update the bios directly now.*/
@@ -80,7 +80,7 @@ if (isset($_POST['update'])) {
 	    $bioinfo[$keyname]=$_POST[$keyname];
 	  } else {
 	    $x=mysql_real_escape_string($_POST[$keyname],$link);
-	    $message.=update_bio_element($link,$title,$x,$badgeid,$biotype,$biolang,$biostate,$biodest);
+	    update_bio_element($link,$title,$x,$badgeid,$biotype,$biolang,$biostate,$biodest);
 	    $bioinfo[$keyname]=$_POST[$keyname];
 	  }
 	}

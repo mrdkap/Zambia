@@ -1,6 +1,8 @@
 <?php
 require_once ('StaffCommonCode.php');
 require ('StaffEditCreateParticipant_FNC.php');
+global $message, $message_error;
+
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 if (isset($_GET['action'])) {
@@ -29,7 +31,7 @@ if ($action=="create") { //initialize participant array
   // If the information has already been added, and we are
   // on the return loop, add the Participant to the database.
   if ((isset ($_POST['update'])) and ($_POST['update']=="Yes")) {
-    list($message,$message_error)=create_participant ($_POST);
+    $msgs=create_participant($_POST);
   }
 
   // Get a set of bioinfo, not for the info, but for the arrays.
@@ -100,6 +102,12 @@ if ($action=="create") { //initialize participant array
     $selpartid=0;
   }
 
+  //If we are on the loop with an update, update the database
+  // with the current version of the information
+  if ((isset ($_POST['update'])) and ($_POST['update'] == "Yes")) {
+    $msgs=edit_participant($_POST);
+  }
+
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
   //Choose the individual from the database
@@ -113,12 +121,6 @@ if ($action=="create") { //initialize participant array
   if ($selpartid==0) {
     correct_footer();
     exit();
-  }
-
-  //If we are on the loop with an update, update the database
-  // with the current version of the information
-  if ((isset ($_POST['update'])) and ($_POST['update'] == "Yes")) {
-    edit_participant ($_POST);
   }
 
   //Get Participant information for updating

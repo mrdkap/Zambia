@@ -327,6 +327,12 @@ if ($short == "T") {
 	  if ($bioinfo["uri_".$partial_key] != "") {
 	    $biodest_out[$biodest].=sprintf("<P>%s</P>\n",$bioinfo["uri_".$partial_key]);
 	  }
+
+	  // Sets the pronoun info
+	  $biodest_out[$biodest].="</P>\n";
+	  if ($bioinfo["pronoun_".$partial_key] != "") {
+	    $biodest_out[$biodest].=sprintf("<P>Preferred pronoun: %s</P>\n",$bioinfo["pronoun_".$partial_key]);
+	  }
 	} // End of biodest switch
 
 	// Hard coded for now, will have to be re-thought when there is more than web/book dests

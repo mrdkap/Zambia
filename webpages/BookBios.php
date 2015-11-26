@@ -233,6 +233,9 @@ if ($short == "T") {
 	//If there is a URI line
 	$uri=getBioDestEdit('uri',$biolang,$bioinfo);
 
+	//If there is a pronoun line
+	$pronoun=getBioDestEdit('pronoun',$biolang,$bioinfo);
+
 	if ($picture != "") {
 	  if ($tablecount == 0) {
 	    $biostring.="<TABLE>\n  <TR>\n    <TD valign=\"top\" width=310>";
@@ -249,6 +252,9 @@ if ($short == "T") {
 	$biostring.="</DT>\n";
 	if ($uri != "") {
 	  $biostring.=sprintf("  <DT>%s</DT>\n",$uri);
+	}
+	if ($pronoun != "") {
+	  $biostring.=sprintf("  <DT>Preferred pronoun: %s</DT>\n",$pronoun);
 	}
       } // End of Language Switch
       $element_array[$i]['Bio']=$biostring;

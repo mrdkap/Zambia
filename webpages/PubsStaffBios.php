@@ -52,7 +52,7 @@ $ConStart=$conname_array[1]['constartdate'];
 $logo=$conname_array[1]['conlogo'];
 
 // LOCALIZATIONS
-$_SESSION['return_to_page']="PubsStaffBios.php&conid=$conid";
+$_SESSION['return_to_page']="PubsStaffBios.php?conid=$conid";
 $title="Biographical Information";
 $description="<P>Biographical Information for all Con Staff.</P>\n";
 $additionalinfo="<P>See also the ";

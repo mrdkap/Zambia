@@ -11,13 +11,13 @@ global $link;
 $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
-$_SESSION['return_to_page']="StaffBios.php&conid=$conid";
+$_SESSION['return_to_page']="StaffBios.php?conid=$conid";
 
 $short="F";
 if (isset($_GET['short'])) {
   if ($_GET['short'] == "Y") {
     $short="T";
-    $_SESSION['return_to_page']="StaffBios.php&conid=$conid&short=\"Y\"";
+    $_SESSION['return_to_page']="StaffBios.php?conid=$conid&short=\"Y\"";
   } elseif ($_GET['short'] == "N") {
     $short="F";
   }
@@ -28,7 +28,7 @@ if (isset($_GET['pic_p'])) {
   if ($_GET['pic_p'] == "N") {
     $pic_p="F";
     $short="F";
-    $_SESSION['return_to_page']="StaffBios.php&conid=$conid&pic_p=\"N\"";
+    $_SESSION['return_to_page']="StaffBios.php?conid=$conid&pic_p=\"N\"";
   }
 }
 

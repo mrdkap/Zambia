@@ -67,7 +67,7 @@ EOD;
 list($phasestatrows,$phaseheader_array,$phase_array)=queryreport($query,$link,$title,$description,0);
 
 // LOCALIZATIONS
-$_SESSION['return_to_page']="PubsBios.php&conid=$conid";
+$_SESSION['return_to_page']="PubsBios.php?conid=$conid";
 $title="Biographical Information";
 $description="<P>Biographical Information for all Presenters.</P>\n";
 $additionalinfo="<P>See also this ";

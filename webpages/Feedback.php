@@ -21,7 +21,7 @@ if ($badgename=="") {$badgename='Anonymous';}
 if ($badgeid=="") {$badgeid='100';}
 
 // LOCALIZATIONS
-$_SESSION['return_to_page']="Feedback.php&conid=$conid";
+$_SESSION['return_to_page']="Feedback.php?conid=$conid";
 //$print_p=$_GET['print_p'];
 $formstring="";
 

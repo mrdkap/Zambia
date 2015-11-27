@@ -212,6 +212,7 @@ function staff_header ($title) {
     maketab("Printing",1,"PreconPrinting.php");
     echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
     maketab("TimeCards",1,"VolunteerCheckIn.php");
+    echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
     echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
     maketab("Participant View",1,"welcome.php");
     if (may_I('Vendor')) {

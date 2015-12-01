@@ -799,8 +799,13 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
       $b=$badgeid_keys[$i];
       $p=$pubsname[$badgeid_keys[$i]];
       $bs=$_GET['badgeids'];
-      $printstring.="        <TD><A HREF=\"StaffEditBios.php?qno=$qno&badgeid=$b&badgeids=$bs\">$p</A></TD>\n";
-      $printstring.="        <TD><A HREF=\"StaffEditCreateParticipant.php?action=edit&partid=$b\">$p</A></TD>\n";
+      if ($qno==3) {
+	$printstring.="        <TD><A HREF=\"StaffEditDescs.php?qno=$qno&badgeid=$b&badgeids=$bs\">$p</A></TD>\n";
+	$printstring.="        <TD><A HREF=\"EditSession.php?id=$b&conid=".$_SESSION['conid']."\">$p</A></TD>\n";
+      } else {
+	$printstring.="        <TD><A HREF=\"StaffEditBios.php?qno=$qno&badgeid=$b&badgeids=$bs\">$p</A></TD>\n";
+	$printstring.="        <TD><A HREF=\"StaffEditCreateParticipant.php?action=edit&partid=$b\">$p</A></TD>\n";
+      }
       $printstring.="        <TD>".$lockedby[$badgeid_keys[$i]]."</TD>\n";
       $printstring.="        </TR>\n";
     }
@@ -809,12 +814,13 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
 
     // Build the matrix, with approrpriate headers.
     // Not doing "good" state for the time being.
-    //$possible_states=array('noraw','noedited','nogood','rawvedited','editedvgood','allmatch');
-    $possible_states=array('noraw','noedited','rawvedited','allmatch');
+    $possible_states=array('noraw','noedited','nogood','rawvedited','rawvgood','editedvgood','allmatch');
+    //$possible_states=array('noraw','noedited','rawvedited','allmatch');
     $possible_statename['noraw']="Missing raw bio";
     $possible_statename['noedited']="Missing edited bio";
     $possible_statename['nogood']="Missing good bio";
     $possible_statename['rawvedited']="Raw bio doesn't match edited bio";
+    $possible_statename['rawvgood']="Raw bio doesn't match good bio";
     $possible_statename['editedvgood']="Edited bio does't match good bio";
     $possible_statename['allmatch']="All bios match";
 
@@ -841,6 +847,12 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
 	  $matrix_count[$l]['rawvedited']++;
 	  $matrix_badgeid[$l]['rawvedited'].=",$k";
 	}
+	if ((isset($check_element[$k][$l]['raw'])) and
+	    (isset($check_element[$k][$l]['good'])) and
+	    ($check_element[$k][$l]['raw'] != $check_element[$k][$l]['good'])) {
+	  $matrix_count[$l]['rawvgood']++;
+	  $matrix_badgeid[$l]['rawvgood'].=",$k";
+	}
 	if ((isset($check_element[$k][$l]['edited'])) and
 	    (isset($check_element[$k][$l]['good'])) and
 	    ($check_element[$k][$l]['edited'] != $check_element[$k][$l]['good'])) {
@@ -850,9 +862,9 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
 	// Changed to reflect the missing "good" fields.
 	if ((isset($check_element[$k][$l]['raw'])) and
 	    (isset($check_element[$k][$l]['edited'])) and
-	    /* (isset($check_element[$k][$l]['good'])) and */
-	    ($check_element[$k][$l]['raw'] == $check_element[$k][$l]['edited']) /*and
-            ($check_element[$k][$l]['edited'] == $check_element[$k][$l]['good']) */) {
+	    (isset($check_element[$k][$l]['good'])) and
+	    ($check_element[$k][$l]['raw'] == $check_element[$k][$l]['edited']) and
+            ($check_element[$k][$l]['edited'] == $check_element[$k][$l]['good'])) {
 	  $matrix_count[$l]['allmatch']++;
 	  $matrix_badgeid[$l]['allmatch'].=",$k";
 	}

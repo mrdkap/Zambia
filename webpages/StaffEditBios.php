@@ -1,6 +1,6 @@
 <?php
 require_once ('StaffCommonCode.php');
-global $link,$message_error,$message2;
+global $link,$message,$message_error;
 
 // Get the various length limits
 $limit_array=getLimitArray();
@@ -44,12 +44,11 @@ if ((isset($qno)) or (isset($badgeids)) or (isset($_POST['unlock']))) {
 $additionalinfo.="\">Return</A> to the selected list.</P>\n";
 $additionalinfo.="<P>Please edit the bios below.  We don't currently edit the raw bios here.";
 $additionalinfo.="  If you really need to, please click on their name, and edit it there.</P>\n";
-$additionalinfo.="<P>We are currently not using the \"Good\" field.</P>\n";
-$message_error.=$message2;
+$additionalinfo.="<P>If the raw and edited in concordance, you may promote it to good.</P>\n";
 
 if (!isset($badgeid)) {
-  $message="Required argument 'badgeid' missing from URL.<BR>\n";
-  RenderError($title,$message);
+  $message_error.="Required argument 'badgeid' missing from URL.<BR>\n";
+  RenderError($title,$message_error);
   exit ();
  }
 
@@ -71,48 +70,61 @@ SELECT
 EOD;
 
 if (($result=mysql_query($query,$link))===false) {
-  $message_error=$query."<BR>\nError retrieving lock and name data from database.\n";
+  $message_error.=$query."<BR>\nError retrieving lock and name data from database.\n";
   RenderError($title,$message_error);
   exit();
  }
 $participant_info_array=mysql_fetch_assoc($result);
 
-/* If there is an update/save passed, check for what was changed, and update (just)
- that in the database. */
+/* If there is an update/save to the edited state passed, check for
+ what was changed, and update (just) that in the database. */
+$biostate="edited";
 if (isset($_POST['update'])) {
   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
-      for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
-        for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
+      // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) { // only edited
+      for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
 
-	  // Setup for short names and keyname, collapsing all four variables into one passed name.
-	  $biotype=$bioinfo['biotype_array'][$i];
-	  $biolang=$bioinfo['biolang_array'][$j];
-	  $biostate=$bioinfo['biostate_array'][$k];
-	  $biodest=$bioinfo['biodest_array'][$l];
-	  $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
+	// Setup for short names and keyname, collapsing all four variables into one passed name.
+	$biotype=$bioinfo['biotype_array'][$i];
+	$biolang=$bioinfo['biolang_array'][$j];
+	// $biostate=$bioinfo['biostate_array'][$k]; hard set above
+	$biodest=$bioinfo['biodest_array'][$l];
+	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-	  // Clean up the posted string.
-	  $teststring=stripslashes(htmlspecialchars_decode($_POST[$keyname]));
-	  $biostring=stripslashes(htmlspecialchars_decode($bioinfo[$keyname]));
+	if ($biostate!='edited') {continue;}
 
-	  // Check for differences, if they exist, update the database.
-	  if ($teststring != $biostring) {
-	    if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($teststring)>$limit_array['max'][$biodest][$biotype])) {
-	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
-	      $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
-	    } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($teststring)<$limit_array['min'][$biodest][$biotype])) {
-	      $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
-	      $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
-	    } else {
-	      update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate,$biodest);
-	    }
-	    $bioinfo[$keyname]=$teststring;
+	// Clean up the posted string.
+	$teststring=stripslashes(htmlspecialchars_decode($_POST[$keyname]));
+	$biostring=stripslashes(htmlspecialchars_decode($bioinfo[$keyname]));
+
+	// Check for differences, if they exist, update the database.
+	if ($teststring != $biostring) {
+	  if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($teststring)>$limit_array['max'][$biodest][$biotype])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	    $message.=" too long (".strlen($teststring)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
+	  } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($teststring)<$limit_array['min'][$biodest][$biotype])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	    $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
+	  } else {
+	    update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate,$biodest);
 	  }
+	  $bioinfo[$keyname]=$teststring;
 	}
       }
     }
   }
+}
+
+// Copy edited to good
+if ((isset($_GET['biotype'])) and (isset($_GET['biolang'])) and (isset($_GET['biodest']))) {
+  $biotype=$_GET['biotype'];
+  $biolang=$_GET['biolang'];
+  $biodest=$_GET['biodest'];
+  $biostate="edited";
+  $goodstring=$bioinfo[$biotype."_".$biolang."_".$biostate."_".$biodest."_bio"];
+  update_bio_element($link,$title,$goodstring,$badgeid,$biotype,$biolang,"good",$biodest);
+  $bioinfo[$biotype."_".$biolang."_good_".$biodest."_bio"]=$goodstring;
 }
 
 /* Lock the editing of the participant.
@@ -163,7 +175,12 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
 	}
 
 	// For now, skip the "good" category
-	if ($biostate=='good') {continue;}
+	if ($biostate=='good') {
+	  if (!empty($bioinfo[$keyname])) {
+	    echo "<H3>Good entry exists for ".ucfirst($biotype)." ".ucfirst($biodest)." ($biolang) Biography</H3>\n";
+	  }
+	  continue;
+	}
 
 	// Set up the LABEL.
 	echo "<LABEL for=\"$keyname\">".ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
@@ -183,11 +200,18 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
 	echo "<TEXTAREA $readonly name=\"$keyname\" rows=8 cols=72>".$bioinfo[$keyname]."</TEXTAREA><BR><BR>\n";
       }
       // Every other change submit button.
-      echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n</DIV>\n";
+      echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n";
+      if (($bioinfo[$biotype."_".$biolang."_raw_".$biodest."_bio"] == $bioinfo[$biotype."_".$biolang."_edited_".$biodest."_bio"]) and
+	  ($bioinfo[$biotype."_".$biolang."_raw_".$biodest."_bio"] != $bioinfo[$biotype."_".$biolang."_good_".$biodest."_bio"])) {
+	echo " <A HREF=\"StaffEditBios.php?qno=$qno&badgeid=$badgeid&badgeids=$badgeids&biotype=$biotype&biolang=$biolang&biodest=$biodest\">";
+	echo " Promote ".ucfirst($biotype)." ".ucfirst($biodest)." ($biolang) to good.";
+        echo "</A>\n";
+      }
+      echo "</DIV>\n";
     }
   }
 }
-echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n</DIV>\n";
+//echo "<br>\n<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n</DIV>\n";
 echo "</FORM>\n";
 echo "<BR>\n<BR>\n";
 correct_footer();

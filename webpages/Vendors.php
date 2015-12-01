@@ -75,21 +75,22 @@ if ($vendormap != "") {
 echo $vendorpdfmap;
 echo $vendorlist;
 
-// Heavy_handed hack!
-if (($conid == "42") or ($conid == "43") or ($conid == "44") or ($conid == "45")) {
-  $vstatus="vendor_status";
-  $vloc="vendor_space_position";
+
+// Connect to Vendor Database
+if (vendor_prepare_db()===false) {
+  $message_error="Unable to connect to database.<BR>No further execution possible.";
+  RenderError($title,$message_error);
+  exit();
+}
+
+//Check to see if the table exists
+$pTableExist = mysql_query("show tables like 'default_vendors_".$conid."'");
+if ($rTableExist = mysql_fetch_array($pTableExist)) {
+
   // Fix for inconsistencies in the database
+  $vstatus="vendor_status";
   if ($conid == "45") {
     $vstatus="status";
-    $vloc="vendor_location";
-  }
-
-  // Connect to Vendor Database
-  if (vendor_prepare_db()===false) {
-    $message_error="Unable to connect to database.<BR>No further execution possible.";
-    RenderError($title,$message_error);
-    exit();
   }
 
   // Vendors
@@ -102,7 +103,7 @@ SELECT
       ">",
       vendor_business_name,
       "</A>") AS Title,
-    if ($vloc IS NULL,"",$vloc) AS Room,
+    if (vendor_location IS NULL,"",vendor_location) AS Room,
     concat(if (vendor_description IS NULL,"",vendor_description),
       if(vendor_website IS NULL,"",concat("<br>\n<A HREF=\"",vendor_website,"\">",vendor_website,"</A>"))) AS Description
   FROM
@@ -137,18 +138,19 @@ EOD;
 
   // Community Tables
 
-  // Fix the inconsistent where string
-  $wherestring="WHERE status in ('Approved')";
+  // Add the description once it starts to exist
+  $desc="NULL";
+  if (($conid == "45") or ($conid == "46")) { $desc="vendor_description"; }
+
+  // Fix for inconsistencies in the database
   $website="website";
-  $vendorloc="if(vendor_location IS NULL,\"\",vendor_location) AS Room";
-  $desc="if(website IS NULL,\"\",concat(\"<A HREF=\\\"\",website,\"\\\">\",website,\"</A>\")) AS Description";
-  if ($conid == "44") {$wherestring="WHERE vendor_status in ('Approved')";}
-  if ($conid == "45") {
-    $wherestring="";
-    $website="vendor_website";
-    $vendorloc="concat('Outside Hallway') AS Room";
-    $desc="concat(if(vendor_description IS NULL,\"\",vendor_description), if(vendor_website IS NULL,\"\",concat(\"<br>\n<A HREF=\\\"\",vendor_website,\"\\\">\",vendor_website,\"</A>\"))) AS Description";
-  }
+  if ($conid == "45") { $website="vendor_website"; }
+
+  $status="status";
+  if (($conid == "44") or ($conid == "46")) { $status="vendor_status"; }
+
+  $wherestring="WHERE $status in ('Approved')";
+  if ($conid == "45") { $wherestring="WHERE vendor_location is NOT NULL"; }
 
   $query = <<<EOD
 SELECT
@@ -159,8 +161,10 @@ SELECT
       ">",
       name,
       "</A>") AS Title,
-    $vendorloc,
-    $desc
+    if(vendor_location IS NULL,"",vendor_location) AS Room,
+    concat(if($desc IS NULL,"",$desc),
+           if(($desc IS NULL or $website IS NULL),"","<br>\n"),
+           if($website IS NULL,"",concat("<A HREF=\"",$website,"\">",$website,"</A>"))) AS Description
   FROM
       default_community_tables_$conid
   $wherestring

@@ -819,9 +819,9 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
     $possible_statename['noraw']="Missing raw bio";
     $possible_statename['noedited']="Missing edited bio";
     $possible_statename['nogood']="Missing good bio";
-    $possible_statename['rawvedited']="Raw bio doesn't match edited bio";
-    $possible_statename['rawvgood']="Raw bio doesn't match good bio";
-    $possible_statename['editedvgood']="Edited bio does't match good bio";
+    $possible_statename['rawvedited']="Raw/edited bios don't match";
+    $possible_statename['rawvgood']="Raw/good bios don't match";
+    $possible_statename['editedvgood']="Edited/good bios don't match";
     $possible_statename['allmatch']="All bios match";
 
     for ($i=0; $i<count($count_badgeid); $i++ ) {

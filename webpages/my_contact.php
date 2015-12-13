@@ -61,27 +61,26 @@ if (isset($_POST['update'])) {
 	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
 	// clean up the passed information
-	$_POST[$keyname] = stripslashes($_POST[$keyname]);
+	$biostring = stripslashes(htmlspecialchars_decode($_POST[$keyname]));
 
 	/* If the bios are changed first reject the change if user is not allowed to edit bios now
 	   and reject submitted bios that are too long otherwise update the bios directly now.*/
-	if ($_POST[$keyname]!=$bioinfo[$keyname]) {
+	if ($biostring!=$bioinfo[$keyname]) {
 	  if (!may_I('EditBio')) {
 	    $message_error.="You may not update your bios for publication at this time.\n";
-	  } elseif ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($_POST[$keyname])>$limit_array['max'][$biodest][$biotype])) {
-	    $message_error.=ucfirst($biotype)." ($biolang) Biography is too long: ".(strlen($_POST[$keyname]));
+	  } elseif ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($biostring)>$limit_array['max'][$biodest][$biotype])) {
+	    $message_error.=ucfirst($biotype)." ($biolang) Biography is too long: ".(strlen($biostring));
 	    $message_error.=" characters (maximum limit ".$limit_array['max'][$biodest][$biotype];
 	    $message_error.=" characters), so it isn't updated.  Please edit.";
-	    $bioinfo[$keyname]=$_POST[$keyname];
-	  } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($_POST[$keyname])<$limit_array['min'][$biodest][$biotype])) {
-	    $message_error.=ucfirst($biotype)." ($biolang) Biography is too short: ".(strlen($_POST[$keyname]));
+	    $bioinfo[$keyname]=$biostring;
+	  } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($biostring)<$limit_array['min'][$biodest][$biotype])) {
+	    $message_error.=ucfirst($biotype)." ($biolang) Biography is too short: ".(strlen($biostring));
 	    $message_error.=" characters (minimum limit ".$limit_array['min'][$biodest][$biotype];
 	    $message_error.=" characters), so it isn't updated.  Please edit.";
-	    $bioinfo[$keyname]=$_POST[$keyname];
+	    $bioinfo[$keyname]=$biostring;
 	  } else {
-	    $x=mysql_real_escape_string($_POST[$keyname],$link);
-	    update_bio_element($link,$title,$x,$badgeid,$biotype,$biolang,$biostate,$biodest);
-	    $bioinfo[$keyname]=$_POST[$keyname];
+	    update_bio_element($link,$title,$biostring,$badgeid,$biotype,$biolang,$biostate,$biodest);
+	    $bioinfo[$keyname]=$biostring;
 	  }
 	}
       }
@@ -174,6 +173,44 @@ if (isset($_POST['update'])) {
 if (strlen($participant["pubsname"])<1) {
   $participant["pubsname"]=$congoinfo["badgename"];
 }
+
+$query = <<<EOD
+SELECT
+    badgeid
+  FROM
+      UserHasConRole
+    JOIN HasReports USING (conroleid,conid)
+  WHERE
+    conid=$conid AND
+    badgeid=$badgeid
+EOD;
+
+// Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+// See if they are on the appropriate level of staff
+$isstaff="T";
+if ($element_array[1]['badgeid']!=$badgeid) {$isstaff="F";}
+
+$query = <<<EOD
+SELECT
+    badgeid
+  FROM
+      ParticipantOnSession
+  WHERE
+    conid=$conid AND
+    badgeid=$badgeid AND
+    volunteer not in ('1', 'Yes') AND
+    introducer not in ('1', 'Yes') AND
+    aidedecamp not in ('1', 'Yes')
+EOD;
+
+// Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+// See if they are on the appropriate level of staff
+$ispresenter="T";
+if ($element_array[1]['badgeid']!=$badgeid) {$ispresenter="F";}
 
 // Begin the page display.
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
@@ -344,6 +381,21 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
       $keynameraw=$biotype."_".$biolang."_".$biostateraw."_".$biodest."_bio";
       $keynameed=$biotype."_".$biolang."_".$biostateed."_".$biodest."_bio";
       $keynamebio="name_".$biolang."_edited_".$biodest."_bio";
+
+      // Skip the "presenter" categories, if is not a presenter
+      if (($ispresenter!="T") and ($biodest=="book")) { continue; }
+      if (($ispresenter!="T") and ($biodest=="web")) { continue; }
+
+      // Skip the "staff" categories, if is not on staff
+      if (($isstaff!="T") and ($biodest=="staffbook")) { continue; }
+      if (($isstaff!="T") and ($biodest=="staffweb")) { continue; }
+
+      // Skip the non-staff, badge-picture category
+      if (($isstaff!="T") and ($biodest=="badge") and ($biotype=="picture")) { continue; }
+
+      // Skip the badge-uri and badge-bio cateories
+      if (($biodest=="badge") and ($biotype=="uri")) { continue; }
+      if (($biodest=="badge") and ($biotype=="bio")) { continue; }
 
       /* If the edited bio exists, present it.  Add the appropriate
 	 biotype "name" before the biotype "bio". */

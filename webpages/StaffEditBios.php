@@ -138,6 +138,44 @@ if ($lockresult==-2) {
 $description ="<H2 class=\"head\"><A HREF=\"StaffEditCreateParticipant.php?action=edit&partid=$badgeid\">";
 $description.=htmlspecialchars($participant_info_array['name'])."</A></H2>\n";
 
+$query = <<<EOD
+SELECT
+    badgeid
+  FROM
+      UserHasConRole
+    JOIN HasReports USING (conroleid,conid)
+  WHERE
+    conid=$conid AND
+    badgeid=$badgeid
+EOD;
+
+// Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+// See if they are on the appropriate level of staff
+$isstaff="T";
+if ($element_array[1]['badgeid']!=$badgeid) {$isstaff="F";}
+
+$query = <<<EOD
+SELECT
+    badgeid
+  FROM
+      ParticipantOnSession
+  WHERE
+    conid=$conid AND
+    badgeid=$badgeid AND
+    volunteer not in ('1', 'Yes') AND
+    introducer not in ('1', 'Yes') AND
+    aidedecamp not in ('1', 'Yes')
+EOD;
+
+// Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+// See if they are on the appropriate level of staff
+$ispresenter="T";
+if ($element_array[1]['badgeid']!=$badgeid) {$ispresenter="F";}
+
 // Begin the presenations
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
@@ -173,6 +211,21 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
 	if ($biostate=='raw') {
 	  $readonly="readonly";
 	}
+
+	/* // Skip the "presenter" categories, if is not a presenter
+	if (($ispresenter!="T") and ($biodest=="book")) { continue; }
+	if (($ispresenter!="T") and ($biodest=="web")) { continue; } */
+
+	// Skip the "staff" categories, if is not staff
+	if (($isstaff!="T") and ($biodest=="staffbook")) { continue; }
+	if (($isstaff!="T") and ($biodest=="staffweb")) { continue; }
+
+	// Skip the badge-uri and badge-bio cateories
+	if (($biodest=="badge") and ($biotype=="uri")) { continue; }
+	if (($biodest=="badge") and ($biotype=="bio")) { continue; }
+
+	// Skip the non-staff, badge-picture category
+	if (($isstaff!="T") and ($biodest=="badge") and ($biotype=="picture")) { continue; }
 
 	// For now, skip the "good" category
 	if ($biostate=='good') {

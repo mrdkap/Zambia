@@ -313,7 +313,7 @@ if ($short == "T") {
 	}
       } // End of Language Switch
       if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
-	$biostring.=sprintf(" <A HREF=\"PostScheduleIcal.php?pubsname=%s\">(Fan iCal)</A></P>\n<P>",$element_array[$i]['pubsname']);
+	$biostring.=sprintf(" <A HREF=\"PostScheduleIcal.php?pubsname=%s\">(Fan iCal)</A></P>\n<P>",$header);
       }
       $element_array[$i]['Bio']=$biostring;
       $element_array[$i]['istable']=$tablecount;

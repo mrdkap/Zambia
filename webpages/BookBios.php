@@ -11,24 +11,39 @@ global $link;
    to see if said variable exists in the bios-set
  */
 function getBioDestEdit($biotype,$biolang,$bioinfo) {
-  if ((isset($bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'])) and
-      ($bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'] != "")) {
-    $bioout=$bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'];
-  } elseif ((isset($bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'])) and
-	    ($bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'] != "")) {
+  if (!empty($bioinfo[$biotype.'_'.$biolang.'_good_book_bio'])) {
+    $bioout=$bioinfo[$biotype.'_'.$biolang.'_good_book_bio'];
+  } elseif (!empty($bioinfo[$biotype.'_'.$biolang.'_good_web_bio'])) {
+    $bioout="***EDIT PLEASE*** ".$bioinfo[$biotype.'_'.$biolang.'_good_web_bio'];
+  } elseif (!empty($bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'])) {
+    $bioout="***EDIT PLEASE*** ".$bioinfo[$biotype.'_'.$biolang.'_edited_book_bio'];
+  } elseif (!empty($bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'])) {
     $bioout="***EDIT PLEASE*** ".$bioinfo[$biotype.'_'.$biolang.'_edited_web_bio'];
-  } elseif ((isset($bioinfo[$biotype.'_'.$biolang.'_raw_book_bio']))  and
-	    ($bioinfo[$biotype.'_'.$biolang.'_raw_book_bio'] != "")) {
+  } elseif (!empty($bioinfo[$biotype.'_'.$biolang.'_raw_book_bio'])) {
     $bioout="***EDIT PLEASE*** ".$bioinfo[$biotype.'_'.$biolang.'_raw_book_bio'];
-  } elseif ((isset($bioinfo[$biotype.'_'.$biolang.'_raw_web_bio']))  and
-	    ($bioinfo[$biotype.'_'.$biolang.'_raw_web_bio'] != "")) {
+  } elseif (!empty($bioinfo[$biotype.'_'.$biolang.'_raw_web_bio'])) {
     $bioout="***EDIT PLEASE*** ".$bioinfo[$biotype.'_'.$biolang.'_raw_web_bio'];
   } else {
     $bioout="";
   }
-
   return ($bioout);
 }
+
+/* Take the badgeid and searches for the picture.
+   This is book then web with edit note. */
+function getPictureDestEdit($checkbadge) {
+  $picture="";
+  $pictureweb="../Local/Participant_Images_web/$checkbadge";
+  $picturebook="../Local/Participant_Images_book/$checkbadge";
+  if (file_exists($picturebook)) {
+    $picture=sprintf("<img width=300 src=\"%s\">",$picturebook);
+  } elseif (file_exists($pictureweb)) {
+    $picture=sprintf("Picture for editing at: http://%s/webpages/%s",
+		     $_SESSION['conurl'], $pictureweb);
+  }
+  return ($picture);
+}
+
 
 // Pass in variables
 $conid=$_GET['conid'];
@@ -208,17 +223,9 @@ if ($short == "T") {
 	$biolang=$bioinfo['biolang_array'][$j];
 
 	// If there is a picture
-	$picturetmp=getBioDestEdit('picture',$biolang,$bioinfo);
-	if (($picturetmp != "") and ($pic_p == "T")) {
-	  $edit_p=strpos($picturetmp,"***EDIT PLEASE***");
-	  if ($edit_p === false) {
-	    $picture=sprintf("<img src=\"%s\">",$picturetmp);
-	  } else {
-	    $picture=sprintf("Picture for editing at: http://%s/webpages/%s",
-			     $_SESSION['conurl'], substr($picturetmp, 18));
-	  }
-	} else {
-	  $picture="";
+	$picture="";
+	if ($pic_p == "T") {
+	  $picture=getPictureDestEdit($element_array[$i]['badgeid']);
 	}
 
 	// Set their name

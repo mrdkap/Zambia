@@ -813,15 +813,13 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
   } else {
 
     // Build the matrix, with approrpriate headers.
-    // Not doing "good" state for the time being.
     $possible_states=array('noraw','noedited','nogood','rawvedited','rawvgood','editedvgood','allmatch');
-    //$possible_states=array('noraw','noedited','rawvedited','allmatch');
-    $possible_statename['noraw']="Missing raw bio";
-    $possible_statename['noedited']="Missing edited bio";
-    $possible_statename['nogood']="Missing good bio";
-    $possible_statename['rawvedited']="Raw/edited bios don't match";
-    $possible_statename['rawvgood']="Raw/good bios don't match";
-    $possible_statename['editedvgood']="Edited/good bios don't match";
+    $possible_statename['noraw']="Missing raw";
+    $possible_statename['noedited']="Missing edited";
+    $possible_statename['nogood']="Missing good";
+    $possible_statename['rawvedited']="Raw/edited don't match";
+    $possible_statename['rawvgood']="Raw/good don't match";
+    $possible_statename['editedvgood']="Edited/good don't match";
     $possible_statename['allmatch']="All bios match";
 
     for ($i=0; $i<count($count_badgeid); $i++ ) {
@@ -859,7 +857,6 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
 	  $matrix_count[$l]['editedvgood']++;
 	  $matrix_badgeid[$l]['editedvgood'].=",$k";
 	}
-	// Changed to reflect the missing "good" fields.
 	if ((isset($check_element[$k][$l]['raw'])) and
 	    (isset($check_element[$k][$l]['edited'])) and
 	    (isset($check_element[$k][$l]['good'])) and
@@ -874,9 +871,9 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
     // Table header
     $printstring.="<TABLE class=\"grid\" border=1>\n";
     $printstring.="  <TR>\n";
-    $printstring.="    <TH>Count of the States of the bios</TH>\n";
+    $printstring.="    <TH>Count of the States</TH>\n";
     for ($i=0; $i<count($count_col); $i++) {
-      $printstring.="    <TH>".$col_keys[$i]."</TH>\n";
+      $printstring.="    <TH>".str_replace(" ","<br>",$col_keys[$i])."</TH>\n";
     }
     $printstring.="  </TR>\n";
 

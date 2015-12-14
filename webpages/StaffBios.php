@@ -7,6 +7,37 @@ if (may_I("Staff")) {
  }
 global $link;
 
+/* takes a variable, and searches across all the posible variations
+   to see if said variable exists in the bios-set
+ */
+function getBioDestEdit($biotype,$biolang,$biodest,$bioinfo) {
+  // Good checking
+  if (!empty($bioinfo[$biotype.'_'.$biolang.'_good_'.$biodest.'_bio'])) {
+    $bioout=$bioinfo[$biotype.'_'.$biolang.'_good_'.$biodest.'_bio'];
+  } elseif (!empty($bioinfo[$biotype.'_'.$biolang.'_edited_'.$biodest.'_bio'])) {
+    $bioout="***EDITED hasn't promoted*** ".$bioinfo[$biotype.'_'.$biolang.'_edited_'.$biodest.'_bio'];
+  } elseif (!empty($bioinfo[$biotype.'_'.$biolang.'_raw_'.$biodest.'_bio'])) {
+    $bioout="***RAW alone exists*** ".$bioinfo[$biotype.'_'.$biolang.'_raw_'.$biodest.'_bio'];
+  } else {
+    $bioout="";
+  }
+  return ($bioout);
+}
+
+/* Take the badgeid and searches for the picture.
+   This presents the web, book, and badge picture if they exist. */
+function getPictureDestEdit($checkbadge,$bioinfo) {
+  $picture="";
+  for ($k=0; $k<count($bioinfo['biodest_array']); $k++) {
+    $biodest=$bioinfo['biodest_array'][$k];
+    $picturestring="../Local/Participant_Images_$biodest/$checkbadge";
+    if (file_exists($picturestring)) {
+      $picture.=sprintf("%s:<br>\n<img width=300 src=\"%s\">",ucfirst($biodest),$picturestring);
+    }
+  }
+  return ($picture);
+}
+
 // Pass in variables
 $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_SESSION['conid'];}
@@ -277,17 +308,10 @@ if ($short == "T") {
       for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
 	$biolang=$bioinfo['biolang_array'][$j];
 
-	// If there is a web or book picture
+	// If there is a picture
 	$picture="";
 	if ($pic_p == "T") {
-	  $webpic=$bioinfo["picture_".$biolang."_edited_web_bio"];
-	  $bookpic=$bioinfo["picture_".$biolang."_edited_book_bio"];
-	  if ($webpic != "") {
-	    $picture.=sprintf("Web:<br>\n<img width=300 src=\"%s\">",$webpic);
-	  }
-	  if ($bookpic != "") {
-	    $picture.=sprintf("Book:<br>\n<img src=\"%s\">",$bookpic);
-	  }
+	  $picture=getPictureDestEdit($element_array[$i]['badgeid'],$bioinfo);
 	}
 
 	if ($picture != "") {
@@ -301,59 +325,45 @@ if ($short == "T") {
 	}
 
 	// For each biodest in our biodest array
-	$biodest_out=array();
 	for ($k=0; $k<count($bioinfo['biodest_array']); $k++) {
+	  $accum="";
 	  $biodest=$bioinfo['biodest_array'][$k];
 
-	  // Establish a partial key to shorten the variables
-	  $partial_key=$biolang.'_'.$biostate.'_'.$biodest."_bio";
+	  // Shows the destination
+	  $accumtitle=sprintf("%s:<br>\n",ucfirst($biodest));
 
 	  // Set their name
-	  $name=($bioinfo['name_'.$partial_key]);
-	  if ($name == "") {
-	    $name=$header;
+	  $name=getBioDestEdit('name',$biolang,$biodest,$bioinfo);
+	  if ($name != "") {
+	    $name="<A NAME=\"$name\"></A>$name";
+	    $accum.=sprintf("<P><B>%s</B>",$name);
 	  }
 
-	  $name="<A NAME=\"$name\"></A>$name";
-	  $biodest_out[$biodest].=sprintf("<P><B>%s</B>",$name);
-
 	  // Sets the bio info
-	  if ($bioinfo["bio_".$partial_key] != "") {
-	    $biodest_out[$biodest].=$bioinfo["bio_".$partial_key];
+	  $bio=getBioDestEdit('bio',$biolang,$biodest,$bioinfo);
+	  if (($name == "") and ($bio != "")) {
+	    $accum.=sprintf("***EDIT PLEASE*** <P><B><A NAME=\"%s\"</A>%s</B>%s</P>\n",$header,$header);
+	  } elseif ($name != "") {
+	    $accum.=sprintf("%s</P>\n",$bio);
 	  }
 
 	  // Sets the URI info
-	  $biodest_out[$biodest].="</P>\n";
-	  if ($bioinfo["uri_".$partial_key] != "") {
-	    $biodest_out[$biodest].=sprintf("<P>%s</P>\n",$bioinfo["uri_".$partial_key]);
+          $uri=getBioDestEdit('uri',$biolang,$biodest,$bioinfo);
+	  if ($uri != "") {
+	    $accum.=sprintf("<P>%s</P>\n",$uri);
 	  }
 
 	  // Sets the pronoun info
-	  $biodest_out[$biodest].="</P>\n";
-	  if ($bioinfo["pronoun_".$partial_key] != "") {
-	    $biodest_out[$biodest].=sprintf("<P>Preferred pronoun: %s</P>\n",$bioinfo["pronoun_".$partial_key]);
+          $pronoun=getBioDestEdit('pronoun',$biolang,$biodest,$bioinfo);
+	  if ($pronoun != "") {
+	    $accum.=sprintf("<P>Preferred pronoun: %s</P>\n",$pronoun);
+	  }
+
+	  // Add only if there is anything in the biodest
+	  if ($accum != "") {
+	    $biostring.=$accumtitle . $accum;
 	  }
 	} // End of biodest switch
-
-	// Hard coded for now, will have to be re-thought when there is more than web/book dests
-	if ((isset($biodest_out['web'])) and (isset($biodest_out['book']))) {
-	  if ($biodest_out['web'] == $biodest_out['book']) {
-	    $biostring.="Web/Book:<br>\n";
-	    $biostring.=$biodest_out['web'];
-	  } else {
-	    $biostring.="Web:<br>\n";
-	    $biostring.=$biodest_out['web'];
-	    $biostring.="Book:<br>\n";
-	    $biostring.=$biodest_out['book'];
-	  }
-	} elseif (isset($biodest_out['web'])) {
-	    $biostring.="Web:<br>\n";
-	    $biostring.=$biodest_out['web'];
-	} elseif (isset($biodest_out['book'])) {
-	    $biostring.="Book:<br>\n";
-	    $biostring.=$biodest_out['book'];
-	}
-	
       } // End of language switch
       if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
 	$biostring.=sprintf(" <A HREF=\"PostScheduleIcal.php?pubsname=%s\">(Fan iCal)</A></P>\n<P>",$element_array[$i]['pubsname']);

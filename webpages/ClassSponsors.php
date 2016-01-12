@@ -46,19 +46,56 @@ $deleteform.="  <INPUT type=\"hidden\" name=\"delsponsorid\" value=\"',badgeid,'
 $deleteform.="  <INPUT type=\"submit\" name=\"submit\" value=\"Delete\">\n";
 $deleteform.="</FORM>\n'";
 
+// Test and toggle sponsor state in database
+if (($_POST["dotoggle"]=="please") and
+    (!empty($_POST["togglesessionid"])) and
+    (is_numeric($_POST["togglesessionid"])) and
+    (!empty($_POST["togglesponsorid"])) and
+    (is_numeric($_POST["togglesponsorid"])) and
+    (($_POST["newsponsorstate"] == "p") or ($_POST["newsponsorstate"] == "a"))) {
+  $set_array=array("sponsorstatus='".$_POST["newsponsorstate"]."'");
+  $match_string="sessionid=".$_POST["togglesessionid"]." AND conid=".$_SESSION["conid"]." AND badgeid=".$_POST["togglesponsorid"];
+  $message.=update_table_element_extended_match($link, $title, "SessionHasSponsor", $set_array, $match_string);
+}
+
+// Complicated form for sponsor state toggle
+$toggleform ="'<FORM name=\"togglesponsor\" method=\"POST\" action=\"ClassSponsors.php\">\n";
+$toggleform.="  <INPUT type=\"hidden\" name=\"dotoggle\" value=\"please\">\n";
+$toggleform.="  <INPUT type=\"hidden\" name=\"newsponsorstate\" value=\"',if(sponsorstatus=\"p\",\"a\",\"p\"),'\">\n";
+$toggleform.="  <INPUT type=\"hidden\" name=\"togglesessionid\" value=\"',sessionid,'\">\n";
+$toggleform.="  <INPUT type=\"hidden\" name=\"togglesponsorid\" value=\"',badgeid,'\">\n";
+$toggleform.="  <INPUT type=\"submit\" name=\"submit\" value=\"',if(sponsorstatus=\"p\",\"Pending\",\"Accepted\"),'\">\n";
+$toggleform.="</FORM>\n'";
+
 // Get the list of classes and who they are sponsored by.
 $query=<<<EOD
 SELECT
     concat("<A HREF=StaffAssignParticipants.php?selsess=", sessionid, ">", sessionid, "</A> - <A HREF=EditSession.php?id=", sessionid, ">", title, if(secondtitle,concat(": ",secondtitle),""), "</A>") AS Class,
+    Participants,
     DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p') AS "Starting Time",
     pubsname as "Sponsored by",
-    concat($deleteform) as "Remove Sponsor"
+    concat($deleteform) as "Remove Sponsor",
+    concat($toggleform) as "Change State"
   FROM
       SessionHasSponsor
     JOIN Sessions USING (sessionid,conid)
     JOIN Schedule USING (sessionid,conid)
     JOIN Participants USING (badgeid)
     JOIN ConInfo USING (conid)
+    LEFT JOIN (SELECT
+        sessionid,
+        conid,
+	       GROUP_CONCAT("<A HREF=mailto:",email,">",badgename,"</A>",if(moderator in ('1','Yes'),'(m)','') ORDER BY moderator DESC SEPARATOR ', ') AS Participants
+      FROM
+          ParticipantOnSession
+        JOIN CongoDump USING (badgeid)
+      WHERE
+        introducer not in ('1','Yes') AND
+        volunteer not in ('1','Yes') AND
+        aidedecamp not in ('1','Yes')
+      GROUP BY
+        conid,
+        sessionid) POS USING (sessionid,conid)
   WHERE
     conid=$conid
   ORDER BY

@@ -122,10 +122,10 @@ SELECT
            if((((servicenotes!='') OR (servicelist!='')) AND (featurelist!='')),", ",""),
            if((featurelist!=''),featurelist,'')) AS Needed
   FROM
-      ParticipantOnSession
-    JOIN ConInfo USING (conid)
-    JOIN Sessions USING (sessionid,conid)
+      Sessions
     JOIN Tracks USING (trackid)
+    JOIN ConInfo USING (conid)
+    LEFT JOIN ParticipantOnSession USING (sessionid,conid)
     LEFT JOIN (SELECT
            sessionid,
            conid,
@@ -222,9 +222,11 @@ SELECT
 	  biodestname='book' AND
 	  descriptionlang='en-us') DGB USING (sessionid,conid)
   WHERE
-    badgeid="$badgeid"
+    badgeid="$badgeid" OR
+    suggestor="$badgeid"
   ORDER BY
-    conid,
+    constartdate DESC,
+    statusid,
     starttime
 EOD;
 // error_log("Zambia: $query");
@@ -267,7 +269,6 @@ for ($i=1; $i<=$schd_rows; $i++) {
     $schd_array[$i]["feedbackwritten"].=$feedback_array[$schd_array[$i]["Sess-Con"]]."</TD>\n  </TR>\n";
   }
 }
-
 
 // Begin the presentation of the information
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);

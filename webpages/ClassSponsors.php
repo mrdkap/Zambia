@@ -64,7 +64,7 @@ $toggleform.="  <INPUT type=\"hidden\" name=\"dotoggle\" value=\"please\">\n";
 $toggleform.="  <INPUT type=\"hidden\" name=\"newsponsorstate\" value=\"',if(sponsorstatus=\"p\",\"a\",\"p\"),'\">\n";
 $toggleform.="  <INPUT type=\"hidden\" name=\"togglesessionid\" value=\"',sessionid,'\">\n";
 $toggleform.="  <INPUT type=\"hidden\" name=\"togglesponsorid\" value=\"',badgeid,'\">\n";
-$toggleform.="  <INPUT type=\"submit\" name=\"submit\" value=\"',if(sponsorstatus=\"p\",\"Pending\",\"Accepted\"),'\">\n";
+$toggleform.="  <INPUT style=\"background-color:',if(sponsorstatus=\"p\",\"yellow\",\"green\"),';color:',if(sponsorstatus=\"p\",\"black\",\"white\"),'\" type=\"submit\" name=\"submit\" value=\"',if(sponsorstatus=\"p\",\"Pending\",\"Accepted\"),'\">\n";
 $toggleform.="</FORM>\n'";
 
 // Get the list of classes and who they are sponsored by.
@@ -74,7 +74,7 @@ SELECT
     Participants,
     DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p') AS "Starting Time",
     pubsname as "Sponsored by",
-    concat($deleteform) as "Remove Sponsor",
+    concat($deleteform) as "Remove",
     concat($toggleform) as "Change State"
   FROM
       SessionHasSponsor

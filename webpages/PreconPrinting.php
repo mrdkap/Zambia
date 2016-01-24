@@ -58,6 +58,8 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   <DT id="programbooktrack"><A HREF="BookSched.php?format=rooms">Rooms list</A>
     <A HREF="BookSched.php?format=rooms&short=Y">(short)</A></DT>
   <DD id="programbooktrack">A room-sorted schedule for the Program Book.</DD>
+  <DT id="programbooktrack"><A HREF="BadgeBios.php">Special Badge Information</A></DT>
+  <DD id="programbooktrack">The special hard-printed badges.</DD>
 </DL>
 <HR>
 <P>And one that is useful after the event feedback is done.</P>

@@ -22,7 +22,7 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   <DT id="badges"><A HREF="BadgesPrint.php">Badges</A></DT>
   <DD id="badges">Print up simple paper badges.</DD>
   <DT id="badgebacks"><A HREF="BadgeBackPrint.php">Badge Backs</A></DT>
-  <DD id="badges">Print up the sechedule for the back of the simple paper badges.</DD>
+  <DD id="badgebacks">Print up the sechedule for the back of the simple paper badges.</DD>
   <DT id="tents"><A HREF="TentsPrint.php">Tents</A></DT>
   <DD id="tents">Print the name-tents.</DD>
   <DT id="lables"><A HREF="LabelsPrint.php">Labels</A></DT>
@@ -31,6 +31,8 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   <DD id="letters">Preview and then print the Welcome Letters for Presenters, Volunteers, and folks who are doing both.</DD>
   <DT id="feedback"><A HREF="StaffFeedback.php">Feedback forms</A></DT>
   <DD id="feedback">Feedback forms for the various days or types to be printed, probably on different colour paper, for easier sorting.</DD>
+  <DT id="specialbadges"><A HREF="BadgeBios.php">Special Badge Information</A></DT>
+  <DD id="specialbadges">The special hard-printed badges.</DD>
 </DL>
 <HR>
 <P>Some useful views for the program book:</P>
@@ -55,11 +57,9 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   <DT id="programbooktrack"><A HREF="BookSched.php?format=trtime">Tracks list by Time</A>
     <A HREF="BookSched.php?format=trtime&short=Y">(short)</A></DT>
   <DD id="programbooktrack">A track then time sorted schedule for the Program Book.</DD>
-  <DT id="programbooktrack"><A HREF="BookSched.php?format=rooms">Rooms list</A>
+  <DT id="programbookroom"><A HREF="BookSched.php?format=rooms">Rooms list</A>
     <A HREF="BookSched.php?format=rooms&short=Y">(short)</A></DT>
-  <DD id="programbooktrack">A room-sorted schedule for the Program Book.</DD>
-  <DT id="programbooktrack"><A HREF="BadgeBios.php">Special Badge Information</A></DT>
-  <DD id="programbooktrack">The special hard-printed badges.</DD>
+  <DD id="programbookroom">A room-sorted schedule for the Program Book.</DD>
 </DL>
 <HR>
 <P>And one that is useful after the event feedback is done.</P>

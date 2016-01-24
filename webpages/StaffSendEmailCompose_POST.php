@@ -18,9 +18,9 @@ if (!isset($_POST['sendto'])) { // page has not been visited before
     }
 $email=get_email_from_post();
 if (!validate_email($email)) {
-    render_send_email($email,$message); // $message came from validate_email
-    exit(0);
-    }
+  render_send_email($email,$subst_list,$message); // $message came from validate_email
+  exit(0);
+}
 $query="SELECT emailtoquery FROM EmailTo where emailtoid=".$email['sendto'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error

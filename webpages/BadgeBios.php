@@ -29,7 +29,7 @@ function getPictureDestEdit($checkbadge) {
   $picture="";
   $picturebadge="../Local/Participant_Images_badge/$checkbadge";
   if (file_exists($picturebadge)) {
-    $picture=sprintf("<img width=300 src=\"%s\">",$picturebadge);
+    $picture=sprintf("<A HREF=\"%s\"><img width=300 src=\"%s\"></A>",$picturebadge,$picturebadge);
   }
   return ($picture);
 }

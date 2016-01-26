@@ -213,14 +213,14 @@ function staff_header ($title) {
     echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
     maketab("TimeCards",1,"VolunteerCheckIn.php");
     echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
-    echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
+    echo "</td>\n      <td class=\"tabblocks border0020\" colspan=2>\n          ";
     maketab("Participant View",1,"welcome.php");
+    echo "</td>\n      <td class=\"tabblocks border0020\" colspan=2>\n          ";
     if (may_I('Vendor')) {
-      echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
       maketab("Vendor View",1,"VendorWelcome.php");
       }
+    echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
     if (may_I('public_login')) {
-      echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
       maketab("Brainstorm View",1,"BrainstormWelcome.php");
     }
     echo "</td>\n    </tr>\n  </table>\n";
@@ -257,9 +257,7 @@ function participant_header ($title) {
   echo "<H1 class=\"head\">Return to the <A HREF=\"http://$ConUrl\">$ConName</A> website</H1>\n";
   echo "<hr>\n\n";
   if (isset($_SESSION['badgeid'])) {
-    echo "<table class=\"tabhead\">\n";
-    echo "  <col width=10%><col width=10%><col width=10%><col width=10%><col width=10%>\n";
-    echo "  <col width=10%><col width=10%><col width=10%><col width=10%><col width=10%>\n";
+    echo "<table width=100% class=\"tabhead\">\n";
     echo "  <tr class=\"tabrow\">\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     maketab("Welcome", 1, "welcome.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
@@ -282,7 +280,10 @@ function participant_header ($title) {
     maketab("My Schedule",may_I('my_schedule'),"MySchedule.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     maketab("Submit a Proposal",may_I('my_suggestions_write'),"MyProposals.php");
-    echo "</td>\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
+    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+    if (may_I('PhotoRev')) {
+      maketab("Photo Review",may_I('PhotoRev'),"PhotoLoungePictures.php");
+    }
     echo "</td>\n  </tr>\n</table>\n";
     echo "<table class=\"header\">\n  <tr>\n    <td style=\"height:5px\"></td>\n  </tr>\n";
     echo "  <tr>\n    <td>\n      <table width=\"100%\">\n";

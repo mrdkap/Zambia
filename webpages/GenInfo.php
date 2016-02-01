@@ -105,6 +105,8 @@ if ($phase_array['Prog Available'] == '0' ) {
   $progbody.="        <A HREF=\"PubsBios.php?conid=$conid&short=Y\">(short)</A></LI>\n";
 }
 if ($phase_array['Brainstorm'] == '0' ) {
+  $progbody.="      <LI><A HREF=\"BrainstormRedirectLogin.php\">Class/Presenter Submission</A></LI>\n";
+  $progbody.="      <LI><A HREF=\"BrainstormRedirectLogin.php\">View Suggested Classes</A></LI>\n";
   $progbody.="      <LI>\n";
   $progbody.="      <FORM name=\"brainstormform\" method=\"POST\" action=\"doLogin.php\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";

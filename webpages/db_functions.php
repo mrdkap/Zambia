@@ -1014,6 +1014,8 @@ EOD;
   };
   $rows=mysql_num_rows($result);
   if ($rows==0) {
+    $message_error=$query." \n <BR> No rows returned from query.";
+    error_log("Zambia: ".$message_error);
     return(0);
   };
   for ($i=0; $i<$rows; $i++) {
@@ -1048,6 +1050,8 @@ EOD;
   };
   $rows=mysql_num_rows($result);
   if ($rows==0) {
+    $message_error=$query." \n <BR> No rows returned from query.";
+    error_log("Zambia: ".$message_error);
     return(0);
   };
   for ($i=0; $i<$rows; $i++) {

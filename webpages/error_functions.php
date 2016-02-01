@@ -34,7 +34,7 @@ function RenderError($title,$message_error) {
     echo "    <H2>$title</H2>\n";
     echo "    <hr>\n";
     echo "    <P> An error occurred: </P>\n    ";
-    echo $message;
+    echo $message_error;
     if (file_exists($FooterTemplateFile)) {
       readfile($FooterTemplateFile);
     }

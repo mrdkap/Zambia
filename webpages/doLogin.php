@@ -62,8 +62,6 @@ $_SESSION['password']=$dbpassword;
 set_permission_set($badgeid);
 //error_log("Zambia: Completed set_permission_set.\n");
 
-$message2="";
-
 // Switch on which page is shown
 if (retrieve_participant_from_db($badgeid)==0) {
   if(may_I('Staff')) {
@@ -85,7 +83,7 @@ if (retrieve_participant_from_db($badgeid)==0) {
 }
 
 // Fail to get db information somewhere ...
-$message_error=$message2."<BR>Error retrieving data from DB.  No further execution possible.";
+$message_error="<BR>Error retrieving data from DB.  No further execution possible.";
 RenderError($title,$message_error);
 exit();
 ?>

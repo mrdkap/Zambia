@@ -1,10 +1,13 @@
 <?php
 require_once('PartCommonCode.php');
 global $link;
-$conid=$_GET['conid'];
 $title="Photo Lounge Voting";
 
 // Test for conid being passed in
+$conid=$_GET['conid'];
+if ((empty($conid)) or (!is_numeric($conid))) {
+  $conid=$_POST['conid'];
+}
 if ((empty($conid)) or (!is_numeric($conid))) {
   $conid=$_SESSION['conid'];
 }
@@ -49,19 +52,35 @@ $sordinal[3]="3rd";
 $sordinal[4]="4th";
 $sordinal[5]="5th";
 
-// Actual picture names as per the table
-$picname[1]="photo_image";
-$picname[2]="photo1";
-$picname[3]="photo2";
-$picname[4]="photo3";
-$picname[5]="photo4";
+if ($conid==46) {
+  // Actual picture names as per the table
+  $picname[1]="photo_image";
+  $picname[2]="photo1";
+  $picname[3]="photo2";
+  $picname[4]="photo3";
+  $picname[5]="photo4";
 
-// Placement for the pictures (somewhat easier)
-$picplace[1]="PMA";
-$picplace[2]="PMB";
-$picplace[3]="PMC";
-$picplace[4]="PMD";
-$picplace[5]="PME";
+  // Placement for the pictures (somewhat easier)
+  $picplace[1]="PMA";
+  $picplace[2]="PMB";
+  $picplace[3]="PMC";
+  $picplace[4]="PMD";
+  $picplace[5]="PME";
+} else {
+  // Actual picture names as per the table
+  $picname[1]="photo_image";
+  $picname[2]="photo_image";
+  $picname[3]="photo_image";
+  $picname[4]="photo_image";
+  $picname[5]="photo_image";
+
+  // Placement for the pictures (somewhat easier)
+  $picplace[1]="PM";
+  $picplace[2]="PM";
+  $picplace[3]="PM";
+  $picplace[4]="PM";
+  $picplace[5]="PM";
+}
 
 // Where this whole bloddy mess lives
 $picurl="https://nelaonline.org";
@@ -145,7 +164,8 @@ $tablename="default_fff_".$conid."_photo_lounge";
 $pTableExist = mysql_query("show tables like '".$tablename."'");
 if ($rTableExist = mysql_fetch_array($pTableExist)) {
 
-  $query = <<<EOD
+  if ($conid==46) {
+    $query = <<<EOD
 SELECT
     concat("\n<!-- 1 -->\n  <TABLE>\n    <TR>\n      <TD>",
 	   if(photo_title is not NULL,concat("Title: ",photo_title,"<BR/>"),"No Title<BR/>"),
@@ -202,15 +222,71 @@ SELECT
   WHERE
     photo_artist_name like "%$artistname%"
 EOD;
+  } else {
+    $query = <<<EOD
+SELECT
+    concat("  <TABLE>\n    <TR>\n      <TD>",
+	   if(photo_title is not NULL,concat("Title: ",photo_title,"<BR/>"),"No Title<BR/>"),
+	   if(photo_model_names is not NULL,concat("Model: ",photo_model_names,"<BR/>"),"No Model<BR/>"),
+	   if(photo_artist_location is not NULL,concat("Photo Location: ",photo_artist_location,"<BR/>"),"No Location<BR/>"),
+	   "</TD>\n      <TD>\n",
+           $urlstring_1,
+	   "\n</TD></TR>\n    <TR><TD colspan=2>\n",
+           $radiostring_1,
+           "</TD></TR></TABLE>\n") AS "Picture"
+  FROM
+      $tablename
+    LEFT JOIN default_files PM ON (photo_image=PM.id)
+  WHERE
+    photo_artist_name like "%$artistname%"
+EOD;
+  }
 
   //Retrieve query
   list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
 
+  $photogquery = <<<EOD
+SELECT
+    DISTINCT photo_artist_name
+  FROM
+      $tablename
+  ORDER BY
+    photo_artist_name
+EOD;
+
+  $result=mysql_query($photogquery,$vlink);
+  while (list($select_artist_name)= mysql_fetch_array($result, MYSQL_NUM)) {
+    $selectstring.="<OPTION value=\"".$select_artist_name."\" ";
+    if ($select_artist_name==$artistname) {
+      $selectstring.="selected";
+    }
+    $selectstring.=">".$select_artist_name."</OPTION>\n";
+  }
+
   // Produce page
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+  echo "<FORM name=\"artistform\" method=POST action=\"PhotoLoungeVote.php\">\n";
+  echo "<DIV><LABEL for=\"artist\">Select Photographer</LABEL>\n";
+  echo "<INPUT type=\"hidden\" name=\"conid\" value=\"$conid\">\n";
+  echo "<SELECT name=\"artist\">\n";
+  echo "$selectstring\n";
+  echo "</SELECT></DIV>\n";
+  echo "<P>&nbsp;\n";
+  if (isset($_SESSION['return_to_page'])) {
+    echo "<A HREF=\"".$_SESSION['return_to_page']."\">Return to report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</A>";
+  }
+  echo "<BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Select Submitter</BUTTON></DIV>\n";
+  echo "</FORM>\n";
+
+  if (empty($artistname)) {
+    correct_footer();
+    exit();
+  }
+
   echo "<FORM name=\"voteform\" method=POST action=\"PhotoLoungeVote.php\">\n";
   echo "<HR/><INPUT type=\"submit\" name=\"submit\" value=\"VOTE\">\n";
   echo "<INPUT type=\"hidden\" name=\"artist\" value=\"$artistname\">\n";
+  echo "<INPUT type=\"hidden\" name=\"conid\" value=\"$conid\">\n";
   echo renderhtmlreport(1,$elements,$header_array,$element_array);
   echo "<INPUT type=\"submit\" name=\"submit\" value=\"VOTE\">\n";
   echo "</FORM>\n";

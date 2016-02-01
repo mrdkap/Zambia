@@ -1,6 +1,7 @@
 <?php
 require_once('PartCommonCode.php');
 global $link;
+$_SESSION['return_to_page']="PhotoLoungePictures.php";
 $conid=$_GET['conid'];
 
 // LOCALISMS
@@ -28,6 +29,8 @@ SELECT
   FROM
       VotesOnPicture
     JOIN Participants USING (badgeid)
+  WHERE
+    conid=$conid
 EOD;
 
 //Retrieve query
@@ -35,7 +38,7 @@ list($voterows,$vote_header_array,$vote_array)=queryreport($query,$link,$title,$
 
 // Build the mapping
 for ($i=1; $i<=$voterows; $i++) {
-  $picture_array[$vote_array[$i]['pictureid']].=$vote_array[$i]['vote'];
+  $picture_array[$vote_array[$i]['pictureid']].=$vote_array[$i]['vote'] . " ";
 }
 
 // Connect to Vendor Database
@@ -53,7 +56,8 @@ if ($rTableExist = mysql_fetch_array($pTableExist)) {
 
   $badlist="'22c90b2144a8d85','230fc849168b5e3','c41500755f89b61','73fe3cb361f676a','9517fd0bf8faa65'";
 
-  $query = <<<EOD
+  if ($conid==46) {
+    $query = <<<EOD
 SELECT
     concat("<A HREF=\"PhotoLoungeVote.php?artist=",photo_artist_name,"\">",photo_artist_name,"</A> -- <A HREF=\"mailto:",photo_artist_email,"\">",photo_artist_email,"</A>") AS "Artist",
     if(photo_artist_bio is not NULL,photo_artist_bio,"No Bio Here") AS "Bio",
@@ -114,14 +118,49 @@ SELECT
     photo_artist_email not in ("webmaster@nelaonline.org", "sweet99iya@gmail.com")
 
 EOD;
+  } else {
+    $query = <<<EOD
+SELECT
+    concat("<A HREF=\"PhotoLoungeVote.php?conid=$conid&artist=",photo_artist_name,"\">",photo_artist_name,"</A> -- <A HREF=\"mailto:",photo_artist_email,"\">",photo_artist_email,"</A>") AS "Artist",
+    if(photo_artist_bio is not NULL,photo_artist_bio,"No Bio Here") AS "Bio",
+    photo_artist_consent AS "Consent",
+    concat("\n  <TABLE>\n    <TR>\n      <TD>",
+	   if(photo_title is not NULL,concat("Title: ",photo_title,"<BR/>"),"No Title<BR/>"),
+	   if(photo_model_names is not NULL,concat("Model: ",photo_model_names,"<BR/>"),"No Model<BR/>"),
+	   if(photo_artist_location is not NULL,concat("Photo Location: ",photo_artist_location,"<BR/>"),"No Location<BR/>"),
+	   "</TD>\n      <TD>",
+	   if(photo_image != "dummy", if(photo_image is not NULL, if(photo_image not in ($badlist), concat("<A HREF=\"",REPLACE(PM.path,"{{ url:site }}","$picurl/"),"\"><img src=\"$picurl/files/thumb/",photo_image,"\"></A>"),"No Image"),"No Image"),"Dummy Image"),
+	   "</TD></TR>",
+	   if(photo_image != "dummy", if(photo_image is not NULL, if(photo_image not in ($badlist), concat("    <TR>\n      <TD>Vote: ",photo_image,"</TD></TR>"),""),""),""),
+	   "</TABLE>\n") AS "Photo"
+  FROM
+      $tablename
+    LEFT JOIN default_files PM ON (photo_image=PM.id)
+  WHERE
+    photo_artist_email not in ("webmaster@nelaonline.org", "sweet99iya@gmail.com", "social@nelaonline.org")
+EOD;
+  }
 
   //Retrieve query
   list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
 
   // Produce vote tally
   for ($i=1; $i<=$elements; $i++) {
-    for ($j=1; $j<=5; $j++) {
-      $fullstring=$element_array[$i][$j.":"];
+    if ($conid==46) {
+      for ($j=1; $j<=5; $j++) {
+	$fullstring=$element_array[$i][$j.":"];
+	$endstring=strstr($fullstring,"Vote: ");
+	$workstring=strstr($endstring,"<",true);
+	$checkstring=trim(strstr($workstring," ")," ");
+	if (!empty($picture_array[$checkstring])) {
+	  $fixstring="Vote: ".$picture_array[$checkstring];
+	} else {
+	  $fixstring="Vote: None";
+	}
+	$element_array[$i][$j.":"]=str_replace($workstring,$fixstring,$fullstring);
+      }
+    } else {
+      $fullstring=$element_array[$i]["Photo"];
       $endstring=strstr($fullstring,"Vote: ");
       $workstring=strstr($endstring,"<",true);
       $checkstring=trim(strstr($workstring," ")," ");
@@ -130,9 +169,9 @@ EOD;
       } else {
 	$fixstring="Vote: None";
       }
-      $element_array[$i][$j.":"]=str_replace($workstring,$fixstring,$fullstring);
+      $element_array[$i]["Photo"]=str_replace($workstring,$fixstring,$fullstring);
     }
- }
+  }
 
   // Produce page
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);

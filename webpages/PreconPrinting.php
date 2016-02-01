@@ -68,7 +68,7 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   <DT id="returnedfeedback"><A HREF="FeedbackPrint.php">Returned Feedback</A></DT>
   <DD id="returnedfeedback">All the feedback on all the schedule elements that we have.</DD>
   */ ?>
-  <DT id="altreturnedfeedback"><A HREF="http://nelaprog.com/main/webpages/StaffSched.php?format=feedback">Alternative Feedback View</A></DT>
+  <DT id="altreturnedfeedback"><A HREF="StaffSched.php?format=feedback">Alternative Feedback View</A></DT>
   <DD id="atlreturnedfeedback">All the schedule elements, with the feedback that we have.</DD>
 </DL>
 <?php correct_footer(); ?>

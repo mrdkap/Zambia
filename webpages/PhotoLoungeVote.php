@@ -83,7 +83,7 @@ if ($conid==46) {
 }
 
 // Where this whole bloddy mess lives
-$picurl="https://nelaonline.org";
+$picurl="https://".VENDORHOSTNAME;
 
 // The bad pictures, since removing them from the database would be tricy.
 $badlist="'22c90b2144a8d85','230fc849168b5e3','c41500755f89b61','73fe3cb361f676a','9517fd0bf8faa65'";

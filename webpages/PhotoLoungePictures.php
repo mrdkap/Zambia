@@ -50,7 +50,7 @@ if (vendor_prepare_db()===false) {
 
 //Check to see if the table exists
 $tablename="default_fff_".$conid."_photo_lounge";
-$picurl="https://nelaonline.org";
+$picurl="https://".VENDORHOSTNAME;
 $pTableExist = mysql_query("show tables like '".$tablename."'");
 if ($rTableExist = mysql_fetch_array($pTableExist)) {
 

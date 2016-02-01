@@ -9,8 +9,8 @@ global $link;
 $conid=$_SESSION['conid'];
 
 // This should probably be generated from the ConInfo.
-$ConLogo="NELA-LOGO.eps";
-/* $ConLogo=QRcode::eps("https://nelaonline.org/FFF-NE-40/webpages/VolunteerCheckIn.php?badgeid=123"); */
+$ConLogo="../Local/logo.eps";
+/* $ConLogo=QRcode::eps("http://".$_SESSION['conurl']."/webpages/VolunteerCheckIn.php?badgeid=123"); */
 $BoundingBox="0 0 759 222";
 
 // LOCALIZATIONS

@@ -1,17 +1,25 @@
 <?php
+require_once('../Local/db_name.php');
+
 /* This file is a short-cut to the hard-coded brainstorm login.
 
    It allows a simple click-through, as opposed to the form
    click-through that used to be the hack to get the login before.
 
-   It will take some testing, but hopefully it will work everywhere for everyone.
+   It will take some testing, but hopefully it will work everywhere
+   for everyone.  The concern is with new logins with no cookies in
+   existence which is hard to test.
  */
 
 //create array of data to be posted
+
+$post_data["newconid"] = FALLBACK_KEY;
+if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
+  $post_data["newconid"] = $_GET['conid'];
+}
 $post_data["badgeid"] = "100";
 $post_data["passwd"] = "submit";
 $post_data["target"] = "brainstorm";
-$post_data["newconid"] = "46";
 
 // Build the string to be posted out of the array of information above
 /* This is the old fashioned way 

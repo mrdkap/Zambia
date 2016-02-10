@@ -15,7 +15,7 @@ $_SESSION['return_to_page']="WelcomeLettersPrint.php";
 $title="Welcome Letters Printing";
 $print_p=$_GET['print_p'];
 $individual=$_GET['individual'];
-$type_array=array("'Panel'","'Class'","'Author Reading'","'SIG/BOF/MnG'","'Lounge'");
+$type_array=array("'Panel'","'Class'","'Author Reading'","'SIG/BOF/MnG'","'Lounge'","'EVENT'","'Social'");
 $role_array=array("'Participant'","'Programming'","'SuperProgramming'");
 $type_string=implode(",",$type_array);
 $role_string=implode(",",$role_array);
@@ -111,21 +111,29 @@ list($rows,$participant_header,$participant_array)=queryreport($query,$link,$tit
 
 foreach ($participant_array as $participant) {
   $workstring = "<P>&nbsp;</P><P>Dear ".$participant['pubsname'].",</P>";
-  if (file_exists("../Local/Verbiage/Welcome_Letter_0")) {
+  if (file_exists("../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_0")) {
+    $workstring .= file_get_contents("../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_0");
+  } elseif (file_exists("../Local/Verbiage/Welcome_Letter_0")) {
     $workstring .= file_get_contents("../Local/Verbiage/Welcome_Letter_0");
   }
   foreach ($role_array as $role) {
     foreach ($type_array as $type) {
-      $filename="../Local/Verbiage/Welcome_Letter_".$rolename_array[$role]."_".$typename_array[$type]."_0";
+      $filename1="../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_".$rolename_array[$role]."_".$typename_array[$type]."_0";
+      $filename2="../Local/Verbiage/Welcome_Letter_".$rolename_array[$role]."_".$typename_array[$type]."_0";
       if ((strpos($participant['Role'],$rolecheck_array[$role]) !== false) AND (strpos($participant['Type'],$typecheck_array[$type]) !== false)) {
-	if (file_exists($filename)) {      
-	  $checkstring = file_get_contents($filename);
+	if (file_exists($filename1)) {
+	  $checkstring = file_get_contents($filename1);
+          if (strpos($workstring,$checkstring) === false) { $workstring .= $checkstring; }
+	} elseif (file_exists($filename2)) {
+	  $checkstring = file_get_contents($filename2);
           if (strpos($workstring,$checkstring) === false) { $workstring .= $checkstring; }
 	}
       }
     }
   }
-  if (file_exists("../Local/Verbiage/Welcome_Letter_1")) {
+  if (file_exists("../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_1")) {
+    $workstring .= file_get_contents("../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_1");
+  } elseif (file_exists("../Local/Verbiage/Welcome_Letter_1")) {
     $workstring .= file_get_contents("../Local/Verbiage/Welcome_Letter_1");
   }
 

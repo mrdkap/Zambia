@@ -10,6 +10,17 @@ $_SESSION['return_to_page']="BadgesPrint.php";
 $title="Badge Print";
 $description="<P>Badges for Printing.</P>\n";
 
+// Extra Message for inclusion.
+$importantinfo0="";
+$importantinfo1="";
+
+if (file_exists("../Local/$conid/Verbiage/Badge_Back_Print_0")) {
+  $importantinfo0=trim(file_get_contents("../Local/$conid/Verbiage/Badge_Back_Print_0"));
+}
+if (file_exists("../Local/$conid/Verbiage/Badge_Back_Print_1")) {
+  $importantinfo1=trim(file_get_contents("../Local/$conid/Verbiage/Badge_Back_Print_1"));
+}
+
 // Specific people
 $whichparticipants='';
 if ((isset($_GET['badgeids'])) and ($_GET['badgeids'] != '')) {
@@ -150,10 +161,10 @@ SELECT
     DISTINCT badgeid,
     pubsname,
     CONCAT(title,
-      if((moderator in ("0","1","YES")),' (moderating)',''),
-      if((aidedecamp in ("0","1","YES")),' (assisting)',''),
-      if((volunteer in ("0","1","YES")),' (outside wristband checker)',''),
-      if((introducer in ("0","1","YES")),' (announcer/inside room attendant)','')) AS Title,
+      if((moderator in ("1","YES")),' (moderating)',''),
+      if((aidedecamp in ("1","YES")),' (assisting)',''),
+      if((volunteer in ("1","YES")),' (outside wristband checker)',''),
+      if((introducer in ("1","YES")),' (announcer/inside room attendant)','')) AS Title,
      CONCAT(DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p'),
 	' - ',
         CASE
@@ -185,13 +196,24 @@ EOD;
 // Retrive query
 list($rows,$header_array,$participant_array)=queryreport($query,$link,$title,$description,0);
 
+/* $startpos is where to start
+   $name_indent is how far to indent the name (title) in X
+   $info_indent is how far to indent the info in X
+   $fontsize is the size of the font
+   $offset is how large in Y a newline offset is
+   $i is the iteration of the count of rows from the participant array query above.
+   $new_participant_array is the collection per card (per person)
+   $j is each participant/pubsname array element (for each person/badge-back)
+   $k is (half) the line count for each (pair of) line(s).
+   $first is the Y offset for the first line of each pair.
+   $second is the Y offset for the second line of each pair.
+   $importantinfo0/1 are established above, from the respective files. 
+*/
 $startpos=140;
 $name_indent=6;
 $info_indent=9;
 $fontsize=6;
 $offset=$fontsize+2;
-$name_offset=$startpos-$offset;
-$info_offset=$startpos-$offset-$offset;
 $i=0;
 $j=0;
 $new_participant_array[$j]['badgeid']="";
@@ -203,26 +225,35 @@ while ($i <= $rows) {
     $j++;
     $new_participant_array[$j]['badgeid']=$participant_array[$i]['badgeid'];
     $new_participant_array[$j]['pubsname']=$participant_array[$i]['pubsname'];
-    $new_participant_array[$j]['Schedule']=" ) show\n".$name_indent." ".$name_offset." moveto\n( ";
-    $new_participant_array[$j]['Schedule'].=$participant_array[$i]['Title'];
-    $new_participant_array[$j]['Schedule'].=" ) show\n".$info_indent." ".$info_offset." moveto\n( ";
-    $new_participant_array[$j]['Schedule'].=$participant_array[$i]['Info'];
-    $new_participant_array[$j]['Schedule'].=" ) show\n";
-   } else {
-    if ($participant_array[$i]['sessionid'] != $participant_array[$i-1]['sessionid']) {
-      $first=$startpos-$offsent-$offset-($k*2*$offset);
+    $new_participant_array[$j]['Schedule']=" ) show\n";
+    if ((!empty($importantinfo0)) or (!empty($importantinfo1))) {
+      $first=$startpos+$offset-($k*2*$offset);
       $second=$first-$offset;
-      $new_participant_array[$j]['Schedule'].=$name_indent." ".$first." moveto\n( ".$participant_array[$i]['Title']." ) show\n".$info_indent." ".$second." moveto\n( ".$participant_array[$i]['Info']." ) show\n";
+      $new_participant_array[$j]['Schedule'].=$name_indent." ".$first." moveto\n( ".$importantinfo0." ) show\n";
+      $new_participant_array[$j]['Schedule'].=$name_indent." ".$second." moveto\n( ".$importantinfo1." ) show\n";
       $k++;
-     }
-   }
- }
+    }
+  }
+  $first=$startpos+$offset-($k*2*$offset);
+  $second=$first-$offset;
+  $new_participant_array[$j]['Schedule'].=$name_indent." ".$first." moveto\n( ".$participant_array[$i]['Title']." ) show\n".$info_indent." ".$second." moveto\n( ".$participant_array[$i]['Info']." ) show\n";
+  $k++;
+}
 $new_participant_array[$j]['Schedule'].="\nstroke\ngrestore\n\n";
 $new_rows=$j;
 
 /* Printing body.  */
 header('Content-type: application/postscript');
 
+/* This builds the cards, with:
+   $k being each person
+   $i being the column switch
+   $j being the row-switch
+   $startpage is the page-header, set above
+   $positional_array of the rows and columns set above
+   A gsave is issued, each card is moved to and written, and then a
+   grestore is done.
+ */
 echo $header;
 $k=1;
 while ($k <= $new_rows) {

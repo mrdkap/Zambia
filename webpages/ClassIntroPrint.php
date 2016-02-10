@@ -10,6 +10,11 @@ require_once('../../tcpdf/tcpdf.php');
 global $link;
 $conid=$_SESSION['conid'];
 
+$onlyclass='';
+if (!empty($_GET['onlyclass'])) {
+  $onlyclass="Yes";
+}
+
 // LOCALIZATIONS
 $_SESSION['return_to_page']="ClassIntroPrint.php";
 $title="Class Introduction Printing";
@@ -22,7 +27,18 @@ if ($_SESSION['role']=="Participant") {$individual=$_SESSION['badgeid'];}
 
 $description="<P>A way to <A HREF=\"ClassIntroPrint.php?print_p=T";
 if ($individual != "") {$description.="&individual=$individual";}
-$description.="\">print</A> the appropriate Class/Panel introduction(s).</P>\n<hr>\n";
+if ($onlyclass != "") {$description.="&onlyclass=Y";}
+$description.="\">print</A> the appropriate Class/Panel introduction(s).";
+if ($onlyclass == "") {
+  $description.=" <A HREF=\"ClassIntroPrint.php?onlyclass=Y";
+  if ($individual != "") {$description.="&individual=$individual";}
+  $description.="\">Switch</A> to the only class version, sorted by time and class name.";
+} else {
+  $description.=" <A HREF=\"ClassIntroPrint.php";
+  if ($individual != "") {$description.="?individual=$individual";}
+  $description.="\">Switch</A> to the participants version, sorted by participant and time.";
+}
+$description.="</P>\n<hr>\n";
 
 // Document information
 class MYPDF extends TCPDF {
@@ -65,15 +81,15 @@ SELECT
     DATE_FORMAT(ADDTIME(constartdate,starttime), '%a %l:%i %p') as StartTime,
     CASE
       WHEN TIME_TO_SEC(starttime) < "79000" THEN
-        concat("../Local/Verbiage/Introduction_Blurb_0-1")
+        concat("../Local/$conid/Verbiage/Introduction_Blurb_0-1")
       WHEN TIME_TO_SEC(starttime) < "133300" THEN
-        concat("../Local/Verbiage/Introduction_Blurb_0-2")
+        concat("../Local/$conid/Verbiage/Introduction_Blurb_0-2")
       WHEN TIME_TO_SEC(starttime) < "146000" THEN
-        concat("../Local/Verbiage/Introduction_Blurb_0-3")
+        concat("../Local/$conid/Verbiage/Introduction_Blurb_0-3")
       WHEN TIME_TO_SEC(starttime) < "165000" THEN
-        concat("../Local/Verbiage/Introduction_Blurb_0-4")
+        concat("../Local/$conid/Verbiage/Introduction_Blurb_0-4")
       ELSE
-        concat("../Local/Verbiage/Introduction_Blurb_0-5")
+        concat("../Local/$conid/Verbiage/Introduction_Blurb_0-5")
       END AS blurb,
     roomname,
     sessionid,
@@ -97,9 +113,16 @@ EOD;
 
 if ($individual) {$query.=" and
     badgeid='$individual'";}
-$query.="
+
+if ($onlyclass=="") {
+  $query.="
   ORDER BY
-    pubsname, starttime";
+    pubsname, Schedule.starttime";
+} else {
+  $query.="
+  ORDER BY
+    Schedule.starttime, title";
+}
 
 // Retrieve query
 list($classcount,$classcount_header,$classlist_array)=queryreport($query,$link,$title,$description,0);
@@ -160,19 +183,21 @@ for ($i=1; $i<=$sponsorcount; $i++) {
  }
 
 // Grab the intro blurb, assign it to $intro
-if (file_exists("../Local/Verbiage/Introduction_Blurb_0")) {
-  $intro= file_get_contents("../Local/Verbiage/Introduction_Blurb_0");
+if (file_exists("../Local/$conid/Verbiage/Introduction_Blurb_0")) {
+  $intro= file_get_contents("../Local/$conid/Verbiage/Introduction_Blurb_0");
  }
 
 // Grab the Volunteer duty description, assign it to $roles
-if (file_exists("../Local/Verbiage/Volunteer_Jobs_0")) {
-  $roles= file_get_contents("../Local/Verbiage/Volunteer_Jobs_0");
+if (file_exists("../Local/$conid/Verbiage/Volunteer_Jobs_0")) {
+  $roles= file_get_contents("../Local/$conid/Verbiage/Volunteer_Jobs_0");
  }
 
 // setup for viewing instead of printing
 if ($print_p =="") {
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-  echo "$roles<hr>";
+  if ($onlyclass == "") {
+    echo "$roles<hr>";
+  }
  }
 
 for ($i=1; $i<=$classcount; $i++) {
@@ -198,6 +223,10 @@ for ($i=1; $i<=$classcount; $i++) {
   if (isset($sponsor_array[$sessionid])) {
     $printstring.= "<P>This class is being sponsored by ";
     $printstring.=$sponsor_array[$sessionid];
+    $printstring.=".  Sponsorship helps us build relationships with key partners in the area.  We appreciate the support of ";
+    $printstring.=$sponsor_array[$sessionid];
+    $printstring.=" in their sponsorship of the ";
+    $printstring.=$_SESSION['conname'];
     $printstring.=".</P>";
   }
 
@@ -228,7 +257,7 @@ for ($i=1; $i<=$classcount; $i++) {
     echo "$printstring<hr>";
   } else {
     if ($print_short != "True") {
-      if ($classlist_array[$i-1]['pubsname'] != $name) {
+      if (($classlist_array[$i-1]['pubsname'] != $name) and ($onlyclass == "")) {
         $pdf->AddPage();
         $pdf->writeHTML($roles, true, false, true, false, '');
         }

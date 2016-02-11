@@ -3,9 +3,9 @@ require_once('PostingCommonCode.php');
 require_once('../../tcpdf/config/lang/eng.php');
 require_once('../../tcpdf/tcpdf.php');
 
-if (isset($_GET['conid']) and ($_GET['conid'] != "")) {
+if ((!empty($_GET['conid'])) and (is_numeric($_GET['conid']))) {
   $conid=$_GET['conid'];
-} elseif (isset($_POST['conid']) and ($_POST['conid'] != "")) {
+} elseif ((!empty($_POST['conid'])) and (is_numeric($_POST['conid']))) {
   $conid=$_POST['conid'];
 } else {
   $conid=$_SESSION['conid']; // make it a variable so it can be substituted
@@ -145,8 +145,8 @@ if (isset($selday) and ($selday!="")) {
 }
 
 // Set standard headers across the pages.
-$title="$dayname Feedback";
-$description="<P>Not sure which class?</P>";
+$title=$_SESSION['conname']." $dayname Feedback";
+$description="<P>Not sure which class?</P>\n";
 $additionalinfo="<P>See ";
 $additionalinfo.="the <A HREF=\"PubsSched.php?format=desc&conid=$conid\">description</A>\n";
 $additionalinfo.="<A HREF=\"PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A>,\n";
@@ -167,7 +167,12 @@ $additionalinfo.="<P>Done with this time block?  Pick a different one:</P>\n<UL>
       $additionalinfo.="  <LI><A HREF=\"Feedback.php?conid=$conid&selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
     }
   }
-$additionalinfo.="</UL>\n";
+$additionalinfo.="</UL></P>\n";
+
+// Add any local information
+if (file_exists("../Local/$conid/Verbiage/Feedback_0")) {
+  $additionalinfo.=file_get_contents("../Local/$conid/Verbiage/Feedback_0");
+}
 
 // Document information
 class MYPDF extends TCPDF {
@@ -255,15 +260,14 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 // Fix the questiontypeid for a single page
 if ($sessionid!="") {$questiontypeid=$element_array[1]['questiontypeid'];}
   
-/* Printing body. */
-$printstring="<TABLE border=\"0\" cellpadding=\"4\"><TR><TD colspan=\"$NumOfColumns\" align=\"center\">Please, indicate the $dayname class you are offering feedback on.</TD></TR>";
-$printstring.="<TR><TD>";
-$formstring.="<FORM name=\"feedbackform\" method=POST action=\"Feedback.php?conid=$conid&selday=$selday\">\n";
-
 if ($elements > 0) {
   /* Get the number of elements into $NumOfColumns rows */
   $NumPerColumn=ceil($elements/$NumOfColumns);
 
+  /* Printing body. */
+  $printstring="<TABLE border=\"0\" cellpadding=\"4\"><TR><TD colspan=\"$NumOfColumns\" align=\"center\">Please, indicate the $dayname class you are offering feedback on.</TD></TR>";
+  $printstring.="<TR><TD>";
+  $formstring.="<FORM name=\"feedbackform\" method=POST action=\"Feedback.php?conid=$conid&selday=$selday\">\n";
   if ($sessionid!="") {
     $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"".$element_array[1]['sessionid']."\">\n";
     $formstring.="<P>Feedback on ".$element_array[1]['title']." (".$element_array[1]['time'].")</P>\n";
@@ -327,7 +331,10 @@ if ($elements > 0) {
   $formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
   $formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
 } else {
-  $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"437\">\n";
+  $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"";
+  if ($conid=44) {$formstring.="437";}
+  if ($conid=46) {$formstring.="526";}
+  $formstring.="\">\n";
   $formstring.="<LABEL for=\"classcomment\">Other Comments: (The more you give us, the better we can meet your desires.)</LABEL>\n<br>\n";
   $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
 }

@@ -8,9 +8,16 @@ if (may_I("Staff")) {
 require_once('../../tcpdf/config/lang/eng.php');
 require_once('../../tcpdf/tcpdf.php');
 
+if ((!empty($_GET['conid'])) and (is_numeric($_GET['conid']))) {
+  $conid=$_GET['conid'];
+} elseif ((!empty($_POST['conid'])) and (is_numeric($_POST['conid']))) {
+  $conid=$_POST['conid'];
+} else {
+  $conid=$_SESSION['conid']; // make it a variable so it can be substituted
+}
+
 /* Global Variables */
 global $link;
-$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $badgename=$_SESSION['badgename']; // make it a variable so it can be substituted
 $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
 
@@ -19,7 +26,7 @@ if ($badgename=="") {$badgename='Anonymous';}
 if ($badgeid=="") {$badgeid='100';}
 
 // LOCALIZATIONS
-$_SESSION['return_to_page']="StaffFeedback.php";
+$_SESSION['return_to_page']="StaffFeedback.php?conid=$conid";
 $print_p=$_GET['print_p'];
 $formstring="";
 
@@ -135,7 +142,7 @@ if (isset($selday) and ($selday!="")) {
   echo "<UL>\n";
   for ($i=1; $i<=$fpagecount; $i++) {
     if ($i!=$single_class_no) {
-      echo "  <LI><A HREF=\"StaffFeedback.php?selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
+      echo "  <LI><A HREF=\"StaffFeedback.php?conid=$conid&selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
     }
   }
   echo "</UL>\n";
@@ -160,14 +167,20 @@ $additionalinfo.="<A HREF=\"StaffSched.php?format=rooms&conid=$conid&short=Y\">(
 $additionalinfo.="or the <A HREF=\"StaffBios.php?conid=$conid\">bios</A>\n";
 $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">(short)</A>\n";
 $additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">(without images)</A> pages to choose from.</P>\n";
-$additionalinfo.="<P><A HREF=\"StaffFeedback.php?selday=$selday&print_p=y\">Printable</A> version.</P>\n";
+$additionalinfo.="<P><A HREF=\"StaffFeedback.php?conid=$conid&selday=$selday&print_p=y\">Printable</A> version.</P>\n";
 $additionalinfo.="<P>Done with this time block?  Pick a different one:</P>\n<UL>\n";
   for ($i=1; $i<=$fpagecount; $i++) {
     if ($i!=$single_class_no) {
-      $additionalinfo.="  <LI><A HREF=\"StaffFeedback.php?selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
+      $additionalinfo.="  <LI><A HREF=\"StaffFeedback.php?conid=$conid&selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
     }
   }
-$additionalinfo.="</UL>\n";
+$additionalinfo.="</UL></P>\n";
+
+// Add any local information
+if (file_exists("../Local/$conid/Verbiage/Feedback_0")) {
+  $additionalinfo.=file_get_contents("../Local/$conid/Verbiage/Feedback_0");
+}
+
 
 // Document information
 class MYPDF extends TCPDF {
@@ -262,7 +275,7 @@ if ($elements > 0) {
   /* Printing body. */
   $printstring="<TABLE border=\"0\" cellpadding=\"4\"><TR><TD colspan=\"$NumOfColumns\" align=\"center\">Please, indicate the $dayname class you are offering feedback on.</TD></TR>";
   $printstring.="<TR><TD>";
-  $formstring.="<FORM name=\"feedbackform\" method=POST action=\"StaffFeedback.php?selday=$selday\">\n";
+  $formstring.="<FORM name=\"feedbackform\" method=POST action=\"StaffFeedback.php?conid=$conid&selday=$selday\">\n";
   if ($sessionid!="") {
     $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"".$element_array[1]['sessionid']."\">\n";
     $formstring.="<P>Feedback on ".$element_array[1]['title']." (".$element_array[1]['time'].")</P>\n";
@@ -296,8 +309,9 @@ $formheaders.="<TH>Somewhat Disagree</TH><TH>Totally Disagree</TH></TR>";
 
 $printstring.="<TABLE border=\"1\">";
 $printstring.="<TR><TD colspan=\"7\" align=\"center\">Please answer the following questions where 5 = totally agree, 1 = totally disagree.</TD></TR>";
-$formstring.="<P>&nbsp;&nbsp;Please answer the following questions from totally agree to totally disagree.";
-$formstring.="<TABLE border=1>";
+$formstring.="<P>&nbsp;&nbsp;Please answer the following questions from totally agree to totally disagree.\n";
+$formstring.="If the question does not apply to you, feel free to leave it blank.\n";
+$formstring.="<TABLE border=1>\n";
 $printstring.=$printheaders;
 $formstring.=$formheaders."\n";
 for ($i=1; $i<=$questioncount; $i++) {
@@ -319,10 +333,19 @@ for ($i=1; $i<=$questioncount; $i++) {
 }
 $printstring.="</TABLE></P><hr>";
 $formstring.="</TABLE></P>\n";
-$formstring.="<LABEL for=\"classcomment\">Other comments on this class:</LABEL>\n<br>\n";
-$formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
-$formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
-$formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
+if ($elements > 0) {
+  $formstring.="<LABEL for=\"classcomment\">Other comments on this class:</LABEL>\n<br>\n";
+  $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
+  $formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
+  $formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
+} else {
+  $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"";
+  if ($conid=44) {$formstring.="437";}
+  if ($conid=46) {$formstring.="526";}
+  $formstring.="\">\n";
+  $formstring.="<LABEL for=\"classcomment\">Other Comments: (The more you give us, the better we can meet your desires.)</LABEL>\n<br>\n";
+  $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
+}
 $formstring.="<BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Send Feedback</BUTTON>\n";
 $formstring.="</FORM>\n";
 $printstring.="<P>Other comments/ideas/questions/feedback about the class or the flea (feel free to use the back):";

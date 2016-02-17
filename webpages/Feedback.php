@@ -167,7 +167,7 @@ $additionalinfo.="<P>Done with this time block?  Pick a different one:</P>\n<UL>
       $additionalinfo.="  <LI><A HREF=\"Feedback.php?conid=$conid&selday=" . $fpage_array[$i]['fpageid'] . "\">" . $fpage_array[$i]['fpagedesc'] . "</A></LI>\n";
     }
   }
-$additionalinfo.="</UL></P>\n";
+$additionalinfo.="</UL>\n";
 
 // Add any local information
 if (file_exists("../Local/$conid/Verbiage/Feedback_0")) {
@@ -259,36 +259,39 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 
 // Fix the questiontypeid for a single page
 if ($sessionid!="") {$questiontypeid=$element_array[1]['questiontypeid'];}
-  
+
 if ($elements > 0) {
   /* Get the number of elements into $NumOfColumns rows */
   $NumPerColumn=ceil($elements/$NumOfColumns);
-
-  /* Printing body. */
-  $printstring="<TABLE border=\"0\" cellpadding=\"4\"><TR><TD colspan=\"$NumOfColumns\" align=\"center\">Please, indicate the $dayname class you are offering feedback on.</TD></TR>";
-  $printstring.="<TR><TD>";
-  $formstring.="<FORM name=\"feedbackform\" method=POST action=\"Feedback.php?conid=$conid&selday=$selday\">\n";
-  if ($sessionid!="") {
-    $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"".$element_array[1]['sessionid']."\">\n";
-    $formstring.="<P>Feedback on ".$element_array[1]['title']." (".$element_array[1]['time'].")</P>\n";
-  } else {
-    $formstring.="<DIV><LABEL for=\"feedbackclass\">Select the $dayname class you are offering feedback on.</LABEL>\n";
-    $formstring.="<SELECT name=\"selsess\">\n";
-    $formstring.="    <OPTION value=0 SELECTED>Select Session</OPTION>\n";
-    for ($i=1; $i<=$elements; $i++) {
-      $printstring.="<img border=\"1\" src=\"images/whitebox.png\"> ";
-      $printstring.=$element_array[$i]['title']." (".$element_array[$i]['time'].")<br>";
-      $formstring.="    <OPTION value=\"".$element_array[$i]['sessionid']."\">";
-      $formstring.=$element_array[$i]['title']." (".$element_array[$i]['time'].")</OPTION>\n";
-      if ($i % $NumPerColumn == 0) {
-	$printstring.="</TD><TD>";
-      }
-    }
-    $printstring.="</TD></TR>";
-    $printstring.="</TABLE>";
-    $formstring.="</SELECT></DIV>\n";
-  }
+} else {
+  $NumPerColumn=1;
 }
+
+/* Printing body. */
+$printstring="<TABLE border=\"0\" cellpadding=\"4\"><TR><TD colspan=\"$NumOfColumns\" align=\"center\">Please, indicate the $dayname class you are offering feedback on.</TD></TR>";
+$printstring.="<TR><TD>";
+$formstring.="<FORM name=\"feedbackform\" method=POST action=\"Feedback.php?conid=$conid&selday=$selday\">\n";
+if ($sessionid!="") {
+  $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"".$element_array[1]['sessionid']."\">\n";
+  $formstring.="<P>Feedback on ".$element_array[1]['title']." (".$element_array[1]['time'].")</P>\n";
+} else {
+  $formstring.="<DIV><LABEL for=\"feedbackclass\">Select the $dayname class you are offering feedback on.</LABEL>\n";
+  $formstring.="<SELECT name=\"selsess\">\n";
+  $formstring.="    <OPTION value=0 SELECTED>Select Session</OPTION>\n";
+  for ($i=1; $i<=$elements; $i++) {
+    $printstring.="<img border=\"1\" src=\"images/whitebox.png\"> ";
+    $printstring.=$element_array[$i]['title']." (".$element_array[$i]['time'].")<br>";
+    $formstring.="    <OPTION value=\"".$element_array[$i]['sessionid']."\">";
+    $formstring.=$element_array[$i]['title']." (".$element_array[$i]['time'].")</OPTION>\n";
+    if ($i % $NumPerColumn == 0) {
+      $printstring.="</TD><TD>";
+    }
+  }
+  $printstring.="</TD></TR>";
+  $printstring.="</TABLE>";
+  $formstring.="</SELECT></DIV>\n";
+}
+
 
 $printheaders="  <TR><TH colspan=\"2\">&nbsp;</TH><TH align=\"center\">Totally Agree</TH>";
 $printheaders.="<TH align=\"center\">Somewhat Agree</TH><TH align=\"center\">Neutral</TH>";
@@ -302,7 +305,7 @@ $formheaders.="<TH>Somewhat Disagree</TH><TH>Totally Disagree</TH></TR>";
 $printstring.="<TABLE border=\"1\">";
 $printstring.="<TR><TD colspan=\"7\" align=\"center\">Please answer the following questions where 5 = totally agree, 1 = totally disagree.</TD></TR>";
 $formstring.="<P>&nbsp;&nbsp;Please answer the following questions from totally agree to totally disagree.\n";
-$formstring.="If the question does not apply to you, feel free to leave it blank.\n";
+$formstring.="If the question does not apply to you, feel free to leave it blank.</P>\n";
 $formstring.="<TABLE border=1>\n";
 $printstring.=$printheaders;
 $formstring.=$formheaders."\n";
@@ -323,18 +326,15 @@ for ($i=1; $i<=$questioncount; $i++) {
     $formstring.="</TD></TR>\n";
   }
 }
-$printstring.="</TABLE></P><hr>";
-$formstring.="</TABLE></P>\n";
+$printstring.="</TABLE><hr>";
+$formstring.="</TABLE>\n";
 if ($elements > 0) {
   $formstring.="<LABEL for=\"classcomment\">Other comments on this class:</LABEL>\n<br>\n";
   $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
   $formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
   $formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
 } else {
-  $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"";
-  if ($conid=44) {$formstring.="437";}
-  if ($conid=46) {$formstring.="526";}
-  $formstring.="\">\n";
+  $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"-1\">\n";
   $formstring.="<LABEL for=\"classcomment\">Other Comments: (The more you give us, the better we can meet your desires.)</LABEL>\n<br>\n";
   $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
 }

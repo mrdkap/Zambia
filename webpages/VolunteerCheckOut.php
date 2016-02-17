@@ -34,7 +34,7 @@ $permrolecheck_string=implode(",",$permrolecheck_array);
 
 $query=<<<EOD
 SELECT
-    voltimeid,
+    DISTINCT voltimeid,
     concat(pubsname, " in at: ",DATE_FORMAT(voltimein,'%a %l:%i %p (%k:%i)')) as 'Who'
   FROM
       Participants

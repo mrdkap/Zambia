@@ -829,6 +829,10 @@ for i in FFF-[34]*
    least you will need to be set up, so you can grant other people
    access.  The use of that page is well documented in the
    Presenter_Flow document in this directory.
+
+   You probably also want to add the 100-user (the Brainstorm User
+   called Idea Submissions), to permroleid 4 (Brainstorm) so that the
+   brainstorm submission system will work.
 ** UserHasConRole
    This is very similar to the UserHasPermissionRole, and was split
    off, because not all Permission Roles want to necessarily be
@@ -868,6 +872,10 @@ for i in FFF-[34]*
    least you will need to be set up, so you can grant other people
    access.  The use of that page is well documented in the
    Presenter_Flow document in this directory.
+
+   You probably want to add the 100-user (the Brainstorm User called
+   Idea Submissions), to conroleid 47 (BrainstormCoord) for tracking
+   purposes.
 ** HasReports
    This maps the organizational chart of your convention.  Again while
    this is not a necessary step for the start of your con, and might
@@ -909,6 +917,9 @@ for i in FFF-[34]*
 #+end_src
    Then just massage the data slightly, and you have the insert you
    can do to mirror the previous con.
+
+   You probably want to make sure the BrainstormCoordinator (47),
+   reports to Programming (3).
 * Adding a year instance - Sessions
   The sessions are mostly generated from Brainstorm (and other
   insertions to your database) but there are a few settings that

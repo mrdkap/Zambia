@@ -919,11 +919,12 @@ This also has to be set up so the appropriate Phase shifting can
 happen.  The phase of the convention will shift, over time, as
 deadlines approach and pass.  Not all of the phasetypeids from the
 PhaseTypes table need to be there, but, it is easier if they are,
-so all you have to do is change the phasestate, and the appropriate
-phase is available.  If you wish to see what values were set for a
-previous instance of your con (to make sure you have the right
-values), you might want to use a query (replacing the \$conid with
-the previous con you want to model on) like:
+so all you have to do is change the phasestate, using the
+AdminPhases.php page and the appropriate phase changes state.  If
+you wish to see what values were set for a previous instance of
+your con (to make sure you have the right values), you might want
+to use a query (replacing the \$conid with the previous con you want
+to model on) like:
 \begin{verbatim}
 SELECT
     *
@@ -942,6 +943,16 @@ whatever conid you are creating.
 described in the PhaseTypes table.
 \item phasestate: If a phase is active.
 \end{itemize}
+
+You might wish to simply populate your phases with (replacing
+\$conid with the appropriate conid, and the last "," with ";"):
+INSERT INTO Phase (conid, phasetypeid, phasestate) VALUES
+\begin{verbatim}
+SELECT
+    concat("($conid,",phasetypeid,",0),") AS ValueSet
+  FROM
+      PhaseTypes;
+\end{verbatim}
 
 An example of phase shifting, is when you open your call for
 presenters, or you close your call for vendors, or you allow
@@ -996,6 +1007,10 @@ least you will need to be set up, so you can grant other people
 access.  The use of that page is well documented in the
 Presenter\_Flow document in this directory.
 
+You probably also want to add the 100-user (the Brainstorm User
+called Idea Submissions), to permroleid 4 (Brainstorm) so that the
+brainstorm submission system will work.
+
 \subsection{UserHasConRole}
 \label{sec-12-2}
 This is very similar to the UserHasPermissionRole, and was split
@@ -1038,6 +1053,10 @@ to give each the right permissions, that will work as well.  But at
 least you will need to be set up, so you can grant other people
 access.  The use of that page is well documented in the
 Presenter\_Flow document in this directory.
+
+You probably want to add the 100-user (the Brainstorm User called
+Idea Submissions), to conroleid 47 (BrainstormCoord) for tracking
+purposes.
 
 \subsection{HasReports}
 \label{sec-12-3}
@@ -1083,6 +1102,9 @@ SELECT
 \end{verbatim}
 Then just massage the data slightly, and you have the insert you
 can do to mirror the previous con.
+
+You probably want to make sure the BrainstormCoordinator (47),
+reports to Programming (3).
 
 \section{Adding a year instance - Sessions}
 \label{sec-13}

@@ -56,7 +56,7 @@ if (isset($_GET['feedback'])) {
   if ($_GET['feedback'] == "Y") {
     $feedback_p="T";
     $single_line_p="F";
-    $_SESSION['return_to_page'].="StaffSched.php?format=$format&conid=$conid&feedback=\"Y\"";
+    $_SESSION['return_to_page'].="StaffSched.php?format=$format&conid=$conid&feedback=Y";
     if (may_I("Staff")) {
       if (empty($checkbadgeid)) {
         $feedback_array=getFeedbackData("");

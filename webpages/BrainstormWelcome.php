@@ -12,7 +12,9 @@ $message.=$message2;
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (may_I('BrainstormSubmit')) {
-  if (file_exists("../Local/Verbiage/BrainstormWelcome_0")) {
+  if (file_exists("../Local/$conid/Verbiage/BrainstormWelcome_0")) {
+    echo file_get_contents("../Local/$conid/Verbiage/BrainstormWelcome_0");
+  } elseif (file_exists("../Local/Verbiage/BrainstormWelcome_0")) {
     echo file_get_contents("../Local/Verbiage/BrainstormWelcome_0");
   } else { ?>
 <p> Here you can submit new suggestions or look at existing ideas for 

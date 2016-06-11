@@ -656,20 +656,22 @@ function renderprecisreport ($startrows,$endrows,$header_array,$element_array) {
     if (!empty($element_array[$i]['desc_good_book'])) {
       $printstring.="<TR><TD colspan=6 class=\"border0010\">Book: ".htmlspecialchars($element_array[$i]['desc_good_book'],ENT_NOQUOTES)."</TD></TR>\n";
     }
-    if (!empty($element_array[$i]['persppartinfo'])) {
-      $printstring.="<TR><TD colspan=6 class=\"border0010\">Perspective Participants: ".htmlspecialchars($element_array[$i]['persppartinfo'],ENT_NOQUOTES)."</TD></TR>\n";
-    }
-    if (!empty($element_array[$i]['notesforpart'])) {
-      $printstring.="<TR><TD colspan=6 class=\"border0010\">Participant notes: ".htmlspecialchars($element_array[$i]['notesforpart'],ENT_NOQUOTES)."</TD></TR>\n";
-    }
-    if (!empty($element_array[$i]['notesforprog'])) {
-      $printstring.="<TR><TD colspan=6 class=\"border0010\">Programming notes: ".htmlspecialchars($element_array[$i]['notesforprog'],ENT_NOQUOTES)."</TD></TR>\n";
-    }
-    if (!empty($element_array[$i]['Needed'])) {
-      $printstring.="<TR><TD colspan=6 class=\"border0010\">Tech/Hotel notes: ".htmlspecialchars($element_array[$i]['Needed'],ENT_NOQUOTES)."</TD></TR>\n";
-    }
-    if (!empty($element_array[$i]['partlist'])) {
-      $printstring.="<TR><TD colspan=6 class=\"border0010\">Scheduled Participants:<br>\n".$element_array[$i]['partlist']."</TD></TR>\n";
+    if ((may_I('Staff')) or (may_I('Participant'))) {
+      if (!empty($element_array[$i]['persppartinfo'])) {
+	$printstring.="<TR><TD colspan=6 class=\"border0010\">Perspective Participants: ".htmlspecialchars($element_array[$i]['persppartinfo'],ENT_NOQUOTES)."</TD></TR>\n";
+      }
+      if (!empty($element_array[$i]['notesforpart'])) {
+	$printstring.="<TR><TD colspan=6 class=\"border0010\">Participant notes: ".htmlspecialchars($element_array[$i]['notesforpart'],ENT_NOQUOTES)."</TD></TR>\n";
+      }
+      if (!empty($element_array[$i]['notesforprog'])) {
+	$printstring.="<TR><TD colspan=6 class=\"border0010\">Programming notes: ".htmlspecialchars($element_array[$i]['notesforprog'],ENT_NOQUOTES)."</TD></TR>\n";
+      }
+      if (!empty($element_array[$i]['Needed'])) {
+	$printstring.="<TR><TD colspan=6 class=\"border0010\">Tech/Hotel notes: ".htmlspecialchars($element_array[$i]['Needed'],ENT_NOQUOTES)."</TD></TR>\n";
+      }
+      if (!empty($element_array[$i]['partlist'])) {
+	$printstring.="<TR><TD colspan=6 class=\"border0010\">Scheduled Participants:<br>\n".$element_array[$i]['partlist']."</TD></TR>\n";
+      }
     }
     $printstring.="<TR><TD colspan=6 class=\"border0020\">&nbsp;</TD></TR>\n";
     $printstring.="<TR><TD colspan=6 class=\"border0000\">&nbsp;</TD></TR>\n";

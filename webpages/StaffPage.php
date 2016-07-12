@@ -49,7 +49,11 @@ list($rows,$header_array,$roles_array)=queryreport($query,$link,$title,$descript
 
 // Build the string:
 $descstring="<A NAME=\"Jobs\"></A><H2>Job Descriptions</H2>\n<DL>\n";
-$todstring= "<A NAME=\"ToO\"></A><H2>Table of Organization</H2>\n<DL>\n";
+$todstring= "<A NAME=\"ToO\"></A><H2>Table of Organization";
+if ((may_I("Maint")) or (may_I("ConChair"))) {
+  $todstring.=" (<A HREF=\"AdminHasReports.php\">Updates</A>)";
+}
+$todstring.="</H2>\n<DL>\n";
 for ($i=1; $i<=$rows; $i++) {
   $todstring.=$roles_array[$i]['Role'];
   $todstring.="  <DD>".$roles_array[$i]['Who']."<br>\n";

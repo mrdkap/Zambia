@@ -6,7 +6,10 @@ $badgeid=$_SESSION['badgeid'];  // make it a variable so it can be substituted
 $title="Photo Lounge Submission";
 $description="<P>Upload what photos you want to submit, below.</P>";
 $additionalinfo="<P>By uploading your files you are agreeing to: &lt;PUT SOMETHING HERE&gt;</P>";
-$piccount=1;
+$minwidth=300;
+$minheight=300;
+$maxwidth=3000;
+$maxwidth=3000;
 
 // Limit this somehow ...
 /* if (!may_I('photo_submission')) {
@@ -25,7 +28,9 @@ if(isset($_POST["submit"])) {
   // Check if image file is a actual image or fake image
   $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
   if($check !== false) {
-    $message.="File is an image - " . $check["mime"] . ".";
+    $width=$check[0];
+    $height=$check[1];
+    $message.="File is an image - " . $check["mime"] . " sized $width by $height.";
     $uploadOk = 1;
   } else {
     $uploadOk = 0;

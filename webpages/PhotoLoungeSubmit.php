@@ -6,10 +6,11 @@ $badgeid=$_SESSION['badgeid'];  // make it a variable so it can be substituted
 $title="Photo Lounge Submission";
 $description="<P>Upload what photos you want to submit, below.</P>";
 $additionalinfo="<P>By uploading your files you are agreeing to: &lt;PUT SOMETHING HERE&gt;</P>";
-$minwidth=300;
-$minheight=300;
-$maxwidth=3000;
-$maxwidth=3000;
+$minwidth=1200;
+$minheight=1200;
+$maxwidth=30000;
+$maxheight=30000;
+$maxfilesize=5000000;
 
 // Limit this somehow ...
 /* if (!may_I('photo_submission')) {
@@ -34,7 +35,7 @@ if(isset($_POST["submit"])) {
     $uploadOk = 1;
   } else {
     $uploadOk = 0;
-    $message_error.="File is not an image.<BR>";
+    $message_error.="Sorry, file is not an image.<BR>";
   }
 
   // Check if file already exists
@@ -44,9 +45,15 @@ if(isset($_POST["submit"])) {
   }
 
   // Check file size
-  if ($_FILES["fileToUpload"]["size"] > 5000000) {
+  if ($_FILES["fileToUpload"]["size"] > $maxfilesize) {
     $uploadOk = 0;
     $message_error.="Sorry, your file is too large.<BR>";
+  }
+
+  // Check image size
+  if (($width !> $minwidth) or ($height !> $minhight)) {
+    $uploadOk = 0;
+    $message_error.="Sorry, your image is too small.<BR>";
   }
 
   // Allow certain file formats

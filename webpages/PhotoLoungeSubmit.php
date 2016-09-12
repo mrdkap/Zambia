@@ -22,12 +22,50 @@ $maxfilesize=5000000;
 
 $target_dir = "../Local/$conid/Photo_Lounge_Submissions/$badgeid-";
 if(isset($_POST["submit"])) {
-  $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+
+  // Photo information (starting with default values)
+  $lounge="Yes";
+  $dvd="Yes";
+  $title="No Title Listed";
+  $photog="No Photographer Listed";
+  $model="No Model Listed";
+  $location="No Location Listed";
+  $notes="NULL";
+
+  // Build the photo information from what was passed in
+  if ((!isset($_POST["lounge"])) or ($_POST["lounge"]!="checked")) {$lounge="No";}
+  if ((!isset($_POST["dvd"])) or ($_POST["dvd"]!="checked")) {$dvd="No";}
+  if (empty($_POST["title"])) {
+    $title=htmlspecialchars_decode($_FILES["fileToUpload"]["name"]);
+  } else {
+    $title=htmlspecialchars_decode($_POST["title"]);
+  }
+  if (!empty($_POST["photog"])) {$photog=htmlspecialchars_decode($_POST["photog"]);}
+  if (!empty($_POST["model"])) {$model=htmlspecialchars_decode($_POST["model"]);}
+  if (!empty($_POST["location"])) {htmlspecialchars_decode($_POST["location"]);}
+  if (!empty($_POST["notes"])) {htmlspecialchars_decode($_POST["notes"]);}
+
+  // File information
+  $target_file = $target_dir . basename($_FILES["fileToUpload"]["tmp_name"]);
+  $upload_filename = basename($_FILES["fileToUpload"]["name"]);
   $uploadOk = 1;
-  $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+  $imageFileType = pathinfo($upload_filename,PATHINFO_EXTENSION);
+  if (empty($_FILES["fileToUpload"]["tmp_name"])) {
+    $uploadOk = 0 ;
+    $message_error.="Sorry, no file provided.<BR>";
+  } else {
+    $target_file = $target_dir . hash_file('sha256', $_FILES["fileToUpload"]["tmp_name"]) . "." . $imageFileType;
+  }
+  $target_file_basename = basename($target_file);
 
   // Check if image file is a actual image or fake image
-  $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+  
+  if (empty($_FILES["fileToUpload"]["tmp_name"])) {
+    $uploadOk = 0 ;
+    $check = false;
+  } else {
+    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+  }
   if($check !== false) {
     $width=$check[0];
     $height=$check[1];
@@ -51,7 +89,7 @@ if(isset($_POST["submit"])) {
   }
 
   // Check image size
-  if (($width !> $minwidth) or ($height !> $minhight)) {
+  if (($width < $minwidth) and ($height < $minheight)) {
     $uploadOk = 0;
     $message_error.="Sorry, your image is too small.<BR>";
   }
@@ -66,10 +104,15 @@ if(isset($_POST["submit"])) {
   // Check if $uploadOk is set to 0 by an error
   if ($uploadOk == 0) {
     $message_error.="Sorry, your file was not uploaded, please try again.<BR>";
-    // if everything is ok, try to upload file
+    // if everything is ok, try to upload file and track information
   } else {
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-      $message.=" The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+      $message.="<BR>\nThe file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+
+      // Put the information in the database
+      $element_array = array('conid', 'badgeid', 'genconsent', 'dvdconsent', 'photofile', 'phototitle', 'photoartist', 'photomodel', 'photoloc', 'photonotes');
+      $value_array=array($conid, $badgeid, $lounge, $dvd, $target_file_basename, $title, $photog, $model, $location, $notes);
+      submit_table_element($link, $title, "PhotoLoungePix", $element_array, $value_array);
     } else {
       $message_error.="<br>Sorry, there was an error uploading your file, please try again.";
     }
@@ -83,8 +126,10 @@ echo "Select images to upload:<BR>\n";
 echo "<TABLE>\n";
 echo "  <TR><TD align=right><LABEL for=\"fileToUpload\">Image: </LABEL></TD>";
 echo "    <TD><INPUT type=\"file\" name=\"fileToUpload\" id=\"fileToUpload\"></TD></TR>\n";
-echo "  <TR><TD colspan=2 align=center><INPUT type=\"checkbox\" name=\"web\" id=\"web\"><LABEL for=\"web\"> Web permission</LABEL> :: \n";
-echo "     <INPUT type=\"checkbox\" name=\"dvd\" id=\"dvd\"><LABEL for=\"dvd\"> DVD permission</LABEL></TD></TR>\n";
+echo "  <TR><TD colspan=2 align=center><INPUT type=\"checkbox\" name=\"lounge\" id=\"lounge\" value=\"checked\" checked>\n";
+echo "    <LABEL for=\"lounge\"> Lounge permission</LABEL> :: \n";
+echo "    <INPUT type=\"checkbox\" name=\"dvd\" id=\"dvd\" value=\"checked\" checked>\n";
+echo "    <LABEL for=\"dvd\"> DVD permission</LABEL></TD></TR>\n";
 echo "  <TR><TD align=right><LABEL for=\"title\">Title: </LABEL></TD>";
 echo "    <TD><INPUT type=\"text\" name=\"title\" id=\"title\"></TD></TR>\n";
 echo "  <TR><TD align=right><LABEL for=\"photog\">Photographer(s): </LABEL></TD>";
@@ -94,6 +139,7 @@ echo "    <TD><INPUT type=\"text\" name=\"model\" id=\"model\"></TD></TR>\n";
 echo "  <TR><TD align=right><LABEL for=\"location\">Location: </LABEL></TD>";
 echo "    <TD><INPUT type=\"text\" name=\"location\" id=\"location\"></TD></TR>\n";
 echo "</TABLE>\n";
+echo "<LABEL for \"notes\">NOTES: </LABEL><TEXTAREA name=\"notes\" rows=6 cols=50></TEXTAREA>\n";
 echo "<INPUT type=\"submit\" value=\"Upload Image\" name=\"submit\"><BR>\n";
 echo "</FORM>\n";
 

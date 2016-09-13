@@ -26,7 +26,7 @@ if(isset($_POST["submit"])) {
   // Photo information (starting with default values)
   $lounge="Yes";
   $dvd="Yes";
-  $title="No Title Listed";
+  $pictitle="No Title Listed";
   $photog="No Photographer Listed";
   $model="No Model Listed";
   $location="No Location Listed";
@@ -36,9 +36,9 @@ if(isset($_POST["submit"])) {
   if ((!isset($_POST["lounge"])) or ($_POST["lounge"]!="checked")) {$lounge="No";}
   if ((!isset($_POST["dvd"])) or ($_POST["dvd"]!="checked")) {$dvd="No";}
   if (empty($_POST["title"])) {
-    $title=htmlspecialchars_decode($_FILES["fileToUpload"]["name"]);
+    $pictitle=htmlspecialchars_decode($_FILES["fileToUpload"]["name"]);
   } else {
-    $title=htmlspecialchars_decode($_POST["title"]);
+    $pictitle=htmlspecialchars_decode($_POST["title"]);
   }
   if (!empty($_POST["photog"])) {$photog=htmlspecialchars_decode($_POST["photog"]);}
   if (!empty($_POST["model"])) {$model=htmlspecialchars_decode($_POST["model"]);}
@@ -111,7 +111,7 @@ if(isset($_POST["submit"])) {
 
       // Put the information in the database
       $element_array = array('conid', 'badgeid', 'genconsent', 'dvdconsent', 'photofile', 'phototitle', 'photoartist', 'photomodel', 'photoloc', 'photonotes');
-      $value_array=array($conid, $badgeid, $lounge, $dvd, $target_file_basename, $title, $photog, $model, $location, $notes);
+      $value_array=array($conid, $badgeid, $lounge, $dvd, $target_file_basename, $pictitle, $photog, $model, $location, $notes);
       submit_table_element($link, $title, "PhotoLoungePix", $element_array, $value_array);
     } else {
       $message_error.="<br>Sorry, there was an error uploading your file, please try again.";

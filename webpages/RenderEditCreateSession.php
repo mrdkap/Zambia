@@ -97,6 +97,21 @@ EOD;
   if (isset($debug)) {
     echo $debug."<BR>\n";
   }
+
+  $typequery = <<<EOD
+SELECT
+    typeid,
+    phasetypename
+  FROM
+      Phase
+    JOIN PhaseTypes USING (phasetypeid)
+    JOIN Types ON (phasetypename=typename)
+  WHERE
+    conid=$conid AND
+    phasetypeid in (19,20,21,22,23,24) AND
+    phasestate="0"
+EOD;
+
 ?>
     <DIV class="formbox">
         <FORM name="sessform" class="bb"  method=POST action="SubmitEditCreateSession.php">
@@ -136,7 +151,10 @@ EOD;
                     <?php populate_select_from_table("Tracks", $session["track"], "SELECT", FALSE); ?>
                     </SELECT>&nbsp;&nbsp;</SPAN>
                 <SPAN><LABEL for="type">Type: </LABEL><SELECT name="type">
-                    <?php populate_select_from_table("Types", $session["type"], "SELECT", FALSE); ?>
+		    <?php if ($action=="brainstorm") {
+                            populate_select_from_query($typequery, $session["type"], "SELECT", FALSE);
+                          } else {
+                            populate_select_from_table("Types", $session["type"], "SELECT", FALSE); } ?>
                     </SELECT>&nbsp;&nbsp;</SPAN>
 	        <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
                 <INPUT type="hidden" name="pubstatusid" value="<?php echo $session["pubstatusid"];?>">

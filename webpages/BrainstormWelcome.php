@@ -9,9 +9,32 @@ $description="";
 $additionalinfo="";
 $message.=$message2;
 
+/* This should be refined with further may_I's in Permissions, but
+   for now, we are working off of the raw Phase state. */
+$query = <<<EOD
+SELECT
+    phasetypename
+  FROM
+      Phase
+    JOIN PhaseTypes USING (phasetypeid)
+  WHERE
+    conid=$conid AND
+  phasetypeid in (19,20,21,22,23,24) AND
+    phasestate="0"
+EOD;
+
+list($rows,$header_array,$phase_array)=queryreport($query,$link,$title,$description,0);
+
+// Nifty Multi-level implode hack here, to get just the phasetypenames of the phases acceptable
+$accepting_string_tmp=implode(", ", array_map(function ($entry) { return $entry['phasetypename']; }, $phase_array));
+
+// For readability, replace the last ", " with ", and "
+$accepting_string=strrev(implode(strrev(", and "), explode(strrev(", "), strrev($accepting_string_tmp), 2)));
+
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (may_I('BrainstormSubmit')) {
+  echo "<H2>We are accepting submissions of types $accepting_string at this time.</H2>";
   if (file_exists("../Local/$conid/Verbiage/BrainstormWelcome_0")) {
     echo file_get_contents("../Local/$conid/Verbiage/BrainstormWelcome_0");
   } elseif (file_exists("../Local/Verbiage/BrainstormWelcome_0")) {

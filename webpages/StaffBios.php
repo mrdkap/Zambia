@@ -368,6 +368,7 @@ if ($short == "T") {
       if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
 	$biostring.=sprintf(" <A HREF=\"PostScheduleIcal.php?pubsname=%s\">(Fan iCal)</A></P>\n<P>",$header);
       }
+      $biostring.="<br><A HREF=\"StaffEditBios.php?qno=1&badgeid=".$element_array[$i]['badgeid']."&badgeids=".$element_array[$i]['badgeid']."\">(edit bio)</A><br>";
       $element_array[$i]['Bio']=$biostring;
       $element_array[$i]['istable']=$tablecount;
     } else {  // if it is the same in the 'Participants' field, just copy the result in.

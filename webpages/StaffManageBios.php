@@ -23,7 +23,6 @@ if (!empty($_GET['badgeids'])) {
  } else {
   $addinfo.="<P>Select with which category you would like to work with and click on the number.</P>\n";
   $descadditionalinfo.="<P>Select with which category you would like to work with and click on the number.</P>\n";
-  $addinfo.="<P>(We currently do not use the \"good\" category of bio.)</P>\n";
   $descadditionalinfo.="<P>(We currently only use the \"good\" category for descriptions.)</P>\n";
   $badgeid_list="";
  }
@@ -33,8 +32,8 @@ $staffadditionalinfo.=$addinfo;
 $descadditionalinfo.="<P>Still to come. Easier to edit elswhere still: \n";
 $descadditionalinfo.="<A HREF=genreport.php?reportname=conflictsessdesc>Missing Web or ";
 $descadditionalinfo.="Program Book Description</A>::<A HREF=StaffSched.php?format=desc>";
-$descadditionalinfo.="Session Descriptions</A>::<A HREF=bookSched.php?format=desc>Book ";
-$descadditionalinfo.="Ready Descriptions</A></P>\n";
+$descadditionalinfo.="Session Descriptions</A>::<A HREF=StaffBios.php>Bios With ";
+$descadditionalinfo.="Descriptions</A></P>\n";
 
 if (isset($_GET['unlock'])) {
   $unlockresult=unlock_participant($_GET['unlock']);
@@ -194,8 +193,8 @@ SELECT
     JOIN Divisions USING (divisionid)
     LEFT JOIN Participants ON (descriptionlockedby = badgeid)
   WHERE
-    conid=46 AND
-    statusname in ("Scheduled") AND
+    conid=$conid AND
+    statusname in ("Edit Me", "Vetted", "Assigned", "Scheduled") AND
     divisionname in ("Programming")
 EOD;
 

@@ -16,7 +16,7 @@ if (($conid == "") or (!is_numeric($conid))) {
 }
 
 // Get the GOH list
-$query = <<<EOD
+$goh_query = <<<EOD
 SELECT
     badgeid
   FROM
@@ -27,7 +27,7 @@ SELECT
     conrolename like '%GOH%'
 EOD;
 
-list($gohrows,$gohheader_array,$gohbadge_array)=queryreport($query,$link,$title,$description,0);
+list($gohrows,$gohheader_array,$gohbadge_array)=queryreport($goh_query,$link,$title,$description,0);
 $GohBadgeList="('";
 for ($i=1; $i<=$gohrows; $i++) {
   $GohBadgeList.=$gohbadge_array[$i]['badgeid']."', '";
@@ -270,16 +270,16 @@ if ($standard=="y") {
   }
 }
 
-$query ="SELECT roomname, roomid";
-$query.=" FROM Rooms";
-$query.=" WHERE";
-$query.=" roomid in (SELECT DISTINCT roomid FROM Schedule JOIN Sessions USING (sessionid,conid) JOIN PubStatuses USING (pubstatusid)";
-if ($goh=="y") {$query.=" JOIN ParticipantOnSession USING (sessionid,conid) WHERE conid=$conid AND badgeid in $GohBadgeList AND";} else {$query.=" WHERE conid=$conid AND";}
-$query.=$pubstatus_check;
-$query.=") ORDER BY display_order";
+$room_query ="SELECT roomname, roomid";
+$room_query.=" FROM Rooms";
+$room_query.=" WHERE";
+$room_query.=" roomid in (SELECT DISTINCT roomid FROM Schedule JOIN Sessions USING (sessionid,conid) JOIN PubStatuses USING (pubstatusid)";
+if ($goh=="y") {$room_query.=" JOIN ParticipantOnSession USING (sessionid,conid) WHERE conid=$conid AND badgeid in $GohBadgeList AND";} else {$room_query.=" WHERE conid=$conid AND";}
+$room_query.=$pubstatus_check;
+$room_query.=") ORDER BY display_order";
 
 // Retrieve query
-list($rooms,$unneeded_array_a,$header_array)=queryreport($query,$link,$title,$description,0);
+list($rooms,$unneeded_array_a,$header_array)=queryreport($room_query,$link,$title,$description,0);
 
 // Set up the header cells
 // Need to add the iCal link in here once it works
@@ -295,7 +295,7 @@ $header_cells.="</TR>";
    based on sessionid, and produces links for them.  This links the
    presenters, and shows the volunteers, introducers, and aidedecamp
    folk, marked appropriately. */
-$query = <<<EOD
+$presenter_query = <<<EOD
 SELECT
       sessionid,
       GROUP_CONCAT(IF((volunteer not in ('1','yes') AND introducer not in ('1','yes') AND aidedecamp not in ('1','yes')),concat("<A HREF=\"StaffBios.php?conid=$conid#",pubsname,"\">",pubsname,"</A>",if((moderator in ('1','yes')),'(m), ',', ')),"") SEPARATOR "") as presentpubsnames,
@@ -315,7 +315,7 @@ SELECT
 EOD;
 
 // Retrieve query
-list($presenters,$unneeded_array_b,$presenters_tmp_array)=queryreport($query,$link,$title,$description,0);
+list($presenters,$unneeded_array_b,$presenters_tmp_array)=queryreport($presenter_query,$link,$title,$description,0);
 
 for ($i=1; $i<=$presenters; $i++) {
   $presenters_array[$presenters_tmp_array[$i]['sessionid']]=$presenters_tmp_array[$i]['presentpubsnames'].$presenters_tmp_array[$i]['volpubsnames'].$presenters_tmp_array[$i]['intpubsnames'].$presenters_tmp_array[$i]['aidpubsnames'];
@@ -323,17 +323,17 @@ for ($i=1; $i<=$presenters; $i++) {
 
 /* Set the sizeing of the grid, from the congridspacer element
    in the ConInfo table. */
-$query="SELECT congridspacer FROM ConInfo WHERE conid=$conid";
-list($congridrows,$congridheader_array,$congrid_array)=queryreport($query,$link,$title,$description,0);
+$spacer_query="SELECT congridspacer FROM ConInfo WHERE conid=$conid";
+list($congridrows,$congridheader_array,$congrid_array)=queryreport($spacer_query,$link,$title,$description,0);
 $grid_spacer=$congrid_array[1]['congridspacer'];
 
 /* These queries finds the first and last second that is actually
    scheduled so we don't waste grid-space. */
-$query="SELECT TIME_TO_SEC(starttime) as 'beginschedule' FROM Schedule WHERE conid=$conid ORDER BY starttime ASC LIMIT 0,1";
-list($earliest,$unneeded_array_c,$grid_start_sec_array)=queryreport($query,$link,$title,$description,0);
+$start_query="SELECT TIME_TO_SEC(starttime) as 'beginschedule' FROM Schedule WHERE conid=$conid ORDER BY starttime ASC LIMIT 0,1";
+list($earliest,$unneeded_array_c,$grid_start_sec_array)=queryreport($start_query,$link,$title,$description,0);
 $grid_start_sec=$grid_start_sec_array[1]['beginschedule'];
 
-$query = <<<EOD
+$end_query = <<<EOD
 SELECT
     (TIME_TO_SEC(starttime) + TIME_TO_SEC(duration)) as 'endschedule'
   FROM
@@ -349,7 +349,7 @@ SELECT
     0,1
 EOD;
 
-list($latest,$unneeded_array_d,$grid_end_sec_array)=queryreport($query,$link,$title,$description,0);
+list($latest,$unneeded_array_d,$grid_end_sec_array)=queryreport($end_query,$link,$title,$description,0);
 $grid_end_sec=$grid_end_sec_array[1]['endschedule'];
 
 /* This sets the unpub to all the classes in the chosen rooms, if it
@@ -600,7 +600,7 @@ if ($trackselect == "y") {
 if ($nocolor == "y") {
   correct_footer();
 } else {
-  $query = <<<EOD
+  $key_query = <<<EOD
 SELECT
     concat("</TD><TD BGCOLOR=\"",htmlcellcolor,"\">",$field) AS "</TH><TH>Key"
   FROM
@@ -609,7 +609,7 @@ SELECT
     display_order
 EOD;
 
-  list($keyrows,$keyheader_array,$key_array)=queryreport($query,$link,$title,$description,0);
+  list($keyrows,$keyheader_array,$key_array)=queryreport($key_query,$link,$title,$description,0);
   echo renderhtmlreport(1,$keyrows,$keyheader_array,$key_array);
   correct_footer();
 }

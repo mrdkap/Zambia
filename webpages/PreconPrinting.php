@@ -37,6 +37,8 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 <HR>
 <P>Some useful views for the program book:</P>
 <DL>
+  <DT id="socialmedia"><A HREF="SocialMediaSpreadsheet.php">Social Media Spreadsheet</A></DT>
+  <DD id="socialmedia">A starting point for Social Media information</A></DD>
   <DT id="programbookbio"><A HREF="BookBios.php">Bios</A>
     <A HREF="BookBios.php?pic_p=N">(without images)</A>
     <A HREF="BookBios.php?short=Y">(short)</A></DT>

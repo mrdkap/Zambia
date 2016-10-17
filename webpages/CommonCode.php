@@ -259,30 +259,42 @@ function participant_header ($title) {
   if (isset($_SESSION['badgeid'])) {
     echo "<table width=100% class=\"tabhead\">\n";
     echo "  <tr class=\"tabrow\">\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    maketab("Welcome", 1, "welcome.php");
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    maketab("My Availability",may_I('my_availability'),"my_sched_constr.php");
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    maketab("My Panel Interests",may_I('my_panel_interests'),"PartPanelInterests.php");
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    maketab("My General Interests",may_I('my_gen_int_write'),"my_interests.php");
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+    if (may_I('Participant')) {
+      maketab("Welcome", 1, "welcome.php");
+    } elseif (may_I('PhotoSub')) {
+      maketab("Welcome", 1, "PhotoLoungeSubmit.php");
+    }
+    if (may_I('Participant')) {
+      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      maketab("My Availability",may_I('my_availability'),"my_sched_constr.php");
+      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      maketab("My Panel Interests",may_I('my_panel_interests'),"PartPanelInterests.php");
+      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      maketab("My General Interests",may_I('my_gen_int_write'),"my_interests.php");
+      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+    }
     if (may_I('Staff')) {
       maketab("Staff View",may_I('Staff'),"StaffPage.php");
     }
     echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    echo "<!-- XXX this should have a may_I -->\n       ";
-    maketab("My Profile",1,"my_contact.php");
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    maketab("Search Panels",may_I('search_panels'),"my_sessions1.php");
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    maketab("My Schedule",may_I('my_schedule'),"MySchedule.php");
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    maketab("Submit a Proposal",may_I('my_suggestions_write'),"MyProposals.php");
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    if (may_I('PhotoRev')) {
-      maketab("Photo Review",may_I('PhotoRev'),"PhotoLoungePictures.php");
+    if (may_I('Participant')) {
+      echo "<!-- XXX this should have a may_I -->\n       ";
+      maketab("My Profile",1,"my_contact.php");
+      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      maketab("Search Panels",may_I('search_panels'),"my_sessions1.php");
+      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      maketab("My Schedule",may_I('my_schedule'),"MySchedule.php");
+      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      maketab("Submit a Proposal",may_I('my_suggestions_write'),"MyProposals.php");
+      if (may_I('PhotoRev')) {
+	echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+	maketab("Photo Review",may_I('PhotoRev'),"PhotoLoungePictures.php");
+      }
+      if (may_I('PhotoSub')) {
+	echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+	maketab("Photo Submission",may_I('PhotoSub'),"PhotoLoungeSubmit.php");
+      }
     }
     echo "</td>\n  </tr>\n</table>\n";
     echo "<table class=\"header\">\n  <tr>\n    <td style=\"height:5px\"></td>\n  </tr>\n";
@@ -1494,6 +1506,22 @@ function create_participant ($participant_arr) {
   if (!is_email($participant_arr['email'])) {
     $message_error="Email address: ".$participant_arr['email']." is not valid.  <BR>\n";
     return array ($message,$message_error);
+  }
+
+  // Already existing email address.
+  $query = "SELECT email FROM CongoDump where email like \"%".$participant_arr['email']."%\"";
+  $result=mysql_query($query,$link);
+  if (!$result) {
+    $message_error="Unable to reach database.<BR>\n$query<BR>\n";
+    RenderError($title,$message_error);
+    exit();
+  }
+  if (mysql_num_rows($result) > 0) {
+    $message_error="There is already an entry with this email address in the system.\n";
+    $message_error.="Please <A HREF\"StaffEditCreateParticipant.php?action=migrate\">Migrate</A>\n";
+    $message_error.="them instead of trying to re-create them.";
+    RenderError($title,$message_error);
+    exit();
   }
 
   // Get next possible badgeid.

@@ -1,5 +1,5 @@
 <?php
-require_once('PartCommonCode.php'); // initialize db; check login;
+require_once('PhotoCommonCode.php'); // initialize db; check login;
 $conid=$_SESSION['conid'];  // make it a variable so it can be substituted
 $badgeid=$_SESSION['badgeid'];  // make it a variable so it can be substituted
 
@@ -12,16 +12,16 @@ $maxwidth=30000;
 $maxheight=30000;
 $maxfilesize=5000000;
 
-// Limit this somehow ...
-/* if (!may_I('photo_submission')) {
+// Limit this to just the folks in PhotoSub permissions.
+ if (!may_I('PhotoSub')) {
   $message_error ="Either you do not currently have permission to view this page,";
   $message_error.=" or the photo lounge submissions are not open.<BR>\n";
   RenderError($title,$message_error);
   exit();
-} */
+}
 
 $target_dir = "../Local/$conid/Photo_Lounge_Submissions/$badgeid-";
-if(isset($_POST["submit"])) {
+if((isset($_POST["submit"])) and ($_POST["submit"]=="Upload Image")) {
 
   // Photo information (starting with default values)
   $lounge="Yes";

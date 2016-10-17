@@ -70,6 +70,10 @@ if (retrieve_participant_from_db($badgeid)==0) {
     require ('renderVendorWelcome.php');
   } elseif (may_I('Participant')) {
     require ('renderWelcome.php');
+  } elseif (may_I('PhotoSub')) {
+    require ('PhotoLoungeSubmit.php');
+  } elseif ((may_I('public_login')) and ($_POST['target']=="photo")) {
+    require ('PhotoLoungeReturning.php');
   } elseif (may_I('public_login')) {
     require ('BrainstormWelcome.php');
   } else {

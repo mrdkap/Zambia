@@ -122,6 +122,16 @@ if ($phase_array['Brainstorm'] == '0' ) {
   $progbody.="      </FORM>\n";
   $progbody.="      </LI>\n";
 }
+if ($phase_array['Photo Submission'] == '0') {
+  $progbody.="      <LI>\n";
+  $progbody.="      <FORM name=\"photosubmitform\" method=\"POST\" action=\"doLogin.php\">\n";
+  $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+  $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+  $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"photo\">\n";
+  $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"Propose to Submit to the Photo Lounge\">\n";
+  $progbody.="      </FORM>\n";
+  $progbody.="      </LI>\n";
+}
 if ($phase_array['Feedback Available'] == '0') {
   $progbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";
 }

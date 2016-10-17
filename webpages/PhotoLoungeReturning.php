@@ -19,10 +19,44 @@ $notatall="<P>If your name is not listed at all, please\n";
 $notatall.="<A HREF=\"PhotoLoungeProposed.php\">propose</A> yourself as someone who wants to\n";
 $notatall.="submit photographs for the Photo Lounge.  Someone will get back to you soon.</P>\n";
 
+// Get the interested value that means "Suggested" from the InterestedTypes table.
+$suggested_number_query= <<<EOD
+SELECT
+    interestedtypeid
+  FROM
+      InterestedTypes
+  WHERE
+    interestedtypename in ('Suggested')
+EOD;
+if (!$result=mysql_query($suggested_number_query,$link)) {
+    $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
+    RenderError($title,$message_error);
+    exit();
+    }
+
+list($interested)=mysql_fetch_array($result, MYSQL_NUM);
+
+// Get the permission role that means "PhotoSub" from the PermissionRoles table.
+$permission_role_query= <<<EOD
+SELECT
+    permroleid
+  FROM
+      PermissionRoles
+  WHERE
+    permrolename in ('PhotoSub')
+EOD;
+if (!$result=mysql_query($permission_role_query,$link)) {
+    $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
+    RenderError($title,$message_error);
+    exit();
+    }
+
+list($permroleid)=mysql_fetch_array($result, MYSQL_NUM);
+
 /* Some loop that will take their click-through or form, and set their
-   status to "suggested" and migrate them as a presenter to the
-   current con-instance. Set interestedtypeid to 4 for "Suggested".
-   This should probably become dynamic at some point. */
+   status to "suggested" and migrate them as a "PhotoSub" to the
+   current con-instance. */
+
 if ((!empty($_POST['who'])) and (is_numeric($_POST['who']))) {
   $proposed=$_POST['who'];
 
@@ -35,7 +69,7 @@ if ((!empty($_POST['who'])) and (is_numeric($_POST['who']))) {
   // If no rows returned, add one.  If more than one row is returned, notify.
   if ($rows==0) {
     $element_array=array('conid','badgeid','interestedtypeid');
-    $value_array=array($conid, $proposed, 4);
+    $value_array=array($conid, $proposed, $interested);
     $message.=submit_table_element($link,$title,"Interested", $element_array, $value_array);
   } elseif ($rows > 1) {
     $message.="<P>There might be something wrong with the table, for there are\n";
@@ -44,10 +78,9 @@ if ((!empty($_POST['who'])) and (is_numeric($_POST['who']))) {
     $message.="to get things straightened out.  Thank you.</P>\n";
   }
 
-  /* Add to UserHasPermissionRole table. Set permroleid to 41 for
-     "PhotoSub".  This should become dynamic at some point. */
+  /* Add to UserHasPermissionRole table. Set permroleid to "PhotoSub". */
   $element_array=array('badgeid','permroleid','conid');
-  $value_array=array($proposed, 41, $conid);
+  $value_array=array($proposed, $permroleid, $conid);
   $verbose.=submit_table_element($link,$title,"UserHasPermissionRole", $element_array, $value_array);
   
   $message.="<P>Your login number is: $proposed and your password has not changed.\n";

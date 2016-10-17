@@ -56,6 +56,11 @@ if (isset($_GET['unlock'])) {
 */
 
 // Participants
+/* For some reason the supers were included in here.  Removed.
+    (permrolename in ('Participant') OR
+     permrolename like '%Super%')
+*/
+
 $query1= <<<EOD
 SELECT
     B.badgeid,
@@ -80,8 +85,7 @@ SELECT
     conid=$conid AND
     biotypename not in ('web','book') AND
     biodestname not in ('staffweb','staffbook') AND
-    (permrolename in ('Participant') OR
-     permrolename like '%Super%')
+    permrolename in ('Participant')
 EOD;
 
 // Specific set of badgeids.
@@ -138,7 +142,8 @@ SELECT
     LEFT JOIN Participants LB on B.biolockedby = LB.badgeid
   WHERE
     conid=$conid AND
-    biotypename not in ('web','book')
+    biotypename not in ('web','book') AND
+    biodestname not in ('web','book')
 EOD;
 
 // Specific set of badgeids.

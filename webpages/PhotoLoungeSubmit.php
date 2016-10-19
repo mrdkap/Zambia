@@ -4,8 +4,9 @@ $conid=$_SESSION['conid'];  // make it a variable so it can be substituted
 $badgeid=$_SESSION['badgeid'];  // make it a variable so it can be substituted
 
 $title="Photo Lounge Submission";
-$description="<P>Upload what photos you want to submit, below.</P>";
-$additionalinfo="<P>By uploading your files you are agreeing to: &lt;PUT SOMETHING HERE&gt;</P>";
+$description="<P>Upload what photos you want to submit, below.</P>\n";
+$additionalinfo="<P>By uploading your files you are agreeing to <A HREF=\"PhotoLoungeSubmit.php?release=Yes\">the release</A>.</P>\n";
+
 $minwidth=1200;
 $minheight=1200;
 $maxwidth=30000;
@@ -18,6 +19,12 @@ $maxfilesize=5000000;
   $message_error.=" or the photo lounge submissions are not open.<BR>\n";
   RenderError($title,$message_error);
   exit();
+}
+
+// See if the release was requested.
+$release_p='';
+if ((isset($_GET['release'])) and ($_GET['release']=="Yes")) {
+  $release_p=true;
 }
 
 $target_dir = "../Local/$conid/Photo_Lounge_Submissions/$badgeid-";
@@ -121,6 +128,17 @@ if((isset($_POST["submit"])) and ($_POST["submit"]=="Upload Image")) {
 
 // Begin the presentation of the information
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+
+// If they wanted to see the release (again):
+if ($release_p) {
+  if (file_exists("../Local/$conid/Verbiage/PhotoLoungeSubmit_0")) {
+    echo file_get_contents("../Local/$conid/Verbiage/PhotoLoungeSubmit_0");
+  } elseif (file_exists("../Local/Verbiage/PhotoLoungeSubmit_0")) {
+    echo file_get_contents("../Local/Verbiage/PhotoLoungeSubmit_0");
+  }
+}
+
+// Form to submit the pictures
 echo "<FORM action=\"PhotoLoungeSubmit.php\" method=\"post\" enctype=\"multipart/form-data\">\n";
 echo "Select images to upload:<BR>\n";
 echo "<TABLE>\n";
@@ -143,6 +161,7 @@ echo "<LABEL for \"notes\">NOTES: </LABEL><TEXTAREA name=\"notes\" rows=6 cols=5
 echo "<INPUT type=\"submit\" value=\"Upload Image\" name=\"submit\"><BR>\n";
 echo "</FORM>\n";
 
+// Show which pictures are already submitted
 $picsubmitted=0;
 foreach (glob("$target_dir" . "*") as $displayfile) {
   if ($picsubmitted==0) {

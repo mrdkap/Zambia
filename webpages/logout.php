@@ -26,6 +26,11 @@ $_SESSION=array();                 // Unset session data
 unset($_COOKIE[session_name()]);   // Clear cookie
 session_destroy();                 // Destroy session data
 
+// Attempt to make the login more useful than just the "Return"
+if (!empty($conid)) {
+  $relogin.="/webpages/login.php?newconid=$conid";
+}
+
 // LOCALIZATIONS
 $title="Logout Confirmation";
 $description="<P align=\"center\">You have logged out from Zambia</P>\n";

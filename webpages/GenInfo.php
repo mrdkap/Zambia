@@ -123,6 +123,7 @@ if ($phase_array['Brainstorm'] == '0' ) {
   $progbody.="      </LI>\n";
 }
 if ($phase_array['Photo Submission'] == '0') {
+  $progbody.="      <LI><A HREF=\"BrainstormRedirectLogin.php?conid=$conid&target=photo\">Propose to Submit to the Photo Lounge</A></LI>\n";
   $progbody.="      <LI>\n";
   $progbody.="      <FORM name=\"photosubmitform\" method=\"POST\" action=\"doLogin.php\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";

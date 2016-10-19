@@ -19,7 +19,13 @@ if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
 }
 $post_data["badgeid"] = "100";
 $post_data["passwd"] = "submit";
-$post_data["target"] = "brainstorm";
+
+// Possibly do the photo lounge login as well.
+if ((!empty($_GET['target'])) AND ($_GET['target'] == "photo")) {
+  $post_data["target"] = "photo";
+} else {
+  $post_data["target"] = "brainstorm";
+}
 
 // Build the string to be posted out of the array of information above
 /* This is the old fashioned way 

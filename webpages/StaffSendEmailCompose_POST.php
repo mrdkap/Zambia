@@ -6,7 +6,7 @@ global $message,$link;
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 // List of replacements
-$subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","\$PUBNAME\$","\$BADGENAME\$","\$SCHEDULE\$","\$FULLSCHEDULE\$","\$BIOS\$","\$HOTELROOM\$","\$CONFIRMNUM\$");
+$subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","\$PUBNAME\$","\$BADGENAME\$","\$SCHEDULE\$","\$FULLSCHEDULE\$","\$BIOS\$","\$LIAISON\$","\$HOTELROOM\$","\$ENTRANCES\$","\$CONFIRMNUM\$");
 
 $title="Send Email (Step 2 - verify)";
 
@@ -51,18 +51,20 @@ $individual=$recipientinfo[0]['badgeid'];
 $query = <<<EOD
 SELECT
     badgeid,
+    liaison,
     hotelroom,
+    entrances,
     confirmnum
   FROM
       (SELECT
           badgeid,
-          compdescription AS confirmnum
+          compamount AS liaison
         FROM
             Compensation
           JOIN CompensationTypes USING (comptypeid)
         WHERE
           conid=$conid AND
-          comptypename in ('Room Cost')) CFN
+          comptypename in ('Liaison')) LIA
     LEFT JOIN (SELECT
           badgeid,
           compdescription AS hotelroom
@@ -72,6 +74,24 @@ SELECT
         WHERE
           conid=$conid AND
           comptypename in ('Room Count')) HLR USING (badgeid)
+    LEFT JOIN (SELECT
+          badgeid,
+          compdescription AS entrances
+        FROM
+            Compensation
+          JOIN CompensationTypes USING (comptypeid)
+        WHERE
+          conid=$conid AND
+          comptypename in ('Entrance Count')) ENT USING (badgeid)
+    LEFT JOIN (SELECT
+          badgeid,
+          compdescription AS confirmnum
+        FROM
+            Compensation
+          JOIN CompensationTypes USING (comptypeid)
+        WHERE
+          conid=$conid AND
+          comptypename in ('Room Cost')) CFN USING (badgeid)
     WHERE
       badgeid=$individual
 EOD;
@@ -80,7 +100,9 @@ EOD;
 list($comprows,$comp_header,$comp_array)=queryreport($query,$link,$title,$description,0);
 
 // Assign the values
+$recipientinfo[$i]['liaison']=$comp_array[1]['liaison'];
 $recipientinfo[$i]['hotelroom']=$comp_array[1]['hotelroom'];
+$recipientinfo[$i]['entrances']=$comp_array[1]['entrances'];
 $recipientinfo[$i]['confirmnum']=$comp_array[1]['confirmnum'];
 
 /* This query pulls the schedule information for an individual, and
@@ -238,7 +260,9 @@ $repl_list=array($recipientinfo[0]['badgeid'],
 		 $recipientinfo[0]['schedule'],
                  $recipientinfo[0]['fullschedule'],
 		 $recipientinfo[$i]['bios'],
+		 $recipientinfo[$i]['liaison'],
 		 $recipientinfo[$i]['hotelroom'],
+		 $recipientinfo[$i]['entrances'],
 		 $recipientinfo[$i]['confirmnum']);
 $emailverify['body']=str_replace($subst_list,$repl_list,$email['body']);
 render_verify_email($email,$emailverify,$message_warning="");

@@ -229,7 +229,11 @@ if ($phase_array[$conid]['Photo Submission'] == '0') {
     $progbody.="      <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";
   }
   if ($nowis < $constart) {
-    $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+    if ($phase_array[$conid]['Photo Submission'] == '0') {
+      $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Photo Submissions/Volunteer Login</A></LI>\n";
+    } else {
+      $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+    }
   } else {
     $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A></LI>\n";
   }

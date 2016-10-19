@@ -1,9 +1,10 @@
 <?php
 require_once('PhotoCommonCode.php');
-$conid=$_SESSION['conid'];
+global $link;
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']='PhotoLoungeReturning.php';
+$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $title="Submit Photos for ".$_SESSION['conname']." Photo Lounge";
 $description="<P>Submit Photos for us, please.</P>\n";
 $additionalinfo="<P>If your name is listed below, please, simply click your name and\n";
@@ -19,76 +20,18 @@ $notatall="<P>If your name is not listed at all, please\n";
 $notatall.="<A HREF=\"PhotoLoungeProposed.php\">propose</A> yourself as someone who wants to\n";
 $notatall.="submit photographs for the Photo Lounge.  Someone will get back to you soon.</P>\n";
 
-// Get the interested value that means "Suggested" from the InterestedTypes table.
-$suggested_number_query= <<<EOD
-SELECT
-    interestedtypeid
-  FROM
-      InterestedTypes
-  WHERE
-    interestedtypename in ('Suggested')
-EOD;
-if (!$result=mysql_query($suggested_number_query,$link)) {
-    $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
-    RenderError($title,$message_error);
-    exit();
-    }
-
-list($interested)=mysql_fetch_array($result, MYSQL_NUM);
-
-// Get the permission role that means "PhotoSub" from the PermissionRoles table.
-$permission_role_query= <<<EOD
-SELECT
-    permroleid
-  FROM
-      PermissionRoles
-  WHERE
-    permrolename in ('PhotoSub')
-EOD;
-if (!$result=mysql_query($permission_role_query,$link)) {
-    $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
-    RenderError($title,$message_error);
-    exit();
-    }
-
-list($permroleid)=mysql_fetch_array($result, MYSQL_NUM);
-
 /* Some loop that will take their click-through or form, and set their
    status to "suggested" and migrate them as a "PhotoSub" to the
    current con-instance. */
 
 if ((!empty($_POST['who'])) and (is_numeric($_POST['who']))) {
+
+  // If the who is not empty and an actual badgeid ...
   $proposed=$_POST['who'];
 
-  /* Check interested table.  If they exist already, leave it well
-     enough alone. They might be involved in other areas of the con,
-     just not as a presenter yet. */
-  $query="SELECT * from Interested WHERE badgeid=\"$proposed\" AND conid=$conid";
-  list($rows,$header_array,$interested_array)=queryreport($query,$link,$title,$description,0);
+  // ... then update them as appropriate.
+  $message.=photo_lounge_propose($title, $description, $proposed, $message, $message_error);
 
-  // If no rows returned, add one.  If more than one row is returned, notify.
-  if ($rows==0) {
-    $element_array=array('conid','badgeid','interestedtypeid');
-    $value_array=array($conid, $proposed, $interested);
-    $message.=submit_table_element($link,$title,"Interested", $element_array, $value_array);
-  } elseif ($rows > 1) {
-    $message.="<P>There might be something wrong with the table, for there are\n";
-    $message.="multiple entries for you for this year.  Please email\n";
-    $message.="<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>\n";
-    $message.="to get things straightened out.  Thank you.</P>\n";
-  }
-
-  /* Add to UserHasPermissionRole table. Set permroleid to "PhotoSub". */
-  $element_array=array('badgeid','permroleid','conid');
-  $value_array=array($proposed, $permroleid, $conid);
-  $verbose.=submit_table_element($link,$title,"UserHasPermissionRole", $element_array, $value_array);
-  
-  $message.="<P>Your login number is: $proposed and your password has not changed.\n";
-  $message.="Please <A HREF=\"login.php?login=$proposed&newconid=$conid\">Log In</A> below by\n";
-  $message.="clicking on your name.\n<br>\n";
-  $message.="If you need help resetting your password, please email\n";
-  $message.="<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>\n";
-  $message.="for assistance.</P>\n";
 }
 
 /* Get the list of all the previous presenters in our system except

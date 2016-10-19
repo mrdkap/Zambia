@@ -135,8 +135,12 @@ if ($phase_array['Photo Submission'] == '0') {
 if ($phase_array['Feedback Available'] == '0') {
   $progbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";
 }
-if ($nowis < $constart) { 
-  $progbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+if ($nowis < $constart) {
+  if ($phase_array['Photo Submission'] == '0') {
+    $progbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Photo Submissions/Volunteer Login</A></LI>\n";
+  } else {
+    $progbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+  }
 } else {
   $progbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter Login</A></LI>\n";
 }

@@ -446,6 +446,9 @@ function topofpagereport ($title,$description,$info,$message,$message_error) {
   elseif ($_SESSION['role'] == "Participant") {
     participant_header($title);
   }
+  elseif ($_SESSION['role'] == "PhotoSub") {
+    participant_header($title);
+  }
   elseif ($_SESSION['role'] == "Staff") {
     staff_header($title);
   }
@@ -492,6 +495,11 @@ function correct_footer () {
     echo "\n\n</body>\n</html>\n";
   } elseif ($_SESSION['role'] == "Participant") {
     echo "<hr>\n<P>If you need help or to tell us something that doesn't fit here, please email ";
+    echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
+    include('google_analytics.php');
+    echo "\n\n</body>\n</html>\n";
+  } elseif ($_SESSION['role'] == "PhotoSub") {
+    echo "<hr>\n<P>If you need help or to tell us something that is not working, please email ";
     echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";
     include('google_analytics.php');
     echo "\n\n</body>\n</html>\n";
@@ -2519,4 +2527,92 @@ EOD;
   }
   return($limit_array);
 }
+
+/* This function adds a badgeid to the list of those who have permission to submit photos
+   for this year, and set their "Interested" flag to "Suggested" if they don't
+   already have an "Interested" flag for this year, so they will show up in the
+   various Zambia reports.
+   It takes:
+   title: title of the page
+   description: page description
+   proposed: the badgeid of the proposed individual
+   message: the accumulation of the message value
+   message_error: any current message error information
+   It returns:
+   message: the updated accumulation of the message value
+   */
+function photo_lounge_propose ($title, $description, $proposed, $message, $message_error) {
+  global $link;
+  // Set this, so it might be able to be substituted
+  $conid=$_SESSION['conid'];
+
+  // Get the interested value that means "Suggested" from the InterestedTypes table.
+  $suggested_number_query= <<<EOD
+SELECT
+    interestedtypeid
+  FROM
+      InterestedTypes
+  WHERE
+    interestedtypename in ('Suggested')
+EOD;
+
+  if (!$result=mysql_query($suggested_number_query,$link)) {
+    $message_error=$suggested_number_query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
+    RenderError($title,$message_error);
+    exit();
+  }
+
+  list($interested)=mysql_fetch_array($result, MYSQL_NUM);
+
+  // Get the permission role that means "PhotoSub" from the PermissionRoles table.
+  $permission_role_query= <<<EOD
+SELECT
+    permroleid
+  FROM
+      PermissionRoles
+  WHERE
+    permrolename in ('PhotoSub')
+EOD;
+
+  if (!$result=mysql_query($permission_role_query,$link)) {
+    $message_error=$permission_role_query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
+    RenderError($title,$message_error);
+    exit();
+  }
+
+  list($permroleid)=mysql_fetch_array($result, MYSQL_NUM);
+
+  /* Check interested table.  If they exist already, leave it well
+     enough alone. They might be involved in other areas of the con,
+     just not as a presenter yet. */
+  $query="SELECT * from Interested WHERE badgeid=\"$proposed\" AND conid=$conid";
+  list($rows,$header_array,$interested_array)=queryreport($query,$link,$title,$description,0);
+
+  // If no rows returned, add one.  If more than one row is returned, notify.
+  if ($rows==0) {
+    $element_array=array('conid','badgeid','interestedtypeid');
+    $value_array=array($conid, $proposed, $interested);
+    $verbose.=submit_table_element($link,$title,"Interested", $element_array, $value_array);
+  } elseif ($rows > 1) {
+    $message.="<P>There might be something wrong with the table, for there are\n";
+    $message.="multiple entries for you for this year.  Please email\n";
+    $message.="<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>\n";
+    $message.="to get things straightened out.  Thank you.</P>\n";
+  }
+
+  /* Add to UserHasPermissionRole table. Set permroleid to "PhotoSub" and give a little update. */
+  $element_array=array('badgeid','permroleid','conid');
+  $value_array=array($proposed, $permroleid, $conid);
+  $verbose.=submit_table_element($link,$title,"UserHasPermissionRole", $element_array, $value_array);
+
+  $message.="<P>Your login number is: $proposed and your password has not changed.\n";
+  $message.="Please <A HREF=\"login.php?login=$proposed&newconid=$conid\">Log In</A> below by\n";
+  $message.="clicking on your name.\n<br>\n";
+  $message.="If you need help resetting your password, please email\n";
+  $message.="<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>\n";
+  $message.="for assistance.</P>\n";
+
+  return($message);
+}
+
 ?>

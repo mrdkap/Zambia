@@ -220,6 +220,7 @@ if ($phase_array[$conid]['Photo Submission'] == '0') {
   $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
   $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"photo\">\n";
+  $progbody.="        <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
   $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"Propose to Submit to the Photo Lounge\">\n";
   $progbody.="      </FORM>\n";
   $progbody.="      </LI>\n";

@@ -13,6 +13,23 @@ function RenderEditCreateSession ($action, $session, $message, $message_error) {
   require_once("javascript_functions.php");
 
 
+  // Limit the types of submissions we are accpting at this time.
+  $typequery = <<<EOD
+SELECT
+    typeid,
+    phasetypename
+  FROM
+      Phase
+    JOIN PhaseTypes USING (phasetypeid)
+    JOIN Types ON (phasetypename=typename)
+  WHERE
+    conid=$conid AND
+    phasetypeid in (19,20,21,22,23,24) AND
+    phasestate="0"
+EOD;
+
+  list($type_rows,$type_header_array,$type_array)=queryreport($typequery,$link,$title,$query,0);
+
 
   // This switched on, the specific action, and ends if one of the
   // specified ones don't exist.
@@ -84,6 +101,11 @@ EOD;
   } elseif ($action=="brainstorm") {
     $title="Proposed Session";
     $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
+    if ($type_rows == 0) {
+      $message_error="<P>Sorry, we are not accepting any type of new session at this time.</P>";
+      RenderError($title,$message_error);
+      exit();
+    }
   } else {
     exit();
   }
@@ -97,20 +119,6 @@ EOD;
   if (isset($debug)) {
     echo $debug."<BR>\n";
   }
-
-  $typequery = <<<EOD
-SELECT
-    typeid,
-    phasetypename
-  FROM
-      Phase
-    JOIN PhaseTypes USING (phasetypeid)
-    JOIN Types ON (phasetypename=typename)
-  WHERE
-    conid=$conid AND
-    phasetypeid in (19,20,21,22,23,24) AND
-    phasestate="0"
-EOD;
 
 ?>
     <DIV class="formbox">

@@ -109,7 +109,7 @@ SELECT
   FROM
       default_vendors_$conid
   WHERE
-      $vstatus in ('Approved','Accepted')
+      $vstatus in ('Approved')
   ORDER BY
     vendor_business_name
 EOD;
@@ -149,7 +149,7 @@ EOD;
   $status="status";
   if (($conid == "44") or ($conid == "46") or ($conid == "47") or ($conid == "48")) { $status="vendor_status"; }
 
-  $wherestring="WHERE $status in ('Approved','Accepted')";
+  $wherestring="WHERE $status in ('Approved')";
   if ($conid == "45") { $wherestring="WHERE vendor_location is NOT NULL"; }
 
   $query = <<<EOD

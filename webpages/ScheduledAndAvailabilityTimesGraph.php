@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once('CommonCode.php');
 if (may_I("Staff")) {
   require_once('StaffCommonCode.php');
@@ -7,11 +7,70 @@ if (may_I("Staff")) {
  }
 global $link;
 $conid=$_SESSION['conid'];
+$ConStart=$_SESSION['constartdate']; // make it a variable so it can be substituted
+$ConNumDays=$_SESSION['connumdays']; // make it a variable so it can be substituted
 $GridSpacer=$_SESSION['congridspacer']; // make it a variable so it can be substituted
 
+/* If there is a passed in badgeid, use just that. */
+if ((!empty($_GET['badgeid'])) and (is_numeric($_GET['badgeid']))) {
+  $queryperson=$_GET['badgeid'];
+}
+
+/* Get all the Permission Roles */
+$permrole_query = <<<EOD
+SELECT
+    permrolename,
+    notes
+  FROM
+      PermissionRoles
+  WHERE
+    permroleid > 1
+EOD;
+
+list($permrole_rows,$permrole_header_array,$permrole_array)=queryreport($permrole_query,$link,"Broken Query",$permrole_query,0);
+
+// Empty Title Switch to begin with.
+$TitleSwitch="";
+
+/* Attempt to establish default graph based on permissions */
+for ($i=1; $i<=$permrole_rows; $i++) {
+  if (may_I($permrole_array[$i]['permrolename'])) {
+    $permrolecheck_array[]="'".$permrole_array[$i]['permrolename']."'";
+    $TitleSwitch.=$permrole_array[$i]['notes']." ";
+   }
+ }
+$permrolecheck_string=implode(",",$permrolecheck_array);
+
+
+/* If Participant, or badgeid just return that one graph */
+if ($_SESSION['role']=="Participant") {
+  $wherestring="permrolename IN ($permrolecheck_string) AND badgeid=".$_SESSION['badgeid'];
+} elseif (!empty($queryperson)) {
+  $wherestring="permrolename IN ($permrolecheck_string) AND badgeid=$queryperson";
+} else {
+  $wherestring="permrolename IN ($permrolecheck_string)";
+ }
+
 // LOCALIZATIONS
-$title="Availability and Scheduled times for Programming";
-$description="<P>If you are seeing this, as opposed to the picture, something failed.  Probably a lack of anything in the ParticipantAvailiblityTimes, or ParticipantOnSession table.  Please fix it.</P>";
+$title="Availability and Scheduled times for $TitleSwitch";
+$description="<P>The orange bars are what is scheduled.  The blue bars are what an individual reported as their availiability.</P>";
+$additionalinfo="<P>Some useful reports:\n
+<UL>\n
+  <LI><A HREF=genreport.php?reportname=volstillclockedin>Volunteers Still Clocked In</A></LI>\n
+  <LI><A HREF=genreport.php?reportname=progvolexpected>Programming Volunteers Expected To Be On</A></LI>\n
+  <LI><A HREF=genreport.php?reportname=genvolexpected>General Volunteers Expected To Be On</A></LI>\n
+  <LI><A HREF=genreport.php?reportname=scheduledtimesandclockedintime>Scheduled Times and Clocked in Times</A> (general) with the sub-reports:\n
+  <UL>\n
+    <LI><A HREF=genreport.php?reportid=196>Liaisons</A></LI>\n
+    <LI><A HREF=genreport.php?reportid=197>Lounges</A></LI>\n
+    <LI><A HREF=genreport.php?reportid=198>Registration</A></LI>\n
+    <LI><A HREF=genreport.php?reportid=199>Logistics</A></LI>\n
+    <LI><A HREF=genreport.php?reportid=200>General</A></LI>\n
+    <LI><A HREF=genreport.php?reportid=211>Tabling</A></LI>\n
+    <LI><A HREF=genreport.php?reportid=212>Events</A></LI>\n
+    <LI><A HREF=genreport.php?reportid=213>Load in/Load Out</A></LI>\n
+  </UL></LI>\n
+</UL></P>\n";
 
 /* ConStartSeconds is the seconds from the epoch that the con started
    from constartdate, for figuring out the times across the bottom
@@ -19,8 +78,66 @@ $description="<P>If you are seeing this, as opposed to the picture, something fa
    con, added to ConStartSeconds which indicates where the grid is to
    stop. */
 
-$ConStartSeconds=strtotime($_SESSION['constartdate']);
-$ConEndSeconds=$ConStartSeconds+($_SESSION['connumdays']*86400);
+/* Pubstatus check gives the right subsets for the check */
+
+if (may_I("SuperProgramming")) {$pubstatus_array[]="'Prog Staff','Public'";}
+if (may_I("SuperGeneral")) {$pubstatus_array[]="'Volunteer'";}
+if (may_I("SuperWatch")) {$pubstatus_array[]="'Watch Staff'";}
+if (may_I("SuperRegistration")) {$pubstatus_array[]="'Reg Staff'";}
+if (may_I("SuperVendor")) {$pubstatus_array[]="'Vendor Staff'";}
+if (may_I("SuperEvents")) {$pubstatus_array[]="'Event Staff'";}
+if (may_I("SuperLogistics")) {$pubstatus_array[]="'Logistics'";}
+if (may_I("SuperSales")) {$pubstatus_array[]="'Sales Staff'";}
+if (may_I("SuperFasttrack")) {$pubstatus_array[]="'Fast Track'";}
+if (may_I("SuperLounge")) {$pubstatus_array[]="'Lounge Staff'";}
+if (may_I("SuperCatering")) {$pubstatus_array[]="'Catering Staff'";}
+if (may_I("SuperTabling")) {$pubstatus_array[]="'Tabling Staff'";}
+if (isset($pubstatus_array)) {
+  $pubstatus_string=implode(",",$pubstatus_array);
+} else {
+  $pubstatus_string="'Public'";
+}
+
+/* These queries finds the first and last second that is actually
+   scheduled so we don't waste grid-space. */
+$start_query = <<<EOD
+SELECT
+    TIME_TO_SEC(starttime) as 'beginschedule'
+  FROM
+      Schedule
+    JOIN Sessions USING (sessionid,conid)
+    JOIN PubStatuses USING (pubstatusid)
+  WHERE
+    conid=$conid AND
+    pubstatusname in ($pubstatus_string)
+  ORDER BY
+    starttime ASC LIMIT 0,1
+EOD;
+
+list($earliest,$unneeded_array_c,$grid_start_sec_array)=queryreport($start_query,$link,$title,$description,0);
+$StartSeconds=$grid_start_sec_array[1]['beginschedule'];
+$ColumnAdjust=$StartSeconds/$GridSpacer;
+$ConStartSeconds=strtotime($ConStart)+$StartSeconds;
+
+$end_query = <<<EOD
+SELECT
+    (TIME_TO_SEC(starttime) + TIME_TO_SEC(duration)) as 'endschedule'
+  FROM
+      Schedule
+    JOIN Sessions USING (sessionid,conid)
+    JOIN PubStatuses USING (pubstatusid)
+  WHERE
+    conid=$conid AND
+    pubstatusname in ($pubstatus_string)
+  ORDER BY
+    endschedule DESC
+  LIMIT
+    0,1
+EOD;
+
+list($latest,$unneeded_array_d,$grid_end_sec_array)=queryreport($end_query,$link,$title,$description,0);
+$EndSeconds=$grid_end_sec_array[1]['endschedule'];
+$ConEndSeconds=strtotime($ConStart)+$EndSeconds;
 
 /* Build the dtime array.  This basically jumps the number of seconds
    in the congridspacer variable and uses that to generate the lables.
@@ -33,13 +150,14 @@ while ($tmp_sec <= $ConEndSeconds) {
     $dtime_array[$i]=date("D",$tmp_sec);
   } elseif (date("H:i",$tmp_sec)=="12:00") {
     $dtime_array[$i]="noon";
+  } elseif (date("i",$tmp_sec) != "00") {
+    $dtime_array[$i]=date(":i",$tmp_sec);
   } else {
     $dtime_array[$i]=date("g:i",$tmp_sec);
   }
   $i++;
   $tmp_sec+=$GridSpacer;
 }
-
 
 // The number of elements in dtime_array
 $dtime_rows=count($dtime_array);
@@ -56,12 +174,12 @@ $pubsname_array=array();
    endtime from the start of the con, divided by the congridspacer
    variable, so it matches the grids. */
 
-$query = <<<EOD
+$avail_query = <<<EOD
 SELECT
     badgeid,
     pubsname,
-    TIME_TO_SEC(starttime) DIV $GridSpacer AS Starttime,
-    TIME_TO_SEC(endtime) DIV $GridSpacer AS Endtime
+    (TIME_TO_SEC(starttime) DIV $GridSpacer) - $ColumnAdjust AS Starttime,
+    (TIME_TO_SEC(endtime) DIV $GridSpacer) - $ColumnAdjust AS Endtime
   FROM
       ParticipantAvailabilityTimes
     JOIN Participants USING (badgeid)
@@ -74,11 +192,11 @@ SELECT
     pubsname
 EOD;
 
-list($avail_rows,$avail_header_array,$avail_array)=queryreport($query,$link,$title,$description,0);
+list($avail_rows,$avail_header_array,$avail_array)=queryreport($avail_query,$link,$title,$description,0);
 
 /* Create the badgeid and pubsname for those that don't yet exist, so,
    when walking the data, the appropriate information can be displayed
-   next to the correct name. */ 
+   next to the correct name. */
 
 for ($i=1; $i<=$avail_rows; $i++) {
   if (! in_array($avail_array[$i]['badgeid'], $badgeid_array)) {
@@ -97,14 +215,14 @@ for ($i=1; $i<=$avail_rows; $i++) {
    duration, divided by the congridspacer variable, so it matches the
    grids. */
 
-$query = <<<EOD
+$sched_query = <<<EOD
 SELECT
     badgeid,
     pubsname,
     sessionid,
     title,
-    TIME_TO_SEC(starttime) DIV $GridSpacer AS Starttime,
-    (TIME_TO_SEC(starttime) DIV $GridSpacer )+(TIME_TO_SEC(duration) DIV $GridSpacer) AS Endtime
+    (TIME_TO_SEC(starttime) DIV $GridSpacer) - $ColumnAdjust AS Starttime,
+    (TIME_TO_SEC(starttime) DIV $GridSpacer )+(TIME_TO_SEC(duration) DIV $GridSpacer) - $ColumnAdjust AS Endtime
   FROM
       ParticipantOnSession
     JOIN Participants USING (badgeid)
@@ -116,11 +234,11 @@ SELECT
      volunteer in ('0','1','Yes'))
 EOD;
 
-list($sched_rows,$sched_header_array,$sched_array)=queryreport($query,$link,$title,$description,0);
+list($sched_rows,$sched_header_array,$sched_array)=queryreport($sched_query,$link,$title,$description,0);
 
 /* Create the badgeid and pubsname for those that don't yet exist, so,
    when walking the data, the appropriate information can be displayed
-   next to the correct name. */ 
+   next to the correct name. */
 
 for ($i=1; $i<=$sched_rows; $i++) {
   if (! in_array($sched_array[$i]['badgeid'], $badgeid_array)) {
@@ -167,6 +285,9 @@ $ypad=$fontsize;
 $xstart=($fontwidth*$longestname)+$xpad;
 $yend=$fontsize*2;
 
+/* Printing body.  Uses the page-init then creates the page. */
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+
 /* The height is figured from the height above the numbers plus the
    height of the padding at the top, plus the number of people times
    the yoffset.  The width is figured from the width of the names
@@ -176,24 +297,19 @@ $yend=$fontsize*2;
    yoffset. */
 
 $height=($yend+$ypad+($yoffset*$badgeid_rows));
+$heightpx=$height."px";
 $width=($xstart+$xpad+($xoffset*($dtime_rows-1)));
+$widthpx=$width."px";
 
-// Header information to be passed, so this shows up as a SVG file.
-header("Expires: 0");
-header("Cache-control: private");
-header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-header("Content-Type: image/svg+xml"); 
-
-// Needed to be inside, otherwise it chokes.
-echo '<?xml version="1.0" standalone="no"?>';
+echo "<DIV style=\"height:400px;width:$widthpx;overflow:scroll;\">\n";
 ?>
 
-<!DOCTYPE svg PUBLIC "-//W3C/DTD SVG 1.0/EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 <svg
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
-   width="<?php echo $width; ?>"
-   height="<?php echo $height; ?>"
+   viewbox="0 0 <?php echo $width; ?> <?php echo $height; ?>"
+   preserveAspectRatio="xMinYMin meet"
+   style="overflow:auto"
    version="1.1"
    onload="init(evt)">
    <title><?php echo $title; ?></title>
@@ -203,8 +319,8 @@ echo '<?xml version="1.0" standalone="no"?>';
 <clipPath id="canvas"><rect width="100%" height="100%" fill="#eee" stroke-width="0px"/>
 </clipPath>
 
-<?php 
-  /* Make the bars pretty.  The gradient0 is red/yellow, the gradient1 
+<?php
+  /* Make the bars pretty.  The gradient0 is red/yellow, the gradient1
      is blue/white, the gradient2 is green/yellow.  Using gradient0
      for scheduled and gradient2 for clocked in times. */
 ?>
@@ -229,7 +345,7 @@ echo '<?xml version="1.0" standalone="no"?>';
      is the simple HideTooltip piece to make it go away. */
 ?>
 
-<script type="text/ecmascript"> 
+<script type="text/ecmascript">
   <![CDATA[
 
     function init(evt) {
@@ -265,14 +381,14 @@ echo '<?xml version="1.0" standalone="no"?>';
     }
     ]]></script>
 
-<?php 
+<?php
   /* I don't know why this is done twice, but for now, I'm leaving
      it. */
 ?>
 <g clip-path="url(#canvas)">
   <rect width="100%" height="100%" fill="#eee" stroke-width="0px"/>
 
-<?php 
+<?php
   /* Draws the grid.
      The horizontal lines bracket the people, so we need one more line
      than we have values, so we count 0 through badgeid_rows, although the
@@ -379,3 +495,59 @@ for ($i=0; $i<$badgeid_rows; $i++) {
   </g>
 </g>
 </svg>
+
+</DIV>
+
+<?php
+$height=$fontsize*2;
+$viewheight=$fontsize*3;
+$viewheightpx=$viewheight."px";
+echo "<DIV style=\"height:$viewheightpx;width:$widthpx;overflow:scroll;\">\n";
+?>
+
+<svg
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   viewbox="0 0 <?php echo $width; ?> <?php echo $viewheight; ?>"
+   preserveAspectRatio="none"
+   style="overflow-x:auto"
+   version="1.1"
+   onload="init(evt)">
+   <title>Times</title>
+<defs>
+
+<?php /* Background as grey */ ?>
+<clipPath id="canvas"><rect width="100%" height="100%" fill="#eee" stroke-width="0px"/>
+</clipPath>
+
+</defs>
+
+<?php
+  /* I don't know why this is done twice, but for now, I'm leaving
+     it. */
+?>
+<g clip-path="url(#canvas)">
+  <rect width="100%" height="100%" fill="#eee" stroke-width="0px"/>
+
+<?php
+echo '  <g font-size="',$fontsize,'px" font-family="Georgia" fill="#000">
+';
+echo '    <g text-anchor="middle">
+';
+
+for ($i=0; $i<$dtime_rows; $i++) {
+  echo '      <text x="'.($xstart+($xoffset*$i)).'" y="'.($height-$ypad).'" font-size="'.$fontsize.'px">'.$dtime_array[$i].'</text>
+';
+}
+?>
+      </g>
+    </g>
+  </g>
+</svg>
+
+</DIV>
+
+<?php
+
+correct_footer();
+?>

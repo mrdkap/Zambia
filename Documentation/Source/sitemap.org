@@ -3,7 +3,7 @@
    + [[file:Bio_Editing.org][Bios Editing in Zambia]]
    + [[file:NotesForCoders.org][Notes for Coders]]
    + [[file:Presenter_Flow.org][Presenter Flow in Zambia]]
-   + [[file:Panelists_Guide.org][Presenter Flow in Zambia]]
+   + [[file:Panelists_Guide.org][Panelists Guide for Zambia]]
    + [[file:Setting_Up.org][Setting Up Zambia from Scratch]]
    + [[file:Tasks-Gantt_Chart.org][Task List and Gantt Chart Usage]]
    + [[file:Time_Card.org][Time Card Usage in Zambia]]

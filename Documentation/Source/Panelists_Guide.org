@@ -1,4 +1,4 @@
-#+TITLE: Presenter Flow in Zambia
+#+TITLE: Panelists Guide for Zambia
 #+EMAIL: NELA.Percy@gmail.com
 #+AUTHOR: Percy
 #+DATE: March 2012

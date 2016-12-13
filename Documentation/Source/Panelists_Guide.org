@@ -1,0 +1,143 @@
+#+TITLE: Presenter Flow in Zambia
+#+EMAIL: NELA.Percy@gmail.com
+#+AUTHOR: Percy
+#+DATE: March 2012
+#+DESCRIPTION: Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting panelists use the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+#+KEYWORDS: Zambia, Documentation, FFF branch
+#+LANGUAGE: en
+#+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:3 num:3 toc:nil @:t ::nil |:t -:t todo:nil tasks:nil tags:nil <:t *:t author:t email:t skip:nil d:t f:t pri:t
+#+STARTUP: fninline
+#+SETUPFILE: "Headers/setupfile.org"
+#+INCLUDE: "Headers/include.org"
+#+TOC: headlines 3
+#+LaTeX: \listoffigures
+#+LaTeX: \listoftables
+#+LaTeX: \newpage
+#+LaTeX: \pagenumbering{arabic}
+* Introduction
+  Zambia is the system used by Arisia to organize and schedule our
+  content.  Logging into Zambia as a participant allows panelists to
+  indicate which panels they’d like to be on, set their availability
+  during the convention and create a profile/biography.
+* First login
+  When you log in for the first time, you will need to update your
+  profile and change your password away from the default by clicking
+  profile on the menu bar.
+
+  From this page you can do the following:
+  + Let us know if you are interested and able to participate in
+    programming for the upcoming convention:
+    + If you want to be on panels or otherwise be a program
+      participant, set it to "Yes".
+    + If you are unable to attend this year, but want to be invited
+      for future years, please still log in and set it to "No".
+  + Let us know if we can share your e-mail address with other
+    participants.  Please consider saying yes so that moderators of
+    panels you have been selected for can contact you prior to the
+    convention to let you know format, and so you can discuss and prep
+    for the panel.  Saying no will not affect our decisions when
+    making panelist selections for panels.
+  + Let us know if we can photograph you while you’re participating on
+    panels, and if we can use those images in the promotion of the
+    convention.  Saying no will not affect our decisions when making
+    panelist selections for panels.
+  + Let us know how you want your name to appear on our electronic and
+    print publications.
+  + Provide us with your biography for our electronic and print
+    publications.  Bios are limited to 1000 characters (including
+    spaces).
+  + Review the contact information we have for you. Corrections can be
+    made by logging into our registration system (which has a separate
+    login process and password than Zambia.
+* Availability
+  Next, please let us know about your availability, by selecting that
+  option from the menu in the page header. This allows us to get an
+  idea of what kind of schedule you’d like to have during the
+  convention. In addition to listing time ranges, make sure to enter
+  information on any constraints or conflicts that might occur on your
+  schedule at the bottom of the page. Be as thorough as you can and
+  fill out all fields on this page -- the more information we have,
+  the better! Please keep in mind that a narrow availability listing
+  makes it difficult for Arisia staff to schedule you, so please be
+  both honest and realistic about your con participation time!
+* General Interests
+  The next section you will want fill out is General Interests. This
+  page is where you can provide information pertaining to your
+  interests, workshops or presentations you’d like to pitch to us, who
+  you’d like to be on panels with (or who you want to avoid).  This is
+  also the place to give us other information we should consider when
+  creating this year’s programming schedule.
+
+  Some people find that it’s best to fill out this section last, after
+  completing all other parts of the panel sign-up process.  You should
+  feel free to come back to it at the end.
+* Search Sessions
+  Next up is Search Sessions; this is how you find out what sort of
+  panels and other program items are available to participate
+  on. Because of the volume of selections that are available at
+  Arisia, we organize panels by tracks. There are no restrictions on
+  how many tracks a person can participate on; we love panelists that
+  have knowledge in several content areas and can participate on a
+  diverse range of items!
+
+  From the Sessions main page you can do the following:
+  + Click the drop menu on the Track option. This will show you a list
+    of all our tracks.
+  + Select the track you’re interested in then click search. This will
+    give you a list of panel options for that track.
+  + Each entry has a box next to the title that you click on to add it
+    as a panel you are interested in being on.
+  + Once you’ve made your selections, click save. You will be taken to
+    a page where you can enter a rating and give reasons as to why you
+    would be a good choice for a given panel (see "Session Interests"
+    section below).
+  + Go back to the Search Sessions page to add more panels to your
+    list, either from the same track, or other tracks.
+* Session Interests
+  Once you have selected a bunch of panels you’re interested in being
+  on, it’s time to provide us with information for why we should place
+  YOU on that panel.  This is a really important step!.  We have so
+  many great panelists that sign up each year, so we rarely assign
+  people to panels that have not ranked the panel and written
+  something about why they would be a fabulous addition to this item.
+
+  Click on the "Session Interests" option from the menu to view all
+  the panels you selected earlier.
+  + First, go through and rank all your panel selections. We use the
+    following rating system:
+    + 1 -- Oooh! Oh! Pick Me!
+    + 2-3 -- I'd like to if I can.
+    + 4-5 -- I am qualified but this is not one of my primary
+      interests.
+    + You’re limited to 4 sessions each of preferences 1-4 and there’s
+      no limit to the number of sessions for which you can express
+      preference 5.
+  + Next, write a bit in the text boxes for each panel to let us know
+    why you would be fabulous on that session.
+    + Completing this step thoughtfully is especially important for
+      the items you rank highest.
+    + Address anything asked of panelists in the beige box associated
+      with that panel.
+    + This doesn’t need to be long -- a short paragraph is typical.
+    + Some panelists draft these out in a separate document and then
+      cut-and-paste their entries into Zambia as a final step.
+    + If you do not fill this section out, you will not get placed on
+      the panel, even if you rate it a 1 and feel that you’re an
+      obvious choice.
+  + If you are interested in moderating a particular panel, please
+    select that option while providing your rankings.  The panelists
+    most enthusiastic about a topic don’t always make the best
+    moderators, as moderators are facilitators in addition to
+    contributors on a panel, so keep this in mind when ranking and
+    indicating your interest in moderating.
+  + Remember to save your progress approximately every ten minutes so
+    that you aren’t logged out due to inactivity and lose your
+    selections or what you wrote!
+  + Ranking a panel as "1" and writing a thesis on why you’re perfect
+    for the panel does not guarantee your placement on it. Most of our
+    panels have more qualified people sign up for them than we have
+    spaces on the panel (typically 4-5), and there are more sessions
+    to sign up for than we have spots in the schedule.
+* Contact
+  There should be whom to contact at the bottom of each page, if you
+  need help or assistance.

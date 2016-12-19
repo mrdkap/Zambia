@@ -53,11 +53,14 @@ $webstring.= <<<EOD
 </form>
 EOD;
 
-if (file_exists("../Local/Verbiage/login_0")) {
-  $webstring.=file_get_contents("../Local/Verbiage/login_0");
- } else {
+$verbiage=get_verbiage("login_0");
+if ($verbiage != "") {
+  ob_start();
+  eval ('?>' . $verbiage);
+  $webstring.=ob_get_clean();
+} else {
   $webstring.="<P id=\"brainstorm-login-hint\"> <b>Brainstorm</b> users: if you want to submit ideas for panels, please enter \"brainstorm\" for your Badge ID and use the last name of the author of the Foundation series as your password (in all lowercase). </P>\n";
- }
+}
 
 if ($included!="YES") {
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);

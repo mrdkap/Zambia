@@ -111,30 +111,31 @@ list($rows,$participant_header,$participant_array)=queryreport($query,$link,$tit
 
 foreach ($participant_array as $participant) {
   $workstring = "<P>&nbsp;</P><P>Dear ".$participant['pubsname'].",</P>";
-  if (file_exists("../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_0")) {
-    $workstring .= file_get_contents("../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_0");
-  } elseif (file_exists("../Local/Verbiage/Welcome_Letter_0")) {
-    $workstring .= file_get_contents("../Local/Verbiage/Welcome_Letter_0");
+  $verbiage=get_verbiage("Welcome_Letter_0");
+  if ($verbiage != "") {
+    ob_start();
+    eval ('?>' . $verbiage);
+    $workstring.=ob_get_clean();
   }
   foreach ($role_array as $role) {
     foreach ($type_array as $type) {
-      $filename1="../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_".$rolename_array[$role]."_".$typename_array[$type]."_0";
-      $filename2="../Local/Verbiage/Welcome_Letter_".$rolename_array[$role]."_".$typename_array[$type]."_0";
+      $section="Welcome_Letter_".$rolename_array[$role]."_".$typename_array[$type]."_0";
       if ((strpos($participant['Role'],$rolecheck_array[$role]) !== false) AND (strpos($participant['Type'],$typecheck_array[$type]) !== false)) {
-	if (file_exists($filename1)) {
-	  $checkstring = file_get_contents($filename1);
-          if (strpos($workstring,$checkstring) === false) { $workstring .= $checkstring; }
-	} elseif (file_exists($filename2)) {
-	  $checkstring = file_get_contents($filename2);
+	$verbiage=get_verbiage($section);
+	if ($verbiage != "") {
+	  ob_start();
+	  eval ('?>' . $verbiage);
+	  $checkstring.=ob_get_clean();
           if (strpos($workstring,$checkstring) === false) { $workstring .= $checkstring; }
 	}
       }
     }
   }
-  if (file_exists("../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_1")) {
-    $workstring .= file_get_contents("../Local/".$_SESSION['conid']."/Verbiage/Welcome_Letter_1");
-  } elseif (file_exists("../Local/Verbiage/Welcome_Letter_1")) {
-    $workstring .= file_get_contents("../Local/Verbiage/Welcome_Letter_1");
+  $verbiage=get_verbiage("Welcome_Letter_1");
+  if ($verbiage != "") {
+    ob_start();
+    eval ('?>' . $verbiage);
+    $workstring.=ob_get_clean();
   }
 
   // If not on paper, add a <hr>, else a new page.

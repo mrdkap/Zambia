@@ -42,8 +42,9 @@ if ($interested=="") {
 }
 
     if (may_I('postcon')) { 
-      if (file_exists("../Local/Verbiage/Welcome_0")) {
-	echo file_get_contents("../Local/Verbiage/Welcome_0");
+      $verbiage=get_verbiage("Welcome_0");
+      if ($verbiage != "") {
+	echo eval('?>' . $verbiage);
       } else {
 ?>
 <P>Thank you for your participation in the <?php echo $_SESSION['conname']; ?> event.  With your help it was a great con.  We look forward 
@@ -55,8 +56,9 @@ to your participation again next year.</P>
     exit();
       }
     }
-    if (file_exists("../Local/Verbiage/Welcome_1")) {
-      echo file_get_contents("../Local/Verbiage/Welcome_1");
+    $verbiage=get_verbiage("Welcome_1");
+    if ($verbiage != "") {
+      echo eval('?>' . $verbiage);
     } else {
 ?>
 
@@ -113,8 +115,9 @@ your liaison person as soon as possible.</P>
 
 <?php
 if (may_I('BrainstormSubmit')) { 
-  if (file_exists("../Local/Verbiage/Welcome_2")) {
-    echo file_get_contents("../Local/Verbiage/Welcome_2");
+  $verbiage=get_verbiage("Welcome_2");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   } else {
 ?>
  <P>If you are a presenter please use our <A HREF="MyProposals.php">"Submit a Proposal"</A> form to submit a class, panel, workshop and/or presentation proposal.</P>
@@ -122,8 +125,9 @@ if (may_I('BrainstormSubmit')) {
   }
 }
 if (may_I('my_availability')) {
-  if (file_exists("../Local/Verbiage/Welcome_3")) {
-    echo file_get_contents("../Local/Verbiage/Welcome_3");
+  $verbiage=get_verbiage("Welcome_3");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   } else {
 ?>
   <P> We need to know your availability for scheduling. Please complete the questions in our <A HREF="my_sched_constr.php">"My Availability"</A> form so we can best accommodate your scheduling preferences.
@@ -136,8 +140,9 @@ if (may_I('my_availability')) {
 <?php
   }
 }
-if (file_exists("../Local/Verbiage/Welcome_4")) {
-  echo file_get_contents("../Local/Verbiage/Welcome_4");
+$verbiage=get_verbiage("Welcome_4");
+if ($verbiage != "") {
+  echo eval('?>' . $verbiage);
 } else {
 ?>
  <P>Please check the contact information we have on file for you under <A HREF="my_contact.php">"My Profile"</A>. Here you can change your password<?php
@@ -154,9 +159,10 @@ If you are a new presenter or vendor, we will need a short and long bio for <?ph
 <?php
 }
 if (may_I('my_schedule')) { 
-    if (file_exists("../Local/Verbiage/Welcome_5")) {
-      echo file_get_contents("../Local/Verbiage/Welcome_5");
-    } else {
+  $verbiage=get_verbiage("Welcome_5");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
+  } else {
 ?>
   <P>We offer a personalized view of your schedule. To see what you have been scheduled to do at the con, see <A HREF="MySchedule.php">"My Schedule"</A>. If there are issues, conflicts or questions please email us at 
 <a href="mailto: <?php echo $_SESSION['programemail']; ?>"><?php echo $_SESSION['programemail']; ?></a>. As a courtesy to you, any previous schedules are listed on this page.</P>
@@ -164,8 +170,9 @@ if (may_I('my_schedule')) {
   }
 }
 if (may_I('search_panels')) {
-  if (file_exists("../Local/Verbiage/Welcome_6")) {
-    echo file_get_contents("../Local/Verbiage/Welcome_6");
+  $verbiage=get_verbiage("Welcome_6");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   } else {
 ?>
 <HR>
@@ -174,8 +181,9 @@ if (may_I('search_panels')) {
   }
 }
 if (may_I('my_panel_interests')) {
-  if (file_exists("../Local/Verbiage/Welcome_7")) {
-    echo file_get_contents("../Local/Verbiage/Welcome_7");
+  $verbiage=get_verbiage("Welcome_7");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   } else {
 ?>
   <P>View what you've selected on the <A HREF="PartPanelInterests.php">"My Panel Interests"</A> page, and rank your interest level.  We don't know which panels will be offered, but we appreciate your input to help us decide.</P>
@@ -183,8 +191,9 @@ if (may_I('my_panel_interests')) {
   }
 }
 if (may_I('my_gen_int_write')) { 
-  if (file_exists("../Local/Verbiage/Welcome_8")) {
-    echo file_get_contents("../Local/Verbiage/Welcome_8");
+  $verbiage=get_verbiage("Welcome_8");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
  } else {
 ?>
   <P>If you would like to provide additional information or constraints, please visit <A HREF="my_interests.php">"My Event Preferences"</A>.</P>

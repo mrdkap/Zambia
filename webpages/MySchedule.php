@@ -272,9 +272,10 @@ for ($i=1; $i<=$schd_rows; $i++) {
 
 // Begin the presentation of the information
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-if (file_exists("../Local/Verbiage/MySchedule_0")) {
-  echo file_get_contents("../Local/Verbiage/MySchedule_0");
- } else {
+$verbiage=get_verbiage("MySchedule_0");
+if ($verbiage != "") {
+  echo eval('?>' . $verbiage);
+} else {
   echo "<P>Below is the list of all the schedule elements for which you are scheduled.  If you need any changes\n";
   echo "to this schedule please contact <A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.</P>\n";
 
@@ -291,7 +292,7 @@ if (file_exists("../Local/Verbiage/MySchedule_0")) {
   echo "<A HREF=\"./my_sessions2.php\">\"My Panel Interests\"</A> tab).  That will expose it to other\n";
   echo "panelists who can then email or call you as appropriate to discuss the panel in advance.  If you\n";
   echo "check back in a day or two you may find other panelists' information.</P>\n";
- }
+}
 
 echo "<P>You can also take a look at all that is going on by\n";
 echo "<A HREF=\"StaffSched.php?format=sched\">timeslot</A>,\n";

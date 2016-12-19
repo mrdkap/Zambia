@@ -34,19 +34,14 @@ if ($rows > 0) {
   $accepting_string=strrev(implode(strrev(", and "), explode(strrev(", "), strrev($accepting_string_tmp), 2)));
 }
 
-
+// Begin the presentation of the information
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-if (may_I('BrainstormSubmit')) {
-  if ($accepting_string == "") {
-    echo "<H2>We are not accepting any new submissions at this time</H2>";
-  } else {
-    echo "<H2>We are accepting submissions of types $accepting_string at this time.</H2>";
-  }
-  if (file_exists("../Local/$conid/Verbiage/BrainstormWelcome_0")) {
-    echo file_get_contents("../Local/$conid/Verbiage/BrainstormWelcome_0");
-  } elseif (file_exists("../Local/Verbiage/BrainstormWelcome_0")) {
-    echo file_get_contents("../Local/Verbiage/BrainstormWelcome_0");
+if ((may_I('BrainstormSubmit')) and ($accepting_string != "")) {
+  echo "<H2>We are accepting submissions of types $accepting_string at this time.</H2>\n";
+  $verbiage=get_verbiage("BrainstormWelcome_0");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   } else { ?>
 <p> Here you can submit new suggestions or look at existing ideas for 
 panels, events, movies, films, presentations, speeches, concerts, etc.  
@@ -75,8 +70,9 @@ everything will make it.   We do save good ideas for future conventions.
       } // end of local words
     } // end of if brainstorming permitted
    else { // Brainstorming not permitted
-     if (file_exists("../Local/Verbiage/BrainstormWelcome_1")) {
-       echo file_get_contents("../Local/Verbiage/BrainstormWelcome_1");
+     $verbiage=get_verbiage("BrainstormWelcome_1");
+     if ($verbiage != "") {
+       echo eval('?>' . $verbiage);
      } else { ?>
 <P> We are not accepting suggestions at this time for <?php echo $_SESSION['conname'];?>.
 <P> You may still use the "Search Sessions" tab to view the sessions which have been selected and to read their precis.  Note,

@@ -131,10 +131,9 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // If they wanted to see the release (again):
 if ($release_p) {
-  if (file_exists("../Local/$conid/Verbiage/PhotoLoungeSubmit_0")) {
-    echo file_get_contents("../Local/$conid/Verbiage/PhotoLoungeSubmit_0");
-  } elseif (file_exists("../Local/Verbiage/PhotoLoungeSubmit_0")) {
-    echo file_get_contents("../Local/Verbiage/PhotoLoungeSubmit_0");
+  $verbiage=get_verbiage("PhotoLoungeSubmit_0");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   }
 }
 

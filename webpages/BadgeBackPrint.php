@@ -14,11 +14,18 @@ $description="<P>Badges for Printing.</P>\n";
 $importantinfo0="";
 $importantinfo1="";
 
-if (file_exists("../Local/$conid/Verbiage/Badge_Back_Print_0")) {
-  $importantinfo0=trim(file_get_contents("../Local/$conid/Verbiage/Badge_Back_Print_0"));
+$verbiage=get_verbiage("Badge_Back_Print_0");
+if ($verbiage != "") {
+  ob_start();
+  eval ('?>' . $verbiage);
+  $importantinfo0.=ob_get_clean();
 }
-if (file_exists("../Local/$conid/Verbiage/Badge_Back_Print_1")) {
-  $importantinfo1=trim(file_get_contents("../Local/$conid/Verbiage/Badge_Back_Print_1"));
+
+$verbiage=get_verbiage("Badge_Back_Print_1");
+if ($verbiage != "") {
+  ob_start();
+  eval ('?>' . $verbiage);
+  $importantinfo1.=ob_get_clean();
 }
 
 // Specific people

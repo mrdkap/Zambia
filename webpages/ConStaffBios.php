@@ -63,8 +63,9 @@ $webstring.="</DL>\n$descstring\n</DL>\n";
 
 if ($included!="YES") {
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-  if (file_exists("../Local/Verbiage/ConStaffBios_1")) {
-    echo file_get_contents("../Local/Verbiage/ConStaffBios_1");
+  $verbiage=get_verbiage("ConStaffBios_0");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   } else {
      echo $webstring;
   }

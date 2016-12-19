@@ -2615,4 +2615,18 @@ EOD;
   return($message);
 }
 
+/* This function takes the verbiage (currently a filename) to be sent, and returns it, if it exists. */
+function get_verbiage ($verbiagefile) {
+  $conid=$_SESSION['conid'];
+  if (file_exists("../Local/$conid/Verbiage/$verbiagefile")) {
+    $returnstring=file_get_contents("../Local/$conid/Verbiage/$verbiagefile");
+  } elseif (file_exists("../Local/Verbiage/$verbiagefile")) {
+    $returnstring=file_get_contents("../Local/Verbiage/$verbiagefile");
+  } else {
+    $returnstring="";
+  }
+
+  return $returnstring;
+}
+
 ?>

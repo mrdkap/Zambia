@@ -119,9 +119,12 @@ foreach ($participant_array as $participant) {
   // Generic header info.
   $workstring= "<P>&nbsp;</P><P>Greetings ".$participant['name'].",</P>";
 
-  // Pull in the intro-blurb.
-  if (file_exists("../Local/Verbiage/Schedule_Blurb_0")) {
-    $workstring.= file_get_contents("../Local/Verbiage/Schedule_Blurb_0");
+  // Pull in the intro-blurb.  NOTE eval into $workstring here!
+  $verbiage=get_verbiage("Schedule_Blurb_0");
+  if ($verbiage != "") {
+    ob_start();
+    eval ('?>' . $verbiage);
+    $workstring.=ob_get_clean();
   }
 
   // Add the schedule.

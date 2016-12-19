@@ -100,8 +100,9 @@ if (may_I("Liaison")) {
 $dashstring.=":: <A HREF=\"SchedulePrint.php?individual=".$_SESSION['badgeid']."\">At Con Schedule</A></CENTER></P>\n";
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-if (file_exists("../Local/Verbiage/StaffPage_1")) {
-  echo file_get_contents("../Local/Verbiage/StaffPage_1");
+$verbiage=get_verbiage("StaffPage_0");
+if ($verbiage != "") {
+  echo eval('?>' . $verbiage);
 } else {
   echo "<HR>\n";
   echo $dashstring;

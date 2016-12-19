@@ -23,13 +23,17 @@ $title="Comments and Feedback from $conname";
 $description="<P>Some of the feedback and comments people have offered up about $conname:</P>";
 
 // Feedback that have been selected to be put up.
-$feedbackfile="";
-if (file_exists("../Local/$conid/Curated_Comments")) {
-  $feedbackfile.=file_get_contents("../Local/$conid/Curated_Comments");
+$verbiage=get_verbiage("Curated_Comments");
+if ($verbiage != "") {
+  ob_start();
+  eval ('?>' . $verbiage);
+  $feedbackfile.=ob_get_clean();
 }
 
 /* Printing body.  Uses the page-init then creates the comments/feedback page. */
-topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-echo $feedbackfile;
-correct_footer();
-
+if ($included!="YES") {
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+  echo $feedbackfile;
+  correct_footer();
+}
+?>

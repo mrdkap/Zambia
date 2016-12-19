@@ -176,8 +176,11 @@ $additionalinfo.="<P>Done with this time block?  Pick a different one:</P>\n<UL>
 $additionalinfo.="</UL>\n";
 
 // Add any local information
-if (file_exists("../Local/$conid/Verbiage/Feedback_0")) {
-  $additionalinfo.=file_get_contents("../Local/$conid/Verbiage/Feedback_0");
+$verbiage=get_verbiage("Feedback_0");
+if ($verbiage != "") {
+  ob_start();
+  eval ('?>' . $verbiage);
+  $additionalinfo.=ob_get_clean();
 }
 
 // Document information

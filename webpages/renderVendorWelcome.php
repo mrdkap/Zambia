@@ -10,9 +10,10 @@ $message_error.=$message2;
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-if (may_I('BrainstormSubmit') or may_I('Vendor')) {
-  if (file_exists("../Local/Verbiage/VendorWelcome_0")) {
-    echo file_get_contents("../Local/Verbiage/VendorWelcome_0");
+if (may_I('Vendor')) {
+  $verbiage=get_verbiage("VendorWelcome_0");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   } else { ?>
 <P>Here you can create/update your vendor profile, and
    apply to be a vendor at this event, and see the other vendors
@@ -51,8 +52,9 @@ if (may_I("Vendor")) {
 }
   } // end of local words
 } else { // brainstorm/vendor not permitted
-  if (file_exists("../Local/Verbiage/VendorWelcome_1")) {
-    echo file_get_contents("../Local/Verbiage/VendorWelcome_1");
+  $verbiage=get_verbiage("VendorWelcome_1");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
   } else { 
     echo "<P>We are not accepting new vendors at this time for ".$_SESSION['conname'].".</P>\n";
     echo "<P>You may still use the \"Search\" tab to view the vendors who might be attending and/or those that have been accepted.</P>\n";

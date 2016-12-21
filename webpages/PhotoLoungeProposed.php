@@ -6,19 +6,29 @@ $_SESSION['return_to_page']='PhotoLoungeProposed.php';
 $conid=$_SESSION['conid'];
 
 $title="Propose to Submit Photos";
-$description="<P><B>Please\n";
-$description.="<A HREF=\"PhotoLoungeReturning.php\">check here first</A></B>\n";
-$description.="to see if you can activate yourself simply by clicking on your name.</P>\n";
+$verbiage=get_verbiage("PhotoLoungeProposed_0");
+if ($verbiage != "") {
+  ob_start();
+  eval ('?>' . $verbiage);
+  $description=ob_get_clean();
+} else {
+
+  $description="<P><B>Please\n";
+  $description.="<A HREF=\"PhotoLoungeReturning.php\">check here first</A></B>\n";
+  $description.="to see if you can activate yourself simply by clicking on your name.</P>\n";
+  $description.="<P>Otherwise, please provide your name, email and bio below, and click\n";
+  $description.="\"save\". One of our staff members will get back to you in 2-3 days with\n";
+  $description.="your log-in ID and a temporary password at the email address\n";
+  $description.="provided, once your account has been set up.</P>\n";
+  $description.="<P>If you are\n";
+  $description.="<A HREF=\"PhotoLoungeReturning.php\">already in our system</A>\n";
+  $description.="we already have your information, and it is you can just click and\n";
+  $description.="be able to start uploading photos immediately.</P>\n";
+}
+
 $additionalinfo="<P>Note: items in red must be completed before you can save.</P>\n";
 $additionalinfo.="<P>Please make sure your name and email address are valid as well\n";
 $additionalinfo.="as whatever you want for your bio.</P>\n";
-$additionalinfo.="<P>One of our staff members will get back to you at the email address\n";
-$additionalinfo.="provided, with your password, once your account has been set up.</P>\n";
-$additionalinfo.="<P>If you are\n";
-$additionalinfo.="<A HREF=\"PhotoLoungeReturning.php\">already in our system</A>\n";
-$additionalinfo.="we already have your information, and it is you can just click and\n";
-$additionalinfo.="be able to start uploading photos immediately.</P>\n";
-
 
 // Check to see if the phase is open
 $phasequery= <<<EOD

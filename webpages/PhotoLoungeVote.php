@@ -12,6 +12,9 @@ if ((empty($conid)) or (!is_numeric($conid))) {
   $conid=$_SESSION['conid'];
 }
 
+// Set target_dir
+$target_dir = "../Local/$conid/Photo_Lounge_Submissions";
+
 // Check to see if page can be displayed
 if (!may_I("PhotoRev")) {
   $message_error ="Alas, you do not have the proper permissions to view this page.";
@@ -20,14 +23,44 @@ if (!may_I("PhotoRev")) {
   exit();
 }
  
-// Error out due to lack of Artist
-$artistname=$_GET['artist'];
-if (empty($artistname)) {$artistname=$_POST['artist'];}
-if (empty($artistname)) {
+// Error out due to lack of submitter
+$artistid=$_GET['artistid'];
+if (empty($artistid)) {$artistid=$_POST['artistid'];}
+if (empty($artistid)) {
   $message.="<P>There needs to be a Photo Submitter named.  Please <A HREF=\"PhotoLoungePictures.php\">Return</A> to the thumbnail display.</P>\n";
   RenderError($title,$message);
   exit();
 }
+
+// Sets up the Select for the artist names, and the map for the specific artist's name.
+$photogquery = <<<EOD
+SELECT
+    DISTINCT badgeid,
+    pubsname
+  FROM
+      PhotoLoungePix
+    JOIN Participants USING (badgeid)
+  ORDER BY
+    pubsname
+EOD;
+
+$selectstring.="<SELECT name=\"artistid\">\n";
+$selectstring.=populate_select_from_query_inline($photogquery,$artistid,"Select Artist Name",false);
+$selectstring.="</SELECT></DIV>\n";
+
+// Fixes the mapping of the id to the name, if the select is used.
+list($artistrows,$artist_header_array,$artist_array)=queryreport($photogquery,$link,$title,$description,0);
+
+// Build the artist/artistid map
+for ($i=1;$i<=$artistrows;$i++) {
+  $artistmap[$artist_array[$i]["badgeid"]]=$artist_array[$i]["pubsname"];
+}
+
+// Establish the artist's name.
+$artistname=$_GET['artist'];
+if (empty($artistname)) {$artistname=$_POST['artist'];}
+if (empty($artistname)) {$artistname=$artistmap[$artistid];}
+
 
 // LOCALISMS
 $title="Photo Lounge Voting on $artistname";
@@ -52,92 +85,9 @@ $sordinal[3]="3rd";
 $sordinal[4]="4th";
 $sordinal[5]="5th";
 
-if ($conid==46) {
-  // Actual picture names as per the table
-  $picname[1]="photo_image";
-  $picname[2]="photo1";
-  $picname[3]="photo2";
-  $picname[4]="photo3";
-  $picname[5]="photo4";
-
-  // Placement for the pictures (somewhat easier)
-  $picplace[1]="PMA";
-  $picplace[2]="PMB";
-  $picplace[3]="PMC";
-  $picplace[4]="PMD";
-  $picplace[5]="PME";
-} else {
-  // Actual picture names as per the table
-  $picname[1]="photo_image";
-  $picname[2]="photo_image";
-  $picname[3]="photo_image";
-  $picname[4]="photo_image";
-  $picname[5]="photo_image";
-
-  // Placement for the pictures (somewhat easier)
-  $picplace[1]="PM";
-  $picplace[2]="PM";
-  $picplace[3]="PM";
-  $picplace[4]="PM";
-  $picplace[5]="PM";
-}
-
-// Where this whole bloddy mess lives
-$picurl="https://".VENDORHOSTNAME;
-
-// The bad pictures, since removing them from the database would be tricy.
-$badlist="'22c90b2144a8d85','230fc849168b5e3','c41500755f89b61','73fe3cb361f676a','9517fd0bf8faa65'";
-
-
 /* This sets up the tests for the existance and permissibility of the
-   pictures.  The "badlist" above weeds out any pictures that the
-   permission has been withdrawn for us to have.  The picurl is the
-   root of this tree, this should probably be made a variable, rather
-   than hard-coded like it is.  It can be hoped that, carrying
-   forward, the photo lounge will continue to use this particular
-   table, set, but ... it might change, so ... being able to change
-   such by variablizing it, is a good thing.
-
-   The checks are for null, called "dummy" or are in the badlist (as
-   explained above) on both the small version of the image (a width of
-   200, seemed acceptable, as opposed to drawing on the thumbnails
-   again) and on the existence of the radio buttons.
-
-   The radio button loop needed to be included in it's own concat,
-   because of it's own test, since it's in a different table row from
-   the information.  If that changes, it might be able to be put back
-   in the same table row and column as the picture, and not need it's
-   own test and concat.
-
-   Because the $query statement is as it is, it stumbles over
-   indecies, so I had to come up with the ${"foo_$i"} nomenclature, so
-   it would pass in without a problem.  I might want to restructure
-   this, so the whole query line is generated in it's own loop, but
-   that might be needlessly complicated.  These short-cuts are to make
-   the code much more readable, rather than anything else.
+   pictures.  The $target_dir variable is the root of this tree.
  */
-for ($i=1; $i<=5; $i++) {
-
-  // Build the url test and display string
-  ${"urlstring_$i"}="if(".$picname[$i]." != \"dummy\", if(".$picname[$i]." is not NULL, if(".$picname[$i]." not in ($badlist),";
-  ${"urlstring_$i"}.=" concat(\"<A HREF=\\\"\",REPLACE(".$picplace[$i].".path,\"{{ url:site }}\",\"".$picurl."/\"),\"\\\">";
-  ${"urlstring_$i"}.="<img width=200 src=\\\"\",REPLACE(".$picplace[$i].".path,\"{{ url:site }}\",\"".$picurl."/\"),\"\\\"></A>\"),";
-  ${"urlstring_$i"}.="\"No Image\"),\"No Image\"),\"Dummy Image\")";
-
-  // Build the radio test and display string
-
-  // Radio button test and prelude
-  ${"radiostring_$i"}="if(".$picname[$i]." != \"dummy\", if(".$picname[$i]." is not NULL, if(".$picname[$i]." not in ($badlist), concat(";
-
-  // Loop across the 5 buttons
-  $accum="";
-  for ($j=1; $j<=5; $j++) {
-    $accum.="\"<INPUT type=\\\"radio\\\" name=\\\"".$ordinal[$j]."\\\" id=\\\"".$ordinal[$j]."\\\" value=\\\"\",".$picname[$i].",\"\\\">".$sordinal[$j]."&nbsp;&nbsp;\",\n";
-  }
-
-  // Radio button end
-  ${"radiostring_$i"}.=$accum." \" \"),\"No Image\"),\"No Image\"),\"Dummy Image\")";
-}
 
 // Add new notes
 for ($i=1; $i<=5; $i++) {
@@ -151,151 +101,61 @@ for ($i=1; $i<=5; $i++) {
   }
 }
 
-
-// Connect to Vendor Database
-if (vendor_prepare_db()===false) {
-  $message_error="Unable to connect to database.<BR>No further execution possible.";
+if ($conid <= 46) { // Exised in this version, see PhotoLoungeVote-old.php for this.
+  $message_error="Using the newer format, older voting has been disabled.";
   RenderError($title,$message_error);
   exit();
 }
 
-//Check to see if the table exists
-$tablename="default_fff_".$conid."_photo_lounge";
-$pTableExist = mysql_query("show tables like '".$tablename."'");
-if ($rTableExist = mysql_fetch_array($pTableExist)) {
-
-  if ($conid==46) {
-    $query = <<<EOD
-SELECT
-    concat("\n<!-- 1 -->\n  <TABLE>\n    <TR>\n      <TD>",
-	   if(photo_title is not NULL,concat("Title: ",photo_title,"<BR/>"),"No Title<BR/>"),
-	   if(photo_model is not NULL,concat("Model: ",photo_model,"<BR/>"),"No Model<BR/>"),
-	   if(photo_location is not NULL,concat("Photo Location: ",photo_location,"<BR/>"),"No Location<BR/>"),
-	   "</TD>\n      <TD>\n",
-           $urlstring_1,
-	   "\n</TD></TR>\n    <TR><TD colspan=2>\n",
-           $radiostring_1,
-           "</TD></TR></TABLE>\n<!-- /1 -->\n") AS "1:",
-    concat("\n<!-- 2 -->\n  <TABLE>\n    <TR>\n      <TD>",
-	   if(title1 is not NULL,concat("Title: ",title1,"<BR/>"),"No Title<BR/>"),
-	   if(model1 is not NULL,concat("Model: ",model1,"<BR/>"),"No Model<BR/>"),
-	   if(location1 is not NULL,concat("Photo Location: ",location1,"<BR/>"),"No Location<BR/>"),
-	   "</TD>\n      <TD>",
-	   $urlstring_2,
-	   "</TD></TR>\n    <TR><TD colspan=2>\n",
-           $radiostring_2,
-           "</TD></TR></TABLE>\n<!-- /2 -->\n") AS "2:",
-    concat("\n<!-- 3 -->\n  <TABLE>\n    <TR>\n      <TD>",
-	   if(title2 is not NULL,concat("Title: ",title2,"<BR/>"),"No Title<BR/>"),
-	   if(model2 is not NULL,concat("Model: ",model2,"<BR/>"),"No Model<BR/>"),
-	   if(location2 is not NULL,concat("Photo Location: ",location2,"<BR/>"),"No Location<BR/>"),
-	   "</TD>\n      <TD>",
-	   $urlstring_3,
-	   "</TD></TR>\n    <TR><TD colspan=2>\n",
-           $radiostring_3,
-	   "</TD></TR></TABLE>\n<!-- /3 -->\n") AS "3:",
-    concat("\n<!-- 4 -->\n  <TABLE>\n    <TR>\n      <TD>",
-	   if(title3 is not NULL,concat("Title: ",title3,"<BR/>"),"No Title<BR/>"),
-	   if(model3 is not NULL,concat("Model: ",model3,"<BR/>"),"No Model<BR/>"),
-	   if(location3 is not NULL,concat("Photo Location: ",location3,"<BR/>"),"No Location<BR/>"),
-	   "</TD>\n      <TD>",
-	   $urlstring_4,
-	   "</TD></TR>\n    <TR><TD colspan=2>\n",
-           $radiostring_4,
-	   "</TD></TR></TABLE>\n<!-- /4 -->\n") AS "4:",
-    concat("\n<!-- 5 -->\n  <TABLE>\n    <TR>\n      <TD>",
-	   if(title4 is not NULL,concat("Title: ",title4,"<BR/>"),"No Title<BR/>"),
- 	   if(model4 is not NULL,concat("Model: ",model4,"<BR/>"),"No Model<BR/>"),
-	   "</TD>\n      <TD>",
-	   if(location4 is not NULL,concat("Photo Location: ",location4,"<BR/>"),"No Location<BR/>"),
-	   $urlstring_5,
-	   "</TD></TR>\n    <TR><TD colspan=2>\n",
-           $radiostring_5,
-	   "</TD></TR></TABLE>\n<!-- /5 -->\n") AS "5:"
-  FROM
-      $tablename PL
-    LEFT JOIN default_files PMA ON (PL.photo_image=PMA.id)
-    LEFT JOIN default_files PMB ON (PL.photo1=PMB.id)
-    LEFT JOIN default_files PMC ON (PL.photo2=PMC.id)
-    LEFT JOIN default_files PMD ON (PL.photo3=PMD.id)
-    LEFT JOIN default_files PME ON (PL.photo4=PME.id)
-  WHERE
-    photo_artist_name like "%$artistname%"
-EOD;
-  } else {
-    $query = <<<EOD
+// Sets up the query for the table.
+$query=<<<EOD
 SELECT
     concat("  <TABLE>\n    <TR>\n      <TD>",
-	   if(photo_title is not NULL,concat("Title: ",photo_title,"<BR/>"),"No Title<BR/>"),
-	   if(photo_model_names is not NULL,concat("Model: ",photo_model_names,"<BR/>"),"No Model<BR/>"),
-	   if(photo_artist_location is not NULL,concat("Photo Location: ",photo_artist_location,"<BR/>"),"No Location<BR/>"),
+	   if(phototitle is not NULL,concat("Title: ",phototitle,"<BR/>"),"No Title<BR/>"),
+	   if(photomodel is not NULL,concat("Model: ",photomodel,"<BR/>"),"No Model<BR/>"),
+	   if(photoloc is not NULL,concat("Photo Location: ",photoloc,"<BR/>"),"No Location<BR/>"),
 	   "</TD>\n      <TD>\n",
-           $urlstring_1,
+           "<A HREF=\"$target_dir/",photofile,"\"><img width=300 src=\"$target_dir/",photofile,"\"></A>\n",
 	   "\n</TD></TR>\n    <TR><TD colspan=2>\n",
-           $radiostring_1,
+	   "<INPUT type=\"radio\" name=\"first\" id=\"first\" value=\"",photofile,"\">1st&nbsp;&nbsp;",
+	   "<INPUT type=\"radio\" name=\"second\" id=\"second\" value=\"",photofile,"\">2nd&nbsp;&nbsp;",
+	   "<INPUT type=\"radio\" name=\"third\" id=\"third\" value=\"",photofile,"\">3rd&nbsp;&nbsp;",
+	   "<INPUT type=\"radio\" name=\"forth\" id=\"forth\" value=\"",photofile,"\">4th&nbsp;&nbsp;",
+	   "<INPUT type=\"radio\" name=\"fifth\" id=\"fifth\" value=\"",photofile,"\">5th&nbsp;&nbsp;",
            "</TD></TR></TABLE>\n") AS "Picture"
   FROM
-      $tablename
-    LEFT JOIN default_files PM ON (photo_image=PM.id)
+      PhotoLoungePix
   WHERE
-    photo_artist_name like "%$artistname%"
-EOD;
-  }
-
-  //Retrieve query
-  list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
-
-  $photogquery = <<<EOD
-SELECT
-    DISTINCT photo_artist_name
-  FROM
-      $tablename
-  ORDER BY
-    photo_artist_name
+    badgeid=$artistid
 EOD;
 
-  $result=mysql_query($photogquery,$vlink);
-  while (list($select_artist_name)= mysql_fetch_array($result, MYSQL_NUM)) {
-    $selectstring.="<OPTION value=\"".$select_artist_name."\" ";
-    if ($select_artist_name==$artistname) {
-      $selectstring.="selected";
-    }
-    $selectstring.=">".$select_artist_name."</OPTION>\n";
-  }
+//Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+ 
+// Produce page
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+echo "<FORM name=\"artistform\" method=POST action=\"PhotoLoungeVote.php\">\n";
+echo "<DIV><LABEL for=\"artist\">Select Photographer</LABEL>\n";
+echo "<INPUT type=\"hidden\" name=\"conid\" value=\"$conid\">\n";
+echo "$selectstring\n";
+echo "<P>&nbsp;\n";
+if (isset($_SESSION['return_to_page'])) {
+  echo "<A HREF=\"".$_SESSION['return_to_page']."\">Return to report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</A>";
+}
+echo "<BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Select Submitter</BUTTON></DIV>\n";
+echo "</FORM>\n";
 
-  // Produce page
-  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-  echo "<FORM name=\"artistform\" method=POST action=\"PhotoLoungeVote.php\">\n";
-  echo "<DIV><LABEL for=\"artist\">Select Photographer</LABEL>\n";
-  echo "<INPUT type=\"hidden\" name=\"conid\" value=\"$conid\">\n";
-  echo "<SELECT name=\"artist\">\n";
-  echo "$selectstring\n";
-  echo "</SELECT></DIV>\n";
-  echo "<P>&nbsp;\n";
-  if (isset($_SESSION['return_to_page'])) {
-    echo "<A HREF=\"".$_SESSION['return_to_page']."\">Return to report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</A>";
-  }
-  echo "<BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\">Select Submitter</BUTTON></DIV>\n";
-  echo "</FORM>\n";
-
-  if (empty($artistname)) {
-    correct_footer();
-    exit();
-  }
-
-  echo "<FORM name=\"voteform\" method=POST action=\"PhotoLoungeVote.php\">\n";
-  echo "<HR/><INPUT type=\"submit\" name=\"submit\" value=\"VOTE\">\n";
-  echo "<INPUT type=\"hidden\" name=\"artist\" value=\"$artistname\">\n";
-  echo "<INPUT type=\"hidden\" name=\"conid\" value=\"$conid\">\n";
-  echo renderhtmlreport(1,$elements,$header_array,$element_array);
-  echo "<INPUT type=\"submit\" name=\"submit\" value=\"VOTE\">\n";
-  echo "</FORM>\n";
+if (empty($artistid)) {
   correct_footer();
-
-} else {
-  
-  // Error out due to lack of $tablename
-  $message.="<P>Cannot find table: $tablename.</P>\n";
-  RenderError($title,$message);
   exit();
 }
+
+echo "<FORM name=\"voteform\" method=POST action=\"PhotoLoungeVote.php\">\n";
+echo "<HR/><INPUT type=\"submit\" name=\"submit\" value=\"VOTE\">\n";
+echo "<INPUT type=\"hidden\" name=\"artist\" value=\"$artistname\">\n";
+echo "<INPUT type=\"hidden\" name=\"artistid\" value=\"$artistid\">\n";
+echo "<INPUT type=\"hidden\" name=\"conid\" value=\"$conid\">\n";
+echo renderhtmlreport(1,$elements,$header_array,$element_array);
+echo "<INPUT type=\"submit\" name=\"submit\" value=\"VOTE\">\n";
+echo "</FORM>\n";
+correct_footer();

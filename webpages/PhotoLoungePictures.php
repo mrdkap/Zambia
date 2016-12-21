@@ -9,6 +9,7 @@ $title="Photo Lounge Picture Database";
 $description="<P>All the information from the photo-lounge DB dumped for your viewing pleasure.</P>\n";
 $additionalinfo="<P>Please click on the Artists name (not their email) to be able to vote for the pictures.</P>\n";
 
+
 // Check to see if page can be displayed
 if (!may_I("PhotoRev")) {
   $message_error ="Alas, you do not have the proper permissions to view this page.";
@@ -21,6 +22,9 @@ if (!may_I("PhotoRev")) {
 if ((empty($conid)) or (!is_numeric($conid))) {
   $conid=$_SESSION['conid'];
 }
+
+// Set target_dir
+$target_dir = "../Local/$conid/Photo_Lounge_Submissions";
 
 $query = <<<EOD
 SELECT
@@ -49,15 +53,17 @@ if (vendor_prepare_db()===false) {
 }
 
 //Check to see if the table exists
-$tablename="default_fff_".$conid."_photo_lounge";
-$picurl="https://".VENDORHOSTNAME;
-$pTableExist = mysql_query("show tables like '".$tablename."'");
-if ($rTableExist = mysql_fetch_array($pTableExist)) {
+if ($conid <= 46) {
+  $golink=$vlink;
+  $tablename="default_fff_".$conid."_photo_lounge";
+  $picurl="https://".VENDORHOSTNAME;
+  $pTableExist = mysql_query("show tables like '".$tablename."'");
+  if ($rTableExist = mysql_fetch_array($pTableExist)) {
 
-  $badlist="'22c90b2144a8d85','230fc849168b5e3','c41500755f89b61','73fe3cb361f676a','9517fd0bf8faa65'";
+    $badlist="'22c90b2144a8d85','230fc849168b5e3','c41500755f89b61','73fe3cb361f676a','9517fd0bf8faa65'";
 
-  if ($conid==46) {
-    $query = <<<EOD
+    if ($conid==46) {
+      $query = <<<EOD
 SELECT
     concat("<A HREF=\"PhotoLoungeVote.php?artist=",photo_artist_name,"\">",photo_artist_name,"</A> -- <A HREF=\"mailto:",photo_artist_email,"\">",photo_artist_email,"</A>") AS "Artist",
     if(photo_artist_bio is not NULL,photo_artist_bio,"No Bio Here") AS "Bio",
@@ -118,8 +124,8 @@ SELECT
     photo_artist_email not in ("webmaster@nelaonline.org", "sweet99iya@gmail.com")
 
 EOD;
-  } else {
-    $query = <<<EOD
+    } elseif ($conid < 46) {
+      $query = <<<EOD
 SELECT
     concat("<A HREF=\"PhotoLoungeVote.php?conid=$conid&artist=",photo_artist_name,"\">",photo_artist_name,"</A> -- <A HREF=\"mailto:",photo_artist_email,"\">",photo_artist_email,"</A>") AS "Artist",
     if(photo_artist_bio is not NULL,photo_artist_bio,"No Bio Here") AS "Bio",
@@ -139,28 +145,44 @@ SELECT
   WHERE
     photo_artist_email not in ("webmaster@nelaonline.org", "sweet99iya@gmail.com", "social@nelaonline.org")
 EOD;
+    }
+  } else {
+
+  // Error out due to lack of $tablename
+  $message.="<P>Cannot find table: $tablename.</P>\n";
+  RenderError($title,$message);
+  exit();
   }
+} else {
+  $golink=$link;
+  $query = <<<EOD
+SELECT
+    concat("<A HREF=\"PhotoLoungeVote.php?conid=$conid&artist=",photoartist,"&artistid=",badgeid,"\">",photoartist,"</A> -- <A HREF=\"mailto:",email,"\">",email,"</A>") AS "Artist",
+    concat(genconsent,"/",dvdconsent) AS "Web/DVD",
+    concat("\n  <TABLE>\n    <TR>\n      <TD>",
+	   if(phototitle is not NULL,concat("Title: ",phototitle,"<BR/>"),"No Title<BR/>"),
+	   if(photomodel is not NULL,concat("Model: ",photomodel,"<BR/>"),"No Model<BR/>"),
+	   if(photoloc is not NULL,concat("Photo Location: ",photoloc,"<BR/>"),"No Location<BR/>"),
+	   if(photonotes is not NULL,concat("Notes: ",photonotes,"<BR/>"),"No Location<BR/>"),
+	   "</TD>\n      <TD>",
+	   if(photofile is not NULL, concat("<img height=150 src=\"$target_dir/",photofile,"\"></A>"),"No Image"),
+	   "</TD></TR>",
+	   if(photofile is not NULL, concat("    <TR>\n      <TD>Vote: ",photofile,"</TD></TR>"),""),
+	   "</TABLE>\n") AS "Photo"
+  FROM
+      PhotoLoungePix
+    JOIN CongoDump USING (badgeid)
+EOD;
+}
 
-  //Retrieve query
-  list($elements,$header_array,$element_array)=queryreport($query,$vlink,$title,$description,0);
+//Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$golink,$title,$description,0);
 
-  // Produce vote tally
-  for ($i=1; $i<=$elements; $i++) {
-    if ($conid==46) {
-      for ($j=1; $j<=5; $j++) {
-	$fullstring=$element_array[$i][$j.":"];
-	$endstring=strstr($fullstring,"Vote: ");
-	$workstring=strstr($endstring,"<",true);
-	$checkstring=trim(strstr($workstring," ")," ");
-	if (!empty($picture_array[$checkstring])) {
-	  $fixstring="Vote: ".$picture_array[$checkstring];
-	} else {
-	  $fixstring="Vote: None";
-	}
-	$element_array[$i][$j.":"]=str_replace($workstring,$fixstring,$fullstring);
-      }
-    } else {
-      $fullstring=$element_array[$i]["Photo"];
+// Produce vote tally
+for ($i=1; $i<=$elements; $i++) {
+  if ($conid==46) {
+    for ($j=1; $j<=5; $j++) {
+      $fullstring=$element_array[$i][$j.":"];
       $endstring=strstr($fullstring,"Vote: ");
       $workstring=strstr($endstring,"<",true);
       $checkstring=trim(strstr($workstring," ")," ");
@@ -169,19 +191,23 @@ EOD;
       } else {
 	$fixstring="Vote: None";
       }
-      $element_array[$i]["Photo"]=str_replace($workstring,$fixstring,$fullstring);
+      $element_array[$i][$j.":"]=str_replace($workstring,$fixstring,$fullstring);
     }
+  } else {
+    $fullstring=$element_array[$i]["Photo"];
+    $endstring=strstr($fullstring,"Vote: ");
+    $workstring=strstr($endstring,"<",true);
+    $checkstring=trim(strstr($workstring," ")," ");
+    if (!empty($picture_array[$checkstring])) {
+      $fixstring="Vote: ".$picture_array[$checkstring];
+    } else {
+      $fixstring="Vote: None";
+    }
+    $element_array[$i]["Photo"]=str_replace($workstring,$fixstring,$fullstring);
   }
-
-  // Produce page
-  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-  echo renderhtmlreport(1,$elements,$header_array,$element_array);
-  correct_footer();
-
-} else {
-  
-  // Error out due to lack of $tablename
-  $message.="<P>Cannot find table: $tablename.</P>\n";
-  RenderError($title,$message);
-  exit();
 }
+
+// Produce page
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+echo renderhtmlreport(1,$elements,$header_array,$element_array);
+correct_footer();

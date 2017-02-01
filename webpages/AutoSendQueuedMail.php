@@ -15,13 +15,13 @@ $usephpmail="True";
 
 // For test verbose=1, otherwise for silent, verbose='';
 $verbose='';
-if ($_GET['verbose'] == "Yes") { $verbose = true; }
+if ($_GET['verbose'] == "Yes") { $verbose=true; }
 
 // Limit the number of emails sent at a time
-$batchnumber=1;
+$batchnumber=96;
 
 // Space (in seconds) between emails sent
-$sleeptime=25;
+$sleeptime=290;
 
 // If we are looking for the error messages, verbose will put it to the page, otherwise, just send it.
 if ($verbose) {

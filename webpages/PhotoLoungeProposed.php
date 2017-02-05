@@ -1,10 +1,17 @@
 <?php
-require_once('PhotoCommonCode.php');
+require_once('PostingCommonCode.php');
+global $link;
+if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
+  $conid=$_GET['conid'];
+}
+
+// Test for conid being passed in
+if ($conid == "") {
+  $conid=$_SESSION['conid'];
+}
 
 // Localisms
 $_SESSION['return_to_page']='PhotoLoungeProposed.php';
-$conid=$_SESSION['conid'];
-
 $title="Propose to Submit Photos";
 $verbiage=get_verbiage("PhotoLoungeProposed_0");
 if ($verbiage != "") {
@@ -65,6 +72,8 @@ if ((isset ($_POST['update'])) and ($_POST['update']=="Yes")) {
   $recordstring.= "Bio: " . htmlspecialchars_decode($_POST["raw_bio"]) . "\n";
   fwrite ($recordfile, $recordstring);
   fclose($recordfile);
+  $message.="Accout for " . htmlspecialchars_decode($_POST["pubsname"]) . " has been submitted to our process.\n";
+  $message.="Look for an email in the next few days with your password.\n";
  }
 
 // Begin the display

@@ -1,7 +1,9 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
-$conid=$_GET['conid'];
+if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
+  $conid=$_GET['conid'];
+}
 
 // Test for conid being passed in
 if ($conid == "") {
@@ -123,15 +125,7 @@ if ($phase_array['Brainstorm'] == '0' ) {
   $progbody.="      </LI>\n";
 }
 if ($phase_array['Photo Submission'] == '0') {
-  $progbody.="      <LI><A HREF=\"BrainstormRedirectLogin.php?conid=$conid&target=photo\">Propose to Submit to the Photo Lounge</A></LI>\n";
-  $progbody.="      <LI>\n";
-  $progbody.="      <FORM name=\"photosubmitform\" method=\"POST\" action=\"doLogin.php\">\n";
-  $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
-  $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
-  $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"photo\">\n";
-  $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"Propose to Submit to the Photo Lounge\">\n";
-  $progbody.="      </FORM>\n";
-  $progbody.="      </LI>\n";
+  $progbody.="      <LI><A HREF=\"PhotoLoungeProposed.php\">Propose to Submit to the Photo Lounge</A></LI>\n";
 }
 if ($phase_array['Feedback Available'] == '0') {
   $progbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";

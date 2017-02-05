@@ -214,17 +214,9 @@ for ($i=1; $i<=$conrows; $i++) {
     $progbody.="      </FORM>\n";
     $progbody.="      </LI>\n";
   }
-if ($phase_array[$conid]['Photo Submission'] == '0') {
-  $progbody.="      <LI>\n";
-  $progbody.="      <FORM name=\"photosubmitform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
-  $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
-  $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
-  $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"photo\">\n";
-  $progbody.="        <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
-  $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"Propose to Submit to the Photo Lounge\">\n";
-  $progbody.="      </FORM>\n";
-  $progbody.="      </LI>\n";
-}
+  if ($phase_array[$conid]['Photo Submission'] == '0') {
+    $progbody.="      <LI><A HREF=\"PhotoLoungeProposed.php\">Propose to Submit to the Photo Lounge</A></LI>\n";
+  }
   if ($phase_array[$conid]['Feedback Available'] == '0') {
     $progbody.="      <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";
   }

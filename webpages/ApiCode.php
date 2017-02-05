@@ -146,6 +146,11 @@ function GenInfoString($api_p,$conid) {
     $progbody.="      </LI>\n";
   }
 
+  // If the Photo Submission is available via the phase, include it.
+  if ($phase_array['Photo Submission'] == '0') {
+    $progbody.="      <LI><A HREF=\"PhotoLoungeProposed.php\">Propose to Submit to the Photo Lounge</A></LI>\n";
+  }
+
   // If the feedback information is available via the phase and the time, include it.
   if ($phase_array['Feedback Available'] == '0') {
     $progbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";
@@ -153,7 +158,11 @@ function GenInfoString($api_p,$conid) {
 
   // Switch the wording on the login, if the con has passed.
   if ($nowis < $constart) { 
-    $progbody.="      <LI><A HREF=\"http://$conurl/webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+    if ($phase_array['Photo Submission'] == '0') {
+      $progbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Photo Submissions/Volunteer Login</A></LI>\n";
+    } else {
+      $progbody.="      <LI><A HREF=\"http://$conurl/webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+    }
   } else {
     $progbody.="      <LI><A HREF=\"http://$conurl/webpages/login.php?newconid=$conid\">Presenter Login</A></LI>\n";
   }

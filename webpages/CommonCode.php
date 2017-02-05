@@ -729,7 +729,11 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
       }
     }
     if ($single_line_p != "T") { $sched.="<P>"; }
-    $sched.=sprintf("<DT><B>%s</B>",$element_array[$i]['Title']);
+    if ($format != "bios") {
+      $sched.=sprintf("<DT><B>%s</B>",$element_array[$i]['Title']);
+    } else {
+      $sched.=sprintf("<B>%s</B>",$element_array[$i]['Title']);
+    }
     if (($single_line_p == "T") and
 	($format != "bios") and
 	(!empty($element_array[$i]['Participants'])) and
@@ -768,11 +772,15 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
 	$sched.="</P></DD>\n";
       }
     } else {
-      $sched.="</DT>\n";
+      if ($format != "bios") {
+	$sched.="</DT>\n";
+      } else {
+	$sched.="<BR>\n";
+      }
     }
     if (($element_array[$i][$header_break] != $element_array[$i + 1][$header_break]) and
 	($format == "bios")) {
-      $sched.="</DL>\n";
+      $sched.="</DT></DL>\n";
       if ((isset($element_array[$i]['istable'])) and ($element_array[$i]['istable'] > 0)) {
 	$sched.="    </TD>\n  </TR>\n</TABLE>\n";
       }

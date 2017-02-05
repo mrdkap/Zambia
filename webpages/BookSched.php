@@ -35,6 +35,19 @@ if (isset($_GET['short'])) {
   }
 }
 
+$endtime_p="F";
+$endtime_opcode="&endtime=Y";
+$endtime_opstring="end times";
+if (isset($_GET['endtime'])) {
+  if ($_GET['endtime'] == "Y") {
+    $endtime_p="T";
+    $endtime_opcode="";
+    $endtime_opstring="duration";
+  } elseif ($_GET['endtime'] == "N") {
+    $endtime_p="F";
+  }
+}
+
 // Default
 $pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname,if(moderator in ('1','Yes'),'(m)','') SEPARATOR ', ')) AS 'Participants'";
 
@@ -71,13 +84,31 @@ if ($format == "sched") {
   $header_break="Start Time";
 }
 
+// Duration vs End Time
+if ($endtime_p == "T") {
+  $duration="GROUP_CONCAT(DISTINCT DATE_FORMAT(ADDTIME(ADDTIME(constartdate,starttime),duration),'%a %l:%i %p') SEPARATOR ', ') AS 'Duration'";
+} else {
+  $duration="CASE
+      WHEN HOUR(duration) < 1 THEN
+        concat(date_format(duration,'%i'),'min')
+      WHEN MINUTE(duration)=0 THEN
+        concat(date_format(duration,'%k'),'hr')
+      ELSE
+        concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
+      END AS Duration";
+}
+
 // LOCALIZATIONS
 $_SESSION['return_to_page']="BookSched.php?format=$format";
 $additionalinfo="<P>See also this ";
 if ($single_line_p=="T") {
   $additionalinfo.="<A HREF=\"BookSched.php?format=$format\">full</A>,\n";
+  $additionalinfo.="this <A HREF=\"BookSched.php?format=$format$endtime_opcode\">full with $endtime_opstring</A>,\n";
+  $additionalinfo.="this <A HREF=\"BookSched.php?format=$format&short=Y$endtime_opcode\">short with $endtime_opstring</A>,\n";
 } else {
   $additionalinfo.="<A HREF=\"BookSched.php?format=$format&short=Y\">short</A>,\n";
+  $additionalinfo.="this <A HREF=\"BookSched.php?format=$format$endtime_opcode\">full with $endtime_opstring</A>,\n";
+  $additionalinfo.="this <A HREF=\"BookSched.php?format=$format&short=Y$endtime_opcode\">short with $endtime_opstring</A>,\n";
 }
 $additionalinfo.="the <A HREF=\"BookBios.php\">bios</A>\n";
 $additionalinfo.="<A HREF=\"BookBios.php?pic_p=N\">(without images)</A>\n";
@@ -111,14 +142,7 @@ SELECT
     concat(title_good_web,if((subtitle_good_web IS NULL),"",concat(": ",subtitle_good_web))) AS Title,
     $pubsname,
     GROUP_CONCAT(DISTINCT DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p') SEPARATOR ', ') AS 'Start Time',
-    CASE
-      WHEN HOUR(duration) < 1 THEN
-        concat(date_format(duration,'%i'),'min')
-      WHEN MINUTE(duration)=0 THEN
-        concat(date_format(duration,'%k'),'hr')
-      ELSE
-        concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
-      END AS Duration,
+    $duration,
     GROUP_CONCAT(DISTINCT roomname SEPARATOR ', ') AS Room,
     if(desc_good_book IS NULL,
       concat("***EDIT PLEASE***",if(desc_good_web IS NULL,"",desc_good_web)),

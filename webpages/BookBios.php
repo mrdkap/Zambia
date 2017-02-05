@@ -36,7 +36,7 @@ function getPictureDestEdit($checkbadge) {
   $pictureweb="../Local/Participant_Images_web/$checkbadge";
   $picturebook="../Local/Participant_Images_book/$checkbadge";
   if (file_exists($picturebook)) {
-    $picture=sprintf("<img width=300 src=\"%s\">",$picturebook);
+    $picture=sprintf("<img src=\"%s\">",$picturebook);
   } elseif (file_exists($pictureweb)) {
     $picture=sprintf("Picture for editing at: http://%s/webpages/%s",
 		     $_SESSION['conurl'], $pictureweb);
@@ -245,10 +245,10 @@ if ($short == "T") {
 
 	if ($picture != "") {
 	  if ($tablecount == 0) {
-	    $biostring.="<TABLE>\n  <TR>\n    <TD valign=\"top\" width=310>";
+	    $biostring.="<TABLE>\n  <TR>\n    <TD valign=\"top\" width=100>";
 	    $tablecount++;
 	  } else {
-	    $biostring.="    </TD>\n  </TR>\n  <TR>\n    <TD width=310>";
+	    $biostring.="    </TD>\n  </TR>\n  <TR>\n    <TD width=100>";
 	  }
 	  $biostring.=sprintf("%s</TD>\n    <TD>",$picture);
 	}
@@ -256,12 +256,12 @@ if ($short == "T") {
 	if ($bio != "") {
 	  $biostring.=$bio;
 	}
-	$biostring.="</DT>\n";
+	$biostring.="</DT>\n<DT>\n";
 	if ($uri != "") {
-	  $biostring.=sprintf("  <DT>%s</DT>\n",$uri);
+	  $biostring.=sprintf("  %s<BR>\n",$uri);
 	}
 	if ($pronoun != "") {
-	  $biostring.=sprintf("  <DT>Preferred pronoun: %s</DT>\n",$pronoun);
+	  $biostring.=sprintf("  Preferred pronoun: %s<BR>\n",$pronoun);
 	}
       } // End of Language Switch
       $element_array[$i]['Bio']=$biostring;

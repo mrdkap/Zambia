@@ -172,6 +172,10 @@ EOD;
 		    ($participant_arr['name_en-us_raw_book_bio'] == "")) {
 		  $participant_arr['name_en-us_raw_book_bio'] = $participant_arr['pubsname'];
 		}
+		if ((!isset($participant_arr['name_en-us_raw_badge_bio'])) or
+		    ($participant_arr['name_en-us_raw_badge_bio'] == "")) {
+		  $participant_arr['name_en-us_raw_badge_bio'] = $participant_arr['pubsname'];
+		}
 
 		/* We are only updating the raw bios here, so only a 3-depth
 		   search happens on biolang, biotypename, and biodest. */

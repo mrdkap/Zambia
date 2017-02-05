@@ -7,7 +7,9 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   $passon="?".$_SERVER['QUERY_STRING'];
 }
 
-$conid=$_GET['conid'];
+if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
+  $conid=$_GET['conid'];
+}
 
 // Test for conid being passed in
 if ($conid == "") {

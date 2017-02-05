@@ -1,7 +1,9 @@
 <?php
 require_once('PostingCommonCode.php');
 global $link;
-$conid=$_GET['conid'];
+if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
+  $conid=$_GET['conid'];
+}
 
 // Test for conid being passed in
 if ($conid == "") {

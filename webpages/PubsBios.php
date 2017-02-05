@@ -40,7 +40,9 @@ function getPictureDestEdit($checkbadge) {
 }
 
 // Pass in variables
-$conid=$_GET['conid'];
+if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
+  $conid=$_GET['conid'];
+}
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
 $short="F";

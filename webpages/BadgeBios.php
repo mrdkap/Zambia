@@ -86,7 +86,7 @@ SELECT
   WHERE
     conid=$conid AND
     badgeid!=110 AND
-    conrolenotes not in ("Pony Paddock", "Rope Lounge", "Whip Lounge", "Captive Moments Photography Exhibit", "Hypnosis Lounge", "Bootblacks", "Convention Sponsor", "Brainstorm Coordinator", "General Staff")
+  conrolenotes not in ("Pony Paddock", "Rope Lounge", "Whip Lounge", "Captive Moments Photography Exhibit", "NELA's Erotic/Fetish Photo Exhibit", "Hypnosis Lounge", "Bootblacks", "Straight Jacket Lounge", "Chill Lounge", "Convention Sponsor", "Brainstorm Coordinator", "General Staff", "Programming Volunteers", "Evening Events Volunteers", "Valet Staff", "Hotel Staff", "Private Safety Staff", "Medical Organization")
   ORDER BY
     pubsname
 EOD;

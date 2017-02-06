@@ -11,7 +11,7 @@ $minwidth=1200;
 $minheight=1200;
 $maxwidth=30000;
 $maxheight=30000;
-$maxfilesize=5000000;
+$maxfilesize=6000000;
 
 // Limit this to just the folks in PhotoSub permissions.
  if (!may_I('PhotoSub')) {

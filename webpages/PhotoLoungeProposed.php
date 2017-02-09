@@ -72,7 +72,7 @@ if ((isset ($_POST['update'])) and ($_POST['update']=="Yes")) {
   $recordstring.= "Bio: " . htmlspecialchars_decode($_POST["raw_bio"]) . "\n";
   fwrite ($recordfile, $recordstring);
   fclose($recordfile);
-  $message.="Accout for " . htmlspecialchars_decode($_POST["pubsname"]) . " has been submitted to our process.\n";
+  $message.="Account for " . htmlspecialchars_decode($_POST["pubsname"]) . " has been submitted to our process.\n";
   $message.="Look for an email in the next few days with your password.\n";
  }
 

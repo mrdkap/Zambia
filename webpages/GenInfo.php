@@ -105,7 +105,9 @@ if ($phase_array['Prog Available'] == '0' ) {
   $progbody.="        <A HREF=\"PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
   $progbody.="      <LI><A HREF=\"PubsBios.php?conid=$conid\">Presenter Bios</A>\n";
   $progbody.="        <A HREF=\"PubsBios.php?conid=$conid&short=Y\">(short)</A></LI>\n";
-  $progbody.="      <LI><A HREF=\"KonOpas.php?conid=$conid\">Web App</A></LI>\n";
+  if ($phase_array['WebApp'] == '0' ) {
+    $progbody.="      <LI><A HREF=\"KonOpas.php?conid=$conid\">Web App</A></LI>\n";
+  }
 }
 if ($phase_array['Brainstorm'] == '0' ) {
   $progbody.="      <LI><A HREF=\"BrainstormRedirectLogin.php?conid=$conid\">Class/Presenter Submission</A></LI>\n";

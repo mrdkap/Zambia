@@ -165,7 +165,7 @@ SELECT
 	   if(photoloc is not NULL,concat("Photo Location: ",photoloc,"<BR/>"),"No Location<BR/>"),
 	   if(photonotes is not NULL,concat("Notes: ",photonotes,"<BR/>"),"No Location<BR/>"),
 	   "</TD>\n      <TD>",
-	   if(photofile is not NULL, concat("<A HREF=\"$target_dir/",photofile,"\"><img height=150 src=\"$target_dir/",photofile,"\"></A>"),"No Image"),
+	   if(photofile is not NULL, concat("<A HREF=\"$target_dir/",photofile,"\"><img height=150 src=\"$target_dir/.thmb/",photofile,"\"></A>"),"No Image"),
 	   "</TD></TR>",
 	   if(photofile is not NULL, concat("    <TR>\n      <TD>Vote: ",photofile,"</TD></TR>"),""),
 	   "</TABLE>\n") AS "Photo"

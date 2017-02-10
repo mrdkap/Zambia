@@ -15,6 +15,8 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   <DD id="classintro">Preview and then print the Introduction pages, including the roles info for everyone applicable.</DD>
   <DT id="logistics"><A HREF="LogisticsPrint.php">Room States</A></DT>
   <DD id="logistics">Preview and then print the Logistics pages for con logistics management.</DD>
+  <DT id="photocontact"><A HREF="PhotoLoungeContactSheet.php">Photo Lounge Contact Sheet</A></DT>
+  <DD id="photocontact">All of the pictures in the photo lounge this year, with descriptions and biograpical information.</DD>
   <DT id="gridwide"><A HREF="Postgrid-wide.php?print_p=y">Times x Rooms</A><DT>
   <DD id="gridwide">Print the public grid with the Times across the top and the Rooms down the left side.</DD>
   <DT id="gridtall"><A HREF="Postgrid.php?print_p=y">Rooms x Times</A><DT>

@@ -210,11 +210,11 @@ if (file_exists("../Local/$conid/Org_Welcome")) {
 }
 
 $rules="";
-if (file_exists("../Local/$conid/Rules")) {
+if (file_exists("../Local/$conid/KRules")) {
   $rules.="<DIV style=\" display: block; width: 100%; float: left; \">\n";
   $rules.="<A NAME=\"rules\">&nbsp;</A>\n";
   $rules.="<HR>\n<H3><center>Rules</center></H3>\n<BR>\n";
-  $rules.=file_get_contents("../Local/$conid/Rules");
+  $rules.=file_get_contents("../Local/$conid/KRules");
   $rules.="</DIV>\n";
 }
 

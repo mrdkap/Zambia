@@ -859,3 +859,48 @@ IMG.tabborder {
         width: 10px;
 }
 /* End of settings needed make the tabs work */   
+/* Maybe get collapse to work? */
+/*.collapse{text-decoration:underline} */
+/*.collapse+* {
+              text-decoration:underline;
+              color: #002985;
+              border:2px;
+              visibility:visible;
+              max-height:100%;
+              opacity:100;
+
+}
+
+H3.collapse {
+              text-decoration:underline;
+              color: #808080;
+              border:2px;
+              visibility:visible;
+              max-height:100%;
+              opacity:100;
+ } */
+
+/*.collapse,#info_view
+.collapse-open{cursor:pointer}#info_view
+.collapse:before,#info_view
+.collapse-open:before{content:"» "}#info_view
+.collapse{border:none}#info_view
+.collapse+*{display:none}#info_view
+
+
+.collapse-list{margin-bottom:0;padding-left:0;list-style:none}
+@media (max-width:$screen-xs-max){}
+@media (min-width:$screen-sm){}
+@media (min-width:$screen-sm){}
+.collapse-open{display:none}
+.collapse-painel{visibility:hidden;max-height:0;opacity:0;transition:max-height .1s,visibility .3s,opacity .3s}
+.collapse-open:checked ~
+.collapse-painel{max-height:100%;opacity:100;visibility:visible}
+.collapse-list li{margin-bottom:10px}
+.collapse-list
+.collapse-btn{border:#eaeaea solid 1px;background:#e8e8e8;border-radius:2px;cursor:pointer;display:block;padding:5px 10px;}
+.collapse-list
+.collapse-btn:hover{background:#eaeaea}
+.collapse-list
+.collapse-inner{padding:10px}
+*/

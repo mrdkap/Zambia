@@ -195,6 +195,8 @@ for ($i=1; $i<=$conrows; $i++) {
     $progbody.="        <A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
     $progbody.="      <LI><A HREF=\"webpages/PubsBios.php?conid=$conid\">Presenter Bios</A>\n";
     $progbody.="        <A HREF=\"webpages/PubsBios.php?conid=$conid&short=Y\">(short)</A></LI>\n";
+    $progbody.="      <LI><A HREF=\"webpages/KonOpas.php?conid=$conid\">Web App</A></LI>\n";
+
   }
   if ($phase_array[$conid]['Brainstorm'] == '0' ) {
     $progbody.="      <LI>\n";

@@ -27,7 +27,15 @@ if ((isset($_GET['release'])) and ($_GET['release']=="Yes")) {
   $release_p=true;
 }
 
+// Set the target_dir (with badgeid) and the thumbnail dir
 $target_dir = "../Local/$conid/Photo_Lounge_Submissions/$badgeid-";
+$thumbnail_dir = "../Local/$conid/Photo_Lounge_Submissions/.thmb";
+
+// Make sure target and thumbnail dir exist
+if (!file_exists($thumbnail_dir)) {
+    mkdir($thumbnail_dir, 0777, true);
+}
+
 if((isset($_POST["submit"])) and ($_POST["submit"]=="Upload Image")) {
 
   // Photo information (starting with default values)

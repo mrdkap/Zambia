@@ -10,6 +10,7 @@ $_SESSION['return_to_page']="PhotoLoungeContactSheet.php";
 $title="Photo Lounge Contact Sheet";
 $description="<P>These are the curated Photo Lounge pictures, with the information we have for them.</P>\n";
 $additionalinfo="<P><A HREF=\"PhotoLoungeContactSheet.php?print_p=Y\">Print</A> this.</P>\n";
+$additionalinfo.="<P><A HREF=\"PhotoLoungeCollectVotes.php\">Change</A> what is included in this.</P>\n<HR>\n";
 
 // For printing
 if ($_GET['print_p']=="Y") {
@@ -17,7 +18,7 @@ if ($_GET['print_p']=="Y") {
 }
 
 // Set the directory that we keep the files in
-$target_dir="../Local/$conid/Photo_Lounge_Accepted/";
+$target_dir="../Local/$conid/Photo_Lounge_Submissions/";
 
 // Printed document information
 class MYPDF extends TCPDF {
@@ -47,22 +48,6 @@ $pdf->setLanguageArray($l);
 $pdf->setFontSubsetting(true);
 $pdf->SetFont('helvetica', '', 10, '', true);
 
-// Generate the list of pictures.
-$image_array = array();
-if (is_dir($target_dir)) {
-  if ($dh = opendir($target_dir)) {
-    while (($file = readdir($dh)) !== false) {
-      if (!is_dir($dir.$file)) {
-	$image_array[] = "'$file'";
-      }
-    }
-    closedir($dh);
-  }
-}
-
-// Create the image_string out of the image_array generated above.
-$image_string=implode(",",$image_array);
-
 // Pull the picture information and thumbnail for each picture.
 $query=<<<EOD
 SELECT
@@ -74,12 +59,13 @@ SELECT
 			"Location: ",photoloc
 			SEPARATOR "</TD>\n    <TD>"),
 	   "</TD>\n  </TR>\n</TABLE>") AS "Pictures",
+    GROUP_CONCAT("<A HREF=StaffEditPhotoLoungeInfo.php?photoid=",photoid,">edit pic</A>" SEPARATOR " :: ") AS "Update",
     badgeid
   FROM
       PhotoLoungePix
   WHERE
     conid=$conid AND
-    photofile in ($image_string)
+    includestatus="a"
   GROUP BY
     badgeid
 EOD;
@@ -128,7 +114,13 @@ for ($i=1; $i<=$rows; $i++) {
   $printstring.="\n<P>$biostring</P>\n";
   // Present the body of the page, or put to a pdf file.
   if ($print_p == "") {
-    echo "$printstring<HR>\n";
+    echo "$printstring";
+    if (may_I("SuperPhotoRev")) {
+      echo "<P>Updates: " . $element_array[$i]['Update'] . " :: ";
+      echo "<A HREF=\"StaffEditBios.php?qno=1&badgeid=".$element_array[$i]['badgeid']."&badgeids=".$element_array[$i]['badgeid']."\">";
+      echo "edit bio</A></P>\n";
+    }
+    echo "<HR>\n";
   } else {
     $pdf->AddPage();
     $pdf->writeHTML($printstring, true, false, true, false, '');

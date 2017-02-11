@@ -7,8 +7,16 @@ $conid=$_GET['conid'];
 // LOCALISMS
 $title="Photo Lounge Picture Database";
 $description="<P>All the information from the photo-lounge DB dumped for your viewing pleasure.</P>\n";
-$additionalinfo="<P>Please click on the Artists name (not their email) to be able to vote for the pictures.</P>\n";
+$additionalinfo="<P>Please click on the Artists name (not their email) to be able to\n";
+$additionalinfo.="vote for the pictures.</P>\n";
+$additionalinfo="<P>If there are no/missing images, please have your Zambia folks run\n";
+$additionalinfo.="the create_thumbnails.sh script for you.</P>\n";
 
+// Check to see if the voted bits can be selected
+if (may_I("SuperPhotoRev")) {
+  $additionalinfo.="<P><A HREF=\"PhotoLoungeCollectVotes.php\">Select</A> ";
+  $additionalinfo.="pictures voted on for inclusion in the Photo Lounge.</P>\n";
+}
 
 // Check to see if page can be displayed
 if (!may_I("PhotoRev")) {
@@ -23,8 +31,9 @@ if ((empty($conid)) or (!is_numeric($conid))) {
   $conid=$_SESSION['conid'];
 }
 
-// Set target_dir
+// Set target_dir and thumbnail_dir
 $target_dir = "../Local/$conid/Photo_Lounge_Submissions";
+$thumbnail_dir = "$target_dir/.thmb";
 
 $query = <<<EOD
 SELECT
@@ -165,7 +174,7 @@ SELECT
 	   if(photoloc is not NULL,concat("Photo Location: ",photoloc,"<BR/>"),"No Location<BR/>"),
 	   if(photonotes is not NULL,concat("Notes: ",photonotes,"<BR/>"),"No Location<BR/>"),
 	   "</TD>\n      <TD>",
-	   if(photofile is not NULL, concat("<A HREF=\"$target_dir/",photofile,"\"><img height=150 src=\"$target_dir/.thmb/",photofile,"\"></A>"),"No Image"),
+	   if(photofile is not NULL, concat("<A HREF=\"$target_dir/",photofile,"\"><img height=150 src=\"$thumbnail_dir/",photofile,"\"></A>"),"No Image"),
 	   "</TD></TR>",
 	   if(photofile is not NULL, concat("    <TR>\n      <TD>Vote: ",photofile,"</TD></TR>"),""),
 	   "</TABLE>\n") AS "Photo"

@@ -12,6 +12,10 @@ if ((empty($conid)) or (!is_numeric($conid))) {
   $conid=$_SESSION['conid'];
 }
 
+// Get photo submitter
+$artistid=$_GET['artistid'];
+if (empty($artistid)) {$artistid=$_POST['artistid'];}
+
 // Set target_dir
 $target_dir = "../Local/$conid/Photo_Lounge_Submissions";
 
@@ -20,15 +24,6 @@ if (!may_I("PhotoRev")) {
   $message_error ="Alas, you do not have the proper permissions to view this page.";
   $message_error.=" If you think this is in error, please, get in touch with an administrator.";
   RenderError($title,$message_error);
-  exit();
-}
- 
-// Error out due to lack of submitter
-$artistid=$_GET['artistid'];
-if (empty($artistid)) {$artistid=$_POST['artistid'];}
-if (empty($artistid)) {
-  $message.="<P>There needs to be a Photo Submitter named.  Please <A HREF=\"PhotoLoungePictures.php\">Return</A> to the thumbnail display.</P>\n";
-  RenderError($title,$message);
   exit();
 }
 
@@ -71,6 +66,12 @@ $additionalinfo.="fifth choice.  You can vote on up to 5, but are not required t
 $additionalinfo.="many (or any, if none strike your fancy).  To see the state of the voting go\n";
 $additionalinfo.="<A HREF=\"PhotoLoungePictures.php\">back</A> to the thumbnail display.</P>\n";
 
+// Check to see if the voted bits can be selected
+if (may_I("SuperPhotoRev")) {
+  $additionalinfo.="<P><A HREF=\"PhotoLoungeCollectVotes.php\">Select</A> ";
+  $additionalinfo.="pictures voted on for inclusion in the Photo Lounge.</P>\n";
+}
+
 // Some local variables to be able to do the munging below.
 
 // Make the passed radio buttons a little more readable.
@@ -107,7 +108,7 @@ if ($conid <= 46) { // Exised in this version, see PhotoLoungeVote-old.php for t
   exit();
 }
 
-// Sets up the query for the table.
+// Sets up the query for the table if there is an artistid
 $query=<<<EOD
 SELECT
     concat("  <TABLE>\n    <TR>\n      <TD>",
@@ -130,7 +131,9 @@ SELECT
 EOD;
 
 //Retrieve query
-list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+if (!empty($artistid)) {
+  list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+}
  
 // Produce page
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);

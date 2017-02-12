@@ -46,6 +46,7 @@ if ($_POST['update']=="please") {
 			   "photoartist='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photoartist"])))."'",
 			   "photomodel='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photomodel"])))."'",
 			   "photoloc='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photoloc"])))."'",
+			   "photonotes='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photonotes"])))."'",
 			   "genconsent='".$genconsent_p."'",
 			   "dvdconsent='".$dvdconsent_p."'");
   $message.=update_table_element($link, $title, "PhotoLoungePix", $pairedvalue_array, "photoid", $photoid);
@@ -60,6 +61,7 @@ SELECT
     photoartist,
     photomodel,
     photoloc,
+    photonotes,
     genconsent,
     dvdconsent
   FROM
@@ -88,6 +90,7 @@ echo "  <DD>Title: <INPUT type=text name=\"phototitle\" size=50 value=\"".$eleme
 echo "  <DD>Artist: <INPUT type=text name=\"photoartist\" size=50 value=\"".$element_array[1]['photoartist']."\"></DD>\n";
 echo "  <DD>Model: <INPUT type=text name=\"photomodel\" size=50 value=\"".$element_array[1]['photomodel']."\"></DD>\n";
 echo "  <DD>Location: <INPUT type=text name=\"photoloc\" size=50 value=\"".$element_array[1]['photoloc']."\"></DD>\n";
+echo "  <DD>Notes: <INPUT type=text name=\"photonotes\" size=50 value=\"".$element_array[1]['photonotes']."\"></DD>\n";
 echo "  <DD>General Consent: <INPUT type=text name=\"genconsent\" size=50 value=\"".$element_array[1]['genconsent']."\"></DD>\n";
 echo "  <DD>DVD Consent: <INPUT type=text name=\"dvdconsent\" size=50 value=\"".$element_array[1]['dvdconsent']."\"></DD>\n";
 echo "</DL>\n";

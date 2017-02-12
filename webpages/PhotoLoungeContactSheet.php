@@ -54,9 +54,10 @@ SELECT
     concat("<TABLE width=100%>\n  <TR>\n    <TD>",
 	   GROUP_CONCAT("<img src=\"../Local/$conid/Photo_Lounge_Submissions/.thmb/",photofile,"\"><br>",
 			"Title: ",phototitle,"<br>",
-			"Artist: ",photoartist,"<br>",
-			"Model: ",photomodel,"<br>",
-			"Location: ",photoloc
+			if((photoartist="No Photographer Listed"),"",concat("Artist: ",photoartist,"<br>")),
+			if((photomodel="No Model Listed"),"",concat("Model: ",photomodel,"<br>")),
+			if((photoloc="No Location Listed"),"",concat("Location: ",photoloc,"<br>")),
+			if((photonotes="NULL"),"",concat("Notes: ",photonotes,"<br>"))
 			SEPARATOR "</TD>\n    <TD>"),
 	   "</TD>\n  </TR>\n</TABLE>") AS "Pictures",
     GROUP_CONCAT("<A HREF=StaffEditPhotoLoungeInfo.php?photoid=",photoid,">edit pic</A>" SEPARATOR " :: ") AS "Update",
@@ -101,15 +102,19 @@ for ($i=1; $i<=$rows; $i++) {
     $biostring.=$bioinfo['bio_en-us_good_book_bio'];
   } elseif (!empty($bioinfo['bio_en-us_good_web_bio'])) {
     $biostring.=$bioinfo['bio_en-us_good_web_bio'];
-  } elseif (!empty($bioinfo['bio_en-us_edited_book_bio'])) {
-    $biostring.=$bioinfo['bio_en-us_edited_book_bio'];
-  } elseif (!empty($bioinfo['bio_en-us_edited_web_bio'])) {
-    $biostring.=$bioinfo['bio_en-us_raw_edited_bio'];
-  } elseif (!empty($bioinfo['bio_en-us_raw_book_bio'])) {
-    $biostring.=$bioinfo['bio_en-us_raw_book_bio'];
-  } elseif (!empty($bioinfo['bio_en-us_raw_web_bio'])) {
-    $biostring.=$bioinfo['bio_en-us_raw_web_bio'];
   }
+  if (!empty($bioinfo['uri_en-us_good_book_bio'])) {
+    $biostring.=" URL: ".$bioinfo['uri_en-us_good_book_bio'];
+  } elseif (!empty($bioinfo['uri_en-us_good_web_bio'])) {
+    $biostring.=" URL: ".$bioinfo['uri_en-us_good_web_bio'];
+  }
+  if (!empty($bioinfo['pronoun_en-us_good_book_bio'])) {
+    $biostring.=" Preferred Pronoun: ".$bioinfo['pronoun_en-us_good_book_bio'];
+  } elseif (!empty($bioinfo['pronoun_en-us_good_web_bio'])) {
+    $biostring.=" Preferred Pronoun: ".$bioinfo['pronoun_en-us_good_web_bio'];
+  }
+
+
   $printstring.=$element_array[$i]["Pictures"];
   $printstring.="\n<P>$biostring</P>\n";
   // Present the body of the page, or put to a pdf file.

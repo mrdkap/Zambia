@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Photo Lounge Flow in Zambia</title>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Percy" />
+<meta  name="description" content="Zambia is a piece of Conference Management Software.  This document is a &quot;How To&quot; guide assisting in the way of keeping track of Volunteer Hours for the Zambia FFF-branch instance for your conference.  This is still a work in progress."
+ />
+<meta  name="keywords" content="Zambia, Documentation, FFF branch" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Photo Lounge Flow in Zambia</h1>
+<p>
+Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in the way of keeping track of Volunteer Hours for the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+</p>
+<p>
+Photo Lounge Flow in Zambia
+</p>
+<p>
+Percy &lt;NELA.Percy@gmail.com&gt;
+</p>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Introduction</a></li>
+<li><a href="#sec-2">2. Basic Setup</a>
+<ul>
+<li><a href="#sec-2-1">2.1. PhaseTypes</a></li>
+<li><a href="#sec-2-2">2.2. PermissionRoles</a></li>
+<li><a href="#sec-2-3">2.3. ConRoles</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Scripts</a></li>
+<li><a href="#sec-4">4. Files</a></li>
+<li><a href="#sec-5">5. Flow</a></li>
+<li><a href="#sec-6">6. Using the imagination software</a>
+<ul>
+<li><a href="#sec-6-1">6.1. File exerpt:</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The Photo Lounge is a complex addition to Zambia that might not be
+used by all groups.  Some groups have used it, some have not.  Like
+all optional pieces, this can simply be untouched, and un-setup, and
+it will not bother anyone.  On the other hand, if you wish to use
+it, and have the ability to host something like a Photo Lounge or
+Art Gallery or the like, this is the right place to be doing so.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Basic Setup</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Like all sub-sections of Zambia, to activate this you have to make
+sure you have a number of elements in your con setup in place.
+</p>
+</div>
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> PhaseTypes</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+A pair of PhaseTypes included in your con.  They would be "Photo
+Voting (17)" and "Photo Submissions (18)".
+</p>
+
+<p>
+Toggling the Photo Submission Phase, adds and removes the inclusion
+of the link to propose yourself as a photo submitter (a public
+page, which writes to a file, we'll get to that later) and your
+standard login to include the photo submitting words in the login
+string.  It also allows for the photo submission pages to be
+active.
+</p>
+
+<p>
+Toggling the Photo Voting Phase, adds and remvoes the links or
+access to voting for those who are of the right permissions to
+vote.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> PermissionRoles</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+The three permission roles associated with the Photo Lounge are:
+</p>
+<ul class="org-ul">
+<li>PhotoSub
+</li>
+<li>PhotoRev
+</li>
+<li>SuperPhotoRev
+</li>
+</ul>
+
+<p>
+PhotoSub is pretty straight-forward.  It is for those who are
+allowed to submit photos.  If they have no other role, then their
+login will take them directly to the Photo Submissions page.  If
+they do have other roles with the event (like presenting or
+volunteering) it will add the tab to their tab bar.  If they have
+other super-roles, then, to access the Photo Submission tab, they
+have to be under the "Participant View" section of the website to
+be able to submit their photos.
+</p>
+
+<p>
+PhotoRev is for those folks trusted with the job of reviewing
+photos.  It should open to the appropriate welcome page, and have
+the Photo Review tab available to them.  That leads to the voting
+section so they can express their opinions on what might or might
+not be included in the Photo Lounge.  There are still some quirks
+around voting, and one can game the system, by voting multiple
+times.  This will have to be coded around at some point in the
+future.
+</p>
+
+<p>
+SuperPhotoRev allows one to be able to select the voted on pictures
+for the lounge, give people permission to be PhotoRev and PhotoSub,
+and has StaffView.  This might want to become more limited, if the
+Super doesn't have other powers, to limit their access and review.
+Also the Super should be able to toggle on and off the Phases, but
+that also is still a work in progress.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> ConRoles</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+There is one con role that works with this, but that is the host of
+the Photography Lounge, so not directly relevant to this document.
+See the document on Lounge Hosts.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Scripts</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+There are two scripts that are useful/necessary to the well-running
+of the Photo Lounge Flow.  They are:
+</p>
+<ul class="org-ul">
+<li>create_thumbnails.sh
+</li>
+<li>create_imagination_files.sh
+</li>
+</ul>
+
+<p>
+The create_thumbnails.sh script does just that.  Creates the
+thumbnail files.  It should be run periodically on a host that has
+access to the files, and can run convert from the imagemagick suite
+of programs to make the smaller, and much more useful, thumbnail
+files.
+</p>
+
+<p>
+The create_imagination_files.sh script is a script that will pull
+all the accepted files into a directory so that the imagination
+software from <a href="http://imagination.sourceforge.net/">http://imagination.sourceforge.net/</a> can be used to
+create the slideshow.
+</p>
+
+<p>
+Both are fairly straight-forward and simple, but useful.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Files</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+There is a possiblity you would want to tweak the values at the top
+of the PhotoLoungeSubmit.php file.  They are:
+</p>
+<ul class="org-ul">
+<li>$minwidth=1200;
+</li>
+<li>$minheight=1200;
+</li>
+<li>$maxwidth=30000;
+</li>
+<li>$maxheight=30000;
+</li>
+<li>$maxfilesize=6000000;
+</li>
+</ul>
+
+<p>
+and they map to, the minimum width, minumum height (both must
+be more than), maxumum width, maximum height (both must be less
+than) and maximum file size (must be less than).
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Flow</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li>The flow starts when the call for Photo Submissions begins.
+</li>
+<li>The SuperPhotoRev either asks for the phase to be set, or sets the
+phase to open, so that people might either submit, or apply to
+submit.
+</li>
+<li>If self-service selection is enabled, then anyone who has been a
+Photo Submitter before can self-select into having those
+permissions again, on their own.
+</li>
+<li>Anyone can be migrated to be allowed to be a Photo Submitter,
+again by the SuperPhotoRev.
+</li>
+<li>If it is desired to just set everyone who has before been a Photo
+Submitter, to have that bit set for this event (replacing $conid
+with the current conid, of course):
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-html">SELECT
+    DISTINCT concat("INSERT INTO UserHasPermissionRole VALUES (",badgeid,",41,$conid);")
+  FROM
+      UserHasPermissionRole
+  WHERE
+    permroleid=41;
+</pre>
+</div>
+<ul class="org-ul">
+<li>The PhotoSubs then submit photos:
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-html">YourWebPath/webpages/PhotoLoungeSubmit.php
+</pre>
+</div>
+<ul class="org-ul">
+<li>Once the photos are all submitted or the SuperPhotoRev is done
+soliciting them, that phase should be closed, and the Photo Voting
+phase should be initiated.
+</li>
+<li>This would be a good time to have the create_thumbnails.sh script
+run.  That will make sure that all the thumbnails are in place,
+before the next step.
+</li>
+<li>Folks that either have self-selected, if self-service has been
+enabled, or have been selected by the SuperPhotoRev may now go and
+vote on all the pictures:
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-html">YourWebPath/webpages/PhotoLoungePictures.php
+</pre>
+</div>
+<p>
+or by going directly to the individual artist selections:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-html">YourWebPath/webpages/PhotoLoungeVote.php
+</pre>
+</div>
+<ul class="org-ul">
+<li>Once sufficient pictures have been voted on, the voting phase can
+close.
+</li>
+<li>The selection process, of the pictures that are voted on have
+several steps, some of which can go in various orders, to be
+determined by the SuperPhotoRev.
+</li>
+<li>View and select which of the voted-upon sets of pictures should be
+included into the lounge:
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-html">YourWebPath/webpages/PhotoLoungeCollectVotes.php
+</pre>
+</div>
+<ul class="org-ul">
+<li>Using the contact sheet, get in touch with all the appropriate
+PhotoSub folks to let them know what was selected.
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-html">YourWebPath/webpages/PhotoLoungeContactSheet.php
+</pre>
+</div>
+<ul class="org-ul">
+<li>If there are any changes, they can be managed from the contact
+sheet:
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-html">YourWebPath/webpages/PhotoLoungeContactSheet.php
+</pre>
+</div>
+<p>
+the view of the voted on pictures:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-html">YourWebPath/webpages/PhotoLoungeCollectVotes.php
+</pre>
+</div>
+<p>
+or the report that also has the same information, without the
+possible confusion of changing what was selected:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-html">YourWebPath/webpages/genreport.php?reportname=picturesubmiswvote
+</pre>
+</div>
+<ul class="org-ul">
+<li>Once the photos are all selected, this is a good time to run the
+create_imagination_files.sh script so that there is a directory to
+pull the appropriate files from, and create the slideshow from.
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Using the imagination software</h2>
+<div class="outline-text-2" id="text-6">
+<ul class="org-ul">
+<li>Create a new slideshow: VOB/576 HD, no rescale, background=black
+</li>
+<li>Import the images from the directory created by the
+create_imagination_files.sh script (probably
+Local/$conid/Photo_Lounge_Accepted)
+</li>
+<li>Select all the images, and set the slide duration to 5.
+</li>
+<li>Select all the images, and set a random transition, to be
+modified.
+</li>
+<li>Select the speed (4)
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-6-1" class="outline-3">
+<h3 id="sec-6-1"><span class="section-number-3">6.1</span> File exerpt:</h3>
+<div class="outline-text-3" id="text-6-1">
+<div class="org-src-container">
+
+<pre class="src src-html">[slideshow settings]
+video format=576
+background color=0;0;0;
+distort images=false
+number of slides=75
+
+[slide 1]
+filename=/home/dkap/hcarperoot/Downloads/PhotoLounge/Anthelian_1_mg_7182a.jpg
+angle=0
+duration=5
+transition_id=13
+speed=4
+no_points=0
+anim id=0
+anim duration=1
+text pos=4
+placing=0
+font=Sans 12
+font color=0;0;0;1;
+font bgcolor=1;1;1;1;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: January 2016</p>
+<p class="author">Author: Percy</p>
+<p class="email">Email: <a href="mailto:NELA.Percy@gmail.com">NELA.Percy@gmail.com</a></p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

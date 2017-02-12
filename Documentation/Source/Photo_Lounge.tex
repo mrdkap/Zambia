@@ -1,0 +1,309 @@
+\documentclass[captions=tablesignature]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{booktabs}
+\usepackage[scaled]{beraserif}
+\usepackage[scaled]{berasans}
+\usepackage[scaled]{beramono}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{fancyhdr}
+\usepackage{subfig}
+\usepackage{listings}
+\lstnewenvironment{common-lispcode}
+{\lstset{language={HTML},basicstyle={\ttfamily\footnotesize},frame=single,breaklines=true}}
+{}
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\description\compactdesc
+\let\enumerate\compactenum
+\usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
+\pagestyle{fancy}
+\setcounter{secnumdepth}{3}
+\author{Percy\thanks{NELA.Percy@gmail.com}}
+\date{January 2016}
+\title{Photo Lounge Flow in Zambia}
+\hypersetup{
+  pdfkeywords={Zambia, Documentation, FFF branch},
+  pdfsubject={Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in the way of keeping track of Volunteer Hours for the Zambia FFF-branch instance for your conference.  This is still a work in progress.},
+  pdfcreator={}}
+\begin{document}
+
+\maketitle
+\pagenumbering{roman}
+\thispagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{}
+\rhead{}
+\chead{}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+\begin{abstract}
+\vspace{5cm}
+{\LARGE{\textbf{Abstract:\\}}}
+Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in the way of keeping track of Volunteer Hours for the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+\end{abstract}
+\newpage
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+\chead{
+Photo Lounge Flow in Zambia
+}
+\lfoot{
+Percy <NELA.Percy@gmail.com>
+}
+\rfoot{\thepage}
+\setcounter{tocdepth}{3}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+\section{Introduction}
+\label{sec-1}
+
+The Photo Lounge is a complex addition to Zambia that might not be
+used by all groups.  Some groups have used it, some have not.  Like
+all optional pieces, this can simply be untouched, and un-setup, and
+it will not bother anyone.  On the other hand, if you wish to use
+it, and have the ability to host something like a Photo Lounge or
+Art Gallery or the like, this is the right place to be doing so.
+\section{Basic Setup}
+\label{sec-2}
+
+Like all sub-sections of Zambia, to activate this you have to make
+sure you have a number of elements in your con setup in place.
+\subsection{PhaseTypes}
+\label{sec-2-1}
+A pair of PhaseTypes included in your con.  They would be "Photo
+Voting (17)" and "Photo Submissions (18)".
+
+Toggling the Photo Submission Phase, adds and removes the inclusion
+of the link to propose yourself as a photo submitter (a public
+page, which writes to a file, we'll get to that later) and your
+standard login to include the photo submitting words in the login
+string.  It also allows for the photo submission pages to be
+active.
+
+Toggling the Photo Voting Phase, adds and remvoes the links or
+access to voting for those who are of the right permissions to
+vote.
+
+\subsection{PermissionRoles}
+\label{sec-2-2}
+The three permission roles associated with the Photo Lounge are:
+\begin{itemize}
+\item PhotoSub
+\item PhotoRev
+\item SuperPhotoRev
+\end{itemize}
+
+PhotoSub is pretty straight-forward.  It is for those who are
+allowed to submit photos.  If they have no other role, then their
+login will take them directly to the Photo Submissions page.  If
+they do have other roles with the event (like presenting or
+volunteering) it will add the tab to their tab bar.  If they have
+other super-roles, then, to access the Photo Submission tab, they
+have to be under the "Participant View" section of the website to
+be able to submit their photos.
+
+PhotoRev is for those folks trusted with the job of reviewing
+photos.  It should open to the appropriate welcome page, and have
+the Photo Review tab available to them.  That leads to the voting
+section so they can express their opinions on what might or might
+not be included in the Photo Lounge.  There are still some quirks
+around voting, and one can game the system, by voting multiple
+times.  This will have to be coded around at some point in the
+future.
+
+SuperPhotoRev allows one to be able to select the voted on pictures
+for the lounge, give people permission to be PhotoRev and PhotoSub,
+and has StaffView.  This might want to become more limited, if the
+Super doesn't have other powers, to limit their access and review.
+Also the Super should be able to toggle on and off the Phases, but
+that also is still a work in progress.
+
+\subsection{ConRoles}
+\label{sec-2-3}
+There is one con role that works with this, but that is the host of
+the Photography Lounge, so not directly relevant to this document.
+See the document on Lounge Hosts.
+
+\section{Scripts}
+\label{sec-3}
+
+There are two scripts that are useful/necessary to the well-running
+of the Photo Lounge Flow.  They are:
+\begin{itemize}
+\item create\_thumbnails.sh
+\item create\_imagination\_files.sh
+\end{itemize}
+
+The create\_thumbnails.sh script does just that.  Creates the
+thumbnail files.  It should be run periodically on a host that has
+access to the files, and can run convert from the imagemagick suite
+of programs to make the smaller, and much more useful, thumbnail
+files.
+
+The create\_imagination\_files.sh script is a script that will pull
+all the accepted files into a directory so that the imagination
+software from \url{http://imagination.sourceforge.net/} can be used to
+create the slideshow.
+
+Both are fairly straight-forward and simple, but useful.
+
+\section{Files}
+\label{sec-4}
+There is a possiblity you would want to tweak the values at the top
+of the PhotoLoungeSubmit.php file.  They are:
+\begin{itemize}
+\item \$minwidth=1200;
+\item \$minheight=1200;
+\item \$maxwidth=30000;
+\item \$maxheight=30000;
+\item \$maxfilesize=6000000;
+\end{itemize}
+
+and they map to, the minimum width, minumum height (both must
+be more than), maxumum width, maximum height (both must be less
+than) and maximum file size (must be less than).
+
+\section{Flow}
+\label{sec-5}
+\begin{itemize}
+\item The flow starts when the call for Photo Submissions begins.
+\item The SuperPhotoRev either asks for the phase to be set, or sets the
+phase to open, so that people might either submit, or apply to
+submit.
+\item If self-service selection is enabled, then anyone who has been a
+Photo Submitter before can self-select into having those
+permissions again, on their own.
+\item Anyone can be migrated to be allowed to be a Photo Submitter,
+again by the SuperPhotoRev.
+\item If it is desired to just set everyone who has before been a Photo
+Submitter, to have that bit set for this event (replacing \$conid
+with the current conid, of course):
+\end{itemize}
+\begin{verbatim}
+SELECT
+    DISTINCT concat("INSERT INTO UserHasPermissionRole VALUES (",badgeid,",41,$conid);")
+  FROM
+      UserHasPermissionRole
+  WHERE
+    permroleid=41;
+\end{verbatim}
+\begin{itemize}
+\item The PhotoSubs then submit photos:
+\end{itemize}
+\begin{verbatim}
+YourWebPath/webpages/PhotoLoungeSubmit.php
+\end{verbatim}
+\begin{itemize}
+\item Once the photos are all submitted or the SuperPhotoRev is done
+soliciting them, that phase should be closed, and the Photo Voting
+phase should be initiated.
+\item This would be a good time to have the create\_thumbnails.sh script
+run.  That will make sure that all the thumbnails are in place,
+before the next step.
+\item Folks that either have self-selected, if self-service has been
+enabled, or have been selected by the SuperPhotoRev may now go and
+vote on all the pictures:
+\end{itemize}
+\begin{verbatim}
+YourWebPath/webpages/PhotoLoungePictures.php
+\end{verbatim}
+or by going directly to the individual artist selections:
+\begin{verbatim}
+YourWebPath/webpages/PhotoLoungeVote.php
+\end{verbatim}
+\begin{itemize}
+\item Once sufficient pictures have been voted on, the voting phase can
+close.
+\item The selection process, of the pictures that are voted on have
+several steps, some of which can go in various orders, to be
+determined by the SuperPhotoRev.
+\item View and select which of the voted-upon sets of pictures should be
+included into the lounge:
+\end{itemize}
+\begin{verbatim}
+YourWebPath/webpages/PhotoLoungeCollectVotes.php
+\end{verbatim}
+\begin{itemize}
+\item Using the contact sheet, get in touch with all the appropriate
+PhotoSub folks to let them know what was selected.
+\end{itemize}
+\begin{verbatim}
+YourWebPath/webpages/PhotoLoungeContactSheet.php
+\end{verbatim}
+\begin{itemize}
+\item If there are any changes, they can be managed from the contact
+sheet:
+\end{itemize}
+\begin{verbatim}
+YourWebPath/webpages/PhotoLoungeContactSheet.php
+\end{verbatim}
+the view of the voted on pictures:
+\begin{verbatim}
+YourWebPath/webpages/PhotoLoungeCollectVotes.php
+\end{verbatim}
+or the report that also has the same information, without the
+possible confusion of changing what was selected:
+\begin{verbatim}
+YourWebPath/webpages/genreport.php?reportname=picturesubmiswvote
+\end{verbatim}
+\begin{itemize}
+\item Once the photos are all selected, this is a good time to run the
+create\_imagination\_files.sh script so that there is a directory to
+pull the appropriate files from, and create the slideshow from.
+\end{itemize}
+
+\section{Using the imagination software}
+\label{sec-6}
+\begin{itemize}
+\item Create a new slideshow: VOB/576 HD, no rescale, background=black
+\item Import the images from the directory created by the
+create\_imagination\_files.sh script (probably
+Local/\$conid/Photo\_Lounge\_Accepted)
+\item Select all the images, and set the slide duration to 5.
+\item Select all the images, and set a random transition, to be
+modified.
+\item Select the speed (4)
+\end{itemize}
+\subsection{File exerpt:}
+\label{sec-6-1}
+\begin{verbatim}
+[slideshow settings]
+video format=576
+background color=0;0;0;
+distort images=false
+number of slides=75
+
+[slide 1]
+filename=/home/dkap/hcarperoot/Downloads/PhotoLounge/Anthelian_1_mg_7182a.jpg
+angle=0
+duration=5
+transition_id=13
+speed=4
+no_points=0
+anim id=0
+anim duration=1
+text pos=4
+placing=0
+font=Sans 12
+font color=0;0;0;1;
+font bgcolor=1;1;1;1;
+\end{verbatim}
+\end{document}

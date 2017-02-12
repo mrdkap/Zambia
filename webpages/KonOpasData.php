@@ -9,9 +9,10 @@ if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
 // Set the conname from the conid
-$conquery="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
+$conquery="SELECT conname,connumdays,conurl,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
 list($connamerows,$connameheader_array,$conname_array)=queryreport($conquery,$link,$title,$description,0);
 $conname=$conname_array[1]['conname'];
+$conurl=$conname_array[1]['conurl'];
 $connumdays=$conname_array[1]['connumdays'];
 $Grid_Spacer=$conname_array[1]['congridspacer'];
 $ConStart=$conname_array[1]['constartdate'];
@@ -147,7 +148,7 @@ SELECT
     concat('"name": [ "',name_good_web,'" ]') AS name,
     concat('"tags": []') AS tags,
     concat('"prog": [ ',GROUP_CONCAT(DISTINCT '"',sessionid,'"' SEPARATOR ", "),' ]') AS prog,
-    concat('"links": { ',if(uri_good_web IS NULL,"",concat('"url" : "',replace(uri_good_web,'"',''),'" ')),' }') AS links,
+    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_web/',badgeid,'",',if(uri_good_web IS NULL,"",concat('\n            "url" : "',replace(uri_good_web,'"',''),'"')),'\n        }') AS links,
     concat('"bio": "',if(bio_good_web IS NULL,"",replace(bio_good_web,'"',"''")),if(pronoun_good_web IS NULL,"",concat(" Preferred Pronoun: ",pronoun_good_web)),'" ') AS bio
   FROM
       ParticipantOnSession

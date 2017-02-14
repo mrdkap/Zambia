@@ -16,7 +16,7 @@ $title="Welcome Letters Printing";
 $print_p=$_GET['print_p'];
 $individual=$_GET['individual'];
 $type_array=array("'Panel'","'Class'","'Author Reading'","'SIG/BOF/MnG'","'Lounge'","'EVENT'","'Social'");
-$role_array=array("'Participant'","'Programming'","'SuperProgramming'");
+$role_array=array("'Participant'","'Programming'","'SuperProgramming'","'Events'","'SuperEvents'","'Lounge'","'SuperLounge'","'Watch'","'SuperWatch'");
 $type_string=implode(",",$type_array);
 $role_string=implode(",",$role_array);
 
@@ -50,7 +50,7 @@ class MYPDF extends TCPDF {
   public function Footer() {
     $this->SetY(-15);
     $this->SetFont("helvetica", 'I', 8);
-    $this->Cell(0, 10, "Copyright 2011 New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
+    $this->Cell(0, 10, "Copyright ".date('Y')." New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
   }
 }
 
@@ -110,7 +110,12 @@ list($rows,$participant_header,$participant_array)=queryreport($query,$link,$tit
 // if ($print_p =="") {topofpagereport($title,$description,$additionalinfo,$message,$message_error);}
 
 foreach ($participant_array as $participant) {
-  $workstring = "<P>&nbsp;</P><P>Dear ".$participant['pubsname'].",</P>";
+  //  $workstring = "<P>&nbsp;</P><P>Dear ".$participant['pubsname'].",</P>";
+  $workstring="<DIV align=\"right\"><font size=\"17\"><B>".$participant['pubsname'];
+  $workstring.="</B></font><br>\n";
+  $workstring.=str_replace("Participant","Presenter",str_replace("Watch","IRT",$participant['Role']));
+  $workstring.="</DIV>\n";
+  $workstring.="<P>&nbsp;</P><P>Dear ".$participant['pubsname'].",</P>";
   $verbiage=get_verbiage("Welcome_Letter_0");
   if ($verbiage != "") {
     ob_start();
@@ -125,7 +130,7 @@ foreach ($participant_array as $participant) {
 	if ($verbiage != "") {
 	  ob_start();
 	  eval ('?>' . $verbiage);
-	  $checkstring.=ob_get_clean();
+	  $checkstring=ob_get_clean();
           if (strpos($workstring,$checkstring) === false) { $workstring .= $checkstring; }
 	}
       }

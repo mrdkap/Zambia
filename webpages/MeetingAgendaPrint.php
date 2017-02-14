@@ -54,7 +54,7 @@ class MYPDF extends TCPDF {
   public function Footer() {
     $this->SetY(-15);
     $this->SetFont("helvetica", 'I', 8);
-    $this->Cell(0, 10, "Copyright 2011 New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
+    $this->Cell(0, 10, "Copyright ".date('Y')." New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
   }
 }
 

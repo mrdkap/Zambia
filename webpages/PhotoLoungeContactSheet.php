@@ -92,7 +92,7 @@ for ($i=1; $i<=$rows; $i++) {
   } elseif (!empty($bioinfo['name_en-us_edited_book_bio'])) {
     $biostring.=$bioinfo['name_en-us_edited_book_bio'];
   } elseif (!empty($bioinfo['name_en-us_edited_web_bio'])) {
-    $biostring.=$bioinfo['name_en-us_raw_edited_bio'];
+    $biostring.=$bioinfo['name_en-us_edited_web_bio'];
   } elseif (!empty($bioinfo['name_en-us_raw_book_bio'])) {
     $biostring.=$bioinfo['name_en-us_raw_book_bio'];
   } elseif (!empty($bioinfo['name_en-us_raw_web_bio'])) {

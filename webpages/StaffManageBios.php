@@ -10,8 +10,9 @@ if ($LanguageList=="LANGUAGE_LIST") {unset($LanguageList);}
 $title="Staff - Manage Participant Biographies";
 $description="<P>Report of status of Participant Biographies.</P>";
 $additionalinfo ="<P>This report is limited to participants who are currently listed as attending and interested in particpating.</P>\n";
-$staffadditionalinfo ="<P>These are the con staff members who have reports.</P>\n";
+$staffadditionalinfo="<P>These are the con staff members who have reports.</P>\n";
 $descadditionalinfo="<P>These are the descriptions for the schedule elements for this event.</P>\n";
+$volsadditionalinfo="<P>These are the volunteers who need badges.</P>\n";
 $message_error.=$message2;
 
 if (!empty($_GET['badgeids'])) {
@@ -29,6 +30,7 @@ if (!empty($_GET['badgeids'])) {
 
 $additionalinfo.=$addinfo;
 $staffadditionalinfo.=$addinfo;
+$volsadditionalinfo.=$addinfo;
 $descadditionalinfo.="<P>Still to come. Easier to edit elswhere still: \n";
 $descadditionalinfo.="<A HREF=genreport.php?reportname=conflictsessdesc>Missing Web or ";
 $descadditionalinfo.="Program Book Description</A>::<A HREF=StaffSched.php?format=desc>";
@@ -63,7 +65,7 @@ if (isset($_GET['unlock'])) {
 
 $query1= <<<EOD
 SELECT
-    B.badgeid,
+    DISTINCT B.badgeid,
     biostatename,
     concat(biolang, " ", biotypename, " ", biodestname) AS col,
     LB.pubsname AS lockedby,
@@ -124,7 +126,7 @@ while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
 // Staff
 $query2= <<<EOD
 SELECT
-    B.badgeid,
+    DISTINCT B.badgeid,
     biostatename,
     concat(biolang, " ", biotypename, " ", biodestname) AS col,
     LB.pubsname AS lockedby,
@@ -235,10 +237,72 @@ while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
    }
   $count_desc_col[$row['col']]++;
  }
+
+$query4= <<<EOD
+SELECT
+    DISTINCT B.badgeid,
+    biostatename,
+    concat(biolang, " ", biotypename, " ", biodestname) AS col,
+    LB.pubsname AS lockedby,
+    P.pubsname,
+    biotext
+  FROM
+      Participants P
+    JOIN Bios B USING (badgeid)
+    JOIN BioTypes USING (biotypeid)
+    JOIN BioStates USING (biostateid)
+    JOIN BioDests USING (biodestid)
+    JOIN UserHasPermissionRole USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN Interested USING (badgeid,conid)
+    JOIN InterestedTypes USING (interestedtypeid)
+    LEFT JOIN Participants LB on B.biolockedby = LB.badgeid
+  WHERE
+    interestedtypename in ('Yes') AND
+    conid=$conid AND
+    biotypename not in ('web','book','bio','uri') AND
+    biodestname in ('badge') AND
+  permrolename in ('General', 'Programming','Events','Lounge')
+EOD;
+
+// Specific set of badgeids.
+if ((!empty($_GET['badgeids'])) and ($_GET['qno']==4)) {
+  $query4.=" AND B.badgeid in (".$badgeid_list.")";
+ }
+
+// Specific languages.
+if (isset($LanguageList)) {
+  $query4.=" AND biolang in $LanguageList";
+ }
+
+// Give some semblance of order to the names
+$query4.=" ORDER BY P.pubsname";
+
+if (($result=mysql_query($query4,$link))===false) {
+  $message_error.=$query4."<BR>\nError retrieving data from database.\n";
+  RenderError($title,$message_error);
+  exit();
+ }
+
+$numvolsrows=mysql_num_rows($result);
+
+while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+  $check_vols_element[$row['badgeid']][$row['col']][$row['biostatename']]=$row['biotext'];
+  $count_vols_badgeid[$row['badgeid']]++;
+  $vols_pubsname[$row['badgeid']]=$row['pubsname'];
+  /*if (((!isset($lockedby[$row['badgeid']])) or ($lockedby[$row['badgeid']] = "")) and
+   (isset($row['lockedby']))) { */
+  if (isset($row['lockedby'])) {
+    $vols_lockedby[$row['badgeid']]=$row['lockedby'];
+   }
+  $count_vols_col[$row['col']]++;
+ }
+
 // Set up the necessary switches so we can know what exactly is being operated on.
 $printquery1=renderbiosreport($badgeid_list,1,$check_element,$numrows,$count_badgeid,$count_col,$pubsname,$lockedby);
 $printquery2=renderbiosreport($badgeid_list,2,$check_staff_element,$numstaffrows,$count_staff_badgeid,$count_staff_col,$staff_pubsname,$staff_lockedby);
 $printquery3=renderbiosreport($badgeid_list,3,$check_desc_element,$numdescrows,$count_desc_badgeid,$count_desc_col,$desc_pubsname,$desc_lockedby);
+$printquery4=renderbiosreport($badgeid_list,4,$check_vols_element,$numvolsrows,$count_vols_badgeid,$count_vols_col,$vols_pubsname,$vols_lockedby);
 
 //Start the page
 if (!empty($_GET['badgeids'])) {
@@ -253,6 +317,10 @@ if (!empty($_GET['badgeids'])) {
     $additionalinfo=$descadditionalinfo;
     topofpagereport($title,$description,$additionalinfo,$message,$message_error);
     echo $printquery3;
+  } elseif ($_GET['qno']=="4") {
+    $additionalinfo=$volsadditionalinfo;
+    topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+    echo $printquery4;
   } else {
     topofpagereport($title,$description,$additionalinfo,$message,$message_error);
     echo "<P>Query Number: " . $_GET['qno'] . " doesn't match any allowed values.</P>\n";
@@ -264,6 +332,8 @@ if (!empty($_GET['badgeids'])) {
   echo $printquery2;
   echo $descadditionalinfo;
   echo $printquery3;
+  echo $volsadditionalinfo;
+  echo $printquery4;
 }
 
 // End the page correctly

@@ -162,7 +162,7 @@ SELECT
     JOIN UserHasPermissionRole USING (badgeid,conid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
-  permrolename in ('Participant', 'Programming', 'SuperProgramming') AND
+  permrolename in ('Participant', 'Programming', 'SuperProgramming','Events','SuperEvents','Lounge','SuperLounge','Watch','SuperWatch') AND
     conid=$conid
   GROUP BY
     badgeid

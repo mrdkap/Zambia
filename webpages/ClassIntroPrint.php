@@ -45,7 +45,7 @@ class MYPDF extends TCPDF {
   public function Footer() {
     $this->SetY(-15);
     $this->SetFont("helvetica", 'I', 8);
-    $this->Cell(0, 10, "Copyright 2011 New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
+    $this->Cell(0, 10, "Copyright ".date('Y')." New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
   }
 }
 
@@ -76,7 +76,7 @@ $pdf->SetFont('helvetica', '', 10, '', true);
  us to print one person's information, as well. */
 $query = <<<EOD
 SELECT
-    pubsname,
+    DISTINCT pubsname,
     title,
     DATE_FORMAT(ADDTIME(constartdate,starttime), '%a %l:%i %p') as StartTime,
     CASE

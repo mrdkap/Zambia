@@ -166,12 +166,12 @@ $positional_array[2]['col']=252;
 $query=<<<EOD
 SELECT
     DISTINCT badgeid,
-    pubsname,
+    if ((name_good_badge IS NOT NULL),name_good_badge,pubsname) AS "Name",
     CONCAT(title,
       if((moderator in ("1","YES")),' (moderating)',''),
       if((aidedecamp in ("1","YES")),' (assisting)',''),
       if((volunteer in ("1","YES")),' (outside wristband checker)',''),
-      if((introducer in ("1","YES")),' (announcer/inside room attendant)','')) AS Title,
+      if((introducer in ("1","YES")),' (announcer/inside room attendant)','')) AS "Title",
      CONCAT(DATE_FORMAT(ADDTIME(constartdate,starttime),'%a %l:%i %p'),
 	' - ',
         CASE
@@ -180,7 +180,7 @@ SELECT
           ELSE concat(date_format(duration,'%k'),'hr ',date_format(duration,'%i'),'min')
           END,
         ' - ',
-	roomname) as Info,
+	roomname) AS "Info",
      sessionid
   FROM
       Sessions
@@ -191,8 +191,21 @@ SELECT
     JOIN UserHasPermissionRole UHPR USING (badgeid,conid)
     JOIN PermissionRoles USING (permroleid)
     JOIN ConInfo USING (conid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as name_good_badge
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('name') AND
+	  biostatename in ('good') AND
+	  biodestname in ('badge') AND
+	  biolang='en-us') NGB USING (badgeid)
   WHERE
-    permrolename IN ('Participant','General','Programming') AND
+    permrolename IN ('Participant','General','Programming','Events','Lounge','Watch') AND
     $whichparticipants
     conid=$conid
   ORDER BY
@@ -231,7 +244,7 @@ while ($i <= $rows) {
     $new_participant_array[$j]['Schedule'].="\nstroke\ngrestore\n\n";
     $j++;
     $new_participant_array[$j]['badgeid']=$participant_array[$i]['badgeid'];
-    $new_participant_array[$j]['pubsname']=$participant_array[$i]['pubsname'];
+    $new_participant_array[$j]['Name']=$participant_array[$i]['Name'];
     $new_participant_array[$j]['Schedule']=" ) show\n";
     if ((!empty($importantinfo0)) or (!empty($importantinfo1))) {
       $first=$startpos+$offset-($k*2*$offset);
@@ -272,7 +285,7 @@ while ($k <= $new_rows) {
       echo " ";
       echo $positional_array[$j]['row'];
       echo "\ntranslate\nlabelclip\nnewpath\nISOArial ".$fontsize." scalefont setfont\n".$name_indent." ".$startpos." moveto\n( ";
-      echo $new_participant_array[$k]['pubsname'];
+      echo $new_participant_array[$k]['Name'];
       if (isset($new_participant_array[$k]['Schedule'])) {
 	echo $new_participant_array[$k++]['Schedule'];
        } else {

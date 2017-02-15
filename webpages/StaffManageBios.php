@@ -260,9 +260,9 @@ SELECT
   WHERE
     interestedtypename in ('Yes') AND
     conid=$conid AND
-    biotypename not in ('web','book','bio','uri') AND
+    biotypename in ('name','pronoun') AND
     biodestname in ('badge') AND
-  permrolename in ('General', 'Programming','Events','Lounge')
+    permrolename in ('General', 'Programming','Events','Lounge','Watch')
 EOD;
 
 // Specific set of badgeids.

@@ -222,7 +222,7 @@ SELECT
     JOIN UserHasPermissionRole USING (badgeid,conid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
-    permrolename IN ('Participant','General','Programming') AND
+    permrolename IN ('Participant','General','Programming','Events','Lounge',"Watch") AND
     $whichparticipants
     conid=$conid
   ORDER BY
@@ -232,6 +232,39 @@ EOD;
 
 // Retrive query
 list($rows,$header_array,$participant_array)=queryreport($query,$link,$title,$description,0);
+
+// Get the listed badge name and pronouns
+for ($i=1; $i<=$rows; $i++) {
+  // Start with an empty biostring, and printstring
+  $bioinfo=getBioData($participant_array[$i]['badgeid']);
+  if (!empty($bioinfo['name_en-us_good_badge_bio'])) {
+    $participant_array[$i]['name'].=$bioinfo['name_en-us_good_badge_bio'];
+  } elseif (!empty($bioinfo['name_en-us_good_web_bio'])) {
+    $participant_array[$i]['name'].=$bioinfo['name_en-us_good_web_bio'];
+  } elseif (!empty($bioinfo['name_en-us_good_book_bio'])) {
+    $participant_array[$i]['name'].=$bioinfo['name_en-us_good_book_bio'];
+  } elseif (!empty($bioinfo['name_en-us_raw_badge_bio'])) {
+    $participant_array[$i]['name'].=$bioinfo['name_en-us_raw_badge_bio'];
+  } elseif (!empty($bioinfo['name_en-us_raw_web_bio'])) {
+    $participant_array[$i]['name'].=$bioinfo['name_en-us_raw_web_bio'];
+  } elseif (!empty($bioinfo['name_en-us_raw_book_bio'])) {
+    $participant_array[$i]['name'].=$bioinfo['name_en-us_raw_book_bio'];
+  }
+  $bioinfo=getBioData($participant_array[$i]['badgeid']);
+  if (!empty($bioinfo['pronoun_en-us_good_badge_bio'])) {
+    $participant_array[$i]['pronoun'].=$bioinfo['pronoun_en-us_good_badge_bio'];
+  } elseif (!empty($bioinfo['pronoun_en-us_good_web_bio'])) {
+    $participant_array[$i]['pronoun'].=$bioinfo['pronoun_en-us_good_web_bio'];
+  } elseif (!empty($bioinfo['pronoun_en-us_good_book_bio'])) {
+    $participant_array[$i]['pronoun'].=$bioinfo['pronoun_en-us_good_book_bio'];
+  } elseif (!empty($bioinfo['pronoun_en-us_raw_badge_bio'])) {
+    $participant_array[$i]['pronoun'].=$bioinfo['pronoun_en-us_raw_badge_bio'];
+  } elseif (!empty($bioinfo['pronoun_en-us_raw_web_bio'])) {
+    $participant_array[$i]['pronoun'].=$bioinfo['pronoun_en-us_raw_web_bio'];
+  } elseif (!empty($bioinfo['pronoun_en-us_raw_book_bio'])) {
+    $participant_array[$i]['pronoun'].=$bioinfo['pronoun_en-us_raw_book_bio'];
+  }
+}
 
 /* Printing body.  */
 header('Content-type: application/postscript');
@@ -250,13 +283,22 @@ while ($k <= $rows) {
 	echo "\ntranslate\n";
 #	echo "3 28 translate\n".$BoundingBox." picinsert\ngsave\ninsertlogo run\ngrestore\n%%Trailer\nEndEPSF\n-3 -28 translate\n";
         echo "labelclip\nnewpath\nISOArial 16 scalefont setfont\n3.000000 75.000000 moveto\n( ";
-	echo $participant_array[$k]['Role'];
+	if (!empty($participant_array[$k]['Role'])) {
+	  echo $participant_array[$k]['Role'];
+	} else {
+	  echo "Volunteer";
+	}
 	echo ") show\n";
 	echo "ISOArial 16 scalefont setfont\n3.000000 55.000000 moveto\n( ";
 	echo $_SESSION['conname'];
 	echo ") show\n";
+	if (!empty($participant_array[$k]['pronoun'])) {
+	  echo "ISOArial 16 scalefont setfont\n3.000000 35.000000 moveto\n( ";
+	  echo "Pronoun: " . $participant_array[$k]['pronoun'];
+	  echo ") show\n";
+	}
 	echo "ISOArial-Bold 24 scalefont setfont\n3.000000 95.000000 moveto\n( ";
-	echo $participant_array[$k++]['pubsname'];
+	echo $participant_array[$k++]['name'];
 	echo ") show\nstroke\ngrestore\n\n";
       }
     }

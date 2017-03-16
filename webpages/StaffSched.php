@@ -12,9 +12,11 @@ $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
 $conid_or_badgeid="conid=$conid";
+$badgeid_p="F";
 if ((!empty($_GET['badgeid'])) and (is_numeric($_GET['badgeid']))) {
   $checkbadgeid=$_GET['badgeid'];
   $conid_or_badgeid="badgeid=$checkbadgeid";
+  $badgeid_p="T";
 }
 
 // Format to print in, and modifications to the query and the additionalinfo
@@ -320,6 +322,25 @@ EOD;
 
 // Retrieve query
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+// Return the whole con feedback
+// If asked for by a staff person, feedback is included, and it's not just a person
+if (may_I("Staff") and ($feedback_p=="T") and ($badgeid_p=="F")) {
+   $elements++;
+   $element_array[$elements]['Track']=" ";
+   $element_array[$elements]['Title']="Whole Con Feedback";
+   $element_array[$elements]['Participants']=" ";
+   $element_array[$elements]['Start Time']=" ";
+   $element_array[$elements]['Duration']=" ";
+   $element_array[$elements]['Room']=" ";
+   $element_array[$elements]['Estatten']="";
+   $element_array[$elements]['Sessionid']="-1";
+   $element_array[$elements]['conid']="$conid";
+   $element_array[$elements]['conname']="$conname";
+   $element_array[$elements]['iCal']="";
+   $element_array[$elements]['Feedback']="";
+   $element_array[$elements]['Description']="";
+}
 
 // Add the feedback
 for ($i=1; $i<=$elements; $i++) {

@@ -188,6 +188,9 @@
   + Select all the images, and set a random transition, to be
     modified.
   + Select the speed (4)
+  + Go through and fix all the transitions
+  + Add the appropriate music
+  + Export to a VOB file
 ** File exerpt:
 #+begin_src html :exports both :results silent
 [slideshow settings]
@@ -214,3 +217,9 @@ font bgcolor=1;1;1;1;
 
 
 
+* Convert VOB to mpeg/avi
+  + ffmpeg -i FFF??_Photo_Lounge.vob -f avi -c:v mpeg4 -b:v 800k -g 300 -bf 2 -c:a libmp3lame -b:a 128k FFF??_Photo_Lounge.avi
+  + cp FFF??_Photo_Lounge.vob FFF??_Photo_Lounge.mpeg
+* Load onto Devices
+  + Thumb Drives:  Pictures into Pictures, only the mpeg in Movies
+  + Pi Devices: Everthing into local Pictures, mpeg into sub Movie diretory in Pictures.

@@ -188,7 +188,7 @@ class MYPDF extends TCPDF {
   public function Footer() {
     $this->SetY(-15);
     $this->SetFont("helvetica", 'I', 8);
-    $this->Cell(0, 10, "Copyright 2011 New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
+    $this->Cell(0, 10, "Copyright ".date('Y')." New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
   }
 }
 
@@ -289,7 +289,10 @@ if ($sessionid!="") {
   $formstring.="    <OPTION value=0 SELECTED>Select Session</OPTION>\n";
   for ($i=1; $i<=$elements; $i++) {
     $printstring.="<img border=\"1\" src=\"images/whitebox.png\"> ";
+    // If you need to shorten the titles, replace the following line with some
+    // variation of the below str_replace line
     $printstring.=$element_array[$i]['title']." (".$element_array[$i]['time'].")<br>";
+    //$printstring.=str_replace(": is Vanilla a Bad Word?","",str_replace(": Learning to Love the Lock","",str_replace("Chest Harnesses, Gotes, & Box Ties Oh My!","Chest Harness, Gote, & Box Tie",str_replace("Bondage & Floggers & Bear Claws Oh My", "Bondage,Floggers,Bearclaws",str_replace("and","&",$element_array[$i]['title'])))))." (".$element_array[$i]['time'].")<br>";
     $formstring.="    <OPTION value=\"".$element_array[$i]['sessionid']."\">";
     $formstring.=$element_array[$i]['title']." (".$element_array[$i]['time'].")</OPTION>\n";
     if ($i % $NumPerColumn == 0) {
@@ -358,6 +361,6 @@ if ($print_p =="") {
   $pdf->AddPage();
   $pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $printstring, $border=0, $ln=true, $fill=false, $reseth=true, $align='', $autopadding=true);
   $pdf->writeHTMLCell($w=0, $h=0, $x=PDF_MARGIN_LEFT, $y=137, $printstring, $border=0, $ln=true, $fill=false, $reseth=true, $align='', $autopadding=true);
-  $pdf->Output($dayname.'Feedback.pdf', 'I');
+  $pdf->Output($dayname.'Feedback_'.$conid.'.pdf', 'I');
  }
 ?>

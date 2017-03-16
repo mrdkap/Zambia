@@ -1061,6 +1061,12 @@ for i in FFF-[34]*
   Setting up feedback for your con is somewhat complex.  I'm not sure
   what motivated me, originally to be so baroque, but I think it was
   flexibility at the time.
+
+  One thing to note, there needs to be, attached to some con instance,
+  an element in the Sessions table with a sessionid of "-1" to work.
+  It doesn't have to be any particular con instance, nor especially
+  the most current one.  Just one has to exist for the constraints to
+  work for general feedback.
 ** Adding Questions
    If your questions are not appropriate for this particular event,
    you might want to add a question type to cover it, in the

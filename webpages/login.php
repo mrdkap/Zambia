@@ -33,7 +33,7 @@ $webstring.= <<<EOD
 <form name="loginform" method="POST" action="doLogin.php">
   <table class="login" align=center>
     <tr>
-      <td>Badge ID:</td>
+      <td>Badge ID/Email:</td>
       <td><input type="text" name="badgeid" maxlength="40"
 EOD;
 

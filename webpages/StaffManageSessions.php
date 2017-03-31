@@ -24,7 +24,9 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
    <DT><A HREF="VoteOnSession.php">Vote on Sessions</A></DT>
    <DD>Add or update your vote on a set of presenter Sessions.</DD>
    <DT><A HREF="ViewPrecis.php">Precis View</A></DT>
-  <DD>This shows all the active Precis, in the status of "Brainstorm", "Edit me", "Vetted", "Assigned", or "Scheduled".</DD>
+   <DD>This shows all the active Precis, in the status of "Brainstorm", "Edit me", "Vetted", "Assigned", or "Scheduled".</DD>
+   <DT><A HREF="KonOpasData.php">Publish to KonOpas/WebApp</A></DT>
+   <DD>This pushes/publishes the current con information to the KonOpas/WebApp tool.</DD>
 </DL>
 
 <P> Session Search (shows same data as Precis View except on all sessions):</P>

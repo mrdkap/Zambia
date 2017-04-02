@@ -118,7 +118,7 @@ for ($i=0;$i<$_SESSION['connumdays'];$i++) {
  }
 
 if (isLoggedIn()==false and !isset($logging_in)) {
-  $message="Session expired. Please log in again.";
+  $message.="Session expired. Please log in again.";
   require ('login.php');
   exit();
  };
@@ -1389,13 +1389,18 @@ function submit_table_element ($link, $title, $table, $element_array, $value_arr
 function update_table_element ($link, $title, $table, $pairedvalue_array, $match_field, $match_value) {
   foreach ($pairedvalue_array as $pairedvalue) {$pairedvalue_string.=$pairedvalue.",";}
   $pairedvalue_string=substr($pairedvalue_string,0,-1);
-  $query="UPDATE $table set $pairedvalue_string where $match_field = '$match_value'";
+  $query="UPDATE $table set $pairedvalue_string WHERE $match_field = '$match_value'";
   if (!mysql_query($query,$link)) {
     $message_error=$query."<BR>Error updating $table.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
-  $message="Table $table updated successfully.<BR>";
+  ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+  if ($r_matched[1]==0) {
+    $message=$query."<BR>Error updating $table.  No entries where $match_string to be updated.";
+  } else {
+    $message="Table $table updated successfully.<BR>";
+  }
   return($message);
 }
 
@@ -1404,13 +1409,18 @@ function update_table_element ($link, $title, $table, $pairedvalue_array, $match
 function update_table_element_extended_match ($link, $title, $table, $pairedvalue_array, $match_string) {
   foreach ($pairedvalue_array as $pairedvalue) {$pairedvalue_string.=$pairedvalue.",";}
   $pairedvalue_string=substr($pairedvalue_string,0,-1);
-  $query="UPDATE $table set $pairedvalue_string where $match_string";
+  $query="UPDATE $table set $pairedvalue_string WHERE $match_string";
   if (!mysql_query($query,$link)) {
     $message_error=$query."<BR>Error updating $table.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
-  $message="Table $table updated successfully.<BR>";
+  ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+  if ($r_matched[1]==0) {
+    $message=$query."<BR>Error updating $table.  No entries where $match_string to be updated.";
+  } else {
+    $message="Table $table updated successfully.<BR>";
+  }
   return($message);
 }
 

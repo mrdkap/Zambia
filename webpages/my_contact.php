@@ -42,12 +42,33 @@ if (getCongoData($badgeid)!=0) {
 // Get the bio data, if there is any.
 $bioinfo=getBioData($badgeid);
 
+// If there is missing blocks of bio-data, ask for it:
+/* We are only presenting the edited bios here, so only a 3-depth
+   search happens on biolang, biotypename and biodest to see if they
+   were passed (updated) and record the update. */
+$biostate='edited'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
+for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
+  for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
+    for ($l=0; $l<count($bioinfo['biodest_array']); $l++) {
+
+      // Setup for keyname, to collapse all three variables into one passed name.
+      $biotype=$bioinfo['biotype_array'][$i];
+      $biolang=$bioinfo['biolang_array'][$j];
+      //$biostate=$bioinfo['biostate_array'][$k];
+      $biodest=$bioinfo['biodest_array'][$l];
+      $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
+      if (!isset($bioinfo[$keyname])) {$bioinfo[$keyname]="Unset";}
+    }
+  }
+}
+
 // Only do the following, if there was an update to the information.
 if (isset($_POST['update'])) {
 
   /* We are only updating the raw bios here, so only a 3-depth
-   search happens on biolang, biotypename and biodest to see if they
-   were passed (updated) and record the update. */
+     search happens on biolang, biotypename and biodest to see if they
+     were passed (updated) and record the update. */
+
   $biostate='raw'; // for ($k=0; $k<count($bioinfo['biostate_array']); $k++) {
   for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
     for ($j=0; $j<count($bioinfo['biolang_array']); $j++) {
@@ -389,9 +410,6 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
       // Skip the "staff" categories, if is not on staff
       if (($isstaff!="T") and ($biodest=="staffbook")) { continue; }
       if (($isstaff!="T") and ($biodest=="staffweb")) { continue; }
-
-      // Skip the non-staff, badge-picture category
-      if (($isstaff!="T") and ($biodest=="badge") and ($biotype=="picture")) { continue; }
 
       // Skip the badge-uri and badge-bio cateories
       if (($biodest=="badge") and ($biotype=="uri")) { continue; }

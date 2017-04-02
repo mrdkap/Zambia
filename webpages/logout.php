@@ -1,26 +1,40 @@
 <?php
-require_once("../Local/db_name.php");
-$key=FALLBACK_KEY;
-$url=FALLBACK_URL;
-$conid=$_SESSION['conid'];
-$conurl=$_SESSION['conurl'];      // Set the return value
 // Default role is Posting, so at least something familiar shows.
-if (empty($_SESSION['conid'])) {$_SESSION['conid']=$conid;}
-if (empty($_SESSION['conid'])) {$_SESSION['conid']=$key;}
-if (empty($_SESSION['role'])) {$_SESSION['role']="Posting";}
-if (empty($_SESSION['conurl'])) {$_SESSION['conurl']=$conurl;}
-if (empty($_SESSION['conurl'])) {$_SESSION['conurl']=$url;}
-$conid=$_SESSION['conid'];
-$conurl=$_SESSION['conurl'];      // Set the return value
 require_once('PostingCommonCode.php');
-// Default role is Posting, so at least something familiar shows.
+
+// Get the next event as the fallback otherwise pull the fallback from the db_name file
+$query=<<<EOF
+SELECT
+    conid,
+    conurl
+  FROM
+      ConInfo
+   WHERE
+    (DATE_ADD(constartdate, INTERVAL connumdays day) >= CURRENT_DATE())
+   ORDER BY
+    constartdate
+   LIMIT 1
+EOF;
+
+// Get the key and URL
+$result=mysql_query($querypast,$link);
+if ($result) {
+  $dbobject=mysql_fetch_object($result);
+  $key=$dbobject->conid;
+  $url=$dbobject->conurl;
+} else {
+  $key=FALLBACK_KEY;
+  $url=FALLBACK_URL;
+}
+
+// Make a guess and tne conid and conurl
 if (empty($_SESSION['conid'])) {$_SESSION['conid']=$conid;}
 if (empty($_SESSION['conid'])) {$_SESSION['conid']=$key;}
 if (empty($_SESSION['role'])) {$_SESSION['role']="Posting";}
 if (empty($_SESSION['conurl'])) {$_SESSION['conurl']=$conurl;}
 if (empty($_SESSION['conurl'])) {$_SESSION['conurl']=$url;}
 $conid=$_SESSION['conid'];
-$conurl=$_SESSION['conurl'];      // Set the return value
+$conurl=$_SESSION['conurl'];
 unlock_participant('');            // unlock any records locked by this user
 $_SESSION=array();                 // Unset session data
 unset($_COOKIE[session_name()]);   // Clear cookie

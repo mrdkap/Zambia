@@ -4,6 +4,7 @@ $logging_in=true;
 // Set the conid
 if ((!empty($_POST['newconid'])) and (is_numeric($_POST['newconid']))) {
   $_SESSION['conid']=$_POST['newconid'];
+  $conid=$_POST['newconid'];
 }
 
 require_once ('CommonCode.php');
@@ -22,7 +23,7 @@ $password = stripslashes($_POST['passwd']);
 
 // echo "Trying to connect to database.\n";
 if (prepare_db()===false) {
-  $message_error="Unable to connect to database.<BR>No further execution possible.";
+  $message_error.="Unable to connect to database.<BR>No further execution possible.";
   RenderError($title,$message_error);
   exit();
 };
@@ -32,7 +33,7 @@ if (prepare_db()===false) {
 if ((!isset($badgeid)) and (isset($emailaddr))) {
   $result=mysql_query("SELECT badgeid FROM CongoDump WHERE email='".$emailaddr."'",$link);
   if (!$result) {
-    $message="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
+    $message_error.="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
     require ('login.php');
     exit();
   }
@@ -45,9 +46,9 @@ if ((!isset($badgeid)) and (isset($emailaddr))) {
 }
 
 //Badgid test
-$result=mysql_query("SELECT password FROM Participants WHERE badgeid='".$badgeid."'",$link);
+$result=mysql_query("SELECT password,password2 FROM Participants WHERE badgeid='".$badgeid."'",$link);
 if (!$result) {
-  $message="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
+  $message_error.="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
   require ('login.php');
   exit();
 }
@@ -55,13 +56,26 @@ if (!$result) {
 // Password check
 $dbobject=mysql_fetch_object($result);
 $dbpassword=$dbobject->password;
+$dbpassword2=$dbobject->password2;
 //echo $badgeid."<BR>".$dbpassword."<BR>".$password."<BR>".md5($password);
 //exit(0);
-if (md5($password)!=$dbpassword) {
-  $message="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
-  require ('login.php');
-  exit(0);
-}
+// For 5.5
+//if (!password_verify($password,$dbpassword2)) {
+  if (md5($password)!=$dbpassword) {
+
+    $message_error.="Incorrect BadgeID, email address or password - please be aware that";
+    $message_error.=" BadgeID, email address and password are case sensitive and try ";
+    $message_error.="again, or reset your password by clicking the button below, and ";
+    $message_error.="have the new one emailed to you.\n";
+    $message_error.="<CENTER><FORM name=\"passchange\" method=POST action=\"passgen.php\">\n";
+    $message_error.="<INPUT type=\"hidden\" name=\"badgeid\" value=\"".$badgeid."\">\n";
+    $message_error.="<INPUT type=\"hidden\" name=\"Update\" value=\"Y\">\n";
+    $message_error.="<INPUT type=\"submit\" value=\"Password Change\">\n</FORM></CENTER>\n";
+    require ('login.php');
+    exit(0);
+  }
+// For 5.5
+//}
 
 // Get and set information on individual
 $result=mysql_query("SELECT badgename FROM CongoDump WHERE badgeid='".$badgeid."'",$link);
@@ -98,7 +112,7 @@ SELECT
     JOIN InterestedTypes USING (interestedtypeid)
   WHERE
     permrolename="Participant" AND
-    interestedtypename="Yes" AND
+    interestedtypename in ("Yes","Invited") AND
     badgeid not in (SELECT
           badgeid
         FROM
@@ -128,7 +142,7 @@ SELECT
     JOIN InterestedTypes USING (interestedtypeid)
   WHERE
     permrolename="PhotoSub" AND
-    interestedtypename="Suggested" AND
+    interestedtypename in ('Suggested','Yes','Invited') AND
     badgeid not in (SELECT
           badgeid
         FROM
@@ -146,6 +160,21 @@ if ($result and (mysql_num_rows($result)==1)) {
   $prevconphotosub=$dbobject->ConName;
 }
 
+// Con date has passed
+$querypast=<<<EOF
+SELECT
+    if ((constartdate < CURRENT_DATE()),"Passed","Upcoming") AS IsPassed
+  FROM
+      ConInfo
+  WHERE
+    conid=$conid
+EOF;
+$result=mysql_query($querypast,$link);
+if ($result and (mysql_num_rows($result)==1)) {
+  $dbobject=mysql_fetch_object($result);
+  $past_p=$dbobject->IsPassed;
+}
+
 // Switch on which page is shown
 if (retrieve_participant_from_db($badgeid)==0) {
   if(may_I('Staff')) {
@@ -160,6 +189,12 @@ if (retrieve_participant_from_db($badgeid)==0) {
     require ('PhotoLoungeReturning.php');
   } elseif (may_I('public_login')) {
     require ('BrainstormWelcome.php');
+  } elseif ($past_p=="Passed") {
+    set_permission_set(0);
+    $message_error.="The event you have chosen, ".$_SESSION['conname'].", has passed, and you don't ";
+    $message_error.="have access to it.\nPlease pick a <A HREF=\"http://".$_SESSION['conurl']."\">";
+    $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.";
+    require('logout.php');
   } elseif (isset($prevconpresent)) {
     /* This should have some sort of reentran piece, allowing a form
        to be set, and relogin to happen.
@@ -172,8 +207,8 @@ if (retrieve_participant_from_db($badgeid)==0) {
        to be set, and relogin to happen.  Probably much along the
        lines of:
        "<FORM name=\"propose\" method=POST action=\"ProposalPage.php\">\n",
-       "<INPUT type=\"hidden\" name=\"who\" value=\"",badgeid,"\">\n",
-       "<INPUT type=\"submit\" value=\"",badgename,"\">\n",
+       "<INPUT type=\"hidden\" name=\"badgeid\" value=\"",badgeid,"\">\n",
+       "<INPUT type=\"submit\" value=\"Propose\">\n",
        "</FORM>\n"
 
        and something in the functionality of:
@@ -189,14 +224,14 @@ if (retrieve_participant_from_db($badgeid)==0) {
     $message_error.="There is a problem with your permission configuration:\n";
     $message_error.="It doesn't have permission to access any welcome page for ";
     $message_error.=$_SESSION['conname'].".\nPlease pick a <A HREF=\"http://".$_SESSION['conurl']."\">";
-    $message_error.="different year</A> or contact a member of the ".$_SESSION['conname']." staff.";
+    $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.";
     require('logout.php');
   }
   exit();
 }
 
 // Fail to get db information somewhere ...
-$message_error="<BR>Error retrieving data from DB.  No further execution possible.";
+$message_error.="<BR>Error retrieving data from DB.  No further execution possible.";
 RenderError($title,$message_error);
 exit();
 ?>

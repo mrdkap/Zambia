@@ -168,17 +168,14 @@ function posting_header ($title) {
   echo "  <link rel=\"stylesheet\" href=\"Common.css\" type=\"text/css\">\n";
   if (file_exists($HeaderTemplateFile)) {
     readfile($HeaderTemplateFile);
-    echo "<H2 class=\"head\" align=\"center\"><A HREF=\"http://$ConUrl\">Return</A> to the programming website</H2>\n";
-    echo "<HR>\n";
-    echo "<H1 class=\"head\" align=\"center\">$title</H1>\n";
   } else {
     echo "  <link rel=\"stylesheet\" href=\"Common.css\" type=\"text/css\">\n";
     echo "</head>\n";
     echo "<body>\n";
-    echo "<H2 class=\"head\"><A HREF=\"http://$ConUrl\">Return</A> to the programming website</H2>\n";
-    echo "<hr>\n\n";
-    echo "<H1 class=\"head\">$title</H1>\n";
   }
+  echo "<H2 class=\"head\" align=\"center\"><A HREF=\"http://$ConUrl\">Return</A> to the programming website</H2>\n";
+  echo "<HR>\n";
+  echo "<H1 class=\"head\" align=\"center\">$title</H1>\n";
 }
 
 function staff_header ($title) {

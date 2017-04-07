@@ -1,5 +1,5 @@
 <?php
-require_once('PostingCommonCode.php');
+require_once('StaffCommonCode.php');
 global $link;
 
 // Pass in variables
@@ -247,7 +247,53 @@ $bios.="    }\n";
 
 $bios.="];";
 
+// OrgChart information
+$orgchart=<<<EOF
+{
+    "cols": [
+	{"id":"","label":"Name","pattern":"","type":"string"},
+	{"id":"","label":"Manager","pattern":"","type":"string"},
+	{"id":"","label":"ToolTip","pattern":"","type":"string"}
+      ],
+    "rows": [
+EOF;
 
+$orgquery=<<<EOF
+SELECT
+    concat('{"c":[{"v":"',CRA.conrolenotes,'","f":"',CRA.conrolenotes,'<br/> ',
+	   group_concat(DISTINCT "<A HREF=\'PubsStaffBios.php?conid=$conid#",pubsname,"\'>",pubsname,"</A>" SEPARATOR '/'),
+           '"},{"v":"',if((CRC.conrolenotes IS NOT NULL),CRC.conrolenotes,""),'"},{"v":"',CRA.conroledescription,'"}]}') AS reportmap
+  FROM
+      ConRoles CRA
+    LEFT JOIN UserHasConRole UHCR ON (UHCR.conroleid=CRA.conroleid AND UHCR.conid=$conid)
+    LEFT JOIN Participants USING (badgeid)
+    LEFT JOIN HasReports HRA ON (HRA.conroleid=CRA.conroleid AND HRA.conid=$conid)
+    LEFT JOIN ConRoles CRB ON (CRB.conroleid=HRA.hasreport)
+    LEFT JOIN HasReports HRB ON (HRB.hasreport=CRA.conroleid AND HRB.conid=$conid)
+    LEFT JOIN ConRoles CRC ON (CRC.conroleid=HRB.conroleid)
+  WHERE
+    HRA.conid=$conid
+  GROUP BY
+    CRA.conroleid
+EOF;
+
+//Build the array
+list($orgrows,$orgheader_array,$org_array)=queryreport($orgquery,$link,$title,$description,0);
+for ($i=1; $i<=$orgrows; $i++) {
+  if (isset($org_array[$i]['reportmap'])) {
+    $orgchart_array[]=$org_array[$i]['reportmap'];
+  }
+}
+
+// Map the array to a string
+$orgchart.=implode(",\n\t",$orgchart_array);
+
+$orgchart.="
+    ]
+}
+";
+
+// Write out the files
 $kpfile="../Local/$conid/program.js";
 $recordfile = fopen($kpfile,"w") or RenderError($title,"Unable to open record file: $kpfile.");
 fwrite ($recordfile, $program);
@@ -259,6 +305,12 @@ $recordfile = fopen($kbfile,"w") or RenderError($title,"Unable to open record fi
 fwrite ($recordfile, $bios);
 fclose($recordfile);
 $message.="$kbfile created<br>\n";
+
+$kocfile="../Local/$conid/orgchart.json";
+$recordfile = fopen($kocfile,"w") or RenderError($title,"Unable to open record file: $kocfile.");
+fwrite ($recordfile, $orgchart);
+fclose($recordfile);
+$message.="$kocfile created<br>\n";
 
 /* Printing body.  Uses the page-init then creates the page. */
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);

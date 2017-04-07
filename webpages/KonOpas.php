@@ -177,10 +177,10 @@ if (navigator.standalone) document.getElementById('install-instructions').style.
 <?php
 // Taken from GenInfo
 $genbody="<DIV style=\" width: 100%; \">\n";
+$genbody.="      <H4 class=collapse>Org Chart:</H4>\n<div id=\"org_chart_div\"></div>\n";
 if ($phase_array['Prog Available'] == '0' ) {
   $genbody.="      <LI><A HREF=\"Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
 }
-$genbody.="      <LI><A HREF=\"ConStaffBios.php?conid=$conid\">Con Staff</A></LI>\n";
 if ($phase_array['Venue Available'] == '0' ) {
   $genbody.="      <LI><A HREF=\"Venue.php?conid=$conid\">Venue Information</A></LI>\n";
 }
@@ -280,7 +280,7 @@ echo $rules;
 </div><!-- /main -->
 
 <script> var konopas_set = {
-	'id': 'nelaFFF48',
+	'id': 'zambia',
 	'default_duration': 90,
         'tag_categories': ['track', 'type'],
 	'time_show_am_pm': true,
@@ -300,6 +300,49 @@ echo $rules;
 	}
 };
 </script>
+
+// Org Chart script
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+      // Load the appropraite tools from google
+      google.charts.load('current', {packages:["orgchart"]});
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Function to pull the information from the json file/php-generated information
+      var getJSON = function(url, callback) {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', url, true);
+	xhr.responseType = 'json';
+	xhr.onload = function () {
+	  var status = xhr.status;
+	  if (status == 200) {
+	    callback(null, xhr.response);
+	  } else {
+	    callback(status);
+	  }
+	};
+	xhr.send();
+      };
+
+      // Actually draws the chart
+      function drawChart() {
+
+	// Get the information from the PHP file and create the chart
+	getJSON('../Local/' + <?php echo $conid ?> + '/orgchart.json', function(err,jsonData) {
+	    if (err != null) {
+	      alert('Something went wrong: ' + err);
+	    } else {
+	      var data = new google.visualization.DataTable(jsonData);
+
+	      // Create the chart.
+	      var chart = new google.visualization.OrgChart(document.getElementById('org_chart_div'));
+	      // Draw the chart, setting the allowHtml option to true for the tooltips.
+	      chart.draw(data, {allowHtml:true, allowCollapse:true});
+	    }
+	  });
+      }
+    </script>
+
 <script src="../Local/<?php echo $conid ?>/program.js"></script>
 <script src="../Local/<?php echo $conid ?>/people.js"></script>
 <script src="../../konopas/konopas.min.js"></script>

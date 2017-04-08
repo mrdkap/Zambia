@@ -302,44 +302,23 @@ echo $rules;
 </script>
 
 // Org Chart script
+<script src="../Local/<?php echo $conid ?>/orgchart.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
       // Load the appropraite tools from google
       google.charts.load('current', {packages:["orgchart"]});
       google.charts.setOnLoadCallback(drawChart);
 
-      // Function to pull the information from the json file/php-generated information
-      var getJSON = function(url, callback) {
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', url, true);
-	xhr.responseType = 'json';
-	xhr.onload = function () {
-	  var status = xhr.status;
-	  if (status == 200) {
-	    callback(null, xhr.response);
-	  } else {
-	    callback(status);
-	  }
-	};
-	xhr.send();
-      };
-
-      // Actually draws the chart
+      // Draws the chart
       function drawChart() {
 
-	// Get the information from the PHP file and create the chart
-	getJSON('../Local/' + <?php echo $conid ?> + '/orgchart.json', function(err,jsonData) {
-	    if (err != null) {
-	      alert('Something went wrong: ' + err);
-	    } else {
-	      var data = new google.visualization.DataTable(jsonData);
+	// Apply data from above orgchart.js file.
+	var data = new google.visualization.DataTable(orgchartData);
 
-	      // Create the chart.
-	      var chart = new google.visualization.OrgChart(document.getElementById('org_chart_div'));
-	      // Draw the chart, setting the allowHtml option to true for the tooltips.
-	      chart.draw(data, {allowHtml:true, allowCollapse:true});
-	    }
-	  });
+	// Create the chart.
+	var chart = new google.visualization.OrgChart(document.getElementById('org_chart_div'));
+	// Draw the chart, setting the allowHtml option to true for the tooltips.
+	chart.draw(data, {allowHtml:true, allowCollapse:true});
       }
     </script>
 

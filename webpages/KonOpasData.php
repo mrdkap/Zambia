@@ -249,7 +249,7 @@ $bios.="];";
 
 // OrgChart information
 $orgchart=<<<EOF
-{
+var orgchartData = {
     "cols": [
 	{"id":"","label":"Name","pattern":"","type":"string"},
 	{"id":"","label":"Manager","pattern":"","type":"string"},
@@ -306,7 +306,7 @@ fwrite ($recordfile, $bios);
 fclose($recordfile);
 $message.="$kbfile created<br>\n";
 
-$kocfile="../Local/$conid/orgchart.json";
+$kocfile="../Local/$conid/orgchart.js";
 $recordfile = fopen($kocfile,"w") or RenderError($title,"Unable to open record file: $kocfile.");
 fwrite ($recordfile, $orgchart);
 fclose($recordfile);

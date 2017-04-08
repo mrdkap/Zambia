@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <script src="../Local/48/timeline.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['timeline']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var count;
+        for(count = 1; count <= chartnum ; count++) {
+          var container = document.getElementById('timeline' + count);
+          var chart = new google.visualization.Timeline(container);
+          var dataTable = new google.visualization.DataTable(tlname[count -1]);
+	
+          var options = {
+            tooltip: {isHtml: true},
+            timeline: { singleColor: '#8d8' }
+          };
+
+          chart.draw(dataTable, options);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <H2>Friday</H2><br/>
+    <div id="timeline1" style="height: 750px; width: 2250px;"></div>
+    <H2>Saturday</H2><br/>
+    <div id="timeline2" style="height: 750px; width: 5250px;"></div>
+    <H2>Sunday</H2><br/>
+    <div id="timeline3" style="height: 750px; width: 1950px;"></div>
+<!--
+<?php
+$workstring=`grep chartnum ../Local/$conid/timeline.js | cut -d"=" -f2 | cut -d";" -f1`;
+for ($graphrow=1; $graphrow<=$workstring; $graphrow++) {
+  echo "    <H2>" . $graph_day[$graphrow] . " $workstring</H2><br/>\n";
+  echo "    <div id=\"timeline".$graphrow."\" style=\"height: 750px; width: " . $graph_slots[$graphrow]*75 . "px;\"></div>\n";
+}
+?>
+-->
+  </body>
+</html>

@@ -1,6 +1,8 @@
 <?php
 require_once('StaffCommonCode.php');
 global $link;
+$title="KonOpas Data Generator";
+$description="<P>Generated Data for:</P>\n";
 
 // Pass in variables
 if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
@@ -278,6 +280,7 @@ SELECT
 EOF;
 
 //Build the array
+$orgchart_array=array();
 list($orgrows,$orgheader_array,$org_array)=queryreport($orgquery,$link,$title,$description,0);
 for ($i=1; $i<=$orgrows; $i++) {
   if (isset($org_array[$i]['reportmap'])) {

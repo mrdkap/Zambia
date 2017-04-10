@@ -33,7 +33,9 @@ if (file_exists("../Local/$conid/Venue_Map.svg")) {
 // Venue information (possibly including mapping instructions)
 $venueinfo="";
 if (file_exists("../Local/$conid/Venue_Info")) {
+  $venueinfo.="\n<UL>\n";
   $venueinfo.=file_get_contents("../Local/$conid/Venue_Info");
+  $venueinfo.="\n</UL>\n";
 }
 
 /* Printing body.  Uses the page-init then creates the vendor bio page. */

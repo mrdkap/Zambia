@@ -25,22 +25,6 @@ for ($i=1; $i<=$phaserows; $i++) {
   $phase_array[$fullphase_array[$i]['phasetypename']]=$fullphase_array[$i]['phasestate'];
 }
 
-// header/footer for each section
-$divfooter ="    </UL>\n";
-$divfooter.="  </DIV>\n";
-$genheader ="  <DIV style=\"float: left; width: 50%\">\n";
-$genheader.="    <H3>General Information</H3>\n";
-$genheader.="    <UL>\n";
-$progheader ="  <DIV style=\"float: right; width: 50%;\">\n";
-$progheader.="    <H3>Programming Information</H3>\n";
-$progheader.="    <UL>\n";
-$volheader ="  <DIV style=\"float: left; width: 50%;\">\n";
-$volheader.="    <H3>Volunteer Information</H3>\n";
-$volheader.="    <UL>\n";
-$vendheader ="  <DIV style=\"float: right; width: 50%;\">\n";
-$vendheader.="    <H3>Vending Information</H3>\n";
-$vendheader.="    <UL>\n";
-
 ?>
 <!DOCTYPE html>
 <html><!-- manifest="konopas.appcache" -->
@@ -176,56 +160,77 @@ if (navigator.standalone) document.getElementById('install-instructions').style.
 
 <?php
 // Taken from GenInfo
-$genbody="<DIV style=\" width: 100%; \">\n";
-$genbody.="      <H4 class=collapse>Org Chart:</H4>\n<div id=\"org_chart_div\"></div>\n";
+$genbody ="  <DIV style=\"float: left;\">\n";
+$genbody.="    <H3>General Information</H3>\n";
+$genbody.="    <UL>\n";
+$genbody.="      <LI class=collapse>Org Chart</LI>\n";
+$genbody.="      <DIV id=\"org_chart_div\" style=\"width:100%\"></DIV></LI>\n";
 if ($phase_array['Prog Available'] == '0' ) {
-  $genbody.="      <LI><A HREF=\"Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
-}
-if ($phase_array['Venue Available'] == '0' ) {
-  $genbody.="      <LI><A HREF=\"Venue.php?conid=$conid\">Venue Information</A></LI>\n";
+  require_once("../Local/$conid/timeline.php");
+  for ($graphrow=0; $graphrow<$graph_count; $graphrow++) {
+    $genbody.="      <LI class=collapse>" . $graph_day[$graphrow] . "</LI>\n";
+    $genbody.="      <DIV id=\"timeline".$graphrow."\" style=\"width:100%\"></DIV></LI>\n";
+  }
 }
 if ($phase_array['Comments Displayed'] == '0' ) {
   $genbody.="      <LI><A HREF=\"CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";
 }
 if (file_exists("../Local/$conid/Program_Book.pdf")) {
-  $genbody.="      <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
+  $genbody.="      <LI><A HREF=\"../Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
+}
+if ($phase_array['Vendors Available'] == '0' ) {
+  $genbody.="      <LI><A HREF=\"Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
+}
+$genbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+$genbody.="    </UL>\n  </DIV>\n";
+
+$venueinfo="";
+if ($phase_array['Venue Available'] == '0' ) {
+  $venueinfo.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
+  $venueinfo.="    <A NAME=\"Venue\">&nbsp;</A>\n";
+  $venueinfo.="    <H3>Venu Information</H3>\n";
+
+  // Map of the venue (not to the venue)
+  if (file_exists("../Local/$conid/Venue_Map.svg")) {
+    $venueinfo.="      <LI class=collapse style=\"width:100%\">Map of the Venue</LI>\n";
+    $venueinfo.=file_get_contents("../Local/$conid/Venue_Map.svg");
+  }
+
+  // Venue information (possibly including mapping instructions)
+  if (file_exists("../Local/$conid/Venue_Info")) {
+    $venueinfo.=file_get_contents("../Local/$conid/Venue_Info");
+  }
+  $venueinfo.="  </DIV>\n";
 }
 
 $conchairletter="";
 if (file_exists("../Local/$conid/Con_Chair_Welcome")) {
-  $conchairletter.="<DIV style=\" display: block; width: 100%; float: left; \">\n";
-  $conchairletter.="  <A NAME=\"conchairletter\">&nbsp;</A>\n";
-  $conchairletter.="  <HR>\n<H3>A welcome letter from the Con Chair:</H3>\n<BR>\n";
+  $conchairletter.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
+  $conchairletter.="    <A NAME=\"conchairletter\">&nbsp;</A>\n";
+  $conchairletter.="    <H3>A welcome letter from the Con Chair:</H3>\n";
   $conchairletter.=file_get_contents("../Local/$conid/Con_Chair_Welcome");
-  $conchairletter.="</DIV>\n";
+  $conchairletter.="  </DIV>\n";
 }
 
 $orgletter="";
 if (file_exists("../Local/$conid/Org_Welcome")) {
-  $orgletter.="<DIV style=\" display: block; width: 100%; float: left; \">\n";
-  $orgletter.="<A NAME=\"orgletter\">&nbsp;</A>\n";
-  $orgletter.="<HR>\n<H3>A welcome letter from the Organization:</H3>\n<BR>\n";
+  $orgletter.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
+  $orgletter.="    <A NAME=\"orgletter\">&nbsp;</A>\n";
+  $orgletter.="    <H3>A welcome letter from the Organization:</H3>\n";
   $orgletter.=file_get_contents("../Local/$conid/Org_Welcome");
-  $orgletter.="</DIV>\n";
+  $orgletter.="  </DIV>\n";
 }
 
 $rules="";
 if (file_exists("../Local/$conid/KRules")) {
-  $rules.="<DIV style=\" display: block; width: 100%; float: left; \">\n";
-  $rules.="<A NAME=\"rules\">&nbsp;</A>\n";
-  $rules.="<HR>\n<H3><center>Rules</center></H3>\n<BR>\n";
+  $rules.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
+  $rules.="    <A NAME=\"rules\">&nbsp;</A>\n";
+  $rules.="    <HR>\n    <H3><center>Rules</center></H3>\n";
   $rules.=file_get_contents("../Local/$conid/KRules");
-  $rules.="</DIV>\n";
+  $rules.="  </DIV>\n";
 }
 
-if ($phase_array['Vendors Available'] == '0' ) {
-  $genbody.="      <LI><A HREF=\"Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
-}
-
-$genbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
-if ($genbody!="") {$gendesc=$genheader . $genbody . $divfooter;}
-
-// Progbody taken out, with the exception of login, addeed above.
+// Progbody, with the exception of login and the grid elements, addeed above.
 
 // Brainstorm taken out.
 
@@ -245,8 +250,9 @@ if (file_exists("../Local/$conid/Gen_Info")) {
 }
 
 // Now, put it all here.
-echo $gendesc;
+echo $genbody;
 echo $geninfo;
+echo $venueinfo;
 echo $conchairletter;
 echo $orgletter;
 echo $rules;
@@ -301,26 +307,64 @@ echo $rules;
 };
 </script>
 
-// Org Chart script
-<script src="../Local/<?php echo $conid ?>/orgchart.js"></script>
+<!-- Google charts load script -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<!-- The org chart and timeline variables -->
+<script src="../Local/<?php echo $conid ?>/orgchart.js"></script>
+<script src="../Local/<?php echo $conid ?>/timeline.js"></script>
+
+<!-- the Org Chart and Timeline script -->
 <script type="text/javascript">
-      // Load the appropraite tools from google
-      google.charts.load('current', {packages:["orgchart"]});
-      google.charts.setOnLoadCallback(drawChart);
 
-      // Draws the chart
-      function drawChart() {
+  // Load the appropraite tools from google
+  google.charts.load('current', {packages:['orgchart', 'timeline']});
+  google.charts.setOnLoadCallback(drawChart);
 
-	// Apply data from above orgchart.js file.
-	var data = new google.visualization.DataTable(orgchartData);
+  // Draws the charts
+  function drawChart() {
 
-	// Create the chart.
-	var chart = new google.visualization.OrgChart(document.getElementById('org_chart_div'));
-	// Draw the chart, setting the allowHtml option to true for the tooltips.
-	chart.draw(data, {allowHtml:true, allowCollapse:true});
-      }
-    </script>
+    // Apply data from above orgchart.js file.
+    var data = new google.visualization.DataTable(orgchartData);
+
+    // Create the org chart.
+    var chart = new google.visualization.OrgChart(document.getElementById('org_chart_div'));
+    // Draw the org chart, setting the allowHtml option to true for the tooltips.
+    chart.draw(data, {allowHtml:true, allowCollapse:true});
+
+    // row hight of each row = 41
+    var rowHeight = 46;
+    var columnWidth = 75;
+
+    // Loops across the number of charts to draw, chartnum from timeline.js
+    var count;
+    for(count = 0; count <= chartnum ; count++) {
+
+      // Create each container
+      var container = document.getElementById('timeline' + count);
+      var chart = new google.visualization.Timeline(container);
+
+      // Apply data from timeline.js
+      var dataTable = new google.visualization.DataTable(tlname[count]);
+
+      // Set the height and width of the chart
+      var chartHeight = (tlheight[count] +1) * rowHeight;
+      var chartWidth = tlwidth[count] * columnWidth;
+
+      // Allows for html-style tooltips and makes everything a single color
+      var options = {
+        tooltip: {isHtml: true},
+	  timeline: { singleColor: '#8d8' },
+	  height : chartHeight,
+          width: chartWidth,
+	  forceIFrame: true
+      };
+
+      // Draws the chart, with the options set above.
+      chart.draw(dataTable, options);
+    }
+  }
+</script>
 
 <script src="../Local/<?php echo $conid ?>/program.js"></script>
 <script src="../Local/<?php echo $conid ?>/people.js"></script>

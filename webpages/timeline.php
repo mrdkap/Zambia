@@ -1,8 +1,8 @@
 <?php
-require_once('PostingCommonCode.php');
+require_once('StaffCommonCode.php');
 global $link;
-$title="Sessions Grid";
-$pagetitle=$title;
+$title="Static Grid Data Generator";
+$description="<P>Generated Data for:</P>\n";
 
 // Test for conid being passed in
 if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
@@ -61,6 +61,12 @@ $in_p=0;
 // The count of the grids
 $graph_count=0;
 
+// Array to hold how many elements wide a graph is
+$graph_slots=array();
+
+// Array to hold the day-names
+$graph_day=array();
+
 // This walks all the possible grid break points, and checks to see if they are durring any
 // class element (with a windage of two slots after) and then notes where the graphs should be.
 for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) {
@@ -86,17 +92,15 @@ for ($time=$grid_start_sec; $time<=$grid_end_sec; $time = $time + $Grid_Spacer) 
   }
 }
 
-// Empty the workstring ... just in case.
+// Empty the workstring, tlname, and tlheight ... just in case.
 $workstring="";
-
-// The beginning of the aggregate of names for the javascript to use.
-$tlname="        var tlname = [";
+$tlname=array();
+$tlheight=array();
 
 // This walks each of the appropriate graphs.
 for ($graphrow=0; $graphrow<$graph_count; $graphrow++) {
   $graphstarttime=$graph_start[$graphrow];
   $graphendtime=$graph_end[$graphrow];
-
 
 // Get the roomname, the title and presenters, the descripton, the starttime, the endtime.
   $timelinequery = <<<EOD
@@ -157,7 +161,9 @@ EOD;
 
   // Walk the rows and build the array
   $timelinedata_array=array();
+  $roomcountelements_array=array();
   for ($i=1; $i<=$timelinerows; $i++) {
+    $roomcountelements_array[$timeline_array[$i]['Where']]++;
     $timelinedata_array[$i]="\t{\"c\":[{\"v\":\"".$timeline_array[$i]['Where']."\"},";
     $timelinedata_array[$i].="{\"v\":\"".$timeline_array[$i]['What']."\"},";
     $timelinedata_array[$i].="{\"v\":\"".$timeline_array[$i]['Who']."\"},";
@@ -165,9 +171,13 @@ EOD;
     $timelinedata_array[$i].="{\"v\":\"".$timeline_array[$i]['End Time']."\"}]}";
   } 
 
-  // Build the string ... header first
+  // The number of rooms for the height of the graph
+  $tlheight[$graphrow]=count($roomcountelements_array);
 
-  $timelinestring="  var timelineData" . $graphrow . " = {\n";
+  // Build the string ... header first
+  $timelinename="timelineData" . $graphrow;
+  $tlname[$graphrow]=$timelinename;
+  $timelinestring="var $timelinename = {\n";
   $timelinestring.=<<<EOD
     "cols" :[
 	{"type":"string","id":"Room"},
@@ -188,24 +198,22 @@ EOD;
   // Accumulation of the timeline strings
   $workstring.=$timelinestring;
 
-  // Accumulation of the various timelineData strings continues
-  $tlname.="timelineData" . $graphrow . ", ";
-
 } // for ($graphrow=1; $graphrow<$graph_count; $graphrow++)
 
-$tlname.="];";
-$chartnum="        var chartnum = ". ($graphrow - 1) .";\n";
+// Adding the chartnum, tlname, tldwidth, and tldheight variables to the timeline.js file
+$workstring.="var chartnum = ". ($graphrow - 1) .";\n";
+$workstring.="var tlname = [" . implode (", ",$tlname) . "];\n";;
+$workstring.="var tlwidth = [" . implode (", ",$graph_slots) . "];\n";
+$workstring.="var tlheight = [" . implode (", ", $tlheight) . "];\n";
 
+// Adding the variables that the presentation script needs to the timeline.php file
 $phpworkstring="<?php\n";
 $phpworkstring.="\$graph_count=$graph_count;\n";
 $phpworkstring.="\$graph_day = array ('" . implode("', '",$graph_day) . "');\n";
-$phpworkstring.="\$graph_slots = array ('" . implode ("', '",$graph_slots) . "');\n";
 $phpworkstring.="?>\n";
 
-// Adding the chartnum and tlname variable to the file
-$workstring.="\n$chartnum\n$tlname\n";
-
-$kgfile="../Local/$conid/grid.js";
+// Write out to the appropriate files
+$kgfile="../Local/$conid/timeline.js";
 $recordfile = fopen($kgfile,"w") or RenderError($title,"Unable to open record file: $kgfile.");
 fwrite ($recordfile, $workstring);
 fclose($recordfile);

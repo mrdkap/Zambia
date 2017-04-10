@@ -3,20 +3,41 @@
     <script src="../Local/48/timeline.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
+      // Load the appropraite tools from google
       google.charts.load('current', {'packages':['timeline']});
       google.charts.setOnLoadCallback(drawChart);
+
+      // Draws the charts
       function drawChart() {
+
+        // row hight and width base for each
+        var rowHeight = 45;
+        var columnWidth = 75;
+
+        // Loops across the number of charts to draw, chartnum from timeline.js
         var count;
-        for(count = 1; count <= chartnum ; count++) {
+        for(count = 0; count <= chartnum ; count++) {
+
+          // Create each container
           var container = document.getElementById('timeline' + count);
           var chart = new google.visualization.Timeline(container);
-          var dataTable = new google.visualization.DataTable(tlname[count -1]);
+
+          // Apply data from timeline.js
+          var dataTable = new google.visualization.DataTable(tlname[count]);
 	
+          // Set the height and width of the chart
+          var chartHeight = (tlheight[count] + 1) * rowHeight;
+          var chartWidth = tlwidth[count] * columnWidth;
+
+          // Allows for html-style tooltips and makes everything a single color
           var options = {
             tooltip: {isHtml: true},
-            timeline: { singleColor: '#8d8' }
+            timeline: { singleColor: '#8d8' },
+            height : chartHeight,
+            width: chartWidth
           };
 
+          // Draws the chart, with the options set above.
           chart.draw(dataTable, options);
         }
       }
@@ -24,17 +45,17 @@
   </head>
   <body>
     <H2>Friday</H2><br/>
-    <div id="timeline1" style="height: 750px; width: 2250px;"></div>
+    <div id="timeline1"></div>
     <H2>Saturday</H2><br/>
-    <div id="timeline2" style="height: 750px; width: 5250px;"></div>
+    <div id="timeline2"></div>
     <H2>Sunday</H2><br/>
-    <div id="timeline3" style="height: 750px; width: 1950px;"></div>
+    <div id="timeline3"></div>
 <!--
 <?php
-$workstring=`grep chartnum ../Local/$conid/timeline.js | cut -d"=" -f2 | cut -d";" -f1`;
-for ($graphrow=1; $graphrow<=$workstring; $graphrow++) {
-  echo "    <H2>" . $graph_day[$graphrow] . " $workstring</H2><br/>\n";
-  echo "    <div id=\"timeline".$graphrow."\" style=\"height: 750px; width: " . $graph_slots[$graphrow]*75 . "px;\"></div>\n";
+require_once("../Local/48/timeline.php");
+for ($graphrow=0; $graphrow<=$graph_count; $graphrow++) {
+  echo "    <H2 class=collapse>" . $graph_day[$graphrow] . "</H2><br/>\n";
+  echo "    <div id=\"timeline".$graphrow."\"></div>\n";
 }
 ?>
 -->

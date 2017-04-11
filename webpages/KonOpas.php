@@ -1,5 +1,5 @@
 <?php
-require_once('PostingCommonCode.php');
+require_once('CommonCode.php');
 global $link;
 
 // Pass in variables
@@ -163,14 +163,17 @@ if (navigator.standalone) document.getElementById('install-instructions').style.
 $genbody ="  <DIV style=\"float: left;\">\n";
 $genbody.="    <H3>General Information</H3>\n";
 $genbody.="    <UL>\n";
-$genbody.="      <LI class=collapse>Org Chart</LI>\n";
-$genbody.="      <DIV id=\"org_chart_div\" style=\"width:100%\"></DIV></LI>\n";
-if ($phase_array['Prog Available'] == '0' ) {
+if ($phase_array['OrgChart'] == '0' ) {
+  $genbody.="      <LI class=collapse>Org Chart</LI>\n";
+  $genbody.="      <DIV id=\"org_chart_div\" style=\"width:100%\"></DIV></LI>\n";
   require_once("../Local/$conid/timeline.php");
   for ($graphrow=0; $graphrow<$graph_count; $graphrow++) {
     $genbody.="      <LI class=collapse>" . $graph_day[$graphrow] . "</LI>\n";
     $genbody.="      <DIV id=\"timeline".$graphrow."\" style=\"width:100%\"></DIV></LI>\n";
   }
+}
+if ($phase_array['Feedback Available'] == '0') {
+  $genbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";
 }
 if ($phase_array['Comments Displayed'] == '0' ) {
   $genbody.="      <LI><A HREF=\"CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";

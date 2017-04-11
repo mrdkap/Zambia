@@ -177,6 +177,22 @@ if ($verbiage != "") {
   $additionalinfo.=ob_get_clean();
 }
 
+$classcomment="Other comments on this class:";
+$verbiage=get_verbiage("Feedback_1");
+if ($verbiage != "") {
+  ob_start();
+  eval ('?>' . $verbiage);
+  $classcomment=ob_get_clean();
+}
+
+$progcomment="Comments on the FFF in general: (not shared with the presenter)";
+$verbiage=get_verbiage("Feedback_2");
+if ($verbiage != "") {
+  ob_start();
+  eval ('?>' . $verbiage);
+  $progcomment=ob_get_clean();
+}
+
 // Document information
 class MYPDF extends TCPDF {
   public function Footer() {
@@ -332,9 +348,9 @@ for ($i=1; $i<=$questioncount; $i++) {
 $printstring.="</TABLE><hr>";
 $formstring.="</TABLE>\n";
 if ($elements > 0) {
-  $formstring.="<LABEL for=\"classcomment\">Other comments on this class:</LABEL>\n<br>\n";
+  $formstring.="<LABEL for=\"classcomment\">$classcomment</LABEL>\n<br>\n";
   $formstring.="  <TEXTAREA name=\"classcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
-  $formstring.="<LABEL for=\"progcomment\">Comments on the FFF in general: (not shared with the presenter)</LABEL>\n<br>\n";
+  $formstring.="<LABEL for=\"progcomment\">$progcomment</LABEL>\n<br>\n";
   $formstring.="  <TEXTAREA name=\"progcomment\" rows=6 cols=72></TEXTAREA>\n<br>\n";
 } else {
   $formstring.="<INPUT type=\"hidden\" name=\"selsess\" value=\"-1\">\n";

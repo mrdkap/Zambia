@@ -107,7 +107,7 @@ for ($graphrow=0; $graphrow<$graph_count; $graphrow++) {
 SELECT
     roomname AS "Where",
     replace(title_good_web,'"',"''") AS "What",
-    GROUP_CONCAT(name_good_web,if((moderator in ('1','Yes')),'(m)','') SEPARATOR ", ") AS "Who",
+    if (name_good_web IS NULL," ",GROUP_CONCAT(name_good_web,if((moderator in ('1','Yes')),'(m)','') SEPARATOR ", ")) AS "Who",
     DATE_FORMAT(ADDTIME(constartdate, starttime),"Date(%Y, %m, %d, %k, %i, %s)") AS "Start Time",
     DATE_FORMAT(ADDTIME(ADDTIME(constartdate, starttime),duration),"Date(%Y, %m, %d, %k, %i, %s)") AS "End Time"
   FROM
@@ -115,22 +115,8 @@ SELECT
     JOIN Schedule USING (sessionid, conid)
     JOIN Rooms USING (roomid)
     JOIN PubStatuses USING (pubstatusid)
-    JOIN ParticipantOnSession USING (sessionid,conid)
     JOIN ConInfo USING (conid)
     JOIN (SELECT
-        badgeid,
-	biotext as name_good_web
-      FROM
-          Bios
-	JOIN BioTypes USING (biotypeid)
-        JOIN BioStates USING (biostateid)
-        JOIN BioDests USING (biodestid)
-      WHERE
-	  biotypename in ('name') AND
-	  biostatename in ('good') AND
-	  biodestname in ('web') AND
-	  biolang='en-us') NGW USING (badgeid)
-         JOIN (SELECT
         sessionid,
 	conid,
 	descriptiontext as title_good_web
@@ -144,6 +130,20 @@ SELECT
 	  biostatename in ('good') AND
 	  biodestname in ('web') AND
 	  descriptionlang='en-us') TGW USING (sessionid,conid)
+    LEFT JOIN ParticipantOnSession USING (sessionid,conid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as name_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('name') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
+	  biolang='en-us') NGW USING (badgeid)
   WHERE
     conid=$conid AND
     TIME_TO_SEC(starttime) >= $graphstarttime AND

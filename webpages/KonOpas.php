@@ -166,6 +166,8 @@ $genbody.="    <UL>\n";
 if ($phase_array['OrgChart'] == '0' ) {
   $genbody.="      <LI class=collapse>Org Chart</LI>\n";
   $genbody.="      <DIV id=\"org_chart_div\" style=\"width:100%\"></DIV></LI>\n";
+}
+if ($phase_array['Grid Available'] == '0') {
   require_once("../Local/$conid/timeline.php");
   for ($graphrow=0; $graphrow<$graph_count; $graphrow++) {
     $genbody.="      <LI class=collapse>" . $graph_day[$graphrow] . "</LI>\n";
@@ -318,15 +320,36 @@ echo $rules;
 <script src="../Local/<?php echo $conid ?>/timeline.js"></script>
 
 <!-- the Org Chart and Timeline script -->
+<?php
+if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0' )) {
+?>
 <script type="text/javascript">
 
   // Load the appropraite tools from google
+
+<?php
+  if (($phase_array['OrgChart'] == '0' ) && ($phase_array['Grid Available'] == '0' )) {
+?>
   google.charts.load('current', {packages:['orgchart', 'timeline']});
+<?php
+  } elseif ($phase_array['OrgChart'] == '0' ) {
+?>
+  google.charts.load('current', {packages:['orgchart']});
+<?php
+  } else {
+?>
+  google.charts.load('current', {packages:['timeline']});
+<?php
+  }
+?>
   google.charts.setOnLoadCallback(drawChart);
 
   // Draws the charts
   function drawChart() {
 
+<?php
+  if ($phase_array['OrgChart'] == '0' ) {
+?>
     // Apply data from above orgchart.js file.
     var data = new google.visualization.DataTable(orgchartData);
 
@@ -335,6 +358,10 @@ echo $rules;
     // Draw the org chart, setting the allowHtml option to true for the tooltips.
     chart.draw(data, {allowHtml:true, allowCollapse:true});
 
+<?php
+  }
+  if ($phase_array['Grid Available'] == '0' ) {
+?>
     // row hight of each row = 41
     var rowHeight = 46;
     var columnWidth = 75;
@@ -366,8 +393,14 @@ echo $rules;
       // Draws the chart, with the options set above.
       chart.draw(dataTable, options);
     }
+<?php
+  }
+?>
   }
 </script>
+<?php
+}
+?>
 
 <script src="../Local/<?php echo $conid ?>/program.js"></script>
 <script src="../Local/<?php echo $conid ?>/people.js"></script>

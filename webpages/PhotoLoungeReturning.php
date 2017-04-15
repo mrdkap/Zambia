@@ -47,7 +47,7 @@ if ((!empty($_POST['who'])) and (is_numeric($_POST['who']))) {
   $proposed=$_POST['who'];
 
   // ... then update them as appropriate.
-  $message.=photo_lounge_propose($title, $description, $proposed, $message, $message_error);
+  $message.=propose_individual($title, $description, $conid, "PhotoSub", $proposed, $message, $message_error);
 
 }
 

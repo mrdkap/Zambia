@@ -42,12 +42,16 @@ if ((!isset($badgeid)) and (isset($emailaddr))) {
   if (mysql_num_rows($result)==1) {
     $dbobject=mysql_fetch_object($result);
     $badgeid=$dbobject->badgeid;
+  } else {
+   $message_error.="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
+    require ('login.php');
+    exit();
   }
 }
 
 //Badgid test
 $result=mysql_query("SELECT password,password2 FROM Participants WHERE badgeid='".$badgeid."'",$link);
-if (!$result) {
+if ((!$result) || (mysql_num_rows($result)!=1)) {
   $message_error.="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
   require ('login.php');
   exit();
@@ -175,7 +179,52 @@ if ($result and (mysql_num_rows($result)==1)) {
   $past_p=$dbobject->IsPassed;
 }
 
-// Switch on which page is shown
+// Brainstorm open
+$querybrainstorm=<<<EOF
+SELECT
+    phasestate
+  FROM
+      Phase
+    JOIN PhaseTypes USING (phasetypeid)
+  WHERE
+    conid=$conid AND
+    phasetypename in ('Brainstorm')
+EOF;
+$result=mysql_query($querybrainstorm,$link);
+if ($result and (mysql_num_rows($result)==1)) {
+  $dbobject=mysql_fetch_object($result);
+  $brainstorm_p=$dbobject->phasestate;
+}
+
+// Photo Submissions open
+$queryphotosub=<<<EOF
+SELECT
+    phasestate
+  FROM
+      Phase
+    JOIN PhaseTypes USING (phasetypeid)
+  WHERE
+    conid=$conid AND
+    phasetypename in ('Photo Submission')
+EOF;
+$result=mysql_query($queryphotosub,$link);
+if ($result and (mysql_num_rows($result)==1)) {
+  $dbobject=mysql_fetch_object($result);
+  $photosub_p=$dbobject->phasestate;
+}
+
+/* Switch on which page is shown
+   First search to see if any landing page is open to said individual,
+   be it Staff, Vendor, Participant, PhotoSub, Photo Sub Returning, or
+   Brainstorm.
+   Then winnow out anyone who doesn't already have permission, from
+   adding themselves to a past event.
+   Followed by a test to see if they can add themselves to this
+   particular event, having been in our database before.  First as a
+   presenter, but only if Brainstorm is open, then as a photo
+   submitter but only if Photo Submissions is open.
+   Finally error out, at the end, exhausting all possibilities.
+ */
 if (retrieve_participant_from_db($badgeid)==0) {
   if(may_I('Staff')) {
     require ('StaffPage.php');
@@ -191,40 +240,55 @@ if (retrieve_participant_from_db($badgeid)==0) {
     require ('BrainstormWelcome.php');
   } elseif ($past_p=="Passed") {
     set_permission_set(0);
-    $message_error.="The event you have chosen, ".$_SESSION['conname'].", has passed, and you don't ";
-    $message_error.="have access to it.\nPlease pick a <A HREF=\"http://".$_SESSION['conurl']."\">";
-    $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.";
+    $message_error.="The event you have chosen, " . $_SESSION['conname'] . "\n";
+    $message_error.="has passed, and you don't have access to it.\n";
+    $message_error.="Please pick a <A HREF=\"http://".$_SESSION['conurl']."\">";
+    $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.\n";
     require('logout.php');
   } elseif (isset($prevconpresent)) {
-    /* This should have some sort of reentran piece, allowing a form
-       to be set, and relogin to happen.
-    */
-    $message.="You previously presented for us at $prevconpresent.\n";
-    $message.="<A HREF=\"\">Propose</A> yourself for this event, then log in again.\n";
-    require('logout.php');
+    if ($brainstorm_p != "0") {
+      set_permission_set(0);
+      $message_error.="The event you have chosen, " . $_SESSION['conname'] . "\n";
+      $message_error.="is not open to accepting proposed presenters at this time.\n";
+      $message_error.="Please pick a <A HREF=\"http://".$_SESSION['conurl']."\">";
+      $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.\n";
+      require('logout.php');
+    } else {
+      $message.="You previously presented for us at $prevconpresent.\n";
+      $message.="Propose yourself to present for this event, by clicking\n";
+      $message.="the button below, then log in again.\n";
+      $message.="<CENTER><FORM name\"propose\" method=POST action=\"ParticipantReturning.php\">\n";
+      $message.="<INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
+      $message.="<INPUT type=\"hidden\" name=\"perm\" value=\"Part\">\n";
+      $message.="<INPUT type=\"hidden\" name=\"who\" value=\"$badgeid\">\n";
+      $message.="<INPUT type=\"submit\" value=\"Propose Yourself\">\n</FORM>\n</CENTER\n";
+      require('login.php');
+    }
   } elseif (isset($prevconphotosub)) {
-    /* This should have some sort of reentran piece, allowing a form
-       to be set, and relogin to happen.  Probably much along the
-       lines of:
-       "<FORM name=\"propose\" method=POST action=\"ProposalPage.php\">\n",
-       "<INPUT type=\"hidden\" name=\"badgeid\" value=\"",badgeid,"\">\n",
-       "<INPUT type=\"submit\" value=\"Propose\">\n",
-       "</FORM>\n"
-
-       and something in the functionality of:
-       $message.=photo_lounge_propose($title, $description, $badgeid, $message, $message_error);
-
-       on said ProposalPage.php
-    */
-    $message.="You were invited to submit photos for us at $prevconphotosub.\n";
-    $message.="<A HREF=\"\">Propose</A> to submit photos for this event, then log in again.\n";
-    require('logout.php');
+    if ($photosub_p != "0") {
+      set_permission_set(0);
+      $message_error.="The event you have chosen, " . $_SESSION['conname'] . "\n";
+      $message_error.="is not open to accepting photo submissions at this time.\n";
+      $message_error.="Please pick a <A HREF=\"http://".$_SESSION['conurl']."\">";
+      $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.\n";
+      require('logout.php');
+    } else {
+      $message.="You were invited to submit photos for us at $prevconphotosub.\n";
+      $message.="Propose yourself to submit photos for this event, by clicking\n";
+      $message.="the button below, then log in again.\n";
+      $message.="<CENTER><FORM name\"propose\" method=POST action=\"ParticipantReturning.php\">\n";
+      $message.="<INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
+      $message.="<INPUT type=\"hidden\" name=\"perm\" value=\"Photo\">\n";
+      $message.="<INPUT type=\"hidden\" name=\"who\" value=\"$badgeid\">\n";
+      $message.="<INPUT type=\"submit\" value=\"Propose Yourself\">\n</FORM>\n</CENTER>\n";
+      require('login.php');
+    }
   } else {
     set_permission_set(0);
     $message_error.="There is a problem with your permission configuration:\n";
     $message_error.="It doesn't have permission to access any welcome page for ";
     $message_error.=$_SESSION['conname'].".\nPlease pick a <A HREF=\"http://".$_SESSION['conurl']."\">";
-    $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.";
+    $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.\n";
     require('logout.php');
   }
   exit();

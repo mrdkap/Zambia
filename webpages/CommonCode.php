@@ -2550,16 +2550,16 @@ EOD;
    It takes:
    title: title of the page
    description: page description
+   conid: the conid
+   permission_type: the type of permission being granted
    proposed: the badgeid of the proposed individual
    message: the accumulation of the message value
    message_error: any current message error information
    It returns:
    message: the updated accumulation of the message value
    */
-function photo_lounge_propose ($title, $description, $proposed, $message, $message_error) {
+function propose_individual ($title, $description, $conid, $permission_type, $proposed, $message, $message_error) {
   global $link;
-  // Set this, so it might be able to be substituted
-  $conid=$_SESSION['conid'];
 
   // Get the interested value that means "Suggested" from the InterestedTypes table.
   $suggested_number_query= <<<EOD
@@ -2586,7 +2586,7 @@ SELECT
   FROM
       PermissionRoles
   WHERE
-    permrolename in ('PhotoSub')
+    permrolename in ('$permission_type')
 EOD;
 
   if (!$result=mysql_query($permission_role_query,$link)) {
@@ -2599,7 +2599,7 @@ EOD;
 
   /* Check interested table.  If they exist already, leave it well
      enough alone. They might be involved in other areas of the con,
-     just not as a presenter yet. */
+     just not as this one yet. */
   $query="SELECT * from Interested WHERE badgeid=\"$proposed\" AND conid=$conid";
   list($rows,$header_array,$interested_array)=queryreport($query,$link,$title,$description,0);
 
@@ -2615,7 +2615,8 @@ EOD;
     $message.="to get things straightened out.  Thank you.</P>\n";
   }
 
-  /* Add to UserHasPermissionRole table. Set permroleid to "PhotoSub" and give a little update. */
+  /* Add to UserHasPermissionRole table. Set permroleid to whatever $permission_role
+     returned and give a little update. */
   $element_array=array('badgeid','permroleid','conid');
   $value_array=array($proposed, $permroleid, $conid);
   $verbose.=submit_table_element($link,$title,"UserHasPermissionRole", $element_array, $value_array);

@@ -1089,25 +1089,28 @@ function get_idlist_from_db($table_name,$id_col_name,$desc_col_name,$desc_col_ma
    call with $badgeid='' to unlock based on user only. */
 function unlock_participant($badgeid) {
   global $query,$link;
-  $query="UPDATE Bios SET biolockedby=NULL WHERE ";
-  if (isset($_SESSION['badgeid'])) {
-    $query.="biolockedby='".$_SESSION['badgeid']."'";
-    if ($badgeid!='') {
-      $query.=" and badgeid='$badgeid'";
-    }
-  } else {
-    if ($badgeid!='') {
-      $query.="badgeid='$badgeid'";
+
+  if (!empty($_SESSION['badgeid'])) {
+    $query="UPDATE Bios SET biolockedby=NULL WHERE ";
+    if (isset($_SESSION['badgeid'])) {
+      $query.="biolockedby='".$_SESSION['badgeid']."'";
+      if ($badgeid!='') {
+	$query.=" and badgeid='$badgeid'";
+      }
     } else {
-      return($query.": Nothing to unlock"); //can't find anything to unlock
+      if ($badgeid!='') {
+	$query.="badgeid='$badgeid'";
+      } else {
+	return($query.": Nothing to unlock"); //can't find anything to unlock
+      }
     }
-  }
-  //error_log("Zambia: unlock_participants: ".$query);
-  $result=mysql_query($query,$link);
-  if (!$result) {
-    return ($query.": -1");
-  } else {
-    return ($query.": 0");
+    //error_log("Zambia: unlock_participants: ".$query);
+    $result=mysql_query($query,$link);
+    if (!$result) {
+      return ($query.": -1");
+    } else {
+      return ($query.": 0");
+    }
   }
 }
 

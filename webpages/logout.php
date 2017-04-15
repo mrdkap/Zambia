@@ -1,9 +1,10 @@
 <?php
 // Default role is Posting, so at least something familiar shows.
 require_once('PostingCommonCode.php');
+global $link;
 
 // Get the next event as the fallback otherwise pull the fallback from the db_name file
-$query=<<<EOF
+$querypast=<<<EOF
 SELECT
     conid,
     conurl

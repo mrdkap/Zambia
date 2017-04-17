@@ -1,8 +1,32 @@
 <html>
   <head>
-    <script src="../Local/48/timeline.js"></script>
+    <script type="text/javascript">
+      // Pull the "GET" variables from the url (basically just conid)
+      var GET = {};
+      var query = window.location.search.substring(1).split("&");
+      for (var i = 0, max = query.length; i < max; i++) {
+        if (query[i] === "") // check for trailing & with no param
+          continue;
+        var param = query[i].split("=");
+        GET[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
+      }
+      // The conid, to be passed to the org-chart generator script
+      var conid = GET['conid'];
+
+      // Default number, just in case
+      if (!conid) conid=48;
+
+      // Set the conurl, and then force it into the head of the file-stream by
+      // assigning it to a local script, and then pushing that script up.
+      var conurl = "../Local/" + conid + "/timeline.js";
+      LScript = document.createElement('script');
+      LScript.src = conurl;
+      document.getElementsByTagName('head')[0].appendChild(LScript);
+    </script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
+      console.log(conurl);
+      console.log(chartnum);
       // Load the appropraite tools from google
       google.charts.load('current', {'packages':['timeline']});
       google.charts.setOnLoadCallback(drawChart);
@@ -44,20 +68,14 @@
     </script>
   </head>
   <body>
-    <H2>Friday</H2><br/>
-    <div id="timeline1"></div>
-    <H2>Saturday</H2><br/>
-    <div id="timeline2"></div>
-    <H2>Sunday</H2><br/>
-    <div id="timeline3"></div>
-<!--
-<?php
-require_once("../Local/48/timeline.php");
-for ($graphrow=0; $graphrow<=$graph_count; $graphrow++) {
-  echo "    <H2 class=collapse>" . $graph_day[$graphrow] . "</H2><br/>\n";
-  echo "    <div id=\"timeline".$graphrow."\"></div>\n";
-}
-?>
--->
+    <div id="timelineout"></div>
+    <script type="text/javascript">
+    var loop;
+    var workstring = "";
+    for(loop=0; loop <= chartnum; loop++) {
+      workstring = workstring + '<H2>' + dayname[loop] + '</H2><br/>\n<div id="timeline' + loop + '"></div>\n';
+    }
+    document.getElementById("timelineout").innerHTML = workstring;
+    </script>
   </body>
 </html>

@@ -187,6 +187,7 @@ EOD;
 	{"type":"date","id":"End"}
     ],
     "rows":[
+
 EOD;
 
   // ... then the chewy array center
@@ -202,9 +203,10 @@ EOD;
 
 // Adding the chartnum, tlname, tldwidth, and tldheight variables to the timeline.js file
 $workstring.="var chartnum = ". ($graphrow - 1) .";\n";
-$workstring.="var tlname = [" . implode (", ",$tlname) . "];\n";;
-$workstring.="var tlwidth = [" . implode (", ",$graph_slots) . "];\n";
-$workstring.="var tlheight = [" . implode (", ", $tlheight) . "];\n";
+$workstring.="var tlname = [" . implode(", ",$tlname) . "];\n";;
+$workstring.="var tlwidth = [" . implode(", ",$graph_slots) . "];\n";
+$workstring.="var tlheight = [" . implode(", ",$tlheight) . "];\n";
+$workstring.="var dayname = [\"" . implode('", "',$graph_day) . "\"];\n";
 
 // Adding the variables that the presentation script needs to the timeline.php file
 $phpworkstring="<?php\n";

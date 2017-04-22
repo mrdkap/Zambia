@@ -107,6 +107,7 @@ for ($graphrow=0; $graphrow<$graph_count; $graphrow++) {
 SELECT
     roomname AS "Where",
     replace(title_good_web,'"',"''") AS "What",
+    htmlcellcolor,
     if (name_good_web IS NULL," ",GROUP_CONCAT(name_good_web,if((moderator in ('1','Yes')),'(m)','') SEPARATOR ", ")) AS "Who",
     DATE_FORMAT(ADDTIME(constartdate, starttime),"Date(%Y, %m, %d, %k, %i, %s)") AS "Start Time",
     DATE_FORMAT(ADDTIME(ADDTIME(constartdate, starttime),duration),"Date(%Y, %m, %d, %k, %i, %s)") AS "End Time"
@@ -114,6 +115,7 @@ SELECT
       Sessions
     JOIN Schedule USING (sessionid, conid)
     JOIN Rooms USING (roomid)
+    JOIN Types USING (typeid)
     JOIN PubStatuses USING (pubstatusid)
     JOIN ConInfo USING (conid)
     JOIN (SELECT
@@ -167,6 +169,7 @@ EOD;
     $timelinedata_array[$i]="\t{\"c\":[{\"v\":\"".$timeline_array[$i]['Where']."\"},";
     $timelinedata_array[$i].="{\"v\":\"".$timeline_array[$i]['What']."\"},";
     $timelinedata_array[$i].="{\"v\":\"".$timeline_array[$i]['Who']."\"},";
+    $timelinedata_array[$i].="{\"v\":\"".$timeline_array[$i]['htmlcellcolor']."\"},";
     $timelinedata_array[$i].="{\"v\":\"".$timeline_array[$i]['Start Time']."\"},";
     $timelinedata_array[$i].="{\"v\":\"".$timeline_array[$i]['End Time']."\"}]}";
   } 
@@ -183,6 +186,7 @@ EOD;
 	{"type":"string","id":"Room"},
 	{"type":"string","id":"Name"},
 	{"type":"string","role":"tooltip","p":{"role":"tooltip"}},
+	{"type":"string","role":"style"},
 	{"type":"date","id":"Start"},
 	{"type":"date","id":"End"}
     ],

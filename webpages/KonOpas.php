@@ -1,5 +1,5 @@
 <?php
-require_once('CommonCode.php');
+require_once('PostingCommonCode.php');
 global $link;
 
 // Pass in variables
@@ -240,8 +240,6 @@ if (file_exists("../Local/$conid/KRules")) {
 // Brainstorm taken out.
 
 // Photo Submission taken out.
-
-// Feedback taken out.
 
 // Volunteer taken out.
 

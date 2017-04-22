@@ -55,11 +55,25 @@
 
           // Allows for html-style tooltips and makes everything a single color
           var options = {
-            tooltip: {isHtml: true},
+            tooltip: {isHtml: false},
             timeline: { singleColor: '#8d8' },
             height : chartHeight,
             width: chartWidth
           };
+
+          google.visualization.events.addListener(chart, 'ready', function () {
+            var rowLabels = container.getElementsByTagName('text');
+            Array.prototype.forEach.call(rowLabels, function (label) {
+              if (label.getAttribute('text-anchor') === 'end') {
+                label.addEventListener('click', displayDetails, false);
+              }
+            });
+          });
+
+          function displayDetails(sender) {
+            alert(sender.target.innerHTML);
+//            document.getElementById('cityData').innerHTML = 'City Data for: ' + sender.target.innerHTML;
+          }
 
           // Draws the chart, with the options set above.
           chart.draw(dataTable, options);

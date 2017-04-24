@@ -25,6 +25,44 @@ for ($i=1; $i<=$phaserows; $i++) {
   $phase_array[$fullphase_array[$i]['phasetypename']]=$fullphase_array[$i]['phasestate'];
 }
 
+// Set up the start/stop times for Applications
+$queryapplications=<<<EOF
+SELECT
+    if((constartdate > NOW()),
+       if((targettime < NOW()),
+	  concat("        <DT>",activity," has already closed.</DT><br />\n"),
+	  if((activitystart <= NOW()),
+	     concat("        <DT><A HREF=\"",
+		    activitynotes,
+		    "\" target=\"_blank\">",
+		    activity,
+		    "</A>:</DT>\n        <DD>Opens ",
+		    DATE_FORMAT(activitystart,'%b %D'),
+		    "</DD>\n        <DD>Closes ",
+		    DATE_FORMAT(targettime,'%b %D'),
+		    "</DD><br />\n"),
+	     concat("        <DT>",
+		    activity,
+		    ":</DT>\n        <DD>Opens ",
+		    DATE_FORMAT(activitystart,'%b %D'),
+		    "</DD>\n        <DD>Closes ",
+		    DATE_FORMAT(targettime,'%b %D'),
+		    "</DD><br />\n"))),"") AS Applications
+  FROM
+      TaskList
+    JOIN ConInfo USING (conid)
+  WHERE
+    conid=$conid AND
+    activity like "%Applications%"
+EOF;
+
+list($approws,$appheader_array,$app_array)=queryreport($queryapplications,$link,$title,$description,0);
+$appstring="      <DL>\n";
+for ($i=1; $i<=$approws; $i++) {
+  $appstring.=$app_array[$i]['Applications'];
+}
+$appstring.="     </DL>\n";
+
 ?>
 <!DOCTYPE html>
 <html><!-- manifest="konopas.appcache" -->
@@ -174,6 +212,9 @@ if ($phase_array['Grid Available'] == '0') {
     $genbody.="      <DIV id=\"timeline".$graphrow."\" style=\"width:100%\"></DIV></LI>\n";
   }
 }
+if (file_exists("../Local/$conid/FAQ")) {
+  $genbody.="      <LI><A HREF=\"FAQ.php\">FAQ</A></LI>\n";
+}
 if ($phase_array['Feedback Available'] == '0') {
   $genbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";
 }
@@ -183,6 +224,7 @@ if ($phase_array['Comments Displayed'] == '0' ) {
 if (file_exists("../Local/$conid/Program_Book.pdf")) {
   $genbody.="      <LI><A HREF=\"../Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
 }
+$genbody.=$appstring;
 if ($phase_array['Vendors Available'] == '0' ) {
   $genbody.="      <LI><A HREF=\"Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
 }

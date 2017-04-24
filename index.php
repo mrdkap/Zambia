@@ -10,7 +10,7 @@ $link = mysql_connect(DBHOSTNAME,DBUSERID,DBPASSWORD);
 mysql_select_db(DBDB,$link);
 
 // Establish the con info
-$query= <<<EOF
+$query=<<<EOF
 SELECT
     conname,
     constartdate,
@@ -24,7 +24,7 @@ EOF;
 
 // Retrieve query fail if database can't be found, and if there isn't just one result
 if (($result=mysql_query($query,$link))===false) {
-  $message ="<P>Error retrieving data from database.</P>\n<P>";
+  $message.="<P>Error retrieving data from database.</P>\n<P>";
   $message.=$query;
   $message.="</P>\n";
 }
@@ -46,7 +46,7 @@ for ($i=1; $i<=$conrows; $i++) {
 $nowis=time();
 
 // Establish the states, for the look of the page
-$query= <<<EOF
+$query=<<<EOF
 SELECT
     phasestate,
     phasetypename,
@@ -58,7 +58,7 @@ EOF;
 
 // Retrieve query, fail if database can't be found, or there aren't any results
 if (($result=mysql_query($query,$link))===false) {
-  $message ="<P>Error retrieving data from database.</P>\n<P>";
+  $message.="<P>Error retrieving data from database.</P>\n<P>";
   $message.=$query;
   $message.="</P>\n";
 }
@@ -72,6 +72,56 @@ if (0==($phaserows=mysql_num_rows($result))) {
 for ($i=1; $i<=$phaserows; $i++) {
   $element_array=mysql_fetch_assoc($result);
   $phase_array[$element_array['conid']][$element_array['phasetypename']]=$element_array['phasestate'];
+}
+
+// Set up the start/stop times for Applications
+$query=<<<EOF
+SELECT
+    conid,
+    if((constartdate > NOW()),
+       if((targettime < NOW()),
+	  concat("        <DT>",activity," has already closed.</DT><br />\n"),
+	  if((activitystart <= NOW()),
+	     concat("        <DT><A HREF=\"",
+		    activitynotes,
+		    "\" target=\"_blank\">",
+		    activity,
+		    "</A>:</DT>\n        <DD>Opens ",
+		    DATE_FORMAT(activitystart,'%b %D'),
+		    "</DD>\n        <DD>Closes ",
+		    DATE_FORMAT(targettime,'%b %D'),
+		    "</DD><br />\n"),
+	     concat("        <DT>",
+		    activity,
+		    ":</DT>\n        <DD>Opens ",
+		    DATE_FORMAT(activitystart,'%b %D'),
+		    "</DD>\n        <DD>Closes ",
+		    DATE_FORMAT(targettime,'%b %D'),
+		    "</DD><br />\n"))),"") AS Applications
+  FROM
+      TaskList
+    JOIN ConInfo USING (conid)
+  WHERE
+    activity like "%Applications%"
+EOF;
+
+// Retrieve query, fail if database can't be found, or there aren't any results
+if (($result=mysql_query($query,$link))===false) {
+  $message.="<P>Error retrieving data from database.</P>\n<P>";
+  $message.=$query;
+  $message.="</P>\n";
+}
+if (0==($approws=mysql_num_rows($result))) {
+  $message.="<P>No results found.</P>\n<P>";
+  $message.=$query;
+  $message.="</P>\n";
+}
+
+$appstringstart="      <DL>\n";
+$appstringend="     </DL>\n";
+for ($i=1; $i<=$approws; $i++) {
+  $element_array=mysql_fetch_assoc($result);
+  $appstring[$element_array['conid']].=$element_array['Applications'];
 }
 
 $title="Upcoming Events:";
@@ -159,6 +209,9 @@ for ($i=1; $i<=$conrows; $i++) {
     $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid\">General Event Information</A></LI>\n";
   }
   $genbody.="      <LI><A HREF=\"webpages/ConStaffBios.php?conid=$conid\">Con Staff</A></LI>\n";
+  if (file_exists("Local/$conid/FAQ")) {
+  $genbody.="      <LI><A HREF=\"webpages/FAQ.php\">FAQ</A></LI>\n";
+}
   if ($phase_array[$conid]['Venue Available'] == '0' ) {
     $genbody.="      <LI><A HREF=\"webpages/Venue.php?conid=$conid\">Venue Information</A></LI>\n";
   }
@@ -167,6 +220,9 @@ for ($i=1; $i<=$conrows; $i++) {
   }
   if (file_exists("Local/$conid/Program_Book.pdf")) {
     $genbody.="      <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
+  }
+  if (!empty($appstring[$conid])) {
+    $genbody.=$appstringstart . $appstring[$conid] . $appstringend;
   }
   if (file_exists("Local/$conid/Con_Chair_Welcome")) {
     $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid#conchairletter\">Welcome from the Con Chair</A></LI>\n";
@@ -275,6 +331,8 @@ for ($i=1; $i<=$conrows; $i++) {
   }
 }
 $navstring.="        </UL>\n";
+
+$webfinalstring=$message . $webfinalstring;
 
 // Now start the display.
 ?>

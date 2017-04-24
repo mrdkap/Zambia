@@ -26,6 +26,44 @@ for ($i=1; $i<=$phaserows; $i++) {
   $phase_array[$fullphase_array[$i]['phasetypename']]=$fullphase_array[$i]['phasestate'];
 }
 
+// Set up the start/stop times for Applications
+$queryapplications=<<<EOF
+SELECT
+    if((constartdate > NOW()),
+       if((targettime < NOW()),
+	  concat("        <DT>",activity," has already closed.</DT><br />\n"),
+	  if((activitystart <= NOW()),
+	     concat("        <DT><A HREF=\"",
+		    activitynotes,
+		    "\" target=\"_blank\">",
+		    activity,
+		    "</A>:</DT>\n        <DD>Opens ",
+		    DATE_FORMAT(activitystart,'%b %D'),
+		    "</DD>\n        <DD>Closes ",
+		    DATE_FORMAT(targettime,'%b %D'),
+		    "</DD><br />\n"),
+	     concat("        <DT>",
+		    activity,
+		    ":</DT>\n        <DD>Opens ",
+		    DATE_FORMAT(activitystart,'%b %D'),
+		    "</DD>\n        <DD>Closes ",
+		    DATE_FORMAT(targettime,'%b %D'),
+		    "</DD><br />\n"))),"") AS Applications
+  FROM
+      TaskList
+    JOIN ConInfo USING (conid)
+  WHERE
+    conid=$conid AND
+    activity like "%Applications%"
+EOF;
+
+list($approws,$appheader_array,$app_array)=queryreport($queryapplications,$link,$title,$description,0);
+$appstring="      <DL>\n";
+for ($i=1; $i<=$approws; $i++) {
+  $appstring.=$app_array[$i]['Applications'];
+}
+$appstring.="     </DL>\n";
+
 // LOCALIZATIONS
 $_SESSION['return_to_page']="GenInfo.php";
 $title="General Information for $conname";
@@ -50,6 +88,9 @@ $vendheader.="    <UL>\n";
 $description.="<DIV style=\" width: 100%; \">\n";
 $genbody="";
 $genbody.="      <LI><A HREF=\"ConStaffBios.php?conid=$conid\">Con Staff</A></LI>\n";
+if (file_exists("../Local/$conid/FAQ")) {
+  $genbody.="      <LI><A HREF=\"FAQ.php\">FAQ</A></LI>\n";
+}
 if ($phase_array['Venue Available'] == '0' ) {
   $genbody.="      <LI><A HREF=\"Venue.php?conid=$conid\">Venue Information</A></LI>\n";
 }
@@ -59,6 +100,7 @@ if ($phase_array['Comments Displayed'] == '0' ) {
 if (file_exists("../Local/$conid/Program_Book.pdf")) {
   $genbody.="      <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
 }
+$genbody.=$appstring;
 
 $conchairletter="";
 if (file_exists("../Local/$conid/Con_Chair_Welcome")) {

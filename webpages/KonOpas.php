@@ -57,11 +57,22 @@ SELECT
 EOF;
 
 list($approws,$appheader_array,$app_array)=queryreport($queryapplications,$link,$title,$description,0);
-$appstring="      <DL>\n";
+
+// Create the application string
+
+// Nulls to start with
+$appstring="";
+$tmpappstring="";
+
+// Walk the possible activities
 for ($i=1; $i<=$approws; $i++) {
-  $appstring.=$app_array[$i]['Applications'];
+  $tmpappstring.=$app_array[$i]['Applications'];
 }
-$appstring.="     </DL>\n";
+
+// If any of the activities came up, put them in the string.
+if ($tmpappstring != "") {
+  $appstring="      <DL>\n" . $tmpappstring . "     </DL>\n";
+}
 
 ?>
 <!DOCTYPE html>
@@ -118,6 +129,8 @@ $appstring.="     </DL>\n";
 <li id="tab_star"><a href="#star" data-txt>My con</a>
 <li id="tab_prog"><a href="#" data-txt>Program</a><div id="day-sidebar" class="sub-side"></div>
 <li id="tab_part"><a href="#part" data-txt>People</a><div id="part-sidebar" class="sub-side"></div>
+<li id="tab_vend"><a href="#vend" data-txt>Vendors</a><div id="vend-sidebar" class="sub-side"></div>
+<li id="tab_comm"><a href="#comm" data-txt>Community Tables</a><div id="comm-sidebar" class="sub-side"></div>
 <li id="tab_info"><a href="#info" data-txt>Info</a>
 </ul>
 
@@ -152,10 +165,22 @@ $appstring.="     </DL>\n";
 	<div id="part_info"></div>
 </div>
 
-<div id="info_view" class="view">
-<p>This is the programme guide for <?php echo "<A HREF=\"http://$conurl/webpages/GenInfo.php?conid=$conid\">$conname</A>" ?>. It should be suitable for use on most browsers and devices. It is an instance of <a href="http://konopas.org/">KonOpas</a>, an open-source project providing conventions with easy-to-use mobile-friendly guides.
+<div id="vend_view" class="view">
+	<div id="vend-narrow" class="sub-narrow"></div>
+	<ul id="vend_names"></ul>
+	<div id="vend_info"></div>
+</div>
 
-<p><div id="last-updated">Programme and participant data were last updated <span></span>.</div>
+<div id="comm_view" class="view">
+	<div id="comm-narrow" class="sub-narrow"></div>
+	<ul id="comm_names"></ul>
+	<div id="comm_info"></div>
+</div>
+
+<div id="info_view" class="view">
+<p>This is the program guide for <?php echo "<A HREF=\"http://$conurl/webpages/GenInfo.php?conid=$conid\">$conname</A>" ?>. It should be suitable for use on most browsers and devices. It is an instance of <a href="http://konopas.org/">KonOpas</a>, an open-source project providing conventions with easy-to-use mobile-friendly guides.
+
+<p><div id="last-updated">Program and participant data were last updated <span></span>.</div>
 
 <div id="install-instructions">
 <p>This guide will work in your browser even when you do not have an internet connection.
@@ -171,31 +196,6 @@ $appstring.="     </DL>\n";
 if (navigator.standalone) document.getElementById('install-instructions').style.display = 'none';
 </script>
 
-<style>
-#map { width: 100% !important; }
-#map td { text-align: center !important; padding: 6px 32px; }
-#map a, #map span { font-family: 'Oswald'; font-weight: 400; font-size: 1.2em; cursor: pointer; }
-#map a:hover, #map span:hover { text-decoration: underline; }
-#map tr:hover, .quick-ref tr:hover { background: inherit !important; }
-.quick-ref dt { margin: 6px 0 3px; }
-.quick-ref table { width: auto !important; border-spacing: 0; margin-bottom: 6px; }
-.quick-ref td { text-align: left !important; }
-#info_view .quick-ref td.c { text-align: center !important; }
-.quick-ref td:nth-child(2) { text-align: right !important; padding: 0 0 0 5px; }
-.quick-ref td:nth-child(3) { padding-left: 0; }
-</style>
-
-<!-- SAMPLE SECTIONS FOR "INFO" VIEW, UNCOMMENT TO SEE
-<h2>Sample Maps</h2>
-<table id="map">
-<tr><td><a class="popup-link" href="http://guide.2014.arisia.org/data/arisia-westin-3W.png">Mezzanine Level&nbsp;(3W)</a>
-    <td><a class="popup-link" href="http://guide.2014.arisia.org/data/arisia-westin-3E.png">Conference Level&nbsp;(3E)</a>
-<tr><td colspan="2"><a class="popup-link" href="http://guide.2014.arisia.org/data/arisia-westin-2.png">Lobby Level&nbsp;(2)</a>
-<tr><td><a class="popup-link" href="http://guide.2014.arisia.org/data/arisia-westin-1W.png">Concourse Level&nbsp;(1W)</a>
-    <td><a class="popup-link" href="http://guide.2014.arisia.org/data/arisia-westin-1E.png">Galleria Level&nbsp;(1E)</a>
-</table>
--->
-
 <?php
 // Taken from GenInfo
 $genbody ="  <DIV style=\"float: left;\">\n";
@@ -208,7 +208,7 @@ if ($phase_array['OrgChart'] == '0' ) {
 if ($phase_array['Grid Available'] == '0') {
   require_once("../Local/$conid/timeline.php");
   for ($graphrow=0; $graphrow<$graph_count; $graphrow++) {
-    $genbody.="      <LI class=collapse>" . $graph_day[$graphrow] . "</LI>\n";
+    $genbody.="      <LI class=collapse>Grid for " . $graph_day[$graphrow] . "</LI>\n";
     $genbody.="      <DIV id=\"timeline".$graphrow."\" style=\"width:100%\"></DIV></LI>\n";
   }
 }
@@ -225,9 +225,6 @@ if (file_exists("../Local/$conid/Program_Book.pdf")) {
   $genbody.="      <LI><A HREF=\"../Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
 }
 $genbody.=$appstring;
-if ($phase_array['Vendors Available'] == '0' ) {
-  $genbody.="      <LI><A HREF=\"Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
-}
 $genbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
 $genbody.="    </UL>\n  </DIV>\n";
 
@@ -277,7 +274,7 @@ if (file_exists("../Local/$conid/KRules")) {
   $rules.="  </DIV>\n";
 }
 
-// Progbody, with the exception of login and the grid elements, addeed above.
+// Progbody taken out, with the exception of login and the grid elements, addeed above.
 
 // Brainstorm taken out.
 
@@ -285,7 +282,7 @@ if (file_exists("../Local/$conid/KRules")) {
 
 // Volunteer taken out.
 
-// Vendor taken out except for vendor list added above.
+// Vendor now part of the main app.
 
 $geninfo="";
 if (file_exists("../Local/$conid/Gen_Info")) {
@@ -304,29 +301,10 @@ echo $rules;
 
 ?>
 
-<!-- SAMPLE SECTIONS FOR "INFO" VIEW, UNCOMMENT TO SEE
-<h2>Sample Quick Reference</h2>
-<dl class="quick-ref">
-<dt><b>Access/Handicapped Services</b>: see Info Desk near elevators
-
-<dt><b>Art Show</b>: Harbor Ballroom II/III (3E)
-<dd><table>
-<tr><td>Friday<td>6pm–<td>9pm
-<tr><td>Saturday<td>10am–<td>6pm, 8pm–10pm
-<tr><td>Sunday<td>10am–<td>1:30pm
-</table>
-<b>Sales Pickup / Artist Checkout</b>: Sunday 3:30pm–7:30pm<br>
-<b>Voice Auction</b>: Sunday 4:30pm<br>
-<b>Sales Pickup / Artist Checkout</b>: Monday 10am–1pm
-
-<dt><b>...</b>
-</dl>
--->
-
 </div>
 
 
-<div id="prog_ls" class="ls"><br><div class="ls_loading">Loading programme data&hellip;</div></div>
+<div id="prog_ls" class="ls"><br><div class="ls_loading">Loading program data&hellip;</div></div>
 
 </div><!-- /main -->
 
@@ -336,6 +314,7 @@ echo $rules;
         'tag_categories': ['track', 'type'],
 	'time_show_am_pm': true,
 	'show_all_days_by_default': true,
+	'non_ascii_people': true,
 	'use_server': false,
 	'filters': {
 		'day': {},
@@ -444,4 +423,6 @@ if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0'
 
 <script src="../Local/<?php echo $conid ?>/program.js"></script>
 <script src="../Local/<?php echo $conid ?>/people.js"></script>
+<script src="../Local/<?php echo $conid ?>/vendor.js"></script>
+<script src="../Local/<?php echo $conid ?>/community.js"></script>
 <script src="../../konopas/konopas.min.js"></script>

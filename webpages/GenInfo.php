@@ -58,11 +58,22 @@ SELECT
 EOF;
 
 list($approws,$appheader_array,$app_array)=queryreport($queryapplications,$link,$title,$description,0);
-$appstring="      <DL>\n";
+
+// Create the application string
+
+// Nulls to start with
+$appstring="";
+$tmpappstring="";
+
+// Walk the possible activities
 for ($i=1; $i<=$approws; $i++) {
-  $appstring.=$app_array[$i]['Applications'];
+  $tmpappstring.=$app_array[$i]['Applications'];
 }
-$appstring.="     </DL>\n";
+
+// If any of the activities came up, put them in the string.
+if ($tmpappstring != "") {
+  $appstring="      <DL>\n" . $tmpappstring . "     </DL>\n";
+}
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="GenInfo.php";

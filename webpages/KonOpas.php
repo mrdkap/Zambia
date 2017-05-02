@@ -419,10 +419,20 @@ if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0'
 </script>
 <?php
 }
-?>
 
-<script src="../Local/<?php echo $conid ?>/program.js"></script>
-<script src="../Local/<?php echo $conid ?>/people.js"></script>
-<script src="../Local/<?php echo $conid ?>/vendor.js"></script>
-<script src="../Local/<?php echo $conid ?>/community.js"></script>
+if ($phase_array['Prog Available'] == '0') {
+   echo "<script src=\"../Local/<?php echo $conid ?>/program.js\"></script>\n";
+   echo "<script src=\"../Local/<?php echo $conid ?>/people.js\"></script>\n";
+} else {
+   echo "<script src=\"../Local/program.js\"></script>\n";
+   echo "<script src=\"../Local/people.js\"></script>\n";
+}
+if ($phase_array['Vendors Available'] == '0') {
+   echo "<script src=\"../Local/<?php echo $conid ?>/vendor.js\"></script>\n";
+   echo "<script src=\"../Local/<?php echo $conid ?>/community.js\"></script>\n";
+} else {
+   echo "<script src=\"../Local/vendor.js\"></script>\n";
+   echo "<script src=\"../Local/community.js\"></script>\n";
+}
+?>
 <script src="../../konopas/konopas.min.js"></script>

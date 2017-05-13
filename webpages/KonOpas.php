@@ -18,6 +18,20 @@ $ConStart=$conname_array[1]['constartdate'];
 $conurl=$conname_array[1]['conurl'];
 $logo=$conname_array[1]['conlogo'];
 
+// Pretty con date
+$constartdateraw = date_create($ConStart);
+$conenddateraw = date_create($ConStart);
+$delta=($connumdays - 1) . " days";
+date_add($conenddateraw, date_interval_create_from_date_string($delta));
+if ($connumdays < 2) {
+  $condate=date_format($constartdateraw, 'l, F jS, Y');
+} else {
+  $condate =date_format($constartdateraw, 'l - ');
+  $condate.=date_format($conenddateraw, 'l, F ');
+  $condate.=date_format($constartdateraw, 'jS - ');
+  $condate.=date_format($conenddateraw, 'jS, Y');
+}
+
 // Set up the phase array
 $query="SELECT phasestate,phasetypename FROM Phase JOIN PhaseTypes USING (phasetypeid) WHERE conid=$conid";
 list($phaserows,$phaseheader_array,$fullphase_array)=queryreport($query,$link,$title,$description,0);
@@ -123,7 +137,8 @@ if ($tmpappstring != "") {
 
 <h1><a href="#info" alt="<?php echo $conname ?>" title="<?php echo $conname ?>">
 <img id="title-small" src="../Local/logo.gif" style="width: 240px;">
-<img id="title" src="../Local/logo.gif" style="width: 200px;"></a></h1>
+<img id="title" src="../Local/logo.gif" style="width: 200px;">
+<?php echo str_replace(" ", "&nbsp;", $conname) ?></a></h1>
 
 <ul id="tabs">
 <li id="tab_star"><a href="#star" data-txt>My con</a>
@@ -199,6 +214,7 @@ if (navigator.standalone) document.getElementById('install-instructions').style.
 <?php
 // Taken from GenInfo
 $genbody ="  <DIV style=\"float: left;\">\n";
+$genbody.="    <H2>$condate</H2>\n";
 $genbody.="    <H3>General Information</H3>\n";
 $genbody.="    <UL>\n";
 if ($phase_array['OrgChart'] == '0' ) {
@@ -421,15 +437,15 @@ if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0'
 }
 
 if ($phase_array['Prog Available'] == '0') {
-   echo "<script src=\"../Local/<?php echo $conid ?>/program.js\"></script>\n";
-   echo "<script src=\"../Local/<?php echo $conid ?>/people.js\"></script>\n";
+   echo "<script src=\"../Local/$conid/program.js\"></script>\n";
+   echo "<script src=\"../Local/$conid/people.js\"></script>\n";
 } else {
    echo "<script src=\"../Local/program.js\"></script>\n";
    echo "<script src=\"../Local/people.js\"></script>\n";
 }
 if ($phase_array['Vendors Available'] == '0') {
-   echo "<script src=\"../Local/<?php echo $conid ?>/vendor.js\"></script>\n";
-   echo "<script src=\"../Local/<?php echo $conid ?>/community.js\"></script>\n";
+   echo "<script src=\"../Local/$conid/vendor.js\"></script>\n";
+   echo "<script src=\"../Local/$conid/community.js\"></script>\n";
 } else {
    echo "<script src=\"../Local/vendor.js\"></script>\n";
    echo "<script src=\"../Local/community.js\"></script>\n";

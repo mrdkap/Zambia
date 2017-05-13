@@ -78,7 +78,7 @@ if ($action=="create") { //initialize participant array
   $participant_arr['postzip']="";
 
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-  RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);
+  RenderEditCreateParticipant($title,$action,$participant_arr);
   correct_footer();
  } else {
   // get participant array from database
@@ -88,7 +88,7 @@ if ($action=="create") { //initialize participant array
     $title="Migrate Participant";
     $description="<P>Locate someone who already exists, and migrate them to ".$_SESSION['conname']." so they can be appropriately utilized.</P>\n";
   }
-  // Collapse the three choices into one
+  // Collapse the three or four choices into one
   if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
   if ($_POST["partidf"]!=0) {$_POST["partid"]=$_POST["partidf"];}
   if ($_POST["partidp"]!=0) {$_POST["partid"]=$_POST["partidp"];}
@@ -145,7 +145,7 @@ SELECT
     altcontact,
     prognotes,
     permroleid_list,
-    group_concat(conroleid) as 'conroleid_list'
+    conroleid_list
   FROM
       CongoDump
     JOIN Participants USING (badgeid)
@@ -158,7 +158,15 @@ SELECT
         WHERE
             badgeid="$selpartid" AND
             conid=$conid) AS X USING (badgeid)
-    JOIN UserHasConRole USING (badgeid)
+    LEFT JOIN (
+      SELECT
+          badgeid,
+          group_concat(conroleid) AS conroleid_list
+        FROM
+            UserHasConRole
+        WHERE
+            badgeid="$selpartid" AND
+            conid=$conid) AS Y USING (badgeid)
   WHERE
     conid=$conid AND
     badgeid='$selpartid'
@@ -209,19 +217,23 @@ EOD;
       }
     }
   }
-  RenderEditCreateParticipant($title,$action,$participant_arr,$message,$message_error);
+  RenderEditCreateParticipant($title,$action,$participant_arr);
   echo "<DIV class=\"sectionheader\">\n";
   $printname=htmlspecialchars($participant_arr['pubsname']);
   echo "<A HREF=AdminParticipants.php?partid=$selpartid>Edit password for $printname</A> ::\n";
-echo "<A HREF=StaffSched.php?format=desc&conid=$conid&feedback=Y&badgeid=$selpartid>Show feedback for $printname</A> :: \n";
   if (may_I(SuperLiaison)) {
     echo "<A HREF=StaffEditCompensation.php?partid=$selpartid>Set Compensation for $printname</A> ::\n";
   }
-  if (may_I(Participant)) {
+  if (may_I(SuperProgramming) || may_I(SuperLiaison) || may_I(Liaison)) {
+    echo "<A HREF=StaffSched.php?format=desc&conid=$conid&feedback=Y&badgeid=$selpartid>Show feedback for $printname</A> :: \n";
     echo "<A HREF=ClassIntroPrint.php?individual=$selpartid>Print Intros for $printname</A> ::\n";
     echo "<A HREF=WelcomeLettersPrint.php?individual=$selpartid>Print Welcome Letter for $printname</A> ::\n";
+    echo "<A HREF=SchedulePrint.php?individual=$selpartid>Print Schedule for $printname</A>\n";
   }
-  echo "<A HREF=SchedulePrint.php?individual=$selpartid>Print Schedule for $printname</A>\n";
+  if (may_I(SuperVendor) || may_I(VendorVols)) {
+    echo "<A HREF=VendorLettersPrint.php?individual=$selpartid>Print Vendor Letter for $printname</A> :: \n";
+    echo "<A HREF=VendorInvoicePrint.php?individual=$seldpartid>Print Vendor Invoice for $printname</A> :: \n";
+  }
   echo "</DIV>\n";
   // Show previous notes added, for references, and end page
   show_participant_notes ($selpartid);

@@ -5,9 +5,8 @@
      participant_arr: array with all data of record to edit or defaults for create
      permrole_arr: array with possible permission roles
      conrole_arr: array with possilbe con roles
-     message1: a string to display before the form - no longer used
-     message2: an urgent string to display before the form and after m1  - no longer used*/
-function RenderEditCreateParticipant ($title, $action, $participant_arr, $message1, $message2) {
+*/
+function RenderEditCreateParticipant ($title, $action, $participant_arr) {
   global $link;
   $conid=$_SESSION['conid']; // make it a variable so it can be substituted
   $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
@@ -56,18 +55,12 @@ EOD;
     // Get the various length limits
     $limit_array=getLimitArray();
 
-    /* This should now be done in topofform
-    if (strlen($message1)>0) {
-      echo "<P id=\"message1\"><font color=red>Message: ".$message1."</font></P>\n";
-    }
-    if (strlen($message2)>0) {
-      echo "<P id=\"message2\"><font color=red>Message: ".$message2."</font></P>\n";
-      exit(); // If there is a message2, then there is a fatal error.
-    }  */
     //error_log("Zambia: ".print_r($participant_arr,TRUE));
 
-    //Get the bioinfo, not for the info, but for the arrays.
-    $bioinfo=getBioData($_SESSION['badgeid']);
+    //Get the bioinfo, just not for migrate
+    if ($action != "migrate") {
+      $bioinfo=getBioData($_SESSION['badgeid']);
+    }
 
   ?>
     <DIV class="formbox">
@@ -127,6 +120,10 @@ EOD;
 		    <?php populate_checkbox_block_from_array("conroleid",$participant_arr['conroleid_list'],"hasreport","conrolenotes",$conrole_arr); ?>
 		</SPAN
             </DIV>
+<?php
+// On migration only give the shortest, most relevant information, the bios stuff can be done/checked later
+if ($action != "migrate") {
+?>
             <DIV class="denseform">
                 <SPAN><LABEL for="postaddress1">Postal Address line 1: </LABEL><INPUT type="text" size=80 name="postaddress1"
                      value="<?php echo htmlspecialchars($participant_arr["postaddress1"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
@@ -230,6 +227,11 @@ EOD;
             <DIV class="denseform">
                 <SPAN><LABEL for="phone">Phone: </LABEL><INPUT type="text" size=14 name="phone"
                      value="<?php echo htmlspecialchars($participant_arr["phone"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
+<?php
+} else {  // end if not migrate (and add the denseform from the above sundered div
+  echo "            <DIV class=\"denseform\">";
+}
+?>
                 <SPAN><LABEL for="regtype">Registration Type: </LABEL><SELECT name="regtype">
                     <?php populate_select_from_query("SELECT regtype, regtype FROM RegTypes", $participant_arr['regtype'], "SELECT", FALSE); ?>
                     </SELECT>

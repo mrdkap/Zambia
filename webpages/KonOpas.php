@@ -9,9 +9,10 @@ if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
 // Set the conname from the conid
-$conquery="SELECT conname,connumdays,congridspacer,constartdate,conurl,conlogo from ConInfo where conid=$conid";
+$conquery="SELECT conname,connamelong,connumdays,congridspacer,constartdate,conurl,conlogo from ConInfo where conid=$conid";
 list($connamerows,$connameheader_array,$conname_array)=queryreport($conquery,$link,$title,$description,0);
 $conname=$conname_array[1]['conname'];
+$connamelong=$conname_array[1]['connamelong'];
 $connumdays=$conname_array[1]['connumdays'];
 $Grid_Spacer=$conname_array[1]['congridspacer'];
 $ConStart=$conname_array[1]['constartdate'];
@@ -24,12 +25,12 @@ $conenddateraw = date_create($ConStart);
 $delta=($connumdays - 1) . " days";
 date_add($conenddateraw, date_interval_create_from_date_string($delta));
 if ($connumdays < 2) {
-  $condate=date_format($constartdateraw, 'l, F jS, Y');
+  $condate=date_format($constartdateraw, 'l, F j, Y');
 } else {
   $condate =date_format($constartdateraw, 'l - ');
   $condate.=date_format($conenddateraw, 'l, F ');
-  $condate.=date_format($constartdateraw, 'jS - ');
-  $condate.=date_format($conenddateraw, 'jS, Y');
+  $condate.=date_format($constartdateraw, 'j - ');
+  $condate.=date_format($conenddateraw, 'j, Y');
 }
 
 // Set up the phase array
@@ -124,7 +125,7 @@ if ($tmpappstring != "") {
 <meta name="msapplication-square310x310logo" content="../Local/icon.ie.png">
 -->
 
-<title>KonOpus Instance for <?php echo $conname ?></title>
+<title>KonOpus Instance for <?php echo $connamelong ?></title>
 
 <body><div id="top"></div>
 <div id="load_disable"></div>
@@ -135,7 +136,7 @@ if ($tmpappstring != "") {
 <div id="banner">
 <div id="server_connect"></div>
 
-<h1><a href="#info" alt="<?php echo $conname ?>" title="<?php echo $conname ?>">
+<h1><a href="#info" alt="<?php echo $connamelong ?>" title="<?php echo $connamelong ?>">
 <img id="title-small" src="../Local/logo.gif" style="width: 240px;">
 <img id="title" src="../Local/logo.gif" style="width: 200px;">
 <?php echo str_replace(" ", "&nbsp;", $conname) ?></a></h1>
@@ -193,7 +194,7 @@ if ($tmpappstring != "") {
 </div>
 
 <div id="info_view" class="view">
-<p>This is the program guide for <?php echo "<A HREF=\"http://$conurl/webpages/GenInfo.php?conid=$conid\">$conname</A>" ?>. It should be suitable for use on most browsers and devices. It is an instance of <a href="http://konopas.org/">KonOpas</a>, an open-source project providing conventions with easy-to-use mobile-friendly guides.
+<p>This is the program guide for <?php echo "<A HREF=\"http://$conurl/webpages/GenInfo.php?conid=$conid\">$connamelong</A>" ?>. It should be suitable for use on most browsers and devices. It is an instance of <a href="http://konopas.org/">KonOpas</a>, an open-source project providing conventions with easy-to-use mobile-friendly guides.
 
 <p><div id="last-updated">Program and participant data were last updated <span></span>.</div>
 
@@ -214,6 +215,7 @@ if (navigator.standalone) document.getElementById('install-instructions').style.
 <?php
 // Taken from GenInfo
 $genbody ="  <DIV style=\"float: left;\">\n";
+$genbody.="    <H2>$connamelong</H2>\n";
 $genbody.="    <H2>$condate</H2>\n";
 $genbody.="    <H3>General Information</H3>\n";
 $genbody.="    <UL>\n";
@@ -248,7 +250,7 @@ $venueinfo="";
 if ($phase_array['Venue Available'] == '0' ) {
   $venueinfo.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
   $venueinfo.="    <A NAME=\"Venue\">&nbsp;</A>\n";
-  $venueinfo.="    <H3>Venu Information</H3>\n";
+  $venueinfo.="    <H3>Venue Information</H3>\n";
 
   // Map of the venue (not to the venue)
   if (file_exists("../Local/$conid/Venue_Map.svg")) {

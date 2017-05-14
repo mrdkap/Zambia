@@ -13,6 +13,7 @@ mysql_select_db(DBDB,$link);
 $query=<<<EOF
 SELECT
     conname,
+    connamelong,
     constartdate,
     connumdays,
     conid
@@ -38,6 +39,7 @@ for ($i=1; $i<=$conrows; $i++) {
   $tmpconinfo_array=mysql_fetch_assoc($result);
   $ConCount_array[$i]=$tmpconinfo_array['conid'];
   $ConInfo_array[$tmpconinfo_array['conid']]['conname']=$tmpconinfo_array['conname'];
+  $ConInfo_array[$tmpconinfo_array['conid']]['connamelong']=$tmpconinfo_array['connamelong'];
   $ConInfo_array[$tmpconinfo_array['conid']]['constartdate']=$tmpconinfo_array['constartdate'];
   $ConInfo_array[$tmpconinfo_array['conid']]['connumdays']=$tmpconinfo_array['connumdays'];
 }
@@ -181,7 +183,7 @@ for ($i=1; $i<=$conrows; $i++) {
   }
 
   // Set the con name
-  $conname=htmlspecialchars_decode($ConInfo_array[$conid]['conname']);
+  $conname=htmlspecialchars_decode($ConInfo_array[$conid]['connamelong']);
 
   // Set the "Previous" barrier.  Once.
   if ($nowis > ($constart + $offset)) {

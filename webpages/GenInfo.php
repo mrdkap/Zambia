@@ -11,9 +11,10 @@ if ($conid == "") {
 }
 
 // Set the conname from the conid
-$query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
+$query="SELECT conname,connamelong,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
 list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
 $conname=$conname_array[1]['conname'];
+$connamelong=$conname_array[1]['connamelong'];
 $connumdays=$conname_array[1]['connumdays'];
 $Grid_Spacer=$conname_array[1]['congridspacer'];
 $constart=$conname_array[1]['constartdate'];
@@ -77,7 +78,7 @@ if ($tmpappstring != "") {
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="GenInfo.php";
-$title="General Information for $conname";
+$title="General Information for $connamelong";
 
 // header/footer for each section
 $divfooter ="    </UL>\n";

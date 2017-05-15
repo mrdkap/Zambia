@@ -66,13 +66,11 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   <DD id="programbookroom">A room-sorted schedule for the Program Book.</DD>
 </DL>
 <HR>
-<P>And one that is useful after the event feedback is done.</P>
+<P>And two that are useful after the event feedback is done.</P>
 <DL>
-<?php /*
   <DT id="returnedfeedback"><A HREF="FeedbackPrint.php">Returned Feedback</A></DT>
-  <DD id="returnedfeedback">All the feedback on all the schedule elements that we have.</DD>
-  */ ?>
+  <DD id="returnedfeedback">All the feedback on all the schedule elements that we have. (graph print)</DD>
   <DT id="altreturnedfeedback"><A HREF="StaffSched.php?format=feedback">Alternative Feedback View</A></DT>
-  <DD id="atlreturnedfeedback">All the schedule elements, with the feedback that we have.</DD>
+  <DD id="atlreturnedfeedback">All the schedule elements, with the feedback that we have. (no graph print)</DD>
 </DL>
 <?php correct_footer(); ?>

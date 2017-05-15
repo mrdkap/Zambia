@@ -5,6 +5,8 @@ if (may_I("Staff")) {
  } else {
   require_once('PartCommonCode.php');
  }
+require_once('../../tcpdf/config/lang/eng.php');
+require_once('../../tcpdf/tcpdf.php');
 global $link;
 
 // Pass in variables
@@ -72,6 +74,37 @@ if (isset($_GET['feedback'])) {
     $feedback_p='F';
   }
 }
+
+$print_p="";
+if ($_GET['print_p'] == "Y") {$print_p="Y";}
+
+// Document information
+class MYPDF extends TCPDF {
+  public function Footer() {
+    $this->SetY(-15);
+    $this->SetFont("helvetica", 'I', 8);
+    $this->Cell(0, 10, "Copyright ".date('Y')." New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
+  }
+}
+
+$pdf = new MYPDF('p', 'mm', 'letter', true, 'UTF-8', false);
+$pdf->SetCreator('Zambia');
+$pdf->SetAuthor('Programming Team');
+$pdf->SetTitle('Schedule Information');
+$pdf->SetSubject('Schedules.');
+$pdf->SetKeywords('Zambia, Presenters, Volunteers, Schedules');
+$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
+$pdf->setHeaderFont(Array("helvetica", '', 10));
+$pdf->setFooterFont(Array("helvetica", '', 8));
+$pdf->SetDefaultMonospacedFont("courier");
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+$pdf->setLanguageArray($l);
+$pdf->setFontSubsetting(true);
+$pdf->SetFont('times', '', 12, '', true);
 
 // Generate the constraints on what is shown
 if (may_I('General')) {$pubstatus_array[]='\'Volunteer\'';}
@@ -152,6 +185,7 @@ if ($format == "sched") {
 // Additional info setup.
 $additionalinfo="<P>See also this ";
 if ($feedback_p=="T") {
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&print_p=Y\">print feedback</A> or\n";
   $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid\">w/o feedback</A> or\n";
   $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&short=Y\">short</A>,\n";
 } elseif ($single_line_p=="T") {
@@ -204,7 +238,9 @@ if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
 
 // Further feedback-only hackery
 //if ($_GET['format']=="feedback") {$additionalinfo=print_r($feedback_array,t);}
-if ($_GET['format']=="feedback") {$additionalinfo="";}
+if ($_GET['format']=="feedback") {
+  $additionalinfo="<P><A HREF=\"StaffSched.php?format=feedback&conid=$conid&print_p=Y\">Print feedback</A>.</P>\n";
+}
 
 // Add the feedback tag if the time is right and the phase allows for it.
 if ((strtotime($ConStart) < time()) AND ($phase_array[1]['phasestate'] == '0')) {
@@ -352,7 +388,8 @@ for ($i=1; $i<=$elements; $i++) {
     $element_array[$i]['Description'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
     $element_array[$i]['Description'].=sprintf("<img src=\"%s\">\n<br>\n",$feedback_file);
   }
-  if (isset($feedback_array['graph'][$element_array[$i]["Sessionid"]."-".$element_array[$i]["conid"]])) {
+  // No feedback graph if printing.  For that see FeedbackPrint for now.
+  if ((isset($feedback_array['graph'][$element_array[$i]["Sessionid"]."-".$element_array[$i]["conid"]])) and ($print_p!="Y")) {
     $element_array[$i]['Description'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
     $element_array[$i]['Description'].=generateSvgString($element_array[$i]["Sessionid"],$element_array[$i]["conid"]);
   }
@@ -362,12 +399,16 @@ for ($i=1; $i<=$elements; $i++) {
   }
 }
 
-/* Printing body.  Uses the page-init then creates the page. */
-topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
-/* Produce the report. */
 $printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
-echo $printstring;
+// Display, with the option of printing.
+if ($print_p == "") {
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+  echo $printstring;
+  correct_footer();
+} else {
+  $pdf->AddPage();
+  $pdf->writeHTML($printstring, true, false, true, false, '');
+  $pdf->Output('Schedule'.$format.'All.pdf', 'I');
+}
 
-correct_footer();
 ?>

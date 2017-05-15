@@ -77,10 +77,13 @@ SELECT
 	descriptiontext as title_good_web
       FROM
           Descriptions
+	  JOIN DescriptionTypes USING (descriptiontypeid)
+          JOIN BioStates USING (biostateid)
+          JOIN BioDests USING (biodestid)
       WHERE
-	  descriptiontypeid=1 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename in ('title') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
 	  descriptionlang='en-us') TGW USING (sessionid,conid)
     LEFT JOIN (SELECT
         sessionid,
@@ -88,10 +91,13 @@ SELECT
 	descriptiontext as subtitle_good_web
       FROM
           Descriptions
+	  JOIN DescriptionTypes USING (descriptiontypeid)
+          JOIN BioStates USING (biostateid)
+          JOIN BioDests USING (biodestid)
       WHERE
-	  descriptiontypeid=2 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename in ('subtitle') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
 	  descriptionlang='en-us') SGW USING (sessionid,conid)
     LEFT JOIN (SELECT
         sessionid,
@@ -99,10 +105,13 @@ SELECT
 	descriptiontext as desc_good_web
       FROM
           Descriptions
+	  JOIN DescriptionTypes USING (descriptiontypeid)
+          JOIN BioStates USING (biostateid)
+          JOIN BioDests USING (biodestid)
       WHERE
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=1 AND
+	  descriptiontypename in ('description') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
 	  descriptionlang='en-us') DGW USING (sessionid,conid)
     LEFT JOIN (SELECT
         sessionid,
@@ -110,17 +119,20 @@ SELECT
 	descriptiontext as desc_good_book
       FROM
           Descriptions
+	  JOIN DescriptionTypes USING (descriptiontypeid)
+          JOIN BioStates USING (biostateid)
+          JOIN BioDests USING (biodestid)
       WHERE
-	  descriptiontypeid=3 AND
-	  biostateid=3 AND
-	  biodestid=2 AND
+	  descriptiontypename in ('description') AND
+	  biostatename in ('good') AND
+	  biodestname in ('book') AND
 	  descriptionlang='en-us') DGB USING (sessionid,conid)
   WHERE
     $conid_or_badgeid AND
     pubstatusname in ('Public') AND
-    (volunteer in ('1','Yes') OR volunteer IS NULL) AND
-    (introducer in ('1','Yes') OR introducer IS NULL) AND
-    (aidedecamp in ('1','Yes') OR aidedecamp IS NULL)
+    (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
+    (introducer IS NULL OR introducer not in ('1','Yes')) AND
+    (aidedecamp IS NULL OR aidedecamp not in ('1','Yes'))
   GROUP BY
     conid,
     sessionid
@@ -131,6 +143,27 @@ EOD;
 
 // Retrieve query
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+// Return the whole con feedback
+// If asked for by a staff person, and it's not just a person
+if (may_I("Staff") and ($badgeid=="")) {
+   $elements++;
+   $element_array[$elements]['Participants']=" ";
+   $element_array[$elements]['Start Time']=" ";
+   $element_array[$elements]['Track']=" ";
+   $element_array[$elements]['Duration']=" ";
+   $element_array[$elements]['Roomname']=" ";
+   $element_array[$elements]['Attended']=" ";
+   $element_array[$elements]['Sessionid']="-1";
+   $element_array[$elements]['Conid']="$conid";
+   $element_array[$elements]['Conname']="$conname";
+   $element_array[$elements]['Sess-Con']="-1-".$conid;
+   $element_array[$elements]['questiontypeid']="2";
+   $element_array[$elements]['Title']="Whole Con Feedback";
+   $element_array[$elements]['Subtitle']=" ";
+   $element_array[$elements]['Web Description']=" ";
+   $element_array[$elements]['Book Description']=" ";
+}
 
 // Document information
 class MYPDF extends TCPDF {

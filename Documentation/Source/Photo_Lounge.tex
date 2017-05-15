@@ -281,6 +281,9 @@ Local/\$conid/Photo\_Lounge\_Accepted)
 \item Select all the images, and set a random transition, to be
 modified.
 \item Select the speed (4)
+\item Go through and fix all the transitions
+\item Add the appropriate music
+\item Export to a VOB file
 \end{itemize}
 \subsection{File exerpt:}
 \label{sec-6-1}
@@ -306,4 +309,19 @@ font=Sans 12
 font color=0;0;0;1;
 font bgcolor=1;1;1;1;
 \end{verbatim}
+
+
+\section{Convert VOB to mpeg/avi}
+\label{sec-7}
+\begin{itemize}
+\item ffmpeg -i FFF??\_Photo\_Lounge.vob -f avi -c:v mpeg4 -b:v 800k -g 300 -bf 2 -c:a libmp3lame -b:a 128k FFF??\_Photo\_Lounge.avi
+\item cp FFF??\_Photo\_Lounge.vob FFF??\_Photo\_Lounge.mpeg
+\end{itemize}
+
+\section{Load onto Devices}
+\label{sec-8}
+\begin{itemize}
+\item Thumb Drives:  Pictures into Pictures, only the mpeg in Movies
+\item Pi Devices: Everthing into local Pictures, mpeg into sub Movie diretory in Pictures.
+\end{itemize}
 \end{document}

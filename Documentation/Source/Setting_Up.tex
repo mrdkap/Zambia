@@ -92,7 +92,7 @@ Either on your staging machine (where you will be uploading the
 information from) or on your server (if you are loading directly to
 there) you must also have:
 \begin{itemize}
-\item svn
+\item git
 \item text editing program
 \end{itemize}
 \subsection{Definitions}
@@ -122,11 +122,11 @@ to interface it with Congo, or another piece of registration software?
 
 \subsubsection{Single/Multiple installation}
 \label{sec-1-2-2}
-Is this going to be a single instantce of Zambia, or are you going
+Is this going to be a single instance of Zambia, or are you going
 to have multiple instances of Zambia running on the same machine
 with some shared resources?
 
-\subsubsection{Webserver}
+\subsubsection{Web server}
 \label{sec-1-2-3}
 Where is your web installation location (whatever directory you
 will be putting your files into)?  Often something like
@@ -137,9 +137,13 @@ the like.
 \label{sec-1-2-4}
 This information will go in the db\_name.php file when you install it.
 \begin{itemize}
-\item Required information for the program to run:
+\item Required information in the db\_name.php file for the program to run:
 \label{sec-1-2-4-1}
 \begin{itemize}
+\item date\_default\_timezone\_set your timezone.  Mine is set to:
+('US/Eastern')
+\item Base session dir (\textbf{BASESESSIONDIR}), which is important for
+garbage collection and timing on our sessions.
 \item Database hostname (\textbf{DBHOSTNAME}). If you are setting things up on
 the same machine that MySQL is running on, \emph{localhost} should be
 what you are using for \textbf{DBHOSTNAME}.
@@ -149,57 +153,44 @@ Zambia program to access the database(s).
 Zambia program to access the database(s).
 \item Main database name (\textbf{DBDB}).  The database for all the single
 convention specific information to live in.
-\item Biographical information database name (\textbf{BIODB}).  The database
-for all the (possibly shared between Zambia instances)
-biographical data.  If you are having the same people either for
-multiple years, or for multiple activities, it makes sense to
-centralize the information, otherwise it could be a one-shot for
-the particular convention.
-\item The Reports databasse name (\textbf{REPORTDB}) points to where the
-reports are kept.  It is on of the main ways of interation with
-the data about the convention.  If you have multiple Zambia
-instances it makes sense for this to be a single, shared
-resource.
+\end{itemize}
+There are several other databases that you might want to connect to:
+\begin{itemize}
+\item Vendor information database name (\textbf{VENDORDB}).  The database
+for all the vendor information.  This can be part of your same
+system or a separate database for what you are working on.
 \item The CongoDump database name (\textbf{CONGODB}). Congo is another piece of
 software designed to interact with Zambia. The information in
 that set of databases can be accessed in a variety of ways.
-\item The Limits (\textbf{LIMITDB}) and Localizations (\textbf{LOCALDB}) databases
-are used to key things that are specific to a convention, but
-might all want to live in a central database, for ease of
-deploying new conventions.
-\item The TimeCard database (\textbf{TIMECARDDB}) might want to be specific to
-a convention, or generalized across many different activities of
-your organization, it often is local to the convention instance,
-but there are some reasons to have it in a single, externally
-served database.
-\item The convention database keying tag (\textbf{CON\_KEY}) is useful when the
-Limits and Localizations are stored in a single table, to
-distinguish between which instance needs to be pulled.
-\item your host name (\textbf{MYHOST}) (If you are setting things up on the same
-machine that MySQL is running on, \emph{localhost} should be what you
-are using for \textbf{MYHOST}) (this doesn't actually go in the file)
+\item The fallback keying tag (\textbf{FALLBACK\_KEY}) and URL
+(\textbf{FALLBACK\_URL}) which is useful when there isn't a specified
+or remembered con instance to be referenced.
+\item The language list (\textbf{LANGUAGE\_LIST}) which is the list of
+languages you are using for your con.
 \end{itemize}
 
 \item Extremely useful information:
 \label{sec-1-2-4-2}
-Most of this information, currently in the db\_name.php file,
-would all be candidtates to be inthe Localization database.
+Most of this information is in the various database tables,
+mostly ConInfo, but a few others in special users.
 \begin{itemize}
-\item Con name.
+\item Unique con id.
+\item Con short name.
+\item Con long name.
 \item Zambia administrator email.
 \item Brainstorm email.
 \item Programming email.
 \item Registration email.
-\item Number of days the con will run (code works for 1-8 currently.)
+\item Number of days the con will run (code has been tested for 1-8.)
 \item Date and time the con will start (In the format of yyyy-mm-dd
 HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
 start time.)
 \item URL of the con (without the leading \url{http://} in the URL.)
 \item Logo for the con (gif, png, etc.)
-\item Availabilty Records (starting number of "availability" fields
+\item Availability Records (starting number of "availability" fields
 to render in the "when I am available" form, 8 is a good
 default.)
-\item Are kids avaiable (This should probably be set to "FALSE", it
+\item Are kids available (This should probably be set to "FALSE", it
 is a hold-over from backwards compatibility.)
 \item Default Duration of the classes. (How long, in H:MM format that
 the classes are expected to be.)
@@ -211,27 +202,23 @@ seconds.  For example 1800 is 60 sec/min and 30 min, and a good
 default.)
 \end{itemize}
 
-\item Very useful information
+\item Very useful information:
 \label{sec-1-2-4-3}
 \begin{itemize}
-\item Guests of Honor badgelist (if you have specific featured Guests
-of Honor, the badgeids get listed here, comma seperated.)
-(This is being migrated as a flag for a presenter.)
-\item Prefered total number of sessions upper limit (so your
+\item Guests of Honor badge list (if you have specific featured Guests
+of Honor, they get indicated as a con role.)
+\item Preferred total number of sessions upper limit (so your
 presenters don't oversubscribe themselves 5 is good default for
-a 3-4 day con.) (This should move to the Limits database.)
-\item Prefered daily number of sessions upper limit (3 is a good
-default.) (This should move to the Limits database.)
+a 3-4 day con.)
+\item Preferred daily number of sessions upper limit (3 is a good
+default.)
 \end{itemize}
 
-\item Description minimums and maximums
+\item Description minimums and maximums:
 \label{sec-1-2-4-4}
-All of this information should be migrated to the Limits
-database.  Only set a value if you need it, unset values are
-simply presume there is no limit to the information in that
-direction.  At some point, the precis descriptions will be folded
-into the same, or a similar structure to the Biographical
-Information is, currently.
+All of this information goes in the limits database table.  Only
+set a value if you need it, unset values are simply presume there
+is no limit to the information in that direction.
 \begin{itemize}
 \item Minimum web biography character length (Some cons have minimum
 biographical information requirements.)
@@ -263,28 +250,19 @@ as well.)
 of at least this long to be acceptable, 5 as a good default.)
 \item Maximum precis title character length (50 as a good default.)
 \item Minimum name character length (if there is a need to make sure
-all names are of at least a specifc length.)
+all names are of at least a specific length.)
 \item Maximum name character length (if there is a need to make sure
-all names are no more than a specifc length.)
+all names are no more than a specific length.)
 \end{itemize}
 
-\item Other interesting settings
+\item Other interesting settings:
 \label{sec-1-2-4-5}
-The linguistic settings (below) will go away once the precis
-descriptions are migrated to a similar format as the Biographical
-information currently resides.
+The linguistic settings can be used if your con is in more than
+one language.
 \begin{itemize}
-\item Is this a bilingual event (This should probably be set to
-"FALSE" due to it's lack of complete support across the system,
-and the next few elements in this list, ignored.)
-\item What the second language is.
-\item Title caption in second language.
-\item Description caption in second language.
-\item Biography caption in second language.
+\item What the second language is, and it's indicator (fr-ca, en-uk)
+\item What will and won't be translated.
 \end{itemize}
-
-\item The rest of the file should not have to change.
-\label{sec-1-2-4-6}
 \end{itemize}
 
 \section{Downloading}
@@ -294,15 +272,16 @@ replace the final "Zambia" with what you decided the web install
 location will be.  If not, you can rename it to whatever you wish to
 call your staging area.
 
-Please, check out the code from:
+Please, check out the code using git from:
 
-svn co \url{https://zambia.svn.sourceforge.net/svnroot/zambia/branches/FFF/} Zambia
+\url{https://github.com/mrdkap/Zambia}
+
 \section{Local file setup}
 \label{sec-3}
-There are certain localisms you want to set up, outside the svn
+There are certain local-isms you want to set up, next to the GIT 
 tree. This is so (should you need to) if an upgrade to the code-base
 is desired, it can be done, without writing over your
-customizations.
+customization.
 
 To begin the process change to your web install location.  There you
 should see a list of files, and you will add one called "Local".
@@ -314,39 +293,53 @@ Copy the example webpages/db\_name\_sample.php to Local/db\_name.php
 as a start, and then put in the values you decided upon before
 starting the install process.
 
-\subsection{FooterTemplate.html}
+\subsection{Data\_Backup}
 \label{sec-3-2}
+Directory that one of the scrips will, with the appropriate entry
+in your crontab, store a running backup will be kept.
+
+\subsection{conid}
+\label{sec-3-3}
+This (or these) will be the con-specific information
+sub-directories.
+
+\subsection{FooterTemplate.html}
+\label{sec-3-4}
 This is where you will put your standard footer, that will be
 below all the public pages, to customize the look and feel to
 match your event's presentation.
 
 \subsection{HeaderTemplate.html}
-\label{sec-3-3}
+\label{sec-3-5}
 This is where you will put your standard header, that will be
 above all the public pages, to customize the look and feel to
 match your event's presentation.
 
-\subsection{Participant\_Images}
-\label{sec-3-4}
+\subsection{Participant\_Images\_foo}
+\label{sec-3-6}
 If you choose to have images of your participants with their
 bios, make this directory, and any pictures that match the
 badgename of the participant will be put next to the bios.
+the foo could be: badge book, or web
 
 \subsection{Verbiage}
-\label{sec-3-5}
+\label{sec-3-7}
+These files can also live under each of the conid directories, so
+can be distinguished by con instance.
+
 If you wish to customize what is put forth to your participants,
 many of the pages allow for customization.  The list of them will
 grow as more are done.  Any information in these files will
 replace the default text.  Some examples of these files are:
 \subsubsection{BrainstormWelcome\_0}
-\label{sec-3-5-1}
+\label{sec-3-7-1}
 \begin{verbatim}
 <P> Here you can submit new suggestions or look at existing ideas for
 panels, Meet and Greets, Special Interest Groups, Birds Of a Feathers,
 Author Readings, and Author Signings.</P>
 <P> As suggestions come in and we read through them, we will rework
 them, combine similar ideas into a single item, split large ones into
-pieces that will fit in their alloted time, etc.  Please expect the
+pieces that will fit in their allotted time, etc.  Please expect the
 suggestions you submit to evolve over time.</P>
 <P> Also, please note that we always have more suggestions than are
 physically possible with the space and time we have, so not everything
@@ -379,14 +372,14 @@ will make it.  We do save good ideas for future conventions.</P>
 \end{verbatim}
 
 \subsubsection{Introduction\_Blurb\_0}
-\label{sec-3-5-2}
+\label{sec-3-7-2}
 \begin{verbatim}
 and before I introduce our speaker, let me ask, How many of you are
 new?  Well, let me tell you, you are in for one heck of a ride.<br
 \end{verbatim}
 
 \subsubsection{Schedule\_Blurb\_0}
-\label{sec-3-5-3}
+\label{sec-3-7-3}
 \begin{verbatim}
 Welcome to the Circus Fantastique.  We really appreciate all your
 efforts to make this weekend go so well.  Below is your schedule for
@@ -396,7 +389,7 @@ that time.  </P><P>I hope you will have all the fun you can!<hr>
 \end{verbatim}
 
 \subsubsection{StaffPage\_0}
-\label{sec-3-5-4}
+\label{sec-3-7-4}
 \begin{verbatim}
 <P> Please note the tabs above.  One of them will take you to your
 participant view.  Another will allow you to manage Sessions.  Note
@@ -450,7 +443,7 @@ room!)  The language needs to match what you want to see
 \end{verbatim}
 
 \subsubsection{Volunteer\_Jobs\_0}
-\label{sec-3-5-5}
+\label{sec-3-7-5}
 \begin{verbatim}
 <UL>
 <H3>Introducer: (in room)</H3>
@@ -519,7 +512,7 @@ might be pressed into service.
 \end{verbatim}
 
 \subsubsection{Welcome\_Letter\_Presenters\_0}
-\label{sec-3-5-6}
+\label{sec-3-7-6}
 \begin{verbatim}
 <P>Dude!
 
@@ -534,7 +527,7 @@ everyone learned bags of info, and your flow was rad!
 \end{verbatim}
 
 \subsubsection{Welcome\_Letter\_Presenters\_and\_Volunteers\_0}
-\label{sec-3-5-7}
+\label{sec-3-7-7}
 \begin{verbatim}
 <P>We would like to express our gratitude for your contribution to the
 Ancient Order of the Spies Convention.  Your expertise, wisdom,
@@ -560,13 +553,13 @@ addition to this event is an advantage to all.
 \end{verbatim}
 
 \subsubsection{Welcome\_Letter\_Volunteers\_0}
-\label{sec-3-5-8}
+\label{sec-3-7-8}
 \begin{verbatim}
 <P>We would like to express our gratitude for your contribution to the
 Con of your Dreams.  Your willingness to share your time and energy
 are critical elements in what will make our event a success.  We here
 at Dream Productions do all we can to create a safe and inviting
-environment for all sleapers, but we must also rely on support from
+environment for all sleepers, but we must also rely on support from
 generous allies such as yourself.  Your effort is much appreciated,
 and is a benefit to all in this lifestyle.
 
@@ -604,8 +597,7 @@ what you are using for \textbf{DBHOSTNAME}).
 \item database password: (\textbf{DBPASSOWRD})
 \item database name: (\textbf{DBNAME})
 \item Each of the alternate database locators that will be used:
-(\textbf{BIODB}), (\textbf{REPORTDB}), (\textbf{CONGODB}), (\textbf{LIMITDB}), (\textbf{LOCALDB}),
-(\textbf{TIMECARDDB})
+(\textbf{VENDORDB}), (\textbf{CONGODB}) \ldots{}
 \item your host name (\textbf{MYHOST}) (If you are setting things up on the
 same machine that MySQL is running on, \emph{localhost} should be what
 you are using for \textbf{MYHOST})
@@ -651,7 +643,7 @@ grant all on DBNAME.* to 'DBUSERNAME'@'MYHOST' identified by 'DBPASSOWRD';
 grant lock tables on DBNAME.* to 'DBUSERNAME'@'MYHOST';
 \end{verbatim}
 \begin{itemize}
-\item Reset the privilages
+\item Reset the privileges
 \end{itemize}
 \begin{verbatim}
 flush privileges;
@@ -659,7 +651,7 @@ flush privileges;
 
 \section{Database populate}
 \label{sec-5}
-change directories until you are in the Install directory, then:
+Change directories until you are in the Install directory, then:
 \begin{verbatim}
 mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./EmptyDbase.dump
 \end{verbatim}
@@ -755,7 +747,7 @@ Feel free to then go and add the rest of your staff, off of the
 
 \subsection{Congo}
 \label{sec-7-2}
-You might want to complete the activites above, just to make sure
+You might want to complete the activities above, just to make sure
 you have access, but once you do, you can migrate the congo data
 into the system, so all the other folks have their information
 added.
@@ -765,7 +757,7 @@ From congo, do:
 export_program_participants_congo.sql
 \end{verbatim}
 
-This generates sql that can be, in turn, locaded into Zambia.
+This generates sql that can be, in turn, loaded into Zambia.
 \subsection{Not Congo}
 \label{sec-7-3}
 Tying this into another registration system is slightly more
@@ -826,7 +818,7 @@ To build a quick and dirty copy on the same machine as another running version:
 \item for i in ../../Zambia-FFF/Local/*.html ; do ln -s \$i . ; done
 \item ln -s ../../Zambia-FFF/Local/Participant\_Images .
 \end{itemize}
-Finally, copy over, and modify the db\_name.php as appropraite
+Finally, copy over, and modify the db\_name.php as appropriate
 To update them all do:
 \begin{verbatim}
 for i in FFF-[34]*
@@ -848,7 +840,7 @@ point the table additions might have their own form.  Feel free to
 update them any way you are comfortable with at the moment.  The
 update to the Local/db\_name.php file should only be the update to
 the CON\_KEY entry in the file, all the rest should remain the same,
-and probably that should migrate to something database setable at
+and probably that should migrate to something database settable at
 some point.  The rest of the information below should be set in your
 database tables.
 \subsection{ConInfo}
@@ -871,8 +863,10 @@ SELECT
 The values are:
 \begin{itemize}
 \item conid: The unique number of your con.
-\item conname: The name of your con (probably inclucign either the
-number, or the year of your con or other unique identifier).
+\item conname: The short name of your con (probably including either
+the number, or the year of your con or other unique identifier).
+\item connamelong: The long name of your con, what people would
+definitely recognize and associate with your event.
 \item connumdays: How many days your con will run.
 \item constartdate: When your con begins, in the format of YYYY-MM-DD
 hh:mm:ss and preferably (for ease of thought and scheduling)
@@ -956,7 +950,7 @@ SELECT
 
 An example of phase shifting, is when you open your call for
 presenters, or you close your call for vendors, or you allow
-feedback.  This can change programatically on specific dates around
+feedback.  This can change programmaticaly on specific dates around
 your con, or you can set them by hand, when you are ready for a
 phase shift.  Many phases (or few) might be active at any given
 point in time.
@@ -970,7 +964,7 @@ defines the access any particular individual might have.
 Individuals might have several sets of accesses, depending on their
 roles, some cover more than one area, others do not.  This gets
 somewhat complex, in the interweaving of some other tables, but,
-theoretcially that was set up, and still should hold true from
+theoretically that was set up, and still should hold true from
 previous instances of your con.  Of course, tweaking from year to
 year might need to happen.  If you wish to see who had which
 leadership roles in a previous instance of your con (to make sure
@@ -1015,7 +1009,7 @@ brainstorm submission system will work.
 \label{sec-12-2}
 This is very similar to the UserHasPermissionRole, and was split
 off, because not all Permission Roles want to necessarily be
-advertized, and sometimes a Permission Role is a superset of a Con
+advertised, and sometimes a Permission Role is a superset of a Con
 Role that actually wants to be called out.  While this is not a
 necessary step, it is a good one to follow, so people know who is
 responsible for what, when they visit your webpage. If you wish to
@@ -1112,8 +1106,8 @@ The sessions are mostly generated from Brainstorm (and other
 insertions to your database) but there are a few settings that
 should be taken care of, to make sure everything works smoothly.
 The limits are set on an event basis, since sometimes publications
-or the space for things to be advertized differs from year to year.
-Also the requestables might change, depending on what is available,
+or the space for things to be advertised differs from year to year.
+Also the requests might change, depending on what is available,
 as well as the rooms
 \subsection{PublicationLimits}
 \label{sec-13-1}
@@ -1140,7 +1134,7 @@ The values are:
 \item conid: The con that these limits are for.  This should be set to
 whatever conid you are creating.
 \item publimtype: This is an enum between two values, min and max.
-This determiines if the limit is a minimum limit, or maximum
+This determines if the limit is a minimum limit, or maximum
 limit.
 \item publimdest: This is an enum between web and book, and should be
 in sync with your BioDests table.  This is so you can set
@@ -1176,7 +1170,7 @@ fall under this, because of being extra cost.  Features are
 elements of the room that someone would look for.  With a single
 room, there might not be much there to choose between, but, with
 many rooms, or different room functions depending on the time of
-day (say, needing curtains in the daytime, and dimable lights, so
+day (say, needing curtains in the daytime, and dimmable lights, so
 that projection will work correctly) so scheduling can happen more
 easily.
 
@@ -1262,6 +1256,12 @@ can do to mirror the previous con.
 Setting up feedback for your con is somewhat complex.  I'm not sure
 what motivated me, originally to be so baroque, but I think it was
 flexibility at the time.
+
+One thing to note, there needs to be, attached to some con instance,
+an element in the Sessions table with a sessionid of "-1" to work.
+It doesn't have to be any particular con instance, nor especially
+the most current one.  Just one has to exist for the constraints to
+work for general feedback.
 \subsection{Adding Questions}
 \label{sec-15-1}
 If your questions are not appropriate for this particular event,
@@ -1273,7 +1273,7 @@ The values for QuestionTypes are:
 \begin{itemize}
 \item questiontypeid: Unique key for this table (it should auto-increment).
 \item questiontypename: A one or two word name for the type of question.
-\item questiontypenotes: A more indepth description of the question type.
+\item questiontypenotes: A more in depth description of the question type.
 \end{itemize}
 
 The values for the QuestionsForSurvey are:

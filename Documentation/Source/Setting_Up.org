@@ -28,7 +28,7 @@
   Either on your staging machine (where you will be uploading the
   information from) or on your server (if you are loading directly to
   there) you must also have:
-  + svn
+  + git
   + text editing program
 ** Definitions
 #+CAPTION: Acronyms and Definitions
@@ -49,73 +49,62 @@
     Is this system going to be a standalone system, or are you going
     to interface it with Congo, or another piece of registration software?
 *** Single/Multiple installation
-    Is this going to be a single instantce of Zambia, or are you going
+    Is this going to be a single instance of Zambia, or are you going
     to have multiple instances of Zambia running on the same machine
     with some shared resources?
-*** Webserver
+*** Web server
     Where is your web installation location (whatever directory you
     will be putting your files into)?  Often something like
     /var/www/Zambia-Con or /home/username/public_html/Zambia-Con or
     the like.
 *** db_name.php file
     This information will go in the db_name.php file when you install it.
-**** Required information for the program to run:
-   + Database hostname (*DBHOSTNAME*). If you are setting things up on
-     the same machine that MySQL is running on, /localhost/ should be
-     what you are using for *DBHOSTNAME*.
-   + Database username (*DBUSERNAME*).  The user created for the
-     Zambia program to access the database(s).
-   + Database password (*DBPASSOWRD*).  The password created for the
-     Zambia program to access the database(s).
-   + Main database name (*DBDB*).  The database for all the single
-     convention specific information to live in.
-   + Biographical information database name (*BIODB*).  The database
-     for all the (possibly shared between Zambia instances)
-     biographical data.  If you are having the same people either for
-     multiple years, or for multiple activities, it makes sense to
-     centralize the information, otherwise it could be a one-shot for
-     the particular convention.
-   + The Reports databasse name (*REPORTDB*) points to where the
-     reports are kept.  It is on of the main ways of interation with
-     the data about the convention.  If you have multiple Zambia
-     instances it makes sense for this to be a single, shared
-     resource.
-   + The CongoDump database name (*CONGODB*). Congo is another piece of
-     software designed to interact with Zambia. The information in
-     that set of databases can be accessed in a variety of ways.
-   + The Limits (*LIMITDB*) and Localizations (*LOCALDB*) databases
-     are used to key things that are specific to a convention, but
-     might all want to live in a central database, for ease of
-     deploying new conventions.
-   + The TimeCard database (*TIMECARDDB*) might want to be specific to
-     a convention, or generalized across many different activities of
-     your organization, it often is local to the convention instance,
-     but there are some reasons to have it in a single, externally
-     served database.
-   + The convention database keying tag (*CON_KEY*) is useful when the
-     Limits and Localizations are stored in a single table, to
-     distinguish between which instance needs to be pulled.
-   + your host name (*MYHOST*) (If you are setting things up on the same
-     machine that MySQL is running on, /localhost/ should be what you
-     are using for *MYHOST*) (this doesn't actually go in the file)
+**** Required information in the db_name.php file for the program to run:
+     + date_default_timezone_set your timezone.  Mine is set to:
+       ('US/Eastern')
+     + Base session dir (*BASESESSIONDIR*), which is important for
+       garbage collection and timing on our sessions.
+     + Database hostname (*DBHOSTNAME*). If you are setting things up on
+       the same machine that MySQL is running on, /localhost/ should be
+       what you are using for *DBHOSTNAME*.
+     + Database username (*DBUSERNAME*).  The user created for the
+       Zambia program to access the database(s).
+     + Database password (*DBPASSOWRD*).  The password created for the
+       Zambia program to access the database(s).
+     + Main database name (*DBDB*).  The database for all the single
+       convention specific information to live in.
+     There are several other databases that you might want to connect to:
+     + Vendor information database name (*VENDORDB*).  The database
+       for all the vendor information.  This can be part of your same
+       system or a separate database for what you are working on.
+     + The CongoDump database name (*CONGODB*). Congo is another piece of
+       software designed to interact with Zambia. The information in
+       that set of databases can be accessed in a variety of ways.
+     + The fallback keying tag (*FALLBACK_KEY*) and URL
+       (*FALLBACK_URL*) which is useful when there isn't a specified
+       or remembered con instance to be referenced.
+     + The language list (*LANGUAGE_LIST*) which is the list of
+       languages you are using for your con.
 **** Extremely useful information:
-     Most of this information, currently in the db_name.php file,
-     would all be candidtates to be inthe Localization database.
-     + Con name.
+     Most of this information is in the various database tables,
+     mostly ConInfo, but a few others in special users.
+     + Unique con id.
+     + Con short name.
+     + Con long name.
      + Zambia administrator email.
      + Brainstorm email.
      + Programming email.
      + Registration email.
-     + Number of days the con will run (code works for 1-8 currently.)
+     + Number of days the con will run (code has been tested for 1-8.)
      + Date and time the con will start (In the format of yyyy-mm-dd
        HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
        start time.)
      + URL of the con (without the leading http:// in the URL.)
      + Logo for the con (gif, png, etc.)
-     + Availabilty Records (starting number of "availability" fields
+     + Availability Records (starting number of "availability" fields
        to render in the "when I am available" form, 8 is a good
        default.)
-     + Are kids avaiable (This should probably be set to "FALSE", it
+     + Are kids available (This should probably be set to "FALSE", it
        is a hold-over from backwards compatibility.)
      + Default Duration of the classes. (How long, in H:MM format that
        the classes are expected to be.)
@@ -125,22 +114,18 @@
      + Grid Spacer (The time divisions in the fixed grid produced, in
        seconds.  For example 1800 is 60 sec/min and 30 min, and a good
        default.)
-**** Very useful information
-     + Guests of Honor badgelist (if you have specific featured Guests
-       of Honor, the badgeids get listed here, comma seperated.)
-       (This is being migrated as a flag for a presenter.)
-     + Prefered total number of sessions upper limit (so your
+**** Very useful information:
+     + Guests of Honor badge list (if you have specific featured Guests
+       of Honor, they get indicated as a con role.)
+     + Preferred total number of sessions upper limit (so your
        presenters don't oversubscribe themselves 5 is good default for
-       a 3-4 day con.) (This should move to the Limits database.)
-     + Prefered daily number of sessions upper limit (3 is a good
-       default.) (This should move to the Limits database.)
-**** Description minimums and maximums
-     All of this information should be migrated to the Limits
-     database.  Only set a value if you need it, unset values are
-     simply presume there is no limit to the information in that
-     direction.  At some point, the precis descriptions will be folded
-     into the same, or a similar structure to the Biographical
-     Information is, currently.
+       a 3-4 day con.)
+     + Preferred daily number of sessions upper limit (3 is a good
+       default.)
+**** Description minimums and maximums:
+     All of this information goes in the limits database table.  Only
+     set a value if you need it, unset values are simply presume there
+     is no limit to the information in that direction.
      + Minimum web biography character length (Some cons have minimum
        biographical information requirements.)
      + Maximum web biography character length (Some cons have a
@@ -171,62 +156,66 @@
        of at least this long to be acceptable, 5 as a good default.)
      + Maximum precis title character length (50 as a good default.)
      + Minimum name character length (if there is a need to make sure
-       all names are of at least a specifc length.)
+       all names are of at least a specific length.)
      + Maximum name character length (if there is a need to make sure
-       all names are no more than a specifc length.)
-**** Other interesting settings
-     The linguistic settings (below) will go away once the precis
-     descriptions are migrated to a similar format as the Biographical
-     information currently resides.
-     + Is this a bilingual event (This should probably be set to
-       "FALSE" due to it's lack of complete support across the system,
-       and the next few elements in this list, ignored.)
-     + What the second language is.
-     + Title caption in second language.
-     + Description caption in second language.
-     + Biography caption in second language.
-**** The rest of the file should not have to change.
+       all names are no more than a specific length.)
+**** Other interesting settings:
+     The linguistic settings can be used if your con is in more than
+     one language.
+     + What the second language is, and it's indicator (fr-ca, en-uk)
+     + What will and won't be translated.
 * Downloading
   If you are checking the code out directly on the hosting machine,
   replace the final "Zambia" with what you decided the web install
   location will be.  If not, you can rename it to whatever you wish to
   call your staging area.
 
-  Please, check out the code from:
+  Please, check out the code using git from:
 
-  svn co https://zambia.svn.sourceforge.net/svnroot/zambia/branches/FFF/ Zambia
+  https://github.com/mrdkap/Zambia
+
 
 * Local file setup
-  There are certain localisms you want to set up, outside the svn
+  There are certain local-isms you want to set up, next to the GIT 
   tree. This is so (should you need to) if an upgrade to the code-base
   is desired, it can be done, without writing over your
-  customizations.
+  customization.
 
   To begin the process change to your web install location.  There you
   should see a list of files, and you will add one called "Local".
   When done your list of files should be:
   These files you will have to create or modify.
 ** db_name.php
-     Copy the example webpages/db_name_sample.php to Local/db_name.php
-     as a start, and then put in the values you decided upon before
-     starting the install process.
+   Copy the example webpages/db_name_sample.php to Local/db_name.php
+   as a start, and then put in the values you decided upon before
+   starting the install process.
+** Data_Backup
+   Directory that one of the scrips will, with the appropriate entry
+   in your crontab, store a running backup will be kept.
+** conid
+   This (or these) will be the con-specific information
+   sub-directories.
 ** FooterTemplate.html
-     This is where you will put your standard footer, that will be
-     below all the public pages, to customize the look and feel to
-     match your event's presentation.
+   This is where you will put your standard footer, that will be
+   below all the public pages, to customize the look and feel to
+   match your event's presentation.
 ** HeaderTemplate.html
-     This is where you will put your standard header, that will be
-     above all the public pages, to customize the look and feel to
-     match your event's presentation.
-** Participant_Images
-     If you choose to have images of your participants with their
-     bios, make this directory, and any pictures that match the
-     badgename of the participant will be put next to the bios.
+   This is where you will put your standard header, that will be
+   above all the public pages, to customize the look and feel to
+   match your event's presentation.
+** Participant_Images_foo
+   If you choose to have images of your participants with their
+   bios, make this directory, and any pictures that match the
+   badgename of the participant will be put next to the bios.
+   the foo could be: badge book, or web
 ** Verbiage
-     If you wish to customize what is put forth to your participants,
-     many of the pages allow for customization.  The list of them will
-     grow as more are done.  Any information in these files will
-     replace the default text.  Some examples of these files are:
+   These files can also live under each of the conid directories, so
+   can be distinguished by con instance.
+
+   If you wish to customize what is put forth to your participants,
+   many of the pages allow for customization.  The list of them will
+   grow as more are done.  Any information in these files will
+   replace the default text.  Some examples of these files are:
 *** BrainstormWelcome_0
 #+begin_src html :exports both :results silent
 <P> Here you can submit new suggestions or look at existing ideas for
@@ -234,7 +223,7 @@ panels, Meet and Greets, Special Interest Groups, Birds Of a Feathers,
 Author Readings, and Author Signings.</P>
 <P> As suggestions come in and we read through them, we will rework
 them, combine similar ideas into a single item, split large ones into
-pieces that will fit in their alloted time, etc.  Please expect the
+pieces that will fit in their allotted time, etc.  Please expect the
 suggestions you submit to evolve over time.</P>
 <P> Also, please note that we always have more suggestions than are
 physically possible with the space and time we have, so not everything
@@ -440,7 +429,7 @@ addition to this event is an advantage to all.
 Con of your Dreams.  Your willingness to share your time and energy
 are critical elements in what will make our event a success.  We here
 at Dream Productions do all we can to create a safe and inviting
-environment for all sleapers, but we must also rely on support from
+environment for all sleepers, but we must also rely on support from
 generous allies such as yourself.  Your effort is much appreciated,
 and is a benefit to all in this lifestyle.
 
@@ -475,8 +464,7 @@ is an advantage to all.
   + database password: (*DBPASSOWRD*)
   + database name: (*DBNAME*)
   + Each of the alternate database locators that will be used:
-    (*BIODB*), (*REPORTDB*), (*CONGODB*), (*LIMITDB*), (*LOCALDB*),
-    (*TIMECARDDB*)
+    (*VENDORDB*), (*CONGODB*) ...
   + your host name (*MYHOST*) (If you are setting things up on the
     same machine that MySQL is running on, /localhost/ should be what
     you are using for *MYHOST*)
@@ -509,12 +497,12 @@ is an advantage to all.
    grant all on DBNAME.* to 'DBUSERNAME'@'MYHOST' identified by 'DBPASSOWRD';
    grant lock tables on DBNAME.* to 'DBUSERNAME'@'MYHOST';
 #+end_src
-   + Reset the privilages
+   + Reset the privileges
 #+begin_src html :exports both :results silent
    flush privileges;
 #+end_src
 * Database populate
-  change directories until you are in the Install directory, then:
+  Change directories until you are in the Install directory, then:
 #+begin_src html :exports both :results silent
     mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./EmptyDbase.dump
 #+end_src
@@ -603,7 +591,7 @@ is an advantage to all.
    Feel free to then go and add the rest of your staff, off of the
    /Enter Participants/ link.
 ** Congo
-   You might want to complete the activites above, just to make sure
+   You might want to complete the activities above, just to make sure
    you have access, but once you do, you can migrate the congo data
    into the system, so all the other folks have their information
    added.
@@ -613,7 +601,7 @@ is an advantage to all.
     export_program_participants_congo.sql
 #+end_src
 
-   This generates sql that can be, in turn, locaded into Zambia.
+   This generates sql that can be, in turn, loaded into Zambia.
 
 ** Not Congo
    Tying this into another registration system is slightly more
@@ -663,7 +651,7 @@ is an advantage to all.
   + mkdir Verbiage
   + for i in ../../Zambia-FFF/Local/*.html ; do ln -s $i . ; done
   + ln -s ../../Zambia-FFF/Local/Participant_Images .
-  Finally, copy over, and modify the db_name.php as appropraite
+  Finally, copy over, and modify the db_name.php as appropriate
   To update them all do:
 #+begin_src html :exports both :results silent
 for i in FFF-[34]*
@@ -683,7 +671,7 @@ for i in FFF-[34]*
   update them any way you are comfortable with at the moment.  The
   update to the Local/db_name.php file should only be the update to
   the CON_KEY entry in the file, all the rest should remain the same,
-  and probably that should migrate to something database setable at
+  and probably that should migrate to something database settable at
   some point.  The rest of the information below should be set in your
   database tables.
 ** ConInfo
@@ -704,8 +692,10 @@ for i in FFF-[34]*
 #+end_src
    The values are:
    + conid: The unique number of your con.
-   + conname: The name of your con (probably inclucign either the
-     number, or the year of your con or other unique identifier).
+   + conname: The short name of your con (probably including either
+     the number, or the year of your con or other unique identifier).
+   + connamelong: The long name of your con, what people would
+     definitely recognize and associate with your event.
    + connumdays: How many days your con will run.
    + constartdate: When your con begins, in the format of YYYY-MM-DD
      hh:mm:ss and preferably (for ease of thought and scheduling)
@@ -784,7 +774,7 @@ for i in FFF-[34]*
 
    An example of phase shifting, is when you open your call for
    presenters, or you close your call for vendors, or you allow
-   feedback.  This can change programatically on specific dates around
+   feedback.  This can change programmaticaly on specific dates around
    your con, or you can set them by hand, when you are ready for a
    phase shift.  Many phases (or few) might be active at any given
    point in time.
@@ -795,7 +785,7 @@ for i in FFF-[34]*
    Individuals might have several sets of accesses, depending on their
    roles, some cover more than one area, others do not.  This gets
    somewhat complex, in the interweaving of some other tables, but,
-   theoretcially that was set up, and still should hold true from
+   theoretically that was set up, and still should hold true from
    previous instances of your con.  Of course, tweaking from year to
    year might need to happen.  If you wish to see who had which
    leadership roles in a previous instance of your con (to make sure
@@ -836,7 +826,7 @@ for i in FFF-[34]*
 ** UserHasConRole
    This is very similar to the UserHasPermissionRole, and was split
    off, because not all Permission Roles want to necessarily be
-   advertized, and sometimes a Permission Role is a superset of a Con
+   advertised, and sometimes a Permission Role is a superset of a Con
    Role that actually wants to be called out.  While this is not a
    necessary step, it is a good one to follow, so people know who is
    responsible for what, when they visit your webpage. If you wish to
@@ -925,8 +915,8 @@ for i in FFF-[34]*
   insertions to your database) but there are a few settings that
   should be taken care of, to make sure everything works smoothly.
   The limits are set on an event basis, since sometimes publications
-  or the space for things to be advertized differs from year to year.
-  Also the requestables might change, depending on what is available,
+  or the space for things to be advertised differs from year to year.
+  Also the requests might change, depending on what is available,
   as well as the rooms
 ** PublicationLimits
    This tracks the various limits on the publication fields, so that
@@ -951,7 +941,7 @@ for i in FFF-[34]*
    + conid: The con that these limits are for.  This should be set to
      whatever conid you are creating.
    + publimtype: This is an enum between two values, min and max.
-     This determiines if the limit is a minimum limit, or maximum
+     This determines if the limit is a minimum limit, or maximum
      limit.
    + publimdest: This is an enum between web and book, and should be
      in sync with your BioDests table.  This is so you can set
@@ -984,7 +974,7 @@ for i in FFF-[34]*
    elements of the room that someone would look for.  With a single
    room, there might not be much there to choose between, but, with
    many rooms, or different room functions depending on the time of
-   day (say, needing curtains in the daytime, and dimable lights, so
+   day (say, needing curtains in the daytime, and dimmable lights, so
    that projection will work correctly) so scheduling can happen more
    easily.
 
@@ -1076,7 +1066,7 @@ for i in FFF-[34]*
    The values for QuestionTypes are:
    + questiontypeid: Unique key for this table (it should auto-increment).
    + questiontypename: A one or two word name for the type of question.
-   + questiontypenotes: A more indepth description of the question type.
+   + questiontypenotes: A more in depth description of the question type.
 
    The values for the QuestionsForSurvey are:
    + questionid: Unique key for this table (it should auto-increment).

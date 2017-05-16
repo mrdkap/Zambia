@@ -1,5 +1,7 @@
 <?php
 require_once('PostingCommonCode.php');
+require_once('../../tcpdf/config/lang/eng.php');
+require_once('../../tcpdf/tcpdf.php');
 global $link;
 
 /* takes a variable, and searches across all the posible variations to
@@ -46,6 +48,7 @@ function getPictureDestEdit($checkbadge) {
   $picturestaffbook="../Local/Participant_Images_staffbook/$checkbadge";
   $pictureweb="../Local/Participant_Images_web/$checkbadge";
   $picturebook="../Local/Participant_Images_book/$checkbadge";
+  $fallback="../Local/logo.gif";
   if (file_exists($picturestaffweb)) {
     $picture=sprintf("<img width=300 src=\"%s\">",$picturestaffweb);
   } elseif (file_exists($picturestaffbook)) {
@@ -54,6 +57,8 @@ function getPictureDestEdit($checkbadge) {
     $picture=sprintf("<img width=300 src=\"%s\">",$pictureweb);
   } elseif (file_exists($picturebook)) {
     $picture=sprintf("<img width=300 src=\"%s\">",$picturebook);
+  } elseif (file_exists($fallback)) {
+    $picture=sprintf("<img width=300 src=\"%s\">",$fallback);
   }
   return ($picture);
 }
@@ -64,6 +69,7 @@ if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
 }
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
+// Short or long format
 $short="F";
 if (isset($_GET['short'])) {
   if ($_GET['short'] == "Y") {
@@ -76,6 +82,11 @@ if (isset($_GET['short'])) {
 /* Just setting this, in other fooBios this is passed in. Since we never want
    to do this without pictures in public, in long form, it is just hard-coded. */
 $pic_p="T";
+
+// Check to see if we are printing this to PDF
+$print_p="F";
+if ($_GET['print_p'] == "T") {$print_p="T";}
+if ($_GET['print_p'] == "Y") {$print_p="T";}
 
 // Set the conname from the conid
 $query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
@@ -92,9 +103,11 @@ $title="Biographical Information";
 $description="<P>Biographical Information for all Con Staff.</P>\n";
 $additionalinfo="<P>See also the ";
 if ($short=="T") {
-  $additionalinfo.="<A HREF=\"PubsStaffBios.php?conid=$conid\">full</A> version of this\n";
+  $additionalinfo.="<A HREF=\"PubsStaffBios.php?conid=$conid\">full</A> version of this or\n";
+  $additionalinfo.="<A HREF=\"PubsStaffBios.php?short=Y&conid=$conid&print_p=Y\">print</A> this\n";
 } else {
-  $additionalinfo.="<A HREF=\"PubsStaffBios.php?short=Y&conid=$conid\">short</A> version of this\n";
+  $additionalinfo.="<A HREF=\"PubsStaffBios.php?short=Y&conid=$conid\">short</A> version of this or\n";
+  $additionalinfo.="<A HREF=\"PubsStaffBios.php?conid=$conid&print_p=Y\">print</A> this\n";
 }
 $additionalinfo.="or the <A HREF=\"ConStaffBios.php?conid=$conid\">Roles and Descriptions</A> ";
 
@@ -139,7 +152,7 @@ if ($short == "T") {
   for ($i=1; $i<=$elements; $i++) {
     if ($element_array[$i]['Participants'] != $header) {
       $header=$element_array[$i]['Participants'];
-      $biostring=sprintf("<P>&nbsp;</P>\n<HR><H3>%s</H3>\n<DL>\n",$header);
+      $biostring=sprintf("<P>&nbsp;</P>\n<HR><H3>%s</H3>\n",$header);
     }
     $element_array[$i]['Bio']=$biostring;
   }
@@ -199,7 +212,7 @@ if ($short == "T") {
 	  $biostring.=sprintf("<P>%s</P>\n",$uri);
 	}
 	if ($pronoun != "") {
-	  $biostring.=sprintf("  <DT>Preferred pronoun: %s</DT>\n",$pronoun);
+	  $biostring.=sprintf("  <P>Preferred pronoun: %s</P>\n",$pronoun);
 	}
       } // End of Language Switch
       $element_array[$i]['Bio']=$biostring;
@@ -216,12 +229,17 @@ $format="bios";
 $header_break="Participants";
 $single_line_p="T";
 
-/* Printing body.  Uses the page-init then creates the page. */
-topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
 /* Produce the report. */
-$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
-echo $printstring;
+$printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
 
-correct_footer();
+// Display, with the option of printing.
+if ($print_p == "F") {
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+  echo "\n\n<!-- Begin Printstring -->\n\n";
+  echo $printstring;
+  echo "\n\n<!-- End Printstring -->\n\n";
+  correct_footer();
+} else {
+  $printstring->Output('Schedule'.$format.'All.pdf', 'I');
+}
 ?>

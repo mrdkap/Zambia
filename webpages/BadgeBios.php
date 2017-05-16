@@ -38,6 +38,7 @@ function getPictureDestEdit($checkbadge) {
 $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
+// Short or long format
 $short="F";
 if (isset($_GET['short'])) {
   if ($_GET['short'] == "Y") {
@@ -47,6 +48,7 @@ if (isset($_GET['short'])) {
   }
 }
 
+// With or without their picture
 $pic_p="T";
 if (isset($_GET['pic_p'])) {
   if ($_GET['pic_p'] == "N") {
@@ -54,6 +56,9 @@ if (isset($_GET['pic_p'])) {
     $short="F";
   }
 }
+
+// This is for pulling purposes, we don't want to pdf this.
+$print_p="F";
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="BadgeBios.php";
@@ -175,12 +180,11 @@ $format="bios";
 $header_break="Participants";
 $single_line_p="T";
 
+/* Produce the report. */
+$printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
+
 /* Printing body.  Uses the page-init then creates the page. */
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
-/* Produce the report. */
-$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
 echo $printstring;
-
 correct_footer();
 ?>

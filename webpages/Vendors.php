@@ -10,6 +10,18 @@ if ($conid == "") {
   $conid=$_SESSION['conid'];
 }
 
+// Format is desc for the renderschedreport.
+$format="desc";
+
+// No header breakpoint for now.
+$header_break="";
+
+// No short/single line for now.
+$single_line_p="F";
+
+// No printing of this for now.
+$print_p="F";
+
 // Set the conname from the conid
 $query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
 list($connamerows,$connameheader_array,$conname_array)=queryreport($query,$link,$title,$description,0);
@@ -135,7 +147,7 @@ EOD;
     echo " or the <A HREF=\"#VendorMapStart\">Map</A>";
   }
   echo ")</H3>\n";
-  $printstring=renderschedreport("desc","","F",$elements,$element_array);
+  $printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
   echo $printstring;
 
   // Community Tables
@@ -191,7 +203,7 @@ EOD;
     echo " or the <A HREF=\"#VendorMapStart\">Map</A>";
   }
   echo ")</H3>\n";
-  $printstring=renderschedreport("desc","","F",$elements,$element_array);
+  $printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
   echo $printstring;
 
 } else {

@@ -75,36 +75,10 @@ if (isset($_GET['feedback'])) {
   }
 }
 
-$print_p="";
-if ($_GET['print_p'] == "Y") {$print_p="Y";}
-
-// Document information
-class MYPDF extends TCPDF {
-  public function Footer() {
-    $this->SetY(-15);
-    $this->SetFont("helvetica", 'I', 8);
-    $this->Cell(0, 10, "Copyright ".date('Y')." New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
-  }
-}
-
-$pdf = new MYPDF('p', 'mm', 'letter', true, 'UTF-8', false);
-$pdf->SetCreator('Zambia');
-$pdf->SetAuthor('Programming Team');
-$pdf->SetTitle('Schedule Information');
-$pdf->SetSubject('Schedules.');
-$pdf->SetKeywords('Zambia, Presenters, Volunteers, Schedules');
-$pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
-$pdf->setHeaderFont(Array("helvetica", '', 10));
-$pdf->setFooterFont(Array("helvetica", '', 8));
-$pdf->SetDefaultMonospacedFont("courier");
-$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-$pdf->setLanguageArray($l);
-$pdf->setFontSubsetting(true);
-$pdf->SetFont('times', '', 12, '', true);
+// Check to see if we are printing this to PDF
+$print_p="F";
+if ($_GET['print_p'] == "T") {$print_p="T";}
+if ($_GET['print_p'] == "Y") {$print_p="T";}
 
 // Generate the constraints on what is shown
 if (may_I('General')) {$pubstatus_array[]='\'Volunteer\'';}
@@ -185,15 +159,17 @@ if ($format == "sched") {
 // Additional info setup.
 $additionalinfo="<P>See also this ";
 if ($feedback_p=="T") {
-  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&print_p=Y\">print feedback</A> or\n";
   $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid\">w/o feedback</A> or\n";
-  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&short=Y\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&short=Y\">short</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&feedback=Y&print_p=Y\">print</A> this,\n";
 } elseif ($single_line_p=="T") {
   $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid\">full</A> or\n";
-  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&feedback=Y\">w/feedback</A>,\n";
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&feedback=Y\">w/feedback</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&short=Y&print_p=Y\">print</A> this,\n";
 } else {
   $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&short=Y\">short</A> or\n";
-  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&feedback=Y\">w/feedback</A>,\n";
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&feedback=Y\">w/feedback</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffSched.php?format=$format&conid=$conid&print_p=Y\">print</A> this,\n";
 }
 $additionalinfo.="the <A HREF=\"StaffBios.php?conid=$conid\">bios</A>\n";
 $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">(short)</A>\n";
@@ -239,7 +215,7 @@ if ((strtotime($ConStart)+(60*60*24*$connumdays)) > time()) {
 // Further feedback-only hackery
 //if ($_GET['format']=="feedback") {$additionalinfo=print_r($feedback_array,t);}
 if ($_GET['format']=="feedback") {
-  $additionalinfo="<P><A HREF=\"StaffSched.php?format=feedback&conid=$conid&print_p=Y\">Print feedback</A>.</P>\n";
+  $additionalinfo="<P><A HREF=\"StaffSched.php?format=feedback&conid=$conid&print_p=T\">Print feedback</A>.</P>\n";
 }
 
 // Add the feedback tag if the time is right and the phase allows for it.
@@ -383,15 +359,21 @@ for ($i=1; $i<=$elements; $i++) {
   if ($_SESSION["conid"] != $element_array[$i]["conid"]) {
     $element_array[$i]['Description']=$element_array[$i]["conname"]."<br>".$element_array[$i]['Description'];
   }
-  $feedback_file=sprintf("../Local/%s/Feedback/%s.jpg",$conid,$element_array[$i]["Sessionid"]);
+  // If there are files
+  $feedback_file=sprintf("../Local/%s/Feedback/%s.jpg",$element_array[$i]["conid"],$element_array[$i]["Sessionid"]);
   if ((file_exists($feedback_file)) and ($feedback_p="T")) {
     $element_array[$i]['Description'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
     $element_array[$i]['Description'].=sprintf("<img src=\"%s\">\n<br>\n",$feedback_file);
   }
-  // No feedback graph if printing.  For that see FeedbackPrint for now.
-  if ((isset($feedback_array['graph'][$element_array[$i]["Sessionid"]."-".$element_array[$i]["conid"]])) and ($print_p!="Y")) {
-    $element_array[$i]['Description'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
-    $element_array[$i]['Description'].=generateSvgString($element_array[$i]["Sessionid"],$element_array[$i]["conid"]);
+  // Special feedback graph printing, if printing it, otherwise also stick it into the Description.
+  if (isset($feedback_array['graph'][$element_array[$i]["Sessionid"]."-".$element_array[$i]["conid"]])) {
+    if ($print_p == "T") {
+      $element_array[$i]['Feedbackgraphdesc'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
+      $element_array[$i]['Feedbackgraph'].=generateSvgString($element_array[$i]["Sessionid"],$element_array[$i]["conid"]);
+    } else {
+      $element_array[$i]['Description'].="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
+      $element_array[$i]['Description'].=generateSvgString($element_array[$i]["Sessionid"],$element_array[$i]["conid"]);
+    }
   }
   if ($feedback_array[$element_array[$i]["Sessionid"]."-".$element_array[$i]["conid"]]) {
     $element_array[$i]['Description'].="  </DD>\n    <DD>Written feedback from surveys:\n<br>\n";
@@ -399,16 +381,16 @@ for ($i=1; $i<=$elements; $i++) {
   }
 }
 
-$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
+/* Produce the report. */
+$printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
+
 // Display, with the option of printing.
-if ($print_p == "") {
+if ($print_p == "F") {
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo $printstring;
   correct_footer();
 } else {
-  $pdf->AddPage();
-  $pdf->writeHTML($printstring, true, false, true, false, '');
-  $pdf->Output('Schedule'.$format.'All.pdf', 'I');
+  $printstring->Output('Schedule'.$format.'All.pdf', 'I');
 }
 
 ?>

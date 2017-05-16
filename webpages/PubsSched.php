@@ -1,5 +1,7 @@
 <?php
 require_once('PostingCommonCode.php');
+require_once('../../tcpdf/config/lang/eng.php');
+require_once('../../tcpdf/tcpdf.php');
 global $link;
 
 // Pass in variables
@@ -8,6 +10,7 @@ if ((!empty($_GET['conid'])) AND (is_numeric($_GET['conid']))) {
 }
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
+// Format to print in, and modifications to the query and the additionalinfo
 $format="desc";
 if (isset($_GET['format'])) {
   if ($_GET['format'] == "tracks") {
@@ -23,6 +26,7 @@ if (isset($_GET['format'])) {
   }
 }
 
+// Short or long format
 $single_line_p="F";
 if (isset($_GET['short'])) {
   if ($_GET['short'] == "Y") {
@@ -31,6 +35,11 @@ if (isset($_GET['short'])) {
     $single_line_p="F";
   }
 }
+
+// Check to see if we are printing this to PDF
+$print_p="F";
+if ($_GET['print_p'] == "T") {$print_p="T";}
+if ($_GET['print_p'] == "Y") {$print_p="T";}
 
 // Set the conname from the conid
 $query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
@@ -95,9 +104,11 @@ if ($format == "sched") {
 // Additional info setup.
 $additionalinfo="<P>See also this ";
 if ($single_line_p=="T") {
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=$format&conid=$conid\">full</A>,\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=$format&conid=$conid\">full</A> or\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=$format&conid=$conid&short=Y&print_p=Y\">print</A> this,\n";
 } else {
-  $additionalinfo.="<A HREF=\"PubsSched.php?format=$format&conid=$conid&short=Y\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=$format&conid=$conid&short=Y\">short</A> or\n";
+  $additionalinfo.="<A HREF=\"PubsSched.php?format=$format&conid=$conid&print_p=Y\">print</A> this,\n";
 }
 $additionalinfo.="the <A HREF=\"PubsBios.php?conid=$conid\">bios</A>\n";
 $additionalinfo.="<A HREF=\"PubsBios.php?short=Y&conid=$conid\">(short)</A>,\n";
@@ -240,12 +251,15 @@ EOD;
 // Retrieve query
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
-/* Printing body.  Uses the page-init then creates the page. */
-topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
 /* Produce the report. */
-$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
-echo $printstring;
+$printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
 
-correct_footer();
+// Display, with the option of printing.
+if ($print_p == "F") {
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+  echo $printstring;
+  correct_footer();
+} else {
+  $printstring->Output('Schedule'.$format.'All.pdf', 'I');
+}
 ?>

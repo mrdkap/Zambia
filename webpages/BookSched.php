@@ -26,6 +26,7 @@ if (isset($_GET['format'])) {
   }
 }
 
+// Short or long format
 $single_line_p="F";
 if (isset($_GET['short'])) {
   if ($_GET['short'] == "Y") {
@@ -35,6 +36,7 @@ if (isset($_GET['short'])) {
   }
 }
 
+// Switch between duration and end time
 $endtime_p="F";
 $endtime_opcode="&endtime=Y";
 $endtime_opstring="end times";
@@ -47,6 +49,9 @@ if (isset($_GET['endtime'])) {
     $endtime_p="F";
   }
 }
+
+// This is for pulling purposes, we don't want to pdf this.
+$print_p="F";
 
 // Default
 $pubsname="if ((pubsname is NULL), ' ', GROUP_CONCAT(DISTINCT pubsname,if(moderator in ('1','Yes'),'(m)','') SEPARATOR ', ')) AS 'Participants'";
@@ -227,12 +232,11 @@ EOD;
 // Retrieve query
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
+/* Produce the report. */
+$printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
+
 /* Printing body.  Uses the page-init then creates the page. */
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
-/* Produce the report. */
-$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
 echo $printstring;
-
 correct_footer();
 ?>

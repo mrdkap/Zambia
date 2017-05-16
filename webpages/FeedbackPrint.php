@@ -301,7 +301,7 @@ for ($i=1; $i<=$elements; $i++) {
   $printstring.=$workstring;
   $pdf->writeHTML($workstring, true, false, true, false, "");
   $workstring="";
-  $feedback_file=sprintf("../Local/Feedback/%s.jpg",$element_array[$i]["Sessionid"]);
+  $feedback_file=sprintf("../Local/%s/Feedback/%s.jpg",$element_array[$i]["conid"],$element_array[$i]["Sessionid"]);
   if (file_exists($feedback_file)) {
     $printstring.="  </DD>\n  <DD>Feedback graph from surveys:\n<br>\n";
     $printstring.=sprintf ("<img src=\"%s\">\n<br>\n",$feedback_file);

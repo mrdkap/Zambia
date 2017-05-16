@@ -49,6 +49,7 @@ function getPictureDestEdit($checkbadge) {
 $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
+// Short or long format
 $short="F";
 if (isset($_GET['short'])) {
   if ($_GET['short'] == "Y") {
@@ -58,6 +59,7 @@ if (isset($_GET['short'])) {
   }
 }
 
+// With or without their picture
 $pic_p="T";
 if (isset($_GET['pic_p'])) {
   if ($_GET['pic_p'] == "N") {
@@ -65,6 +67,9 @@ if (isset($_GET['pic_p'])) {
     $short="F";
   }
 }
+
+// This is for pulling purposes, we don't want to pdf this.
+$print_p="F";
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="BookBios.php";
@@ -203,7 +208,7 @@ if ($short == "T") {
   for ($i=1; $i<=$elements; $i++) {
     if ($element_array[$i]['Participants'] != $header) {
       $header=$element_array[$i]['Participants'];
-      $biostring=sprintf("<P>&nbsp;</P>\n<HR><H3>%s</H3>\n<DL>\n",$header);
+      $biostring=sprintf("<P>&nbsp;</P>\n<HR>\n<H3>%s</H3>\n",$header);
     }
     $element_array[$i]['Bio']=$biostring;
   }
@@ -252,16 +257,16 @@ if ($short == "T") {
 	  }
 	  $biostring.=sprintf("%s</TD>\n    <TD>",$picture);
 	}
-	$biostring.=sprintf("<DL>\n  <DT><B>%s</B>",$name);
+	$biostring.=sprintf("<P><B>%s</B>",$name);
 	if ($bio != "") {
 	  $biostring.=$bio;
 	}
-	$biostring.="</DT>\n<DT>\n";
+	$biostring.="</P>\n";
 	if ($uri != "") {
-	  $biostring.=sprintf("  %s<BR>\n",$uri);
+	  $biostring.=sprintf("<P>%s</P>\n",$uri);
 	}
 	if ($pronoun != "") {
-	  $biostring.=sprintf("  Preferred pronoun: %s<BR>\n",$pronoun);
+	  $biostring.=sprintf("<P>Preferred pronoun: %s</P>\n",$pronoun);
 	}
       } // End of Language Switch
       $element_array[$i]['Bio']=$biostring;
@@ -278,12 +283,11 @@ $format="bios";
 $header_break="Participants";
 $single_line_p="T";
 
+/* Produce the report. */
+$printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
+
 /* Printing body.  Uses the page-init then creates the page. */
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
-/* Produce the report. */
-$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
 echo $printstring;
-
 correct_footer();
 ?>

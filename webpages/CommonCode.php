@@ -713,8 +713,44 @@ function renderprecisreport ($startrows,$endrows,$header_array,$element_array) {
    Start Time, Duration, Room, iCal, Feedback, and Description.  Bio only needs to
    be included if the format is set to bios.
  */
-function renderschedreport ($format,$header_break,$single_line_p,$elements,$element_array) {
-  $sched="<DL>\n";
+function renderschedreport ($format,$header_break,$single_line_p,$print_p,$elements,$element_array) {
+  if ($print_p == "T") {
+    require_once('../../tcpdf/config/lang/eng.php');
+    require_once('../../tcpdf/tcpdf.php');
+
+    // Document information
+    class MYPDF extends TCPDF {
+      public function Footer() {
+	$this->SetY(-15);
+	$this->SetFont("helvetica", 'I', 8);
+	$this->Cell(0, 10, "Copyright ".date('Y')." New England Leather Alliance, a Coalition Partner of NCSF and a subscribing organization of CARAS", 'T', 1, 'C');
+      }
+    }
+
+    $pdf = new MYPDF('p', 'mm', 'letter', true, 'UTF-8', false);
+    $pdf->SetCreator('Zambia');
+    $pdf->SetAuthor('Programming Team');
+    $pdf->SetTitle('Schedule Information');
+    $pdf->SetSubject('Schedules.');
+    $pdf->SetKeywords('Zambia, Presenters, Volunteers, Schedules');
+    $pdf->SetHeaderData($_SESSION['conlogo'], 70, $_SESSION['conname'], $_SESSION['conurl']);
+    $pdf->setHeaderFont(Array("helvetica", '', 10));
+    $pdf->setFooterFont(Array("helvetica", '', 8));
+    $pdf->SetDefaultMonospacedFont("courier");
+    $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+    $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+    $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+    $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+    $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+    $pdf->setLanguageArray($l);
+    $pdf->setFontSubsetting(true);
+    $pdf->SetFont('times', '', 12, '', true);
+    $pdf->AddPage();
+  } // if $print_p=="T"
+
+  if ($format != "bios") {
+    $sched="<DL>\n";
+  }
 
   $header="";
   for ($i=1; $i<=$elements; $i++) {
@@ -762,6 +798,12 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
     if ($single_line_p != "T") {
       if (!empty($element_array[$i]['Description'])) {
 	$sched.=sprintf("</DT>\n<DD><P>%s",$element_array[$i]['Description']);
+	if ((isset($element_array[$i]['Feedbackgraph'])) and (!empty($element_array[$i]['Feedbackgraph'])) and ($print_p == "T")) {
+	  $pdf->writeHTML($sched, true, false, true, false, "");
+	  $sched="";
+	  $pdf->writeHTML($element_array[$i]['Feedbackgraphdesc'], true, false, true, false, "");
+	  $pdf->ImageSVG("@".$element_array[$i]['Feedbackgraph'],'','','','','','N','',1,true);
+	}
       }
       if ((!empty($element_array[$i]['Participants'])) and
 	  ($element_array[$i]['Participants'] != " ")) {
@@ -778,7 +820,6 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
     }
     if (($element_array[$i][$header_break] != $element_array[$i + 1][$header_break]) and
 	($format == "bios")) {
-      $sched.="</DT></DL>\n";
       if ((isset($element_array[$i]['istable'])) and ($element_array[$i]['istable'] > 0)) {
 	$sched.="    </TD>\n  </TR>\n</TABLE>\n";
       }
@@ -787,7 +828,12 @@ function renderschedreport ($format,$header_break,$single_line_p,$elements,$elem
   if ($format != "bios") {
     $sched.="</DL>\n";
   }
-  return($sched);
+  if ($print_p == "T") {
+    $pdf->writeHTML($sched, true, false, true, false, "");
+    return($pdf);
+  } else {
+    return($sched);
+  }
 }
 
 /* This function renders the matrix or list of Bios that need editing

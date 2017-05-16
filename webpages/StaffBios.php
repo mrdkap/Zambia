@@ -5,6 +5,8 @@ if (may_I("Staff")) {
  } else {
   require_once('PartCommonCode.php');
  }
+require_once('../../tcpdf/config/lang/eng.php');
+require_once('../../tcpdf/tcpdf.php');
 global $link;
 
 /* takes a variable, and searches across all the posible variations
@@ -44,6 +46,7 @@ if ($conid=="") {$conid=$_SESSION['conid'];}
 
 $_SESSION['return_to_page']="StaffBios.php?conid=$conid";
 
+// Short or long format
 $short="F";
 if (isset($_GET['short'])) {
   if ($_GET['short'] == "Y") {
@@ -54,6 +57,7 @@ if (isset($_GET['short'])) {
   }
 }
 
+// With or without their picture
 $pic_p="T";
 if (isset($_GET['pic_p'])) {
   if ($_GET['pic_p'] == "N") {
@@ -62,6 +66,11 @@ if (isset($_GET['pic_p'])) {
     $_SESSION['return_to_page']="StaffBios.php?conid=$conid&pic_p=\"N\"";
   }
 }
+
+// Check to see if we are printing this to PDF
+$print_p="F";
+if ($_GET['print_p'] == "T") {$print_p="T";}
+if ($_GET['print_p'] == "Y") {$print_p="T";}
 
 // Generate the constraints on what is shown
 if (may_I('General')) {$pubstatus_array[]='\'Volunteer\'';}
@@ -108,13 +117,16 @@ $description="<P>Biographical Information for all Presenters.</P>\n";
 $additionalinfo="<P>See also this ";
 if ($short=="T") {
   $additionalinfo.="<A HREF=\"StaffBios.php?conid=$conid\">full</A> or\n";
-  $additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">full without images</A>,\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">full without images</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid&print_p=Y\">print</A> this,\n";
 } elseif ($pic_p=="F") {
   $additionalinfo.="<A HREF=\"StaffBios.php?conid=$conid\">full</A> or\n";
-  $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">short</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid&print_p=Y\">print</A> this,\n";
 } else {
   $additionalinfo.="<A HREF=\"StaffBios.php?pic_p=N&conid=$conid\">without images</A> or\n";
-  $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">short</A>,\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?short=Y&conid=$conid\">short</A> or\n";
+  $additionalinfo.="<A HREF=\"StaffBios.php?conid=$conid&print_p=Y\">print</A> this,\n";
 }
 $additionalinfo.="the <A HREF=\"StaffSched.php?format=desc&conid=$conid\">description</A>\n";
 $additionalinfo.="<A HREF=\"StaffSched.php?format=desc&conid=$conid&short=Y\">(short)</A>\n";
@@ -286,7 +298,7 @@ if ($short == "T") {
   for ($i=1; $i<=$elements; $i++) {
     if ($element_array[$i]['Participants'] != $header) {
       $header=$element_array[$i]['Participants'];
-      $biostring=sprintf("<P>&nbsp;</P>\n<HR><H3>%s</H3>\n<DL>\n",$header);
+      $biostring=sprintf("<P>&nbsp;</P>\n<HR>\n<H3>%s</H3>\n",$header);
     }
     $element_array[$i]['Bio']=$biostring;
   }
@@ -383,12 +395,15 @@ $format="bios";
 $header_break="Participants";
 $single_line_p="T";
 
-/* Printing body.  Uses the page-init then creates the page. */
-topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
 /* Produce the report. */
-$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
-echo $printstring;
+$printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
 
-correct_footer();
+// Display, with the option of printing.
+if ($print_p == "F") {
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+  echo $printstring;
+  correct_footer();
+} else {
+  $printstring->Output('Schedule'.$format.'All.pdf', 'I');
+}
 ?>

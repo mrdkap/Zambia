@@ -539,12 +539,16 @@ function VolsSchedString($format,$conid,$short) {
     $format="desc";
   }
 
+  // Short or long format
   $single_line_p="F";
   if ($short == "Y") {
     $single_line_p="T";
   } elseif ($short == "N") {
     $single_line_p="F";
   }
+
+  // Since this is embedded, no printing from here
+  $print_p="F";
 
   // Set the conname from the conid
   $query="SELECT conname,connumdays,congridspacer,constartdate,conlogo from ConInfo where conid=$conid";
@@ -735,7 +739,7 @@ EOD;
   $returnarray['title']=$title;
   $returnarray['description']=$description;
   $returnarray['additionalinfo']=$additionalinfo;
-  $returnarray['returnstring']=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
+  $returnarray['returnstring']=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
   return($returnarray);
 }
 

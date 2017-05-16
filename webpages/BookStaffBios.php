@@ -49,6 +49,7 @@ function getPictureDestEdit($checkbadge) {
   $picturestaffbook="../Local/Participant_Images_staffbook/$checkbadge";
   $pictureweb="../Local/Participant_Images_web/$checkbadge";
   $picturebook="../Local/Participant_Images_book/$checkbadge";
+  $fallback="../Local/logo.gif";
   if (file_exists($picturestaffbook)) {
     $picture=sprintf("<img width=300 src=\"%s\">",$picturestaffbook);
   } elseif (file_exists($picturestaffweb)) {
@@ -60,6 +61,9 @@ function getPictureDestEdit($checkbadge) {
   } elseif (file_exists($pictureweb)) {
     $picture=sprintf("Picture for editing at: http://%s/webpages/%s",
 		     $_SESSION['conurl'], $pictureweb);
+  } elseif (file_exists($fallback)) {
+    $picture=sprintf("Picture for editing at: http://%s/webpages/%s",
+		     $_SESSION['conurl'], $fallback);
   }
   return ($picture);
 }
@@ -69,6 +73,7 @@ function getPictureDestEdit($checkbadge) {
 $conid=$_GET['conid'];
 if ($conid=="") {$conid=$_SESSION['conid'];}
 
+// Short or long format
 $short="F";
 if (isset($_GET['short'])) {
   if ($_GET['short'] == "Y") {
@@ -78,6 +83,7 @@ if (isset($_GET['short'])) {
   }
 }
 
+// With or without their picture
 $pic_p="T";
 if (isset($_GET['pic_p'])) {
   if ($_GET['pic_p'] == "N") {
@@ -85,6 +91,9 @@ if (isset($_GET['pic_p'])) {
     $short="F";
   }
 }
+
+// This is for pulling purposes, we don't want to pdf this.
+$print_p="F";
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']="BookStaffBios.php";
@@ -155,7 +164,7 @@ if ($short == "T") {
   for ($i=1; $i<=$elements; $i++) {
     if ($element_array[$i]['Participants'] != $header) {
       $header=$element_array[$i]['Participants'];
-      $biostring=sprintf("<P>&nbsp;</P>\n<HR><H3>%s</H3>\n<DL>\n",$header);
+      $biostring=sprintf("<P>&nbsp;</P>\n<HR>\n<H3>%s</H3>\n",$header);
     }
     $element_array[$i]['Bio']=$biostring;
   }
@@ -230,12 +239,11 @@ $format="bios";
 $header_break="Participants";
 $single_line_p="T";
 
+/* Produce the report. */
+$printstring=renderschedreport($format,$header_break,$single_line_p,$print_p,$elements,$element_array);
+
 /* Printing body.  Uses the page-init then creates the page. */
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
-/* Produce the report. */
-$printstring=renderschedreport($format,$header_break,$single_line_p,$elements,$element_array);
 echo $printstring;
-
 correct_footer();
 ?>

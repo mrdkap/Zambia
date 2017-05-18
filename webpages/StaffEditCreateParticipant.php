@@ -168,7 +168,6 @@ SELECT
             badgeid="$selpartid" AND
             conid=$conid) AS Y USING (badgeid)
   WHERE
-    conid=$conid AND
     badgeid='$selpartid'
 EOD;
   if (($result=mysql_query($query,$link))===false) {

@@ -229,6 +229,7 @@ if ($action != "migrate") {
                      value="<?php echo htmlspecialchars($participant_arr["phone"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
 <?php
 } else {  // end if not migrate (and add the denseform from the above sundered div
+  echo "            <INPUT type=\"hidden\" name=\"note\" value=\"Migrate participant to this con-instance\">\n";
   echo "            <DIV class=\"denseform\">";
 }
 ?>

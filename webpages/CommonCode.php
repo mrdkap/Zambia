@@ -860,8 +860,6 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
     if ($numrows==0) {
       $printstring.="<P>There are no biographies to edit which match your selection.</P>\n";
       $printstring.="<P><A HREF=\"StaffManageBios.php\">Reload the Manage Biographies page.</A></P>\n";
-      correct_footer();
-      exit();
     }
     $printstring.="<TABLE class=\"grid\" border=1>\n";
     $printstring.="    <TR>\n";

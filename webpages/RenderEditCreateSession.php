@@ -17,15 +17,18 @@ function RenderEditCreateSession ($action, $session, $message, $message_error) {
   $typequery = <<<EOD
 SELECT
     typeid,
-    phasetypename
+    typename
   FROM
-      Phase
-    JOIN PhaseTypes USING (phasetypeid)
-    JOIN Types ON (phasetypename=typename)
+      Permissions
+    JOIN PermissionAtoms USING (permatomid)
+    JOIN UserHasPermissionRole UHPR USING (permroleid)
+    JOIN Phase USING (phasetypeid, conid)
+    JOIN Types ON (permatomtag=concat("write_",typename))
   WHERE
+    permatomtag in (SELECT concat ("write_", typename) FROM Types) AND
+    phasestate = '0' AND
     conid=$conid AND
-    phasetypeid in (19,20,21,22,23,24) AND
-    phasestate="0"
+    UHPR.badgeid=$badgeid
 EOD;
 
   list($type_rows,$type_header_array,$type_array)=queryreport($typequery,$link,$title,$query,0);
@@ -36,6 +39,13 @@ EOD;
   if ($action=="create") {
     $title="Add New Session";
     $description="<P>Saving an added session presumes you are going to add another new session next.</P>";
+    if ($type_rows == 0) {
+      $message_error="<P>Sorry, we are not accepting any new sessions at this time.\n";
+      $message_error.="If you think you reached this message in error, please get in touch with\n";
+      $message_error.="the appropriate people.<br />\nThank you.</P>\n";
+      RenderError($title,$message_error);
+      exit();
+    }
   } elseif ($action=="edit") {
     $title="Edit Session";
     $description="<P>Hit either the top or the bottom \"Save\" button when you are done with your changes.</P>\n";
@@ -45,6 +55,11 @@ EOD;
   } elseif ($action=="propose") {
     $title="Propose Session";
     $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
+    if ($type_rows == 0) {
+      $message_error="<P>Sorry, we are not accepting any new sessions at this time.</P>";
+      RenderError($title,$message_error);
+      exit();
+    }
     /* $additionalinfo.="  <FORM name=\"brainstormform\" method=\"POST\" action=\"doLogin.php\">\n";
     $additionalinfo.="    <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
     $additionalinfo.="    <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
@@ -159,10 +174,7 @@ EOD;
                     <?php populate_select_from_table("Tracks", $session["track"], "SELECT", FALSE); ?>
                     </SELECT>&nbsp;&nbsp;</SPAN>
                 <SPAN><LABEL for="type">Type: </LABEL><SELECT name="type">
-		    <?php if ($action=="brainstorm") {
-                            populate_select_from_query($typequery, $session["type"], "SELECT", FALSE);
-                          } else {
-                            populate_select_from_table("Types", $session["type"], "SELECT", FALSE); } ?>
+		    <?php populate_select_from_query($typequery, $session["type"], "SELECT", FALSE); ?>
                     </SELECT>&nbsp;&nbsp;</SPAN>
 	        <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
                 <INPUT type="hidden" name="pubstatusid" value="<?php echo $session["pubstatusid"];?>">

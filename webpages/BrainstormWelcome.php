@@ -10,17 +10,22 @@ $additionalinfo="";
 $message.=$message2;
 
 /* This should be refined with further may_I's in Permissions, but
-   for now, we are working off of the raw Phase state. */
+   for now, we are working off of the raw Phase state.
+   The special opt-out for Vendor should go away at some point,
+   probably after the vendor class is part of the new vendor side.
+*/
 $query = <<<EOD
 SELECT
-    phasetypename
+    typename
   FROM
       Phase
     JOIN PhaseTypes USING (phasetypeid)
+    JOIN Types ON (phasetypename=typename)
   WHERE
     conid=$conid AND
-  phasetypeid in (19,20,21,22,23,24) AND
+    typename != "Vendor" AND
     phasestate="0"
+
 EOD;
 
 list($rows,$header_array,$phase_array)=queryreport($query,$link,$title,$description,0);

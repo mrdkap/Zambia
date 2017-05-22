@@ -265,6 +265,37 @@ if ($phase_array['Venue Available'] == '0' ) {
   $venueinfo.="  </DIV>\n";
 }
 
+$vendorinfo="";
+$vendorbodyinfo="";
+if ($phase_array['Vendors Available'] == '0' ) {
+
+  // SVG Map of the vendor layout
+  if (file_exists("../Local/$conid/Vendor_Map.svg")) {
+    $vendorbodyinfo.="      <LI class=collapse style=\"width:100%\">Map of the Vendor</LI>\n";
+    $vendorbodyinfo.=file_get_contents("../Local/$conid/Vendor_Map.svg");
+  }
+
+  // PDF Map of the vendor layout
+  if (file_exists("../Local/$conid/Vendor_Map.pdf")) {
+    $vendorbodyinfo.="<A HREF=\"../Local/$conid/Vendor_Map.pdf\">Click for the Map</A>\n";
+  }
+
+  // Vendor information
+  if (file_exists("../Local/$conid/Vendor_List")) {
+    $vendorbodyinfo.="      <LI class=collapse style=\"width:100%\">Vendor List</LI>\n";
+    $vendorbodyinfo.=file_get_contents("../Local/$conid/Vendor_List");
+  }
+
+  // Check for empty
+  if ($vendorbodyinfo != "") {
+  $vendorinfo.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
+  $vendorinfo.="    <A NAME=\"Vendors\">&nbsp;</A>\n";
+  $vendorinfo.="    <H3>Vendors</H3>\n";
+  $vendorinfo.=$vendorbodyinfo;
+  $vendorinfo.="  </DIV>\n";
+  }
+}
+
 $conchairletter="";
 if (file_exists("../Local/$conid/Con_Chair_Welcome")) {
   $conchairletter.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
@@ -300,11 +331,11 @@ if (file_exists("../Local/$conid/KRules")) {
 
 // Volunteer taken out.
 
-// Vendor now part of the main app.
+// Vendor now part of the main app, but because not everything is entered in $vendor_list exists
 
 $geninfo="";
 if (file_exists("../Local/$conid/Gen_Info")) {
-  $geninfo.="<DIV class=\"collapse\" style=\" display: block; width: 100%; float: left; \">\n";
+  $geninfo.="<DIV style=\" display: block; width: 100%; float: left; \">\n";
   $geninfo.=file_get_contents("../Local/$conid/Gen_Info");
   $geninfo.="</DIV>\n";
 }
@@ -313,6 +344,7 @@ if (file_exists("../Local/$conid/Gen_Info")) {
 echo $genbody;
 echo $geninfo;
 echo $venueinfo;
+echo $vendorinfo;
 echo $conchairletter;
 echo $orgletter;
 echo $rules;

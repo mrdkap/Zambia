@@ -87,7 +87,7 @@ SELECT
     conid=$conid AND
     biotypename not in ('web','book') AND
     biodestname not in ('staffweb','staffbook') AND
-    permrolename in ('Participant')
+    permrolename in ('Participant','Panelist','Demo','Teacher','Presenter','Author','Organizer','Performer')
 EOD;
 
 // Specific set of badgeids.
@@ -299,10 +299,29 @@ while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
  }
 
 // Set up the necessary switches so we can know what exactly is being operated on.
-$printquery1=renderbiosreport($badgeid_list,1,$check_element,$numrows,$count_badgeid,$count_col,$pubsname,$lockedby);
-$printquery2=renderbiosreport($badgeid_list,2,$check_staff_element,$numstaffrows,$count_staff_badgeid,$count_staff_col,$staff_pubsname,$staff_lockedby);
-$printquery3=renderbiosreport($badgeid_list,3,$check_desc_element,$numdescrows,$count_desc_badgeid,$count_desc_col,$desc_pubsname,$desc_lockedby);
-$printquery4=renderbiosreport($badgeid_list,4,$check_vols_element,$numvolsrows,$count_vols_badgeid,$count_vols_col,$vols_pubsname,$vols_lockedby);
+if ($numrows > 0) {
+  $printquery1=renderbiosreport($badgeid_list,1,$check_element,$numrows,$count_badgeid,$count_col,$pubsname,$lockedby);
+} else {
+  $printquery1="<TABLE><TR><TH>There are no presenter bios to edit which match your selection.</TH></TR></TABLE>\n";
+}
+
+if ($numstaffrows > 0) {
+  $printquery2=renderbiosreport($badgeid_list,2,$check_staff_element,$numstaffrows,$count_staff_badgeid,$count_staff_col,$staff_pubsname,$staff_lockedby);
+} else {
+  $printquery2="<TABLE><TR><TH>There are no staff bios to edit which match your selection.</TH></TR></TABLE>\n";
+}
+
+if ($numdescrows > 0) {
+  $printquery3=renderbiosreport($badgeid_list,3,$check_desc_element,$numdescrows,$count_desc_badgeid,$count_desc_col,$desc_pubsname,$desc_lockedby);
+} else {
+  $printquery3="<TABLE><TR><TH>There are no descriptons to edit which match your selection.</TH></TR></TABLE>\n";
+}
+
+if ($numvolsrows > 0) {
+  $printquery4=renderbiosreport($badgeid_list,4,$check_vols_element,$numvolsrows,$count_vols_badgeid,$count_vols_col,$vols_pubsname,$vols_lockedby);
+} else {
+  $printquery4="<TABLE><TR><TH>There are no volunteer bios to edit which match your selection.</TH></TR></TABLE>\n";
+}
 
 //Start the page
 if (!empty($_GET['badgeids'])) {

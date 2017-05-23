@@ -20,6 +20,8 @@ $Grid_Spacer=$conname_array[1]['congridspacer'];
 $ConStart=$conname_array[1]['constartdate'];
 $logo=$conname_array[1]['conlogo'];
 
+// Program (session element) information
+
 $programquery = <<<EOD
 SELECT
     concat('"id": "',sessionid,'"') AS id,
@@ -248,6 +250,169 @@ $bios.="    }\n";
 
 $bios.="];";
 
+// Staff Job Descriptions
+
+$staffdescquery = <<<EOD
+SELECT
+    concat('"id": "',CRA.conroleid,'"') AS id,
+    concat('"title": "',CRA.conrolenotes,'"') AS title,
+    concat('"tags": [ "" ], "date": "", "time": "", "mins": "", "loc": [ "" ]') AS empty,
+    concat('"people": [ ',if ((name_good_staffweb is NULL), " ", GROUP_CONCAT(DISTINCT '{ "id": "',badgeid,'", "name": "',name_good_staffweb,'" }' SEPARATOR ", ")),' ]') AS people,
+    concat('"desc": "', CRA.conroledescription, '"') AS 'desc'
+  FROM
+      ConRoles CRA
+    JOIN HasReports USING (conroleid)
+    LEFT JOIN UserHasConRole UHCR USING (conroleid, conid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as name_good_staffweb
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('name') AND
+	  biostatename in ('good') AND
+	  biodestname in ('staffweb') AND
+	  biolang='en-us') NGS USING (badgeid)
+  WHERE
+    conid=$conid
+  GROUP BY
+    conroleid
+  ORDER BY
+    display_order,
+    conrolename
+EOD;
+
+// Retrieve query
+list($elementrows,$header_array,$element_array)=queryreport($staffdescquery,$link,$title,$description,0);
+
+$staffdesc.="var program = [\n";
+
+for ($i=1; $i<$elementrows; $i++) {
+  $staffdesc.="    {\n";
+  $staffdesc.="        " . $element_array[$i]['id'] . ",\n";
+  $staffdesc.="        " . $element_array[$i]['title'] . ",\n";
+  $staffdesc.="        " . $element_array[$i]['empty'] . ",\n";
+  $staffdesc.="        " . $element_array[$i]['people'] . ",\n";
+  $staffdesc.="        " . str_replace("\n"," ",$element_array[$i]['desc']) . "\n";
+  $staffdesc.="    },\n";
+}
+
+// last run through, without the comma at the end.
+$staffdesc.="    {\n";
+$staffdesc.="        " . $element_array[$i]['id'] . ",\n";
+$staffdesc.="        " . $element_array[$i]['title'] . ",\n";
+$staffdesc.="        " . $element_array[$i]['empty'] . ",\n";
+$staffdesc.="        " . $element_array[$i]['people'] . ",\n";
+$staffdesc.="        " . str_replace("\n"," ",$element_array[$i]['desc']) . "\n";
+$staffdesc.="    }\n";
+
+$staffdesc.="];";
+
+
+// Staff Bios Information
+
+$staffbioquery = <<<EOD
+SELECT
+    concat('"id": "',badgeid,'"') AS id,
+    concat('"name": [ "',name_good_staffweb,'" ]') AS name,
+    concat('"tags": []') AS tags,
+    concat('"prog": [ ',GROUP_CONCAT(DISTINCT '"',conroleid,'"' SEPARATOR ", "),' ]') AS prog,
+    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_staffweb/',badgeid,'",',if(uri_good_staffweb IS NULL,"",concat('\n            "url" : "',replace(uri_good_staffweb,'"',''),'"')),'\n        }') AS links,
+    concat('"bio": "',if(bio_good_staffweb IS NULL,"",replace(bio_good_staffweb,'"',"''")),if(pronoun_good_staffweb IS NULL,"",concat(" Preferred Pronoun: ",pronoun_good_staffweb)),'" ') AS bio
+  FROM
+      UserHasConRole
+    JOIN HasReports USING (conroleid, conid)
+    JOIN (SELECT
+        badgeid,
+	biotext as name_good_staffweb
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('name') AND
+	  biostatename in ('good') AND
+	  biodestname in ('staffweb') AND
+	  biolang='en-us') NGS USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as bio_good_staffweb
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('bio') AND
+	  biostatename in ('good') AND
+	  biodestname in ('staffweb') AND
+          biolang='en-us') BGS USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as uri_good_staffweb
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('uri') AND
+	  biostatename in ('good') AND
+	  biodestname in ('staffweb') AND
+	  biolang='en-us') UGS USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as pronoun_good_staffweb
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('pronoun') AND
+	  biostatename in ('good') AND
+	  biodestname in ('staffweb') AND
+          biolang='en-us') PGS USING (badgeid)
+  WHERE
+    conid=$conid
+  GROUP BY
+    badgeid
+  ORDER BY
+    name_good_staffweb
+EOD;
+
+// Retrieve query
+list($staffbiorows,$staffbioheader_array,$staffbio_array)=queryreport($staffbioquery,$link,$title,$description,0);
+
+$staffbios.="var people = [\n";
+
+for ($i=1; $i<$staffbiorows; $i++) {
+  $staffbios.="    {\n";
+  $staffbios.="        " . $staffbio_array[$i]['id'] . ",\n";
+  $staffbios.="        " . $staffbio_array[$i]['name'] . ",\n";
+  $staffbios.="        " . $staffbio_array[$i]['tags'] . ",\n";
+  $staffbios.="        " . $staffbio_array[$i]['prog'] . ",\n";
+  $staffbios.="        " . str_replace("\n"," ",$staffbio_array[$i]['links']) . ",\n";
+  $staffbios.="        " . str_replace("\n"," ",$staffbio_array[$i]['bio']) . "\n";
+  $staffbios.="    },\n";
+}
+
+// last run through, without the comma at the end.
+$staffbios.="    {\n";
+$staffbios.="        " . $staffbio_array[$i]['id'] . ",\n";
+$staffbios.="        " . $staffbio_array[$i]['name'] . ",\n";
+$staffbios.="        " . $staffbio_array[$i]['tags'] . ",\n";
+$staffbios.="        " . $staffbio_array[$i]['prog'] . ",\n";
+$staffbios.="        " . str_replace("\n"," ",$staffbio_array[$i]['links']) . ",\n";
+$staffbios.="        " . str_replace("\n"," ",$staffbio_array[$i]['bio']) . "\n";
+$staffbios.="    }\n";
+
+$staffbios.="];";
+
 // Vendor information
 
 // Connect to Vendor Database
@@ -389,7 +554,7 @@ EOD;
 $orgquery=<<<EOD
 SELECT
     concat('{"c":[{"v":"',CRA.conrolenotes,'","f":"',CRA.conrolenotes,'<br/> ',
-	   group_concat(DISTINCT "<A HREF=\'PubsStaffBios.php?conid=$conid#",pubsname,"\'>",pubsname,"</A>" SEPARATOR '/'),
+	   group_concat(DISTINCT "<A HREF=\'KonOpasStaff.php?conid=$conid#part/",badgeid,"\'>",pubsname,"</A>" SEPARATOR '/'),
            '"},{"v":"',if((CRC.conrolenotes IS NOT NULL),CRC.conrolenotes,""),'"},{"v":"',CRA.conroledescription,'"}]}') AS reportmap
   FROM
       ConRoles CRA
@@ -630,6 +795,18 @@ $recordfile = fopen($kbfile,"w") or RenderError($title,"Unable to open record fi
 fwrite ($recordfile, $bios);
 fclose($recordfile);
 $message.="$kbfile created<br>\n";
+
+$ksdfile="../Local/$conid/staffjobs.js";
+$recordfile = fopen($ksdfile,"w") or RenderError($title,"Unable to open record file: $ksdfile.");
+fwrite ($recordfile, $staffdesc);
+fclose($recordfile);
+$message.="$ksdfile created<br>\n";
+
+$ksfile="../Local/$conid/staff.js";
+$recordfile = fopen($ksfile,"w") or RenderError($title,"Unable to open record file: $ksfile.");
+fwrite ($recordfile, $staffbios);
+fclose($recordfile);
+$message.="$ksfile created<br>\n";
 
 $kvfile="../Local/$conid/vendor.js";
 $recordfile = fopen($kvfile,"w") or RenderError($title,"Unable to open record file: $kvfile.");

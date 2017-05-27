@@ -275,7 +275,6 @@ call your staging area.
 Please, check out the code using git from:
 
 \url{https://github.com/mrdkap/Zambia}
-
 \section{Local file setup}
 \label{sec-3}
 There are certain local-isms you want to set up, next to the GIT 
@@ -946,6 +945,13 @@ SELECT
     concat("($conid,",phasetypeid,",0),") AS ValueSet
   FROM
       PhaseTypes;
+\end{verbatim}
+You can also depend on the altering of the phase state within
+Zambia to populate the rest of the phases, once a single phase
+exists. You can accomplish that with (replacing \$conid with the
+appropriate conid):
+\begin{verbatim}
+INSERT INTO Phase (conid) VALUES ($conid);
 \end{verbatim}
 
 An example of phase shifting, is when you open your call for

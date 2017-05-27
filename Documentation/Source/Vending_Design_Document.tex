@@ -1,0 +1,748 @@
+\documentclass[captions=tablesignature]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{booktabs}
+\usepackage[scaled]{beraserif}
+\usepackage[scaled]{berasans}
+\usepackage[scaled]{beramono}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{fancyhdr}
+\usepackage{subfig}
+\usepackage{listings}
+\lstnewenvironment{common-lispcode}
+{\lstset{language={HTML},basicstyle={\ttfamily\footnotesize},frame=single,breaklines=true}}
+{}
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\description\compactdesc
+\let\enumerate\compactenum
+\usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
+\pagestyle{fancy}
+\setcounter{secnumdepth}{2}
+\author{Percy, Amanda, Rob, Iya\thanks{NELA.Percy@gmail.com}}
+\date{May 2017}
+\title{Vending Design Document}
+\hypersetup{
+  pdfkeywords={Zambia, Documentation, FFF branch},
+  pdfsubject={Zambia is a piece of Con Management Software.  This document is a guide to building the Vendor System for the Zambia FFF-branch instance.  This is still a work in progress.},
+  pdfcreator={}}
+\begin{document}
+
+\maketitle
+\pagenumbering{roman}
+\thispagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{}
+\rhead{}
+\chead{}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+\begin{abstract}
+\vspace{5cm}
+{\LARGE{\textbf{Abstract:\\}}}
+Zambia is a piece of Con Management Software.  This document is a guide to building the Vendor System for the Zambia FFF-branch instance.  This is still a work in progress.
+\end{abstract}
+\newpage
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+\chead{
+Vending Design Document
+}
+\lfoot{
+Percy, Amanda, Rob, Iya <NELA.Percy@gmail.com>
+}
+\rfoot{\thepage}
+\setcounter{tocdepth}{2}
+\tableofcontents
+\listoftables
+\listoffigures
+\newpage
+\pagenumbering{arabic}
+\section{General Design}
+\label{sec-1}
+This is a working guide on how the vending portion of Zambia will be
+designed/changed.  Some of it is already in place, some has yet to
+be built.  This guide should have all the relevant bits in it so
+that all the stake-holders can have their say, and we are working
+off of one document.
+
+NOTE: when there is a - or a + next to things, it's because I asked
+that as a question, or made a supposition, and it was answered (by
+Amanda) so, for now at least the - is my side of the conversation
+and the + is her side of the conversation.
+
+\section{Database Design}
+\label{sec-2}
+\subsection{Perennial}
+\label{sec-2-1}
+These are the current values that should be migrated to the Zambia
+values if they are not already set.  The latest entries will be
+considered cannonical.  The ones of these in CongoDump will be more
+or less fixed and (currently) take an act of Vendor Coordinator (or
+other back-end Zambia person) to update.  
+
+The ones of these in Bios can be updated by the
+Vendors. times\_at\_fff\_untracked should also be fixed.  Not sure
+about vendor\_type.  If their "DBA" name is different from their
+vendor\_business\_name then, that can go in the bio field.
+
+The logo submission has yet to be determined, but I figure it's
+going to be handled along the same lines as the picture that we
+use for Presenters.
+\begin{itemize}
+\item id
+\label{sec-2-1-1}
+CongoDump.badgeid
+
+\item vendor\_address
+\label{sec-2-1-2}
+CongoDump.postaddress1 and CongoDump.postaddress2
+
+\item vendor\_business\_name
+\label{sec-2-1-3}
+CongoDump.badgename, Bios - badgeid=id, biotype=name
+
+\item vendor\_city
+\label{sec-2-1-4}
+CongoDump.postcity
+
+\item vendor\_contact\_email
+\label{sec-2-1-5}
+CongoDump.email
+
+\item vendor\_contact\_name
+\label{sec-2-1-6}
+CongoDump.firstname, CongoDump.lastname
+
+\item vendor\_contact\_phone
+\label{sec-2-1-7}
+CongoDump.phone
+
+\item vendor\_country
+\label{sec-2-1-8}
+CongoDump.postcountry
+
+\item vendor\_description
+\label{sec-2-1-9}
+Bios - badgeid=id,, biotype=bio 
+
+\item vendor\_state
+\label{sec-2-1-10}
+CongoDump.poststate
+
+\item vendor\_website
+\label{sec-2-1-11}
+Bios - badgeid=id, biotype=url
+
+\item vendor\_twitter
+\label{sec-2-1-12}
+Bios - badgeid=id, biotype=twitter
+
+\item vendor\_facebook
+\label{sec-2-1-13}
+Bios - badgeid=id, biotype=facebook
+
+\item vendor\_fetlife
+\label{sec-2-1-14}
+Bios - badgeid=id, biotype=fetlife
+
+\item vendor\_zipcode
+\label{sec-2-1-15}
+CongoDump.postzip
+
+\item vendor\_type
+\label{sec-2-1-16}
+\begin{itemize}
+\item New? possibly a short list of possible with a mapping to the
+vendor?
+\item Might also include "community table" as a type?  If this isn't a
+short list of pickable things, we might want to make another
+table field "vendor/community table" with allowable "V" or "C"
+as part of the enum.
+\end{itemize}
+
+\item times\_at\_fff\_untracked
+\label{sec-2-1-17}
+The number of times they vended at the fff that we currently don't
+have in the database, so that the generated number below can be
+(more) accurately generated.  As we add more instances (as I find
+them) this should probably get adjusted, so it's not artificially
+inflated.
+\end{itemize}
+
+\subsection{Annual}
+\label{sec-2-2}
+Most of these have to either be created, or co-opted, since the way
+that it was being done before is too baroque and complicated.  Easy
+enough to simply make new tables, and resuse little bits, instead
+of trying to force everything into the other workflow, as we did on
+an "emergency" and "emergant" basis, originally.
+\begin{itemize}
+\item id - varchar(15)
+\label{sec-2-2-1}
+linked to Participants.badgeid
+
+\item conid - int(11)
+\label{sec-2-2-2}
+linked to ConInfo.conid
+
+\item created - datetime
+\label{sec-2-2-3}
+\begin{itemize}
+\item when applied I think?
+\item CORRECT
+\end{itemize}
+
+\item digital\_advertising - Y/N (enum)
+\label{sec-2-2-4}
+\begin{itemize}
+\item y/n or \$ or type?
+\item do they want it? or how much?
+\item JUST A Y/N
+\end{itemize}
+
+\item fff\_sponsorship - Y/N (enum)
+\label{sec-2-2-5}
+\begin{itemize}
+\item y/n or \$ or level?
+\item will they sponsor us?
+\item JUST A Y/N
+\end{itemize}
+
+\item print\_advertising - Y/N (enum)
+\label{sec-2-2-6}
+\begin{itemize}
+\item y/n or \$ or type?
+\item do they want it?
+\item JUST A Y/N
+\end{itemize}
+
+\item updated - timestamp
+\label{sec-2-2-7}
+\begin{itemize}
+\item most recently updated, I believe
+\item CORRECT
+\end{itemize}
+
+\item vendor\_acknowledgement - varchar(25) (signature)
+\label{sec-2-2-8}
+\begin{itemize}
+\item Vendor acknowledges \ldots{} something?
+\item VENDOR ACKNOWLEDGES THEY AGREE TO OUR TERMS AND CONDITIONS -
+THIS SHOULD BE AGREED TO ANNUALLY
+\end{itemize}
+
+\item vendor\_additional\_notes / additional\_information - text
+\label{sec-2-2-9}
+\begin{itemize}
+\item this might also want to be perenial as well, perhaps?
+\item ANNUAL ONLY; THIS IS REGARDING REQUESTS (EX:  FUR ALLERGY, WALL,
+ETC)
+\end{itemize}
+
+\item vendor\_amenities\_foo - ?? (see also VendorFeatures)
+\label{sec-2-2-10}
+\begin{itemize}
+\item A variety of possible fields?  How is this  used?
+\begin{itemize}
+\item 6ft\_table
+\item corner\_endcap
+\item extra\_badges
+\item number\_of\_chairs
+\item shared\_electrical 8ft\_tables
+\end{itemize}
+\item RIGHT NOW IT'S SPLIT INTO MULTIPLE LINES WITH MULTI OPTIONS.  \#
+OF TABLES, \# OF CHAIRS, CORNER/END CAP, ELECTRICAL, EXTRA
+BADGES
+\end{itemize}
+
+\item vendor\_contract - varchar(5)
+\label{sec-2-2-11}
+\begin{itemize}
+\item How is this used?
+\item THIS IS INITIALS TO STATE THEY READ AND AGREE TO OUR TERMS ALREADY ABOVE
+\end{itemize}
+
+\item vendor\_invoiced - Y/N (enum)
+\label{sec-2-2-12}
+\begin{itemize}
+\item Were they invoced?
+\item YUP
+\end{itemize}
+
+\item vendor\_location - ??
+\label{sec-2-2-13}
+\begin{itemize}
+\item Where we put them.
+\item YUP
+\item This might want to be slightly more complex, building, room, and booth-number
+\end{itemize}
+
+\item vendor\_payment\_adjustment - decimal(13,4)
+\label{sec-2-2-14}
+\begin{itemize}
+\item Adjustments to the bill
+\item YUP
+\end{itemize}
+
+\item vendor\_payment\_amount - decimal(13,4)
+\label{sec-2-2-15}
+\begin{itemize}
+\item amount they paid, should match invoiced amounts
+\item YUP
+\end{itemize}
+
+\item vendor\_payment\_received - Y/N (enum)
+\label{sec-2-2-16}
+\begin{itemize}
+\item check box?
+\item YES
+\item default "N" or maybe blank?
+\end{itemize}
+
+\item vendor\_preferred\_space - ?? (see also VendorSpaces)
+\label{sec-2-2-17}
+\begin{itemize}
+\item Where they would like to be put.
+\item NO - THIS IS BOOTH SIZE (SINGLE, DOUBLE, ETC)
+\end{itemize}
+
+\item vendor\_loadin\_self\_carry - Y/N (enum)
+\label{sec-2-2-18}
+\begin{itemize}
+\item will they?
+\item This should be Y/n, right?
+\item YES
+\end{itemize}
+
+\item vendor\_sponsorship\_package  - ??
+\label{sec-2-2-19}
+\begin{itemize}
+\item what package they wanted?  They actually bought?
+\item THIS IS THE Y/N ABOVE
+\item if this is redundant it should be removed.  If it is the same as
+what is in missing, below, then \ldots{} perhaps not so missing after
+all?
+\end{itemize}
+
+\item vendor\_status / status - Denied/Approved/Accepted/Approved/Paid (enum)
+\label{sec-2-2-20}
+\begin{itemize}
+\item STATUS
+\item DENIED, APPROVED, ACCEPTED, APPROVED AND PAID
+\item Approved is in twice?  Should it be 4, Denied, Approved,
+Accepted, Paid?  I'd also add "Proposed" or the like?
+\end{itemize}
+
+\item rejected\_reason - text
+\label{sec-2-2-21}
+\begin{itemize}
+\item KEEP, WOULD BE SUBJECT TO CHANGE UNLESS VENDOR IS BANNER
+\end{itemize}
+\end{itemize}
+
+\subsection{Missing}
+\label{sec-2-3}
+These are values that I think we need, that don't seem to actually
+exist anywhere else, and should probably be at least tracked, if
+not having several layers to them, so that they can be figured into
+things like costs, and historical data.
+\begin{itemize}
+\item vendor\_sponsor\_level
+\label{sec-2-3-1}
+\begin{itemize}
+\item This might be the vendor\_sponsorship\_package piece?
+\item This might get more complex, depending on the offerings
+\end{itemize}
+
+\item digital\_advertising\_level
+\label{sec-2-3-2}
+\begin{itemize}
+\item This might need to be a table of some sort, based on the
+offerings
+\end{itemize}
+
+\item print\_advertising\_level
+\label{sec-2-3-3}
+\begin{itemize}
+\item This might need to be a table of some sort, based on the
+offerings
+\end{itemize}
+
+\item vendor\_actual\_space
+\label{sec-2-3-4}
+\begin{itemize}
+\item single, double, room, etc. probably based on the same
+VendorSpaces/VendorHasVendorSpace etc.
+\end{itemize}
+
+\item vendor\_location\_requests
+\label{sec-2-3-5}
+\begin{itemize}
+\item although this might be under vendor notes?
+\end{itemize}
+\end{itemize}
+
+\subsection{Generated}
+\label{sec-2-4}
+These values would not actually be stored anywhere, but generated
+for various purposes, from other information collected in the
+database, rather than simple values.  The Vendor Invoice Amount
+should also go along with the Vendor Invoice, which lists all the
+things they are paying for, and interfaces with our credit-card
+system.
+\begin{itemize}
+\item vendor\_invoice\_amount - decimal(13,4)
+\label{sec-2-4-1}
+\begin{itemize}
+\item Money
+\item YUP
+\item possibly a geneerated field, as opposed to a stored one, based
+on the varieties chosen in vendor\_amenites,
+vendor\_payment\_adjustment, vendor\_actual\_space and others?
+\end{itemize}
+
+\item times\_at\_fff
+\label{sec-2-4-2}
+\begin{itemize}
+\item currently a freeform field, should probably be generated, with a
+special number that adds in, for (currently) untracked events.
+\item SOUNDS GOOD
+\item Base figure above in perennial
+\end{itemize}
+\end{itemize}
+
+\subsection{Structture}
+\label{sec-2-5}
+These are the proposed new tables or modifications to existing
+tables that the data will be collected in.  Mostly interesting for
+building purposes, but also for those curious on how things operate
+under the hood, because, I like sharing that way, as opposed to
+keeping things secret and cryptic.  Yes, I know it's called "code"
+because we didn't want you to know what it did, but \ldots{} 
+\begin{itemize}
+\item Vendor Constants
+\label{sec-2-5-1}
+\begin{itemize}
+\item Most of these (as listed) are already in the CongoDump table.
+\item Two need their own table:
+\begin{itemize}
+\item vendor\_type
+possibly a short list of possible with a mapping to the
+vendor, so might be another table
+\item times\_at\_fff\_untracked - int(3)
+\end{itemize}
+\end{itemize}
+
+\item Vendor Yearly Variables
+\label{sec-2-5-2}
+\begin{itemize}
+\item Most just are, as specified in this table
+\item Some might be cross-references to the other tables below, or be
+in the other tables entirely.
+\end{itemize}
+
+\item Vendor Features
+\label{sec-2-5-3}
+Probably just a tweak to this table, and might need to be a
+"standard set" and a "this year set" like BaseFeatures and
+Features does as well as BaseServices and Services does and a
+repurposing of "SessionHasVendorFeature" to
+"VendorHasVendorFeature"
+
+\item Vendor Spaces
+\label{sec-2-5-4}
+Probably just a tweak to this table, and might need to be a
+"standard set" and a "this year set" like BaseFeatures and
+Features does as well as BaseServices and Services does and a
+repurposing of "SessionHasVendorSpace" to "VendorHasVendorSpace"
+
+\item Vendor Location
+\label{sec-2-5-5}
+Might be it's own table, with conid (linked), badgeid (linked),
+building, floor, room (possibly linked), and booth\_number, and
+then code around it so blanks just don't get reported (aka, if
+they are a room vendor, their booth\_number might not be listed,
+but if there are several vendors in a room, it might be.)  This
+might also allow ties to maps, and possibly the redraw of maps.
+
+\item Vendor Status
+\label{sec-2-5-6}
+Might want to be it's own table as a mapping, so searches, and
+display\_order could be set.
+
+\item Vendor Sponsorship Package/vendor\_sponsor\_level
+\label{sec-2-5-7}
+These three would need to be determined.
+
+\item digital\_advertising\_level
+\label{sec-2-5-8}
+These three would need to be determined.
+
+\item print\_advertising\_level
+\label{sec-2-5-9}
+These three would need to be determined.
+\end{itemize}
+
+\subsection{Still Unknown}
+\label{sec-2-6}
+These are the variables that exist already in the other usage
+space, that I still don't have a handle on.  More explination would
+be very useful.
+\begin{itemize}
+\item created\_by - number
+\label{sec-2-6-1}
+\begin{itemize}
+\item Not sure what this does?
+\item I THINK IT"S VENDORS NAME VS. I UPDATED, ETC
+\item So \ldots{} how should it be expressed/tracked?
+\end{itemize}
+
+\item ordering\_count - number
+\label{sec-2-6-2}
+\begin{itemize}
+\item Another random number?
+\item YES
+\item Should it be kept?  Removed, what is it's state?  What is it's
+purpose?
+\end{itemize}
+\end{itemize}
+
+\section{Front End}
+\label{sec-3}
+\subsection{Available Pages}
+\label{sec-3-1}
+This should be the comprehensive list of all the pages that either
+the vendors/community table folk need to interact with or those who
+manage them (the Div Head) needs to interact with.
+\begin{itemize}
+\item Returning Vendor sign-in
+\label{sec-3-1-1}
+By number or email address.
+
+\item Returning Community Table sign-in
+\label{sec-3-1-2}
+By number or email address.  Might simply be switched on one of
+the values in the vending type or on it's own value, and just have
+one place to go?  Since we are collecting pretty much the same
+information for them both?  Or should I be separating them out?
+
+\item New Vendor proposal
+\label{sec-3-1-3}
+With a catch to see if they are already in our database, using
+their email address
+
+\item New Community Table proposal
+\label{sec-3-1-4}
+With a catch to see if they are already in our database, using
+their email address
+
+\item Returning Vendor/Community Table informational gathering
+\label{sec-3-1-5}
+This can be the same, although there might, again, be a slight
+difference bases on vendor/community table differences.  Also, we
+might want to present last? event's information as defaults, so
+they have to do less typing. Dealing with changes once the state
+has changed to "invoice generated" might require Vendor Div Head
+intervention.
+
+\item Returning Vendor informational update
+\label{sec-3-1-6}
+This might not be necessary, based on the above page keeping what
+is set for this year as set.
+
+\item Returning Vendor/Community Table Bio update
+\label{sec-3-1-7}
+Page that they can, at will? update their web or book information.
+
+\item Invoice
+\label{sec-3-1-8}
+Not available until after both they are accepted (by Vendor
+Div Head), and they hit the "generate invoice" button, which
+probably should lock changes.  Once the invoice is generated, it
+should be fixed, and also payable.
+This will (of course) be a comprehensive list of everything they
+agreed to.  The invoice page should continue to be available after
+they paid, so there is a referece point to the services agreed
+to/paid for.
+
+\item Ad Copy Submissions
+\label{sec-3-1-9}
+For those who have agreed to either digital or print ads, this is
+a place for them to upload/submit them.
+
+\item Vendor Jury
+\label{sec-3-1-10}
+The page that all the proposed vendors, with certain bits of
+information (to be determined, since I've not seen that page yet
+in our current system) will be on for the Vendor Div Head to move
+vendors to either "Accepted" or "Denied".  Probably includes some
+vendor notes and the like, including "Denied Reasons" Also
+probably where any price adjustments happen to the invoice.  Maybe
+a grouping by Vendor Type, and leaving the ones already moved on
+from this in a different colour, so that those already accepted,
+and their type, will be shown for balance reasons.
+
+\item Vendor Placement
+\label{sec-3-1-11}
+After the invoice is paid? Or perhaps slightly different, if there
+is those that have invoice exceptions allowing for the placement
+of vendors.  Probably should have the invoice amount paid, and
+invoice amount expected on this page, to verify that they are,
+indeed, all paid up.  Also the vendor type should show up here, as
+well, so that similars can either be grouped together, or spread
+apart, as per the decision of the Div Head. May also contain
+previous placements, or links to previous maps or something useful
+along those lines.
+
+\item Administer Vendor
+\label{sec-3-1-12}
+Where any changes are made to the vendor information (both that
+they can change and that they can't) for creation/update by Vendor
+Div Head.
+
+\item Vendor Welcome Letter
+\label{sec-3-1-13}
+Generate the (physical) welcome letter to the vendors
+
+\item Vendor Email
+\label{sec-3-1-14}
+Generate (and send) various all-vendor communications
+
+\item Vendor Badges
+\label{sec-3-1-15}
+Generate the Vendor Badges for printing purposes.
+
+\item Vendor Tents
+\label{sec-3-1-16}
+Generate all the vendor "tents" to put on their tables, to mark
+their place.
+
+\item Check-in/Check-out lists
+\label{sec-3-1-17}
+All of the vendors expected, so they can be ticked off the list
+when they get there, and, so that when they return whatever they
+have to return at the end of the night (tax forms, possibly?) can
+be ticked off again.
+\end{itemize}
+
+\subsection{Flow}
+\label{sec-3-2}
+\begin{itemize}
+\item Task List
+\label{sec-3-2-1}
+Task List element with the call for vendors is created, with the
+appropriate link.
+
+\item Task List
+\label{sec-3-2-2}
+Task List element with the call for community tables is created,
+with the appropriate link.
+
+\item Email
+\label{sec-3-2-3}
+Possible email from Vendor Div Head goes out reminding
+vendors/community tables when the call will open and close.
+
+\item Phase Change
+\label{sec-3-2-4}
+At the appropriate time, the Con Chair or Zambia bitch open the
+call for vendors.
+
+\item Email
+\label{sec-3-2-5}
+Vendor Div Head generates and sends email letting the
+vendors/community tables know that the call is open.
+
+\item Vendors/Community Table folk apply
+\label{sec-3-2-6}
+They use either the returning or the new pages, select the
+appropriate features, sponsorships, and ads that they want, and
+make sure everything is as expected.
+
+\item (If Rolling Acceptance) Jury
+\label{sec-3-2-7}
+If there is a rolling acceptantce of vendors and/or community
+tables, while the vendor call/community table call is open
+acceptances can roll out and then things can go forward.
+Otherwise \ldots{}
+
+\item Phase Change
+\label{sec-3-2-8}
+At the appropriate time, the Con Chair or Zambia bitch close the
+call for vendors.
+
+\item Jury
+\label{sec-3-2-9}
+The (rest of (if rolling acceptance is happening)) vendors and
+community tables get acceptance, which probably is an individual
+email from the Div Head, with any specific to them in information
+included, and an invitation for them to pay their invoice.
+
+\item Invoice
+\label{sec-3-2-10}
+Vendors then (hopefully, magically, smoothly) pay their agreed-to
+invoices.
+
+\item Ad Copy
+\label{sec-3-2-11}
+All paid for advertizing copy is generated by the vendors or
+community tables is submitted.
+
+\item Placement
+\label{sec-3-2-12}
+Div Head (and anyone else that can be roped into helping)
+schedules the vendors to be put in the appropriate locations on
+the day of the event.
+
+\item Email
+\label{sec-3-2-13}
+Final email goes out, with any instruction reminders and if there
+is a manditory vendor meeting, or the like.
+
+\item Welcome Letter
+\label{sec-3-2-14}
+Welcome lettters generated and printed, possibly stuffed in an
+envelope or folder of some sort.
+This might include some form of their (electronically) signed
+contract, and maybe invoice highlights.  Definitely includes their
+placement information, and information on how load-in and load-out
+works, etc.
+
+\item Badges
+\label{sec-3-2-15}
+Badges, the appropriate number for each vendor and community
+table, are printed, and possibly stuffed as above.
+
+\item Wrist bands
+\label{sec-3-2-16}
+Are possibly stuffed as above.
+
+\item Check-in/check-out lists printed
+\label{sec-3-2-17}
+So they are available on the day-of.
+\end{itemize}
+
+\section{Conclusion}
+\label{sec-4}
+This should cover all the bits and pieces.  If I missed any, let me
+know so this document can be updated, and the system can be tested.
+Hopfully all will work, and this can go forth as The New Way.  Until
+we change it, again, in 2-3 years \textbf{grin}.
+\end{document}

@@ -3,7 +3,9 @@
 #+AUTHOR: Percy, Bendyogagirl
 #+DATE: July 2011
 #+DESCRIPTION: Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.
+#+META: DESCRIPTION Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.
 #+KEYWORDS: Zambia, Documentation, FFF branch
+#+META: KEYWORDS Zambia, Documentation, FFF branch
 #+LANGUAGE: en
 #+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:3 num:3 toc:nil @:t ::nil |:t -:t todo:nil tasks:nil tags:nil <:t *:t author:t email:t skip:nil d:t f:t pri:t
 #+STARTUP: fninline
@@ -173,7 +175,6 @@
   Please, check out the code using git from:
 
   https://github.com/mrdkap/Zambia
-
 
 * Local file setup
   There are certain local-isms you want to set up, next to the GIT 
@@ -770,6 +771,13 @@ for i in FFF-[34]*
         concat("($conid,",phasetypeid,",0),") AS ValueSet
       FROM
           PhaseTypes;
+#+end_src
+   You can also depend on the altering of the phase state within
+   Zambia to populate the rest of the phases, once a single phase
+   exists. You can accomplish that with (replacing $conid with the
+   appropriate conid):
+#+begin_src html :exports both :results silent
+     INSERT INTO Phase (conid) VALUES ($conid);
 #+end_src
 
    An example of phase shifting, is when you open your call for

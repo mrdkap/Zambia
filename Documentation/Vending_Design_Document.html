@@ -1,0 +1,1179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Vending Design Document</title>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Percy, Amanda, Rob, Iya" />
+<meta  name="description" content="Zambia is a piece of Con Management Software.  This document is a guide to building the Vendor System for the Zambia FFF-branch instance.  This is still a work in progress."
+ />
+<meta  name="keywords" content="Zambia, Documentation, FFF branch" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Vending Design Document</h1>
+<p>
+Zambia is a piece of Con Management Software.  This document is a guide to building the Vendor System for the Zambia FFF-branch instance.  This is still a work in progress.
+</p>
+<p>
+Vending Design Document
+</p>
+<p>
+Percy, Amanda, Rob, Iya &lt;NELA.Percy@gmail.com&gt;
+</p>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. General Design</a></li>
+<li><a href="#sec-2">2. Database Design</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Perennial</a></li>
+<li><a href="#sec-2-2">2.2. Annual</a></li>
+<li><a href="#sec-2-3">2.3. Missing</a></li>
+<li><a href="#sec-2-4">2.4. Generated</a></li>
+<li><a href="#sec-2-5">2.5. Structture</a></li>
+<li><a href="#sec-2-6">2.6. Still Unknown</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Front End</a>
+<ul>
+<li><a href="#sec-3-1">3.1. Available Pages</a></li>
+<li><a href="#sec-3-2">3.2. Flow</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4. Conclusion</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> General Design</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This is a working guide on how the vending portion of Zambia will be
+designed/changed.  Some of it is already in place, some has yet to
+be built.  This guide should have all the relevant bits in it so
+that all the stake-holders can have their say, and we are working
+off of one document.
+</p>
+
+<p>
+NOTE: when there is a - or a + next to things, it's because I asked
+that as a question, or made a supposition, and it was answered (by
+Amanda) so, for now at least the - is my side of the conversation
+and the + is her side of the conversation.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Database Design</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Perennial</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+These are the current values that should be migrated to the Zambia
+values if they are not already set.  The latest entries will be
+considered cannonical.  The ones of these in CongoDump will be more
+or less fixed and (currently) take an act of Vendor Coordinator (or
+other back-end Zambia person) to update.  
+</p>
+
+<p>
+The ones of these in Bios can be updated by the
+Vendors. times_at_fff_untracked should also be fixed.  Not sure
+about vendor_type.  If their "DBA" name is different from their
+vendor_business_name then, that can go in the bio field.
+</p>
+
+<p>
+The logo submission has yet to be determined, but I figure it's
+going to be handled along the same lines as the picture that we
+use for Presenters.
+</p>
+</div>
+<ul class="org-ul"><li>id<br  /><div class="outline-text-4" id="text-2-1-1">
+<p>
+CongoDump.badgeid
+</p>
+</div>
+</li>
+
+<li>vendor_address<br  /><div class="outline-text-4" id="text-2-1-2">
+<p>
+CongoDump.postaddress1 and CongoDump.postaddress2
+</p>
+</div>
+</li>
+
+<li>vendor_business_name<br  /><div class="outline-text-4" id="text-2-1-3">
+<p>
+CongoDump.badgename, Bios - badgeid=id, biotype=name
+</p>
+</div>
+</li>
+
+<li>vendor_city<br  /><div class="outline-text-4" id="text-2-1-4">
+<p>
+CongoDump.postcity
+</p>
+</div>
+</li>
+
+<li>vendor_contact_email<br  /><div class="outline-text-4" id="text-2-1-5">
+<p>
+CongoDump.email
+</p>
+</div>
+</li>
+
+<li>vendor_contact_name<br  /><div class="outline-text-4" id="text-2-1-6">
+<p>
+CongoDump.firstname, CongoDump.lastname
+</p>
+</div>
+</li>
+
+<li>vendor_contact_phone<br  /><div class="outline-text-4" id="text-2-1-7">
+<p>
+CongoDump.phone
+</p>
+</div>
+</li>
+
+<li>vendor_country<br  /><div class="outline-text-4" id="text-2-1-8">
+<p>
+CongoDump.postcountry
+</p>
+</div>
+</li>
+
+<li>vendor_description<br  /><div class="outline-text-4" id="text-2-1-9">
+<p>
+Bios - badgeid=id,, biotype=bio 
+</p>
+</div>
+</li>
+
+<li>vendor_state<br  /><div class="outline-text-4" id="text-2-1-10">
+<p>
+CongoDump.poststate
+</p>
+</div>
+</li>
+
+<li>vendor_website<br  /><div class="outline-text-4" id="text-2-1-11">
+<p>
+Bios - badgeid=id, biotype=url
+</p>
+</div>
+</li>
+
+<li>vendor_twitter<br  /><div class="outline-text-4" id="text-2-1-12">
+<p>
+Bios - badgeid=id, biotype=twitter
+</p>
+</div>
+</li>
+
+<li>vendor_facebook<br  /><div class="outline-text-4" id="text-2-1-13">
+<p>
+Bios - badgeid=id, biotype=facebook
+</p>
+</div>
+</li>
+
+<li>vendor_fetlife<br  /><div class="outline-text-4" id="text-2-1-14">
+<p>
+Bios - badgeid=id, biotype=fetlife
+</p>
+</div>
+</li>
+
+<li>vendor_zipcode<br  /><div class="outline-text-4" id="text-2-1-15">
+<p>
+CongoDump.postzip
+</p>
+</div>
+</li>
+
+<li>vendor_type<br  /><div class="outline-text-4" id="text-2-1-16">
+<ul class="org-ul">
+<li>New? possibly a short list of possible with a mapping to the
+vendor?
+</li>
+<li>Might also include "community table" as a type?  If this isn't a
+short list of pickable things, we might want to make another
+table field "vendor/community table" with allowable "V" or "C"
+as part of the enum.
+</li>
+</ul>
+</div>
+</li>
+
+<li>times_at_fff_untracked<br  /><div class="outline-text-4" id="text-2-1-17">
+<p>
+The number of times they vended at the fff that we currently don't
+have in the database, so that the generated number below can be
+(more) accurately generated.  As we add more instances (as I find
+them) this should probably get adjusted, so it's not artificially
+inflated. 
+</p>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Annual</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Most of these have to either be created, or co-opted, since the way
+that it was being done before is too baroque and complicated.  Easy
+enough to simply make new tables, and resuse little bits, instead
+of trying to force everything into the other workflow, as we did on
+an "emergency" and "emergant" basis, originally.
+</p>
+</div>
+<ul class="org-ul"><li>id - varchar(15)<br  /><div class="outline-text-4" id="text-2-2-1">
+<p>
+linked to Participants.badgeid
+</p>
+</div>
+</li>
+
+<li>conid - int(11)<br  /><div class="outline-text-4" id="text-2-2-2">
+<p>
+linked to ConInfo.conid
+</p>
+</div>
+</li>
+
+<li>created - datetime<br  /><div class="outline-text-4" id="text-2-2-3">
+<ul class="org-ul">
+<li>when applied I think?
+</li>
+<li>CORRECT
+</li>
+</ul>
+</div>
+</li>
+
+<li>digital_advertising - Y/N (enum)<br  /><div class="outline-text-4" id="text-2-2-4">
+<ul class="org-ul">
+<li>y/n or $ or type? 
+</li>
+<li>do they want it? or how much?
+</li>
+<li>JUST A Y/N
+</li>
+</ul>
+</div>
+</li>
+
+<li>fff_sponsorship - Y/N (enum)<br  /><div class="outline-text-4" id="text-2-2-5">
+<ul class="org-ul">
+<li>y/n or $ or level? 
+</li>
+<li>will they sponsor us?
+</li>
+<li>JUST A Y/N
+</li>
+</ul>
+</div>
+</li>
+
+<li>print_advertising - Y/N (enum)<br  /><div class="outline-text-4" id="text-2-2-6">
+<ul class="org-ul">
+<li>y/n or $ or type? 
+</li>
+<li>do they want it?
+</li>
+<li>JUST A Y/N
+</li>
+</ul>
+</div>
+</li>
+
+<li>updated - timestamp<br  /><div class="outline-text-4" id="text-2-2-7">
+<ul class="org-ul">
+<li>most recently updated, I believe
+</li>
+<li>CORRECT
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_acknowledgement - varchar(25) (signature)<br  /><div class="outline-text-4" id="text-2-2-8">
+<ul class="org-ul">
+<li>Vendor acknowledges &#x2026; something?
+</li>
+<li>VENDOR ACKNOWLEDGES THEY AGREE TO OUR TERMS AND CONDITIONS -
+THIS SHOULD BE AGREED TO ANNUALLY 
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_additional_notes / additional_information - text<br  /><div class="outline-text-4" id="text-2-2-9">
+<ul class="org-ul">
+<li>this might also want to be perenial as well, perhaps?
+</li>
+<li>ANNUAL ONLY; THIS IS REGARDING REQUESTS (EX:  FUR ALLERGY, WALL,
+ETC)
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_amenities_foo - ?? (see also VendorFeatures)<br  /><div class="outline-text-4" id="text-2-2-10">
+<ul class="org-ul">
+<li>A variety of possible fields?  How is this  used?
+<ul class="org-ul">
+<li>6ft_table
+</li>
+<li>corner_endcap
+</li>
+<li>extra_badges
+</li>
+<li>number_of_chairs
+</li>
+<li>shared_electrical 8ft_tables
+</li>
+</ul>
+</li>
+<li>RIGHT NOW IT'S SPLIT INTO MULTIPLE LINES WITH MULTI OPTIONS.  #
+OF TABLES, # OF CHAIRS, CORNER/END CAP, ELECTRICAL, EXTRA
+BADGES 
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_contract - varchar(5)<br  /><div class="outline-text-4" id="text-2-2-11">
+<ul class="org-ul">
+<li>How is this used?
+</li>
+<li>THIS IS INITIALS TO STATE THEY READ AND AGREE TO OUR TERMS ALREADY ABOVE
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_invoiced - Y/N (enum)<br  /><div class="outline-text-4" id="text-2-2-12">
+<ul class="org-ul">
+<li>Were they invoced?
+</li>
+<li>YUP
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_location - ??<br  /><div class="outline-text-4" id="text-2-2-13">
+<ul class="org-ul">
+<li>Where we put them.
+</li>
+<li>YUP
+</li>
+<li>This might want to be slightly more complex, building, room, and booth-number
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_payment_adjustment - decimal(13,4)<br  /><div class="outline-text-4" id="text-2-2-14">
+<ul class="org-ul">
+<li>Adjustments to the bill
+</li>
+<li>YUP
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_payment_amount - decimal(13,4)<br  /><div class="outline-text-4" id="text-2-2-15">
+<ul class="org-ul">
+<li>amount they paid, should match invoiced amounts
+</li>
+<li>YUP
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_payment_received - Y/N (enum)<br  /><div class="outline-text-4" id="text-2-2-16">
+<ul class="org-ul">
+<li>check box?
+</li>
+<li>YES
+</li>
+<li>default "N" or maybe blank?
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_preferred_space - ?? (see also VendorSpaces)<br  /><div class="outline-text-4" id="text-2-2-17">
+<ul class="org-ul">
+<li>Where they would like to be put.
+</li>
+<li>NO - THIS IS BOOTH SIZE (SINGLE, DOUBLE, ETC)
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_loadin_self_carry - Y/N (enum)<br  /><div class="outline-text-4" id="text-2-2-18">
+<ul class="org-ul">
+<li>will they?
+</li>
+<li>This should be Y/n, right?
+</li>
+<li>YES
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_sponsorship_package  - ??<br  /><div class="outline-text-4" id="text-2-2-19">
+<ul class="org-ul">
+<li>what package they wanted?  They actually bought?
+</li>
+<li>THIS IS THE Y/N ABOVE
+</li>
+<li>if this is redundant it should be removed.  If it is the same as
+what is in missing, below, then &#x2026; perhaps not so missing after
+all?
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_status / status - Denied/Approved/Accepted/Approved/Paid (enum)<br  /><div class="outline-text-4" id="text-2-2-20">
+<ul class="org-ul">
+<li>STATUS
+</li>
+<li>DENIED, APPROVED, ACCEPTED, APPROVED AND PAID
+</li>
+<li>Approved is in twice?  Should it be 4, Denied, Approved,
+Accepted, Paid?  I'd also add "Proposed" or the like?
+</li>
+</ul>
+</div>
+</li>
+
+<li>rejected_reason - text<br  /><div class="outline-text-4" id="text-2-2-21">
+<ul class="org-ul">
+<li>KEEP, WOULD BE SUBJECT TO CHANGE UNLESS VENDOR IS BANNER
+</li>
+</ul>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Missing</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+These are values that I think we need, that don't seem to actually
+exist anywhere else, and should probably be at least tracked, if
+not having several layers to them, so that they can be figured into
+things like costs, and historical data.
+</p>
+</div>
+<ul class="org-ul"><li>vendor_sponsor_level<br  /><div class="outline-text-4" id="text-2-3-1">
+<ul class="org-ul">
+<li>This might be the vendor_sponsorship_package piece?
+</li>
+<li>This might get more complex, depending on the offerings
+</li>
+</ul>
+</div>
+</li>
+
+<li>digital_advertising_level<br  /><div class="outline-text-4" id="text-2-3-2">
+<ul class="org-ul">
+<li>This might need to be a table of some sort, based on the
+offerings
+</li>
+</ul>
+</div>
+</li>
+
+<li>print_advertising_level<br  /><div class="outline-text-4" id="text-2-3-3">
+<ul class="org-ul">
+<li>This might need to be a table of some sort, based on the
+offerings
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_actual_space<br  /><div class="outline-text-4" id="text-2-3-4">
+<ul class="org-ul">
+<li>single, double, room, etc. probably based on the same
+VendorSpaces/VendorHasVendorSpace etc.
+</li>
+</ul>
+</div>
+</li>
+
+<li>vendor_location_requests<br  /><div class="outline-text-4" id="text-2-3-5">
+<ul class="org-ul">
+<li>although this might be under vendor notes?
+</li>
+</ul>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Generated</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+These values would not actually be stored anywhere, but generated
+for various purposes, from other information collected in the
+database, rather than simple values.  The Vendor Invoice Amount
+should also go along with the Vendor Invoice, which lists all the
+things they are paying for, and interfaces with our credit-card
+system.
+</p>
+</div>
+<ul class="org-ul"><li>vendor_invoice_amount - decimal(13,4)<br  /><div class="outline-text-4" id="text-2-4-1">
+<ul class="org-ul">
+<li>Money
+</li>
+<li>YUP
+</li>
+<li>possibly a geneerated field, as opposed to a stored one, based
+on the varieties chosen in vendor_amenites,
+vendor_payment_adjustment, vendor_actual_space and others?
+</li>
+</ul>
+</div>
+</li>
+
+<li>times_at_fff<br  /><div class="outline-text-4" id="text-2-4-2">
+<ul class="org-ul">
+<li>currently a freeform field, should probably be generated, with a
+special number that adds in, for (currently) untracked events.
+</li>
+<li>SOUNDS GOOD
+</li>
+<li>Base figure above in perennial
+</li>
+</ul>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Structture</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+These are the proposed new tables or modifications to existing
+tables that the data will be collected in.  Mostly interesting for
+building purposes, but also for those curious on how things operate
+under the hood, because, I like sharing that way, as opposed to
+keeping things secret and cryptic.  Yes, I know it's called "code"
+because we didn't want you to know what it did, but &#x2026; 
+</p>
+</div>
+<ul class="org-ul"><li>Vendor Constants<br  /><div class="outline-text-4" id="text-2-5-1">
+<ul class="org-ul">
+<li>Most of these (as listed) are already in the CongoDump table.
+</li>
+<li>Two need their own table:
+<ul class="org-ul">
+<li>vendor_type
+possibly a short list of possible with a mapping to the
+vendor, so might be another table
+</li>
+<li>times_at_fff_untracked - int(3)
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</li>
+
+<li>Vendor Yearly Variables<br  /><div class="outline-text-4" id="text-2-5-2">
+<ul class="org-ul">
+<li>Most just are, as specified in this table
+</li>
+<li>Some might be cross-references to the other tables below, or be
+in the other tables entirely.
+</li>
+</ul>
+</div>
+</li>
+
+<li>Vendor Features<br  /><div class="outline-text-4" id="text-2-5-3">
+<p>
+Probably just a tweak to this table, and might need to be a
+"standard set" and a "this year set" like BaseFeatures and
+Features does as well as BaseServices and Services does and a
+repurposing of "SessionHasVendorFeature" to
+"VendorHasVendorFeature"
+</p>
+</div>
+</li>
+
+<li>Vendor Spaces<br  /><div class="outline-text-4" id="text-2-5-4">
+<p>
+Probably just a tweak to this table, and might need to be a
+"standard set" and a "this year set" like BaseFeatures and
+Features does as well as BaseServices and Services does and a
+repurposing of "SessionHasVendorSpace" to "VendorHasVendorSpace"
+</p>
+</div>
+</li>
+
+<li>Vendor Location<br  /><div class="outline-text-4" id="text-2-5-5">
+<p>
+Might be it's own table, with conid (linked), badgeid (linked),
+building, floor, room (possibly linked), and booth_number, and
+then code around it so blanks just don't get reported (aka, if
+they are a room vendor, their booth_number might not be listed,
+but if there are several vendors in a room, it might be.)  This
+might also allow ties to maps, and possibly the redraw of maps.
+</p>
+</div>
+</li>
+
+<li>Vendor Status<br  /><div class="outline-text-4" id="text-2-5-6">
+<p>
+Might want to be it's own table as a mapping, so searches, and
+display_order could be set.
+</p>
+</div>
+</li>
+
+<li>Vendor Sponsorship Package/vendor_sponsor_level<br  /><div class="outline-text-4" id="text-2-5-7">
+<p>
+These three would need to be determined.
+</p>
+</div>
+</li>
+
+<li>digital_advertising_level<br  /><div class="outline-text-4" id="text-2-5-8">
+<p>
+These three would need to be determined.
+</p>
+</div>
+</li>
+
+<li>print_advertising_level<br  /><div class="outline-text-4" id="text-2-5-9">
+<p>
+These three would need to be determined.
+</p>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-2-6" class="outline-3">
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Still Unknown</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+These are the variables that exist already in the other usage
+space, that I still don't have a handle on.  More explination would
+be very useful.
+</p>
+</div>
+<ul class="org-ul"><li>created_by - number<br  /><div class="outline-text-4" id="text-2-6-1">
+<ul class="org-ul">
+<li>Not sure what this does?
+</li>
+<li>I THINK IT"S VENDORS NAME VS. I UPDATED, ETC
+</li>
+<li>So &#x2026; how should it be expressed/tracked?
+</li>
+</ul>
+</div>
+</li>
+
+<li>ordering_count - number<br  /><div class="outline-text-4" id="text-2-6-2">
+<ul class="org-ul">
+<li>Another random number?
+</li>
+<li>YES
+</li>
+<li>Should it be kept?  Removed, what is it's state?  What is it's
+purpose?
+</li>
+</ul>
+</div>
+</li></ul>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Front End</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Available Pages</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+This should be the comprehensive list of all the pages that either
+the vendors/community table folk need to interact with or those who
+manage them (the Div Head) needs to interact with.
+</p>
+</div>
+<ul class="org-ul"><li>Returning Vendor sign-in<br  /><div class="outline-text-4" id="text-3-1-1">
+<p>
+By number or email address.
+</p>
+</div>
+</li>
+
+<li>Returning Community Table sign-in<br  /><div class="outline-text-4" id="text-3-1-2">
+<p>
+By number or email address.  Might simply be switched on one of
+the values in the vending type or on it's own value, and just have
+one place to go?  Since we are collecting pretty much the same
+information for them both?  Or should I be separating them out?
+</p>
+</div>
+</li>
+
+<li>New Vendor proposal<br  /><div class="outline-text-4" id="text-3-1-3">
+<p>
+With a catch to see if they are already in our database, using
+their email address
+</p>
+</div>
+</li>
+
+<li>New Community Table proposal<br  /><div class="outline-text-4" id="text-3-1-4">
+<p>
+With a catch to see if they are already in our database, using
+their email address
+</p>
+</div>
+</li>
+
+<li>Returning Vendor/Community Table informational gathering<br  /><div class="outline-text-4" id="text-3-1-5">
+<p>
+This can be the same, although there might, again, be a slight
+difference bases on vendor/community table differences.  Also, we
+might want to present last? event's information as defaults, so
+they have to do less typing. Dealing with changes once the state
+has changed to "invoice generated" might require Vendor Div Head
+intervention.
+</p>
+</div>
+</li>
+
+<li>Returning Vendor informational update<br  /><div class="outline-text-4" id="text-3-1-6">
+<p>
+This might not be necessary, based on the above page keeping what
+is set for this year as set.
+</p>
+</div>
+</li>
+
+<li>Returning Vendor/Community Table Bio update<br  /><div class="outline-text-4" id="text-3-1-7">
+<p>
+Page that they can, at will? update their web or book information.
+</p>
+</div>
+</li>
+
+<li>Invoice<br  /><div class="outline-text-4" id="text-3-1-8">
+<p>
+Not available until after both they are accepted (by Vendor
+Div Head), and they hit the "generate invoice" button, which
+probably should lock changes.  Once the invoice is generated, it
+should be fixed, and also payable.
+This will (of course) be a comprehensive list of everything they
+agreed to.  The invoice page should continue to be available after
+they paid, so there is a referece point to the services agreed
+to/paid for.
+</p>
+</div>
+</li>
+
+<li>Ad Copy Submissions<br  /><div class="outline-text-4" id="text-3-1-9">
+<p>
+For those who have agreed to either digital or print ads, this is
+a place for them to upload/submit them.
+</p>
+</div>
+</li>
+
+<li>Vendor Jury<br  /><div class="outline-text-4" id="text-3-1-10">
+<p>
+The page that all the proposed vendors, with certain bits of
+information (to be determined, since I've not seen that page yet
+in our current system) will be on for the Vendor Div Head to move
+vendors to either "Accepted" or "Denied".  Probably includes some
+vendor notes and the like, including "Denied Reasons" Also
+probably where any price adjustments happen to the invoice.  Maybe
+a grouping by Vendor Type, and leaving the ones already moved on
+from this in a different colour, so that those already accepted,
+and their type, will be shown for balance reasons.
+</p>
+</div>
+</li>
+
+<li>Vendor Placement<br  /><div class="outline-text-4" id="text-3-1-11">
+<p>
+After the invoice is paid? Or perhaps slightly different, if there
+is those that have invoice exceptions allowing for the placement
+of vendors.  Probably should have the invoice amount paid, and
+invoice amount expected on this page, to verify that they are,
+indeed, all paid up.  Also the vendor type should show up here, as
+well, so that similars can either be grouped together, or spread
+apart, as per the decision of the Div Head. May also contain
+previous placements, or links to previous maps or something useful
+along those lines.
+</p>
+</div>
+</li>
+
+<li>Administer Vendor<br  /><div class="outline-text-4" id="text-3-1-12">
+<p>
+Where any changes are made to the vendor information (both that
+they can change and that they can't) for creation/update by Vendor
+Div Head.
+</p>
+</div>
+</li>
+
+<li>Vendor Welcome Letter<br  /><div class="outline-text-4" id="text-3-1-13">
+<p>
+Generate the (physical) welcome letter to the vendors
+</p>
+</div>
+</li>
+
+<li>Vendor Email<br  /><div class="outline-text-4" id="text-3-1-14">
+<p>
+Generate (and send) various all-vendor communications
+</p>
+</div>
+</li>
+
+<li>Vendor Badges<br  /><div class="outline-text-4" id="text-3-1-15">
+<p>
+Generate the Vendor Badges for printing purposes.
+</p>
+</div>
+</li>
+
+<li>Vendor Tents<br  /><div class="outline-text-4" id="text-3-1-16">
+<p>
+Generate all the vendor "tents" to put on their tables, to mark
+their place.
+</p>
+</div>
+</li>
+
+<li>Check-in/Check-out lists<br  /><div class="outline-text-4" id="text-3-1-17">
+<p>
+All of the vendors expected, so they can be ticked off the list
+when they get there, and, so that when they return whatever they
+have to return at the end of the night (tax forms, possibly?) can
+be ticked off again.
+</p>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Flow</h3>
+<div class="outline-text-3" id="text-3-2">
+</div><ul class="org-ul"><li>Task List<br  /><div class="outline-text-4" id="text-3-2-1">
+<p>
+Task List element with the call for vendors is created, with the
+appropriate link.
+</p>
+</div>
+</li>
+
+<li>Task List<br  /><div class="outline-text-4" id="text-3-2-2">
+<p>
+Task List element with the call for community tables is created,
+with the appropriate link.
+</p>
+</div>
+</li>
+
+<li>Email<br  /><div class="outline-text-4" id="text-3-2-3">
+<p>
+Possible email from Vendor Div Head goes out reminding
+vendors/community tables when the call will open and close.
+</p>
+</div>
+</li>
+
+<li>Phase Change<br  /><div class="outline-text-4" id="text-3-2-4">
+<p>
+At the appropriate time, the Con Chair or Zambia bitch open the
+call for vendors.
+</p>
+</div>
+</li>
+
+<li>Email<br  /><div class="outline-text-4" id="text-3-2-5">
+<p>
+Vendor Div Head generates and sends email letting the
+vendors/community tables know that the call is open.
+</p>
+</div>
+</li>
+
+<li>Vendors/Community Table folk apply<br  /><div class="outline-text-4" id="text-3-2-6">
+<p>
+They use either the returning or the new pages, select the
+appropriate features, sponsorships, and ads that they want, and
+make sure everything is as expected.
+</p>
+</div>
+</li>
+
+<li>(If Rolling Acceptance) Jury<br  /><div class="outline-text-4" id="text-3-2-7">
+<p>
+If there is a rolling acceptantce of vendors and/or community
+tables, while the vendor call/community table call is open
+acceptances can roll out and then things can go forward.
+Otherwise &#x2026;
+</p>
+</div>
+</li>
+
+<li>Phase Change<br  /><div class="outline-text-4" id="text-3-2-8">
+<p>
+At the appropriate time, the Con Chair or Zambia bitch close the
+call for vendors.
+</p>
+</div>
+</li>
+
+<li>Jury<br  /><div class="outline-text-4" id="text-3-2-9">
+<p>
+The (rest of (if rolling acceptance is happening)) vendors and
+community tables get acceptance, which probably is an individual
+email from the Div Head, with any specific to them in information
+included, and an invitation for them to pay their invoice.
+</p>
+</div>
+</li>
+
+<li>Invoice<br  /><div class="outline-text-4" id="text-3-2-10">
+<p>
+Vendors then (hopefully, magically, smoothly) pay their agreed-to
+invoices.
+</p>
+</div>
+</li>
+
+<li>Ad Copy<br  /><div class="outline-text-4" id="text-3-2-11">
+<p>
+All paid for advertizing copy is generated by the vendors or
+community tables is submitted.
+</p>
+</div>
+</li>
+
+<li>Placement<br  /><div class="outline-text-4" id="text-3-2-12">
+<p>
+Div Head (and anyone else that can be roped into helping)
+schedules the vendors to be put in the appropriate locations on
+the day of the event.
+</p>
+</div>
+</li>
+
+<li>Email<br  /><div class="outline-text-4" id="text-3-2-13">
+<p>
+Final email goes out, with any instruction reminders and if there
+is a manditory vendor meeting, or the like.
+</p>
+</div>
+</li>
+
+<li>Welcome Letter<br  /><div class="outline-text-4" id="text-3-2-14">
+<p>
+Welcome lettters generated and printed, possibly stuffed in an
+envelope or folder of some sort.
+This might include some form of their (electronically) signed
+contract, and maybe invoice highlights.  Definitely includes their
+placement information, and information on how load-in and load-out
+works, etc.
+</p>
+</div>
+</li>
+
+<li>Badges<br  /><div class="outline-text-4" id="text-3-2-15">
+<p>
+Badges, the appropriate number for each vendor and community
+table, are printed, and possibly stuffed as above.
+</p>
+</div>
+</li>
+
+<li>Wrist bands<br  /><div class="outline-text-4" id="text-3-2-16">
+<p>
+Are possibly stuffed as above.
+</p>
+</div>
+</li>
+
+<li>Check-in/check-out lists printed<br  /><div class="outline-text-4" id="text-3-2-17">
+<p>
+So they are available on the day-of.
+</p>
+</div>
+</li></ul>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Conclusion</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+This should cover all the bits and pieces.  If I missed any, let me
+know so this document can be updated, and the system can be tested.
+Hopfully all will work, and this can go forth as The New Way.  Until
+we change it, again, in 2-3 years <b>grin</b>.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: May 2017</p>
+<p class="author">Author: Percy, Amanda, Rob, Iya</p>
+<p class="email">Email: <a href="mailto:NELA.Percy@gmail.com">NELA.Percy@gmail.com</a></p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

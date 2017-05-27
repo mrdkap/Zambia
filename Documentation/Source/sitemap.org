@@ -8,3 +8,4 @@
    + [[file:Setting_Up.org][Setting Up Zambia from Scratch]]
    + [[file:Tasks-Gantt_Chart.org][Task List and Gantt Chart Usage]]
    + [[file:Time_Card.org][Time Card Usage in Zambia]]
+   + [[file:Vending_Design_Document.org][Vending Design Document]]

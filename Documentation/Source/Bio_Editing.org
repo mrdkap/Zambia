@@ -3,7 +3,9 @@
 #+AUTHOR: Percy
 #+DATE: November 2011
 #+DESCRIPTION: Zambia is a piece of Con Management Software.  This document is a "How To" guide assisting in the way of editing the Bios for the Zambia FFF-branch instance for your convention.  This is still a work in progress.
+#+META: DESCRIPTION Zambia is a piece of Con Management Software.  This document is a "How To" guide assisting in the way of editing the Bios for the Zambia FFF-branch instance for your convention.  This is still a work in progress.
 #+KEYWORDS: Zambia, Documentation, FFF branch
+#+META: KEYWORDS Zambia, Documentation, FFF branch
 #+LANGUAGE: en
 #+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:3 num:3 toc:nil @:t ::nil |:t -:t todo:nil tasks:nil tags:nil <:t *:t author:t email:t skip:nil d:t f:t pri:t
 #+STARTUP: fninline

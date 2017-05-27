@@ -231,7 +231,8 @@ if ($phase_array['Grid Available'] == '0') {
   }
 }
 if (file_exists("../Local/$conid/FAQ")) {
-  $genbody.="      <LI><A HREF=\"FAQ.php\">FAQ</A></LI>\n";
+  $genbody.="      <LI class=collapse>FAQ</LI>\n";
+  $genbody.=file_get_contents("../Local/$conid/FAQ");
 }
 if ($phase_array['Feedback Available'] == '0') {
   $genbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";

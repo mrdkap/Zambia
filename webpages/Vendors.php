@@ -154,14 +154,14 @@ EOD;
 
   // Add the description once it starts to exist
   $desc="NULL";
-  if (($conid == "45") or ($conid == "46") or ($conid == "47") or ($conid == "48")) { $desc="vendor_description"; }
+  if (($conid == "45") or ($conid == "46") or ($conid == "47") or ($conid == "48") or ($conid == "49")) { $desc="vendor_description"; }
 
   // Fix for inconsistencies in the database
   $website="website";
   if ($conid == "45") { $website="vendor_website"; }
 
   $status="status";
-  if (($conid == "44") or ($conid == "46") or ($conid == "47") or ($conid == "48")) { $status="vendor_status"; }
+  if (($conid == "44") or ($conid == "46") or ($conid == "47") or ($conid == "48") or ($conid == "49")) { $status="vendor_status"; }
 
   $wherestring="WHERE $status in ('Approved')";
   if ($conid == "45") { $wherestring="WHERE vendor_location is NOT NULL"; }

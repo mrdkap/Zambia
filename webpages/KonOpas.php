@@ -474,16 +474,10 @@ if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0'
 if ($phase_array['Prog Available'] == '0') {
    echo "<script src=\"../Local/$conid/program.js\"></script>\n";
    echo "<script src=\"../Local/$conid/people.js\"></script>\n";
-} else {
-   echo "<script src=\"../Local/program.js\"></script>\n";
-   echo "<script src=\"../Local/people.js\"></script>\n";
 }
 if ($phase_array['Vendors Available'] == '0') {
    echo "<script src=\"../Local/$conid/vendor.js\"></script>\n";
    echo "<script src=\"../Local/$conid/community.js\"></script>\n";
-} else {
-   echo "<script src=\"../Local/vendor.js\"></script>\n";
-   echo "<script src=\"../Local/community.js\"></script>\n";
 }
 ?>
 <script src="../../konopas/konopas.min.js"></script>

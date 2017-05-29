@@ -50,10 +50,6 @@
 *** Standalone/Combination
     Is this system going to be a standalone system, or are you going
     to interface it with Congo, or another piece of registration software?
-*** Single/Multiple installation
-    Is this going to be a single instance of Zambia, or are you going
-    to have multiple instances of Zambia running on the same machine
-    with some shared resources?
 *** Web server
     Where is your web installation location (whatever directory you
     will be putting your files into)?  Often something like
@@ -61,107 +57,112 @@
     the like.
 *** db_name.php file
     This information will go in the db_name.php file when you install it.
-**** Required information in the db_name.php file for the program to run:
-     + date_default_timezone_set your timezone.  Mine is set to:
-       ('US/Eastern')
-     + Base session dir (*BASESESSIONDIR*), which is important for
-       garbage collection and timing on our sessions.
-     + Database hostname (*DBHOSTNAME*). If you are setting things up on
-       the same machine that MySQL is running on, /localhost/ should be
-       what you are using for *DBHOSTNAME*.
-     + Database username (*DBUSERNAME*).  The user created for the
-       Zambia program to access the database(s).
-     + Database password (*DBPASSOWRD*).  The password created for the
-       Zambia program to access the database(s).
-     + Main database name (*DBDB*).  The database for all the single
-       convention specific information to live in.
-     There are several other databases that you might want to connect to:
-     + Vendor information database name (*VENDORDB*).  The database
-       for all the vendor information.  This can be part of your same
-       system or a separate database for what you are working on.
-     + The CongoDump database name (*CONGODB*). Congo is another piece of
-       software designed to interact with Zambia. The information in
-       that set of databases can be accessed in a variety of ways.
-     + The fallback keying tag (*FALLBACK_KEY*) and URL
-       (*FALLBACK_URL*) which is useful when there isn't a specified
-       or remembered con instance to be referenced.
-     + The language list (*LANGUAGE_LIST*) which is the list of
-       languages you are using for your con.
-**** Extremely useful information:
-     Most of this information is in the various database tables,
-     mostly ConInfo, but a few others in special users.
-     + Unique con id.
-     + Con short name.
-     + Con long name.
+    + date_default_timezone_set your timezone.  Mine is set to:
+      ('US/Eastern')
+    + Base session dir (*BASESESSIONDIR*), which is important for
+      garbage collection and timing on our sessions.
+    + Database hostname (*DBHOSTNAME*). If you are setting things up on
+      the same machine that MySQL is running on, /localhost/ should be
+      what you are using for *DBHOSTNAME*.
+    + Database username (*DBUSERNAME*).  The user created for the
+      Zambia program to access the database(s).
+    + Database password (*DBPASSOWRD*).  The password created for the
+      Zambia program to access the database(s).
+    + Main database name (*DBDB*).  The database for all the single
+      convention specific information to live in.
+    There are several other databases that you might want to connect to:
+    + Vendor information database name (*VENDORDB*).  The database
+      for all the vendor information.  This can be part of your same
+      system or a separate database for what you are working on.
+    + The CongoDump database name (*CONGODB*). Congo is another piece of
+      software designed to interact with Zambia. The information in
+      that set of databases can be accessed in a variety of ways.
+    + The fallback keying tag (*FALLBACK_KEY*) and URL
+      (*FALLBACK_URL*) which is useful when there isn't a specified
+      or remembered con instance to be referenced.
+    + The language list (*LANGUAGE_LIST*) which is the list of
+      languages you are using for your con.
+*** ConInfo table
+    This information is for the ConInfo table, the table that defines
+    what your particular ConInstance is like.  There will be an
+    "Initial" instance set up by default, if you use the defaults, and
+    that can be used to generate other instances from there, as well
+    as hold default bits of information.
+    + Unique con id.
+    + Con short name.
+    + Con long name.
+    + Number of days the con will run (code has been tested for 1-8.)
+    + Date and time the con will start (In the format of yyyy-mm-dd
+      HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
+      start time.)
+    + URL of the con (without the leading http:// in the URL.)
+    + Logo for the con (gif, png, etc.)  This is based from the tcpdf
+      directory so, if your file is in Zambia-con/Local/Logo.gif then
+      the path should be: ../../Zambia-con/Local/Logo.gif
+    + Default Duration of the classes. (How long, in H:MM format that
+      the classes are expected to be.)
+    + Duration in Minutes (Should probably be "FALSE": TRUE: in mmm;
+      False: in hh:mm - affects session edit/create page only, not
+      reports.)
+    + Grid Spacer (The time divisions in the fixed grid produced, in
+      seconds.  For example 1800 is 60 sec/min and 30 min, and a good
+      default.)
+    + Are kids available (This should probably be set to "FALSE", it
+      is a hold-over from backwards compatibility.)
+    + Preferred total number of sessions upper limit (so your
+      presenters don't oversubscribe themselves 5 is good default for
+      a 3-4 day con.)
+    + Preferred daily number of sessions upper limit (3 is a good
+      default.)
+    + Availability Records (starting number of "availability" fields
+      to render in the "when I am available" form, 8 is a good
+      default.)
+*** Description minimums and maximums
+    All of this information goes in the limits database table.  Only
+    set a value if you need it, unset values are simply presume there
+    is no limit to the information in that direction.
+    + Minimum web biography character length (Some cons have minimum
+      biographical information requirements.)
+    + Maximum web biography character length (Some cons have a
+      different limits for what is on the web, and what is in the
+      book, 3000 characters is a good starting default for the WWW.)
+    + Minimum book biography character length (Some cons have minimum
+      biographical information requirements.)
+    + Maximum book biography character length (if there isn't a
+      difference in the limit, but still, there is a limit, set to
+      the same as the web maximum.)
+    + Minimum uri biography character length (the URI block is often
+      unlimited in either direction.)
+    + Maximum uri biography character length (the URI block is often
+      unlimited in either direction.)
+    + Minimum picture biography character length (the picture line is
+      often unlimited in either direction.)
+    + Maximum picture biography character length (the picture line is
+      often unlimited in either direction.)
+    + Minimum web precis character length (You need a precis
+      description of at least this long to be acceptable, 10 as a
+      good default.)
+    + Maximum web precis character length (3000 as a good default.)
+    + Minimum book precis character length (if there isn't a
+      difference in the limit, set it to the same as above for these,
+      as well.)
+    + Maximum book precis character length
+    + Minimum precis title character length (You need a precis title
+      of at least this long to be acceptable, 5 as a good default.)
+    + Maximum precis title character length (50 as a good default.)
+    + Minimum name character length (if there is a need to make sure
+      all names are of at least a specific length.)
+    + Maximum name character length (if there is a need to make sure
+      all names are no more than a specific length.)
+*** Very useful information
+    This information should end up in various tables, as things go.
+    You don't need the information for setup, but it is good to have.
      + Zambia administrator email.
-     + Brainstorm email.
-     + Programming email.
-     + Registration email.
-     + Number of days the con will run (code has been tested for 1-8.)
-     + Date and time the con will start (In the format of yyyy-mm-dd
-       HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
-       start time.)
-     + URL of the con (without the leading http:// in the URL.)
-     + Logo for the con (gif, png, etc.)
-     + Availability Records (starting number of "availability" fields
-       to render in the "when I am available" form, 8 is a good
-       default.)
-     + Are kids available (This should probably be set to "FALSE", it
-       is a hold-over from backwards compatibility.)
-     + Default Duration of the classes. (How long, in H:MM format that
-       the classes are expected to be.)
-     + Duration in Minutes (Should probably be "FALSE": TRUE: in mmm;
-       False: in hh:mm - affects session edit/create page only, not
-       reports.)
-     + Grid Spacer (The time divisions in the fixed grid produced, in
-       seconds.  For example 1800 is 60 sec/min and 30 min, and a good
-       default.)
-**** Very useful information:
-     + Guests of Honor badge list (if you have specific featured Guests
-       of Honor, they get indicated as a con role.)
-     + Preferred total number of sessions upper limit (so your
-       presenters don't oversubscribe themselves 5 is good default for
-       a 3-4 day con.)
-     + Preferred daily number of sessions upper limit (3 is a good
-       default.)
-**** Description minimums and maximums:
-     All of this information goes in the limits database table.  Only
-     set a value if you need it, unset values are simply presume there
-     is no limit to the information in that direction.
-     + Minimum web biography character length (Some cons have minimum
-       biographical information requirements.)
-     + Maximum web biography character length (Some cons have a
-       different limits for what is on the web, and what is in the
-       book, 3000 characters is a good starting default for the WWW.)
-     + Minimum book biography character length (Some cons have minimum
-       biographical information requirements.)
-     + Maximum book biography character length (if there isn't a
-       difference in the limit, but still, there is a limit, set to
-       the same as the web maximum.)
-     + Minimum uri biography character length (the URI block is often
-       unlimited in either direction.)
-     + Maximum uri biography character length (the URI block is often
-       unlimited in either direction.)
-     + Minimum picture biography character length (the picture line is
-       often unlimited in either direction.)
-     + Maximum picture biography character length (the picture line is
-       often unlimited in either direction.)
-     + Minimum web precis character length (You need a precis
-       description of at least this long to be acceptable, 10 as a
-       good default.)
-     + Maximum web precis character length (3000 as a good default.)
-     + Minimum book precis character length (if there isn't a
-       difference in the limit, set it to the same as above for these,
-       as well.)
-     + Maximum book precis character length
-     + Minimum precis title character length (You need a precis title
-       of at least this long to be acceptable, 5 as a good default.)
-     + Maximum precis title character length (50 as a good default.)
-     + Minimum name character length (if there is a need to make sure
-       all names are of at least a specific length.)
-     + Maximum name character length (if there is a need to make sure
-       all names are no more than a specific length.)
-**** Other interesting settings:
+     + Brainstorm email - goes in the Brainstorm Person's account.
+     + Programming email - goes in the Programming Person's account.
+     + Guests of Honor badge list - if you have specific featured Guests
+       of Honor, they get indicated as a con role.
+*** Language Settings
      The linguistic settings can be used if your con is in more than
      one language.
      + What the second language is, and it's indicator (fr-ca, en-uk)
@@ -196,6 +197,7 @@
 ** conid
    This (or these) will be the con-specific information
    sub-directories.
+   There should be a 0 entry, that holds some defaults
 ** FooterTemplate.html
    This is where you will put your standard footer, that will be
    below all the public pages, to customize the look and feel to
@@ -208,10 +210,13 @@
    If you choose to have images of your participants with their
    bios, make this directory, and any pictures that match the
    badgename of the participant will be put next to the bios.
-   the foo could be: badge book, or web
+   the foo could be: badge, book, web, staffbadge, staffbook,
+   staffweb, etc.
 ** Verbiage
    These files can also live under each of the conid directories, so
    can be distinguished by con instance.
+
+   The defaults are under Local/0/Verbiage.
 
    If you wish to customize what is put forth to your participants,
    many of the pages allow for customization.  The list of them will
@@ -640,41 +645,15 @@ is an advantage to all.
 #+begin_src html :exports both :results silent
   backup_mysql /your/path/to/Zambia-FFF/instance
 #+end_src
-* Quick and dirty
-  To build a quick and dirty copy on the same machine as another running version:
-  + for i in ../Zambia-FFF/* ; do ln -s $i . ; done
-  + rm Local
-  + rm webpages
-  + mkdir Local webpages
-  + cd webpages
-  + for i in ../../Zambia-FFF/webpages/* ; do ln -s $i . ; done
-  + cd ../Local
-  + mkdir Verbiage
-  + for i in ../../Zambia-FFF/Local/*.html ; do ln -s $i . ; done
-  + ln -s ../../Zambia-FFF/Local/Participant_Images .
-  Finally, copy over, and modify the db_name.php as appropriate
-  To update them all do:
-#+begin_src html :exports both :results silent
-for i in FFF-[34]*
-  do
-    pushd $i/webpages
-    for j in ../../Zambia-FFF/webpages/*
-      do
-        ln -s $j .
-      done
-    popd
-  done
-#+end_src
 * Adding a year instance - Con Structure
   Another Con instance is approaching.  To set up for this, there is
-  one file and a number of table additions you need to make.  At some
-  point the table additions might have their own form.  Feel free to
-  update them any way you are comfortable with at the moment.  The
-  update to the Local/db_name.php file should only be the update to
-  the CON_KEY entry in the file, all the rest should remain the same,
-  and probably that should migrate to something database settable at
-  some point.  The rest of the information below should be set in your
-  database tables.
+  one file and a number of table additions you need to make.  The best
+  way to initiate this is to log into a similar con instance and use
+  the AdminNewConInstance.php page.  If you want to do it by hand,
+  here are the updates you have to do.  You might want to update the
+  FALLBACK_KEY in the Local/db_name.php file, but you shouldn't have
+  to, all the rest should remain the same.  The rest of the
+  information below should be set in your database tables.
 ** ConInfo
    The first place to start is setting your ConInfo information.  This
    allows for the con to show up in the index file, and opens all the

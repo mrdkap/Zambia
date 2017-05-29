@@ -40,7 +40,7 @@ if ((isset($_GET['role'])) && (is_numeric($_GET['role']))) {
    reports.  Probably should be done up higher, but ... can update the
    array here as well.
 */
-if ($_POST['update']=='Yes') {
+if (($_POST['update']=='Yes') and ((may_I("Maint")) or (may_I("ConChair")))) {
 
   // Update HasReports
   foreach ($_POST['washasreport'] as $key => $value) {
@@ -58,7 +58,7 @@ if ($_POST['update']=='Yes') {
   }
 }
 
-if ($role!=0) {
+if (($role!=0) and ((may_I("Maint")) or (may_I("ConChair")))) {
   $query="SELECT hasreport FROM HasReports where conid=$conid and conroleid=$role";
   list($workrows,$workheader_array,$work_array)=queryreport($query,$link,$title,$description,0);
   if (in_array("This report retrieved no results matching the criteria.",array_keys($work_array))) {
@@ -106,27 +106,27 @@ if ($role==0) {
   exit;
 }
   
-// Begin the page that has the selection process on it.
-echo "\n<HR>\n";
-
-// Start the form
-echo "<FORM name=\"selreports\" class=\"bb\" method=POST action=\"AdminHasReports.php\">\n";
-
-// This will give us the clue that we need to update something, and the role we update it for.
-echo "  <INPUT type=\"hidden\" name=\"update\" value=\"Yes\">\n";
-echo "  <INPUT type=\"hidden\" name=\"role\" value=\"$role\">\n";
-
 // Reports set only by ConChair or the Janitor
 if ((may_I("Maint")) or (may_I("ConChair"))) {
+
+  // Begin the page that has the selection process on it.
+  echo "\n<HR>\n";
+
+  // Start the form
+  echo "<FORM name=\"selreports\" class=\"bb\" method=POST action=\"AdminHasReports.php\">\n";
+
+  // This will give us the clue that we need to update something, and the role we update it for.
+  echo "  <INPUT type=\"hidden\" name=\"update\" value=\"Yes\">\n";
+  echo "  <INPUT type=\"hidden\" name=\"role\" value=\"$role\">\n";
   echo "  <SPAN><LABEL for=\"hasreportid\">Who reports to ".$conrole[$role].":<br></LABEL>\n";
   // $label, $element_list, $key, $value, $boxarray
   populate_checkbox_block_from_array("hasreport",$workname_list,"conroleid","conrolenotes",$conrole_array);
   echo "  </SPAN>\n  <BR>\n";
   echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
-}
 
-// Close the form
-echo "</FORM>";
+  // Close the form
+  echo "</FORM>";
+}
 
 // Display the key
 $keystring="<br>\n<HR>\n<P>Key:</P>\n";

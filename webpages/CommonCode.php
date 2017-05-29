@@ -38,6 +38,7 @@ $query= <<<EOF
 SELECT
     conid,
     conname,
+    connamelong,
     constartdate,
     connumdays,
     conurl,
@@ -2681,8 +2682,8 @@ function get_verbiage ($verbiagefile) {
   $conid=$_SESSION['conid'];
   if (file_exists("../Local/$conid/Verbiage/$verbiagefile")) {
     $returnstring=file_get_contents("../Local/$conid/Verbiage/$verbiagefile");
-  } elseif (file_exists("../Local/Verbiage/$verbiagefile")) {
-    $returnstring=file_get_contents("../Local/Verbiage/$verbiagefile");
+  } elseif (file_exists("../Local/0/Verbiage/$verbiagefile")) {
+    $returnstring=file_get_contents("../Local/0/Verbiage/$verbiagefile");
   } else {
     $returnstring="";
   }

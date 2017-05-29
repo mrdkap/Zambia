@@ -54,7 +54,7 @@ if (in_array("This report retrieved no results matching the criteria.",array_key
    probably should be done up higher, but ... can update the array
    here as well.
 */
-if ($_POST['update']=='Yes') {
+if (($_POST['update']=='Yes') and ((may_I("Maint")) or (may_I("ConChair")))) {
 
   // Update phases
   foreach ($_POST['wasphasetypeid'] as $key => $value) {
@@ -92,24 +92,25 @@ if (in_array("This report retrieved no results matching the criteria.",array_key
 // Begin the page
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-/* Start form.  Any button will update all of the lists.  Since they
-   only change if there is something different selected, hence the
-   hidden -> update only has to be once.
-*/
-echo "<FORM name=\"updatelists\" class=\"bb\" method=POST action=\"AdminPhases.php\">\n";
-echo "  <INPUT type=\"hidden\" name=\"update\" value=\"Yes\">\n";
-
 // Phases set only by ConChair or the Janitor
 if ((may_I("Maint")) or (may_I("ConChair"))) {
+
+  /* Start form.  Any button will update all of the lists.  Since they
+     only change if there is something different selected, hence the
+     hidden -> update only has to be once.
+  */
+  echo "<FORM name=\"updatelists\" class=\"bb\" method=POST action=\"AdminPhases.php\">\n";
+  echo "  <INPUT type=\"hidden\" name=\"update\" value=\"Yes\">\n";
+
   echo "  <SPAN><LABEL for=\"phasetypeid\">Which Phases are currently set:<br></LABEL>\n";
-  // $label, $element_list, $key, $vakue, $boxarray
+  // $label, $element_list, $key, $value, $boxarray
   populate_checkbox_block_from_array("phasetypeid",$workname_list,"phasetypeid","phasetypename",$phasetype_array);
   echo "  </SPAN>\n  <BR>\n";
   echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
-}
 
-// Close the form
-echo "</FORM>";
+  // Close the form
+  echo "</FORM>";
+}
 
 $keystring="<br>\n<HR>\n<P>Key:</P>\n";
 $keystring.=renderhtmlreport(1,count($key_array),$keyheader_array,$key_array);

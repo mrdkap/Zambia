@@ -11,6 +11,10 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 <hr>
 <DL>
+<?php if ((may_I("SuperProgramming")) or (may_I("SuperLogistics"))) { ?>
+   <DT><A HREF="AdminSetupServices.php">Update the Services and Features available</A></DT>
+   <DD>Update what Services and Features are offered as standard for a schedule element.</DD>
+<?php } ?>
    <DT><A HREF="CreateSession.php">Create a New Session</A></DT>
    <DD>Used for creating new sessions.  They are intially created in status "edit me".  Once created, a second persion edits for content (and uniqueness). This person promotes the session to status "Brainstorm".  A third set of eyes does a basic grammar and spelling edit and promotes the session to status "Vetted".   At that time it is ready for general viewing by prospective panelists.</DD>
    <DT><A HREF="EditSession.php">Edit an Existing Session</A></DT>

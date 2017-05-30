@@ -53,7 +53,22 @@ if ($_POST['update']=='Yes') {
     if (($_POST['wasserviceid'][$key]=="indeed") and
 	($_POST['serviceid'][$key]!="checked")) {
       $match_string="display_order=".$key." AND conid=".$_SESSION['conid'];
-      $message.=delete_table_element($link, $title, "Services",$match_string);
+      $message.=delete_table_element($link, $title, "Services", $match_string);
+    }
+  }
+
+  // Update features
+  foreach ($_POST['wasfeatureid'] as $key => $value) {
+    if (($_POST['wasfeatureid'][$key]=="not") and
+	($_POST['featureid'][$key]=="checked")) {
+      $element_array = array('featurename', 'conid', 'display_order');
+      $value_array = array($basefeature[$key],$_SESSION['conid'],$key);
+      $message.=submit_table_element($link, $title, "Features", $element_array, $value_array);
+    }
+    if (($_POST['wasfeatureid'][$key]=="indeed") and
+	($_POST['featureid'][$key]!="checked")) {
+      $match_string="display_order=".$key." AND conid=".$_SESSION['conid'];
+      $message.=delete_table_element($link, $title, "Features", $match_string);
     }
   }
 

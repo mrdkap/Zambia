@@ -138,8 +138,6 @@ EOD;
 ?>
     <DIV class="formbox">
       <FORM name="sessform" class="bb"  method=POST action="SubmitEditCreateSession.php">
-        <INPUT type="hidden" name="name" value="<?php echo htmlspecialchars($name,ENT_COMPAT);?>">
-        <INPUT type="hidden" name="email" value="<?php echo htmlspecialchars($email,ENT_COMPAT);?>">
         <INPUT type="hidden" name="conid" value="<?php echo $_SESSION['conid'];?>">
         <DIV style="margin: 0.5em; padding: 0em">
           <TABLE style="margin: 0em; padding: 0em" >
@@ -261,7 +259,7 @@ place.
 <?php } ?>
 <?php if ($action=="brainstorm") { ?>
           <INPUT type="hidden" name="roomset" value="<?php echo $session["roomset"] ?>">
-} else { ?>
+<?php } else { ?>
           <SPAN><LABEL for="roomset">Room Set: </LABEL>
             <SELECT name="roomset"><?php populate_select_from_table("RoomSets", $session["roomset"], "SELECT", FALSE); ?>
             </SELECT>&nbsp;&nbsp;</SPAN>

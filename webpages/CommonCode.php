@@ -16,7 +16,8 @@ if ((empty($_SESSION['conid'])) and (is_numeric($conid))) {
 }
 
 //set_session_timeout();
-session_save_path("/tmp/tmp");
+session_save_path("/tmp/tmp_Zambia");
+ini_set('session.gc_probability', 1);
 session_start();
 if (prepare_db()===false) {
   $message_error="Unable to connect to database.<BR>No further execution possible.";

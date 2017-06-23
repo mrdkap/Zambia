@@ -60,6 +60,11 @@ if ($_POST['create'] == "Yes") {
   }
   $message.=submit_table_element($link, $title, "ConInfo", $element_array, $value_array);
 
+  /* Make the directory in Local if it doesn't already exist */
+  if (!is_dir('../Local/$newconid')) {
+    mkdir('../Local/$newconid', 0777, true);
+  }
+
   /* 
   Populate one element of the Phase table, so it can be opened, and
   when AdminPhases.php is invoked, all the other phases are populated.

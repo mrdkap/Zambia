@@ -16,7 +16,7 @@ function RenderEditCreateSession ($action, $session, $message, $message_error) {
   // Limit the types of submissions we are accpting at this time.
   $typequery = <<<EOD
 SELECT
-    typeid,
+    DISTINCT typeid,
     typename
   FROM
       Permissions
@@ -31,8 +31,7 @@ SELECT
     UHPR.badgeid=$badgeid
 EOD;
 
-  list($type_rows,$type_header_array,$type_array)=queryreport($typequery,$link,$title,$query,0);
-
+  list($type_rows,$type_header_array,$type_array)=queryreport($typequery,$link,$title,$typequery,0);
 
   // This switched on, the specific action, and ends if one of the
   // specified ones don't exist.

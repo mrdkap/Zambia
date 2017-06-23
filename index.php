@@ -183,7 +183,12 @@ for ($i=1; $i<=$conrows; $i++) {
   }
 
   // Set the con name
-  $conname=htmlspecialchars_decode($ConInfo_array[$conid]['connamelong']);
+  $conname_tmp=htmlspecialchars_decode($ConInfo_array[$conid]['connamelong']);
+  if ($phase_array[$conid]['WebApp'] == '0' ) {
+    $conname="<A HREF=\"webpages/KonOpas.php?conid=$conid#info\">$conname_tmp</A>";
+  } else {
+    $conname=$conname_tmp;
+  }
 
   // Set the "Previous" barrier.  Once.
   if ($nowis > ($constart + $offset)) {
@@ -207,6 +212,7 @@ for ($i=1; $i<=$conrows; $i++) {
 
   // General information block
   $genbody="";
+  /* Removed, because now in KonOpas
   if ($phase_array[$conid]['General Info Available'] == '0' ) {
     $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid\">General Event Information</A></LI>\n";
   }
@@ -223,9 +229,11 @@ for ($i=1; $i<=$conrows; $i++) {
   if (file_exists("Local/$conid/Program_Book.pdf")) {
     $genbody.="      <LI><A HREF=\"Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
   }
+  */
   if (!empty($appstring[$conid])) {
     $genbody.=$appstringstart . $appstring[$conid] . $appstringend;
   }
+  /* In KonOpas
   if (file_exists("Local/$conid/Con_Chair_Welcome")) {
     $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid#conchairletter\">Welcome from the Con Chair</A></LI>\n";
   }
@@ -235,12 +243,17 @@ for ($i=1; $i<=$conrows; $i++) {
   if (file_exists("Local/$conid/Rules")) {
     $genbody.="      <LI><A HREF=\"webpages/GenInfo.php?conid=$conid#rules\">Rules</A></LI>\n";
   }
+  */
   if ($genbody!="") {$webstring.=$genheader . $genbody . $divfooter;}
 
   // Programming information block
   $progbody="";
+  if ($phase_array[$conid]['WebApp'] == '0' ) {
+    $progbody.="      <LI><A HREF=\"webpages/KonOpas.php?conid=$conid#info\">All Event Information</A></LI>\n";
+  }
   if ($phase_array[$conid]['Prog Available'] == '0' ) {
     $progbody.="      <LI><A HREF=\"webpages/Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
+    /*  Commented out, because now in KonOpas
     $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=desc&conid=$conid\">Class Descriptions</A>\n";
     $progbody.="        <A HREF=\"webpages/PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
     $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
@@ -253,9 +266,7 @@ for ($i=1; $i<=$conrows; $i++) {
     $progbody.="        <A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
     $progbody.="      <LI><A HREF=\"webpages/PubsBios.php?conid=$conid\">Presenter Bios</A>\n";
     $progbody.="        <A HREF=\"webpages/PubsBios.php?conid=$conid&short=Y\">(short)</A></LI>\n";
-  }
-  if ($phase_array[$conid]['WebApp'] == '0' ) {
-    $progbody.="      <LI><A HREF=\"webpages/KonOpas.php?conid=$conid\">Web App</A></LI>\n";
+    */
   }
   if ($phase_array[$conid]['Brainstorm'] == '0' ) {
     $progbody.="      <LI>\n";
@@ -307,6 +318,7 @@ for ($i=1; $i<=$conrows; $i++) {
 
   // Vending information block
   $vendbody="";
+  /* Now in KonOpas
   if ($phase_array[$conid]['Vendors Available'] == '0' ) {
     $vendbody.="      <LI><A HREF=\"webpages/Vendors.php?conid=$conid\">Vendor List</A></LI>\n";
   }
@@ -320,6 +332,7 @@ for ($i=1; $i<=$conrows; $i++) {
     $vendbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"New Vendor Application\">\n";
     $vendbody.="      </FORM>\n</LI>\n";
   }
+  */
   if ($vendbody!="") {$webstring.=$vendheader . $vendbody . $divfooter;}
   $webstring.="</DIV>\n";
 

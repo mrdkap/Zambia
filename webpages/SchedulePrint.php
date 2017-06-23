@@ -21,10 +21,13 @@ $group=$_GET['group'];
 if ($_SESSION['role']=="Participant") {$individual=$_SESSION['badgeid'];}
 
 // If an individual request, make sure it pulls all of the schedule for that person
-if ($individual != "") {$group = "Participant','Programming','SuperProgramming','General','Watch','Registration','Vendor','Events','Logistics','Sales','Fasttrack";}
+if ($individual != "") {$group = "Participant','Programming','SuperProgramming','General','Watch','Registration','Vendor','Events','Logistics','Sales','Fasttrack','Hotel','Catering','Liaison','SuperLiaison','Lounge','Tabling','Panelist','Aide','Host','Demo','Teacher','Presenter','Author','Organizer','Performer','Participant','VendorVols','LoungeVols";}
 
 // If no group is set, presume that you want the Participants
-if ($group == "") {$group='Participant';}
+if ($group == "") {$group="Panelist','Aide','Host','Demo','Teacher','Presenter','Author','Organizer','Performer','Participant";}
+
+// If group is just Participant, presume that you want all of the below
+if ($group == "Participant") {$group="Panelist','Aide','Host','Demo','Teacher','Presenter','Author','Organizer','Performer','Participant";}
 
 $description="<P>A way to <A HREF=\"SchedulePrint.php?print_p=T&group=$group";
 if ($individual != "") {$description.="&individual=$individual";}

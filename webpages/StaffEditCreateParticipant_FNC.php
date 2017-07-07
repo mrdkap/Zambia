@@ -57,10 +57,8 @@ EOD;
 
     //error_log("Zambia: ".print_r($participant_arr,TRUE));
 
-    //Get the bioinfo, just not for migrate
-    if ($action != "migrate") {
-      $bioinfo=getBioData($_SESSION['badgeid']);
-    }
+    //Get the bioinfo
+    $bioinfo=getBioData($_SESSION['badgeid']);
 
   ?>
     <DIV class="formbox">
@@ -121,8 +119,8 @@ EOD;
 		</SPAN
             </DIV>
 <?php
-// On migration only give the shortest, most relevant information, the bios stuff can be done/checked later
-if ($action != "migrate") {
+              // On migration only give the shortest, most relevant information, the bios stuff can be done/checked later
+              if ($action != "migrate") {
 ?>
             <DIV class="denseform">
                 <SPAN><LABEL for="postaddress1">Postal Address line 1: </LABEL><INPUT type="text" size=80 name="postaddress1"
@@ -141,6 +139,16 @@ if ($action != "migrate") {
                      value="<?php echo htmlspecialchars($participant_arr["postzip"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
                 </DIV>
 <?php
+              } else {
+		// values to be migrated, without being presented:
+?>
+            <INPUT type="hidden" name="postaddress1" value="<?php echo htmlspecialchars($participant_arr["postaddress1"],ENT_COMPAT);?>">
+            <INPUT type="hidden" name="postaddress2" value="<?php echo htmlspecialchars($participant_arr["postaddress2"],ENT_COMPAT);?>">
+            <INPUT type="hidden" name="postcity" value="<?php echo htmlspecialchars($participant_arr["postcity"],ENT_COMPAT);?>">
+            <INPUT type="hidden" name="poststate" value="<?php echo htmlspecialchars($participant_arr["poststate"],ENT_COMPAT);?>">
+            <INPUT type="hidden" name="postzip" value="<?php echo htmlspecialchars($participant_arr["postzip"],ENT_COMPAT);?>">
+<?php
+	      } // close migrate switch
               if ((may_I("SuperProgramming")) or
 		  (may_I("SuperVendor")) or
 		  (may_I("Liaison")) or
@@ -188,28 +196,35 @@ if ($action != "migrate") {
 		      $biodest=$bioinfo['biodest_array'][$l];
 		      $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-		      echo "            <DIV class=\"denseform\">\n";
-		      echo "                <SPAN><LABEL for=\"$keyname\" style=\"vertical-align: top\">";
-		      echo ucfirst($biotype)." $biodest ($biolang) Biography";
-		      $limit_string="";
-		      if (isset($limit_array['max'][$biodest][$biotype])) {
-			$limit_string.=" maximum ".$limit_array['max'][$biodest][$biotype];
+		      if ($action != "migrate") {
+			echo "            <DIV class=\"denseform\">\n";
+			echo "                <SPAN><LABEL for=\"$keyname\" style=\"vertical-align: top\">";
+			echo ucfirst($biotype)." $biodest ($biolang) Biography";
+			$limit_string="";
+			if (isset($limit_array['max'][$biodest][$biotype])) {
+			  $limit_string.=" maximum ".$limit_array['max'][$biodest][$biotype];
+			}
+			if (isset($limit_array['min'][$biodest][$biotype])) {
+			  $limit_string.=" minimum ".$limit_array['min'][$biodest][$biotype];
+			}
+			if ($limit_string !="") {
+			  echo "<BR>(Limit".$limit_string." characters)";
+			}
+			echo ": </LABEL>\n";
+			echo "                    <TEXTAREA class=\"textlabelarea\" cols=70 name=\"$keyname\" >";
+			echo htmlspecialchars($participant_arr[$keyname],ENT_NOQUOTES)."</TEXTAREA>\n";
+			echo "                    </SPAN>\n";
+			echo "                </DIV>\n";
+		      } else {
+			echo "            <INPUT type=\"hidden\" name=\"$keyname\" value=\"";
+                        echo htmlspecialchars($participant_arr[$keyname],ENT_NOQUOTES) . "\">\n";
 		      }
-		      if (isset($limit_array['min'][$biodest][$biotype])) {
-			$limit_string.=" minimum ".$limit_array['min'][$biodest][$biotype];
-		      }
-		      if ($limit_string !="") {
-			echo "<BR>(Limit".$limit_string." characters)";
-		      }
-		      echo ": </LABEL>\n";
-		      echo "                    <TEXTAREA class=\"textlabelarea\" cols=70 name=\"$keyname\" >";
-		      echo htmlspecialchars($participant_arr[$keyname],ENT_NOQUOTES)."</TEXTAREA>\n";
-		      echo "                    </SPAN>\n";
-		      echo "                </DIV>\n";
 		    }
 		  }
 		}
-	      }?>
+	      }
+	      if ($action != "migrate") {
+?>
             <DIV class="denseform">
                 <SPAN><LABEL for="altcontact" style="vertical-align: top">Alternative ways to contact: </LABEL>
                     <TEXTAREA class="textlabelarea" cols=70 name="altcontact" ><?php echo htmlspecialchars($participant_arr["altcontact"],ENT_NOQUOTES);?></TEXTAREA>
@@ -228,9 +243,15 @@ if ($action != "migrate") {
                 <SPAN><LABEL for="phone">Phone: </LABEL><INPUT type="text" size=14 name="phone"
                      value="<?php echo htmlspecialchars($participant_arr["phone"],ENT_COMPAT);?>">&nbsp;&nbsp;</SPAN>
 <?php
-} else {  // end if not migrate (and add the denseform from the above sundered div
-  echo "            <INPUT type=\"hidden\" name=\"note\" value=\"Migrate participant to this con-instance\">\n";
-  echo "            <DIV class=\"denseform\">";
+	      } else {  // end if not migrate (and add the denseform from the above sundered div
+		echo "            <INPUT type=\"hidden\" name=\"altcontact\" value=\"";
+                echo htmlspecialchars($participant_arr["altcontact"],ENT_NOQUOTES) . "\">\n";
+		echo "            <INPUT type=\"hidden\" name=\"prognotes\" value=\"";
+                echo htmlspecialchars($participant_arr["prognotes"],ENT_NOQUOTES) . "\">\n";
+		echo "            <INPUT type=\"hidden\" name=\"phone\" value=\"";
+                echo htmlspecialchars($participant_arr["phone"],ENT_COMPAT) . "\">\n";
+		echo "            <INPUT type=\"hidden\" name=\"note\" value=\"Migrate participant to this con-instance\">\n";
+		echo "            <DIV class=\"denseform\">\n";
 }
 ?>
                 <SPAN><LABEL for="regtype">Registration Type: </LABEL><SELECT name="regtype">

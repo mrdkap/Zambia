@@ -179,7 +179,7 @@ if ($result and (mysql_num_rows($result)==1)) {
   $past_p=$dbobject->IsPassed;
 }
 
-// Brainstorm open
+// Brainstorm open in the form of "Suggestions"
 $querybrainstorm=<<<EOF
 SELECT
     phasestate
@@ -188,7 +188,7 @@ SELECT
     JOIN PhaseTypes USING (phasetypeid)
   WHERE
     conid=$conid AND
-    phasetypename in ('Brainstorm')
+    phasetypename in ('Suggestions')
 EOF;
 $result=mysql_query($querybrainstorm,$link);
 if ($result and (mysql_num_rows($result)==1)) {

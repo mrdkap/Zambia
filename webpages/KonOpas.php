@@ -136,7 +136,7 @@ if ($tmpappstring != "") {
 <div id="banner">
 <div id="server_connect"></div>
 
-<h1><a href="http://fetishflea.com/" alt="<?php echo $connamelong ?>" title="<?php echo $connamelong ?>">
+<h1><a href="http://fetishflea.com/" target="_blank" alt="<?php echo $connamelong ?>" title="<?php echo $connamelong ?>">
 <img id="title-small" src="../Local/logo.gif" style="width: 240px;">
 <img id="title" src="../Local/logo.gif" style="width: 200px;">
 <?php echo str_replace(" ", "&nbsp;", $conname) ?></a></h1>
@@ -194,7 +194,7 @@ if ($tmpappstring != "") {
 </div>
 
 <div id="info_view" class="view">
-<p>This is the program guide for <?php echo "<A HREF=\"http://$conurl/webpages/GenInfo.php?conid=$conid\">$connamelong</A>" ?>. It should be suitable for use on most browsers and devices. It is an instance of <a href="http://konopas.org/">KonOpas</a>, an open-source project providing conventions with easy-to-use mobile-friendly guides.
+<p>This is the program guide for <?php echo "<A HREF=\"http://$conurl/webpages/GenInfo.php?conid=$conid\" target=\"_blank\">$connamelong</A>" ?>. It should be suitable for use on most browsers and devices. It is an instance of <a href="http://konopas.org/" target="_blank">KonOpas</a>, an open-source project providing conventions with easy-to-use mobile-friendly guides.
 
 <p><div id="last-updated">Program and participant data were last updated <span></span>.</div>
 
@@ -235,16 +235,16 @@ if (file_exists("../Local/$conid/FAQ")) {
   $genbody.=file_get_contents("../Local/$conid/FAQ");
 }
 if ($phase_array['Feedback Available'] == '0') {
-  $genbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\">Feedback</A></LI>\n";
+  $genbody.="      <LI><A HREF=\"Feedback.php?conid=$conid\" target=\"_blank\">Feedback</A></LI>\n";
 }
 if ($phase_array['Comments Displayed'] == '0' ) {
-  $genbody.="      <LI><A HREF=\"CuratedComments.php?conid=$conid\">Comments about the event</A></LI>\n";
+  $genbody.="      <LI><A HREF=\"CuratedComments.php?conid=$conid\" target=\"_blank\">Comments about the event</A></LI>\n";
 }
 if (file_exists("../Local/$conid/Program_Book.pdf")) {
-  $genbody.="      <LI><A HREF=\"../Local/$conid/Program_Book.pdf\">Program Book</A></LI>\n";
+  $genbody.="      <LI><A HREF=\"../Local/$conid/Program_Book.pdf\" target=\"_blank\">Program Book</A></LI>\n";
 }
 $genbody.=$appstring;
-$genbody.="      <LI><A HREF=\"login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+$genbody.="      <LI><A HREF=\"login.php?newconid=$conid\" target=\"_blank\">Presenter/Volunteer Login</A></LI>\n";
 $genbody.="    </UL>\n  </DIV>\n";
 
 $venueinfo="";
@@ -278,7 +278,7 @@ if ($phase_array['Vendors Available'] == '0' ) {
 
   // PDF Map of the vendor layout
   if (file_exists("../Local/$conid/Vendor_Map.pdf")) {
-    $vendorbodyinfo.="<A HREF=\"../Local/$conid/Vendor_Map.pdf\">Click for the Map</A>\n";
+    $vendorbodyinfo.="<A HREF=\"../Local/$conid/Vendor_Map.pdf\" target=\"_blank\">Click for the Map</A>\n";
   }
 
   // Vendor information
@@ -332,7 +332,7 @@ if (file_exists("../Local/$conid/KRules")) {
 
 // Volunteer taken out.
 
-// Vendor now part of the main app, but because not everything is entered in $vendor_list exists
+// Vendor now part of the main app, but because not everything is entered in, $vendor_list exists
 
 $geninfo="";
 if (file_exists("../Local/$conid/Gen_Info")) {

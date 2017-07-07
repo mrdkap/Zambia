@@ -161,7 +161,7 @@ function maketab ($text,$usable,$url) {
 function posting_header ($title) {
   $ConName=$_SESSION['conname']; // make it a variable so it can be substituted
   $ConUrl=$_SESSION['conurl']; // make it a variable so it can be substituted
-  $HeaderTemplateFile="../Local/HeaderTemplate.html";
+  $HeaderTemplateFile="../Local/HeaderTemplate.php";
 
   echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/strict.dtd\">\n";
   echo "<html xmlns=\"http://www.w3.org/TR/xhtml1/transitional\">\n";
@@ -170,7 +170,7 @@ function posting_header ($title) {
   echo "  <title>Zambia -- $ConName -- $title</title>\n";
   echo "  <link rel=\"stylesheet\" href=\"Common.css\" type=\"text/css\">\n";
   if (file_exists($HeaderTemplateFile)) {
-    readfile($HeaderTemplateFile);
+    require($HeaderTemplateFile);
   } else {
     echo "  <link rel=\"stylesheet\" href=\"Common.css\" type=\"text/css\">\n";
     echo "</head>\n";
@@ -510,10 +510,10 @@ function correct_footer () {
     include ('google_analytics.php');
     echo "\n\n</body>\n</html>\n";
   } elseif ($_SESSION['role'] == "Posting") {
-    $FooterTemplateFile="../Local/FooterTemplate.html";
+    $FooterTemplateFile="../Local/FooterTemplate.php";
 
     if (file_exists($FooterTemplateFile)) {
-      readfile($FooterTemplateFile);
+      require($FooterTemplateFile);
     } else {
       echo "<hr>\n<P>If you have questions or wish to communicate an idea, please contact ";
       echo "<A HREF=\"mailto:".$_SESSION['programemail']."\">".$_SESSION['programemail']."</A>.\n</P>";

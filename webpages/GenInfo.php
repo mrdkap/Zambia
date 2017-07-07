@@ -233,9 +233,11 @@ if (file_exists("../Local/$conid/Gen_Info")) {
 
 /* Printing body.  Uses the page-init then creates the vendor bio page. */
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+echo "        <ARTICLE>\n";
 echo $geninfo;
 echo $conchairletter;
 echo $orgletter;
 echo $rules;
+echo "        </ARTICLE>\n";
 correct_footer();
 

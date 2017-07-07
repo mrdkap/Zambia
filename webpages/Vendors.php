@@ -113,13 +113,13 @@ SELECT
     concat("<A NAME=\"",
       vendor_business_name,
       "\"",
-      (if(vendor_website IS NULL,"",concat(" HREF=\"",vendor_website,"\""))),
+      (if(vendor_website IS NULL,"",concat(" HREF=\"",vendor_website,"\" target=\"_blank\""))),
       ">",
       vendor_business_name,
       "</A>") AS Title,
     if (vendor_location IS NULL,"",vendor_location) AS Room,
     concat(if (vendor_description IS NULL,"",vendor_description),
-      if(vendor_website IS NULL,"",concat("<br>\n<A HREF=\"",vendor_website,"\">",vendor_website,"</A>"))) AS Description
+      if(vendor_website IS NULL,"",concat("<br>\n<A HREF=\"",vendor_website,"\" target=\"_blank\">",vendor_website,"</A>"))) AS Description
   FROM
       default_vendors_$conid
   WHERE

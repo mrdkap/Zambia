@@ -2,8 +2,8 @@
 require_once ('Local/db_name.php'); // This should be generalized so everything can be one directory
 $ConKey=CON_KEY; // should be passed in, rather than hard set
 $webstring="";
-$HeaderTemplateFile="Local/HeaderTemplate.html";
-$FooterTemplateFile="Local/FooterTemplate.html";
+$HeaderTemplateFile="Local/HeaderTemplate.php";
+$FooterTemplateFile="Local/FooterTemplate.php";
 
 // Database link
 $link = mysql_connect(DBHOSTNAME,DBUSERID,DBPASSWORD);
@@ -194,7 +194,7 @@ for ($i=1; $i<=$conrows; $i++) {
   if ($nowis > ($constart + $offset)) {
     if ($onetime < 1) {
       $webstring.="<DIV style=\"background-color: #ffdb70; display: table; width: 100%;\">\n";
-      $webstring.="  <H1>Previous Events:</H1>";
+      $webstring.="  <H1>Previous Events:</H1>\n";
       $navstring.="        </UL>\n";
       $navstring.="        <P>Previous:</P>\n";
       $navstring.="        <UL>\n";
@@ -361,7 +361,7 @@ $webfinalstring=$message . $webfinalstring;
    or use the simply header file below. */
 echo "    <TITLE>$title</TITLE>\n";
 if (file_exists($HeaderTemplateFile)) {
-  readfile($HeaderTemplateFile);
+  require($HeaderTemplateFile);
  } else {
 ?>
     <meta name="description" content="Fetish Fair Fleamarket information page">
@@ -397,14 +397,19 @@ if (file_exists($HeaderTemplateFile)) {
 <?php echo $navstring; ?>
       </NAV>
 <?php } ?>
+      <MAIN role='main' class='content-wrapper inner-section'>
       <ARTICLE>
         <DIV style="background-color: #ffdb70; display: table; width: 100%;">
 <?php echo "          <H1>$title</H1>\n" ?>
         </DIV>
 <?php echo $webfinalstring; ?>
       </ARTICLE>
+      </MAIN>
+      <DIV style="background-color: #ffdb70; display: table; width: 100%;">
+
+      </DIV>
 <?php if (file_exists($FooterTemplateFile)) {
-  readfile($FooterTemplateFile);
+  require($FooterTemplateFile);
  } else {
 ?>
       <FOOTER>

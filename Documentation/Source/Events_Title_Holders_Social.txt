@@ -1,0 +1,92 @@
+Leather Title Holders Social Event -*- mode: org -*-
+#+TITLE: Leather Title Holders Social Event
+#+EMAIL: programming@nelaonline.org
+#+AUTHOR: Percy, Synda, Iya
+#+DATE: June 2017
+#+DESCRIPTION: This document is a proposal for the M/s Title Holders Social under Events.
+#+MACRO: DESCRIPTION This document is a proposal for the M/s Title Holders Social under Events.
+#+KEYWORDS: Zambia, Documentation, FFF branch
+#+MACRO: KEYWORDS Zambia, Documentation, FFF branch
+#+LANGUAGE: en
+#+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:2 num:2 toc:nil @:t ::nil |:t -:t todo:t tasks:t tags:t <:t *:t author:t email:t skip:nil d:t f:t pri:t inline:t title:t
+#+TODO: TODO(t) INPROCESS(p@/!) | DONE(d@)
+#+STARTUP: fninline
+#+SETUPFILE: "Headers/setupfile.org"
+#+INCLUDE: "Headers/include.org"
+#+TOC: headlines 2
+#+LaTeX: \newpage
+#+LaTeX: \pagenumbering{arabic}
+* General Information
+  This idea was pitched as part of the Friday Night entertainment /
+  teaching point of view.  After discussions at TESFest with some of
+  the title-holders, the number of people ignorant of what that was,
+  much less the history, pride, and importance of it.  
+** Timing
+   So we thought a Friday Event would be good to help fill some of
+   that gap.  Currently the Friday schedule for the Rotunda room has
+   setup going on through about 5pm, so, depending on the Socials,
+   this can start either at 6 or at 7, and run through 10:00, with
+   cleanup and turn-over time so that the RKO Army can start by
+   11:00.
+** Slack:
+   http://nela-events.slack.com
+* Action Items:
+** TODO Time-line 						 ::Everyone::
+   Establish the time-line for everything from go/no-go to cleanup.
+** TODO Presenter email 					    ::Percy::
+   Gather a list of all presenters who are title holders, and send
+   that list to Synda.
+** TODO Volunteer Rewards 					    ::Percy::
+   Send standard volunteer reward chart to Synda.
+** TODO History Project 					    ::Percy::
+   Connect Scott Ericson to Synda.
+** TODO Bootblacks 					      ::Programming::
+   Find out if we want to/are going to move the bootblacks to the
+   Rotunda for that section of time, and the downstream consequences
+   of such.
+** TODO Ad rates 						    ::Percy::
+   Get the advertising rates from the Publications team and get them
+   to Synda so that can be appropriately distributed.
+** TODO Silent Auction 						    ::Percy::
+   Get research librarian to find out any regulations for/around the
+   possible silent auction.
+** TODO Zambia 							    ::Percy::
+   Make sure Synda and Stephen are set up properly in Zambia.
+** TODO Food 							    ::Percy::
+   There is already the bar set up, get the food prices, and
+   availability to Synda, as well as the budget for such.
+** TODO EVENTS Team 						    ::Percy::
+   Make sure there is an introduction, and then functional
+   communications between the EVENTS Team and Synda.
+** TODO Pitch to Stephen 					    ::Synda::
+   See if Stephen is wanting/willing to go along for this ride.
+** TODO MaST 							    ::Synda::
+   Reach to MaSTMass and MaST Rhode Island to see what level of
+   involvement they would want with this event.
+** TODO Leather Quilt 						    ::Synda::
+   Connect with the current quilt holders, and see about arranging for
+   it (or a piece of it) to be at the event to show our pride.
+** TODO Presentation of the Colors 				    ::Synda::
+   Research what is needed for this, should this want to be part of
+   the event.
+** TODO Promotions 						    ::Synda::
+   Build the cards for Publications, and write the content for Social
+   Media so this can be spread, appropriately.
+** TODO Volunteers 						    ::Synda::
+   Establish a volunteer pool to take care of what is necessary for
+   the event.  (See also the Volunteer Rewards, above)
+** TODO Other Participants 					    ::Synda::
+   Reach out to other (local?  For some value of local) title-holders
+   and let them know they are welcome at the event, for some value of
+   included (to be decided) and compensated with the standard
+   Volunteer Rewards, if necessary adding setup and cleanup to help
+   people make their 4 hours.
+* TIME-LINE
+  TBD
+* People
+  TBD
+* Supplies
+** BEOs
+   TBD
+** Us provided
+   TBD

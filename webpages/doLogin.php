@@ -107,7 +107,8 @@ set_permission_set($badgeid);
 // Was Previous Presenter
 $querypresent=<<<EOF
 SELECT
-    GROUP_CONCAT(DISTINCT conname SEPARATOR ", ") AS ConName
+    GROUP_CONCAT(DISTINCT conname SEPARATOR ", ") AS ConName,
+    permrolename
   FROM
       UserHasPermissionRole
     JOIN PermissionRoles USING (permroleid)
@@ -115,7 +116,7 @@ SELECT
     JOIN Interested USING (badgeid,conid)
     JOIN InterestedTypes USING (interestedtypeid)
   WHERE
-    permrolename="Participant" AND
+  permrolename in ("Participant", "Host", "Demo", "Teacher", "Presenter", "Author", "Organizer", "Performer") AND
     interestedtypename in ("Yes","Invited") AND
     badgeid not in (SELECT
           badgeid
@@ -132,6 +133,7 @@ $result=mysql_query($querypresent,$link);
 if ($result and (mysql_num_rows($result)==1)) {
   $dbobject=mysql_fetch_object($result);
   $prevconpresent=$dbobject->ConName;
+  $prevconrole=$dbobject->permrolename;
 }
 
 // Was Previous Photo Submitter
@@ -230,7 +232,9 @@ if (retrieve_participant_from_db($badgeid)==0) {
     require ('StaffPage.php');
   } elseif ((may_I('Vendor')) or ((may_I('public_login')) and ($_POST['target']=="vendor"))) {
     require ('renderVendorWelcome.php');
-  } elseif (may_I('Participant')) {
+  } elseif ((may_I('Participant')) or (may_I('Panelist')) or (may_I('Aide')) or
+	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or
+	    (may_I('Author')) or (may_I('Organizer')) or (may_I('Performer'))) {
     require ('renderWelcome.php');
   } elseif (may_I('PhotoSub')) {
     require ('PhotoLoungeSubmit.php');
@@ -259,7 +263,7 @@ if (retrieve_participant_from_db($badgeid)==0) {
       $message.="the button below, then log in again.\n";
       $message.="<CENTER><FORM name\"propose\" method=POST action=\"ParticipantReturning.php\">\n";
       $message.="<INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
-      $message.="<INPUT type=\"hidden\" name=\"perm\" value=\"Part\">\n";
+      $message.="<INPUT type=\"hidden\" name=\"perm\" value=\"$prevconrole\">\n";
       $message.="<INPUT type=\"hidden\" name=\"who\" value=\"$badgeid\">\n";
       $message.="<INPUT type=\"submit\" value=\"Propose Yourself\">\n</FORM>\n</CENTER\n";
       require('login.php');

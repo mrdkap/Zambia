@@ -27,8 +27,22 @@ if (empty($conid)) {
 if (!empty($_POST['perm'])) {
   if ($_POST['perm']=="Photo") {
     $permission_type="PhotoSub";
-  } elseif ($_POST['perm']=="Part") {
+  } elseif ($_POST['perm']=="Participant") {
     $permission_type="Participant";
+  } elseif ($_POST['perm']=="Host") {
+    $permission_type="Host";
+  } elseif ($_POST['perm']=="Demo") {
+    $permission_type="Demo";
+  } elseif ($_POST['perm']=="Teacher") {
+    $permission_type="Teacher";
+  } elseif ($_POST['perm']=="Presenter") {
+    $permission_type="Presenter";
+  } elseif ($_POST['perm']=="Author") {
+    $permission_type="Author";
+  } elseif ($_POST['perm']=="Organizer") {
+    $permission_type="Organizer";
+  } elseif ($_POST['perm']=="Performer") {
+    $permission_type="Performer";
   } else {
     $message_error.="Cannot create permission " . $_POST['perm'];
     RenderError($title,$message_error);

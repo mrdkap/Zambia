@@ -259,12 +259,16 @@ function participant_header ($title) {
   if (isset($_SESSION['badgeid'])) {
     echo "<table width=100% class=\"tabhead\">\n";
     echo "  <tr class=\"tabrow\">\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    if (may_I('Participant')) {
+    if ((may_I('Participant')) or (may_I('Panelist')) or (may_I('Aide')) or
+	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or
+	    (may_I('Author')) or (may_I('Organizer')) or (may_I('Performer'))) {
       maketab("Welcome", 1, "welcome.php");
     } elseif (may_I('PhotoSub')) {
       maketab("Welcome", 1, "PhotoLoungeSubmit.php");
     }
-    if (may_I('Participant')) {
+    if ((may_I('Participant'))  or (may_I('Panelist')) or (may_I('Aide')) or
+	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or
+	    (may_I('Author')) or (may_I('Organizer')) or (may_I('Performer'))) {
       echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
       maketab("My Availability",may_I('my_availability'),"my_sched_constr.php");
       echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
@@ -278,7 +282,9 @@ function participant_header ($title) {
     }
     echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    if (may_I('Participant')) {
+    if ((may_I('Participant'))  or (may_I('Panelist')) or (may_I('Aide')) or
+	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or
+	    (may_I('Author')) or (may_I('Organizer')) or (may_I('Performer'))) {
       echo "<!-- XXX this should have a may_I -->\n       ";
       maketab("My Profile",1,"my_contact.php");
       echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";

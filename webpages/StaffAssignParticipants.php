@@ -284,6 +284,15 @@ $volintaid_p=0;
 foreach ($additional_permission_array as $perm) {
   if (may_I($perm)) {
     $permrolecheck_array[]="'Participant'";
+    $permrolecheck_array[]="'Panelist'";
+    $permrolecheck_array[]="'Aide'";
+    $permrolecheck_array[]="'Host'";
+    $permrolecheck_array[]="'Demo'";
+    $permrolecheck_array[]="'Teacher'";
+    $permrolecheck_array[]="'Presenter'";
+    $permrolecheck_array[]="'Author'";
+    $permrolecheck_array[]="'Organizer'";
+    $permrolecheck_array[]="'Performer'";
     $volintaid_p++;
   }
 }

@@ -301,7 +301,7 @@ $conchairletter="";
 if (file_exists("../Local/$conid/Con_Chair_Welcome")) {
   $conchairletter.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
   $conchairletter.="    <A NAME=\"conchairletter\">&nbsp;</A>\n";
-  $conchairletter.="    <H3>A welcome letter from the Con Chair:</H3>\n";
+  $conchairletter.="    <H3 class=\"collapse\">A welcome letter from the Con Chair:</H3>\n";
   $conchairletter.=file_get_contents("../Local/$conid/Con_Chair_Welcome");
   $conchairletter.="  </DIV>\n";
 }
@@ -310,7 +310,7 @@ $orgletter="";
 if (file_exists("../Local/$conid/Org_Welcome")) {
   $orgletter.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
   $orgletter.="    <A NAME=\"orgletter\">&nbsp;</A>\n";
-  $orgletter.="    <H3>A welcome letter from the Organization:</H3>\n";
+  $orgletter.="    <H3 class=\"collapse\">A welcome letter from the Organization:</H3>\n";
   $orgletter.=file_get_contents("../Local/$conid/Org_Welcome");
   $orgletter.="  </DIV>\n";
 }

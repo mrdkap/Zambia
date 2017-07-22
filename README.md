@@ -2,6 +2,9 @@ Zambia
 ======
 
 Secondary line of Zambia code to be stored in a different location.
+This line of code is for multi-year, and wider functionality than
+the SVN repository of the main-line Zambia code.  You can find the
+main-line code at: https://github.com/olszowka/Zambia
 
 ## What is it?
 

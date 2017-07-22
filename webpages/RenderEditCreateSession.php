@@ -126,6 +126,8 @@ EOD;
       exit();
     }
   } else {
+    $message_error="<P>Sorry, this is not a valid action type: $action.</P>";
+    RenderError($title,$message_error);
     exit();
   }
 

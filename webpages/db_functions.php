@@ -433,6 +433,7 @@ function get_next_session_id() {
   if (!$result) {return "";}
   list($maxid)=mysql_fetch_array($result, MYSQL_NUM);
   if (!$maxid) {return "1";}
+  if ($maxid==-1) {return "1";}
   return $maxid+1;
 }
 

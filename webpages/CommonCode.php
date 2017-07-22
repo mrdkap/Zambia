@@ -176,7 +176,7 @@ function posting_header ($title) {
     echo "</head>\n";
     echo "<body>\n";
   }
-  echo "<H2 class=\"head\" align=\"center\"><A HREF=\"http://$ConUrl\">Return</A> to the programming website</H2>\n";
+  echo "<H2 align=\"center\"><A HREF=\"http://$ConUrl\">Return</A> to the programming website</H2>\n";
   echo "<HR>\n";
   echo "<H1 class=\"head\" align=\"center\">$title</H1>\n";
 }

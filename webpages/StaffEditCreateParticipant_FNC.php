@@ -217,7 +217,7 @@ EOD;
 			echo "                </DIV>\n";
 		      } else {
 			echo "            <INPUT type=\"hidden\" name=\"$keyname\" value=\"";
-                        echo htmlspecialchars($participant_arr[$keyname],ENT_NOQUOTES) . "\">\n";
+                        echo htmlspecialchars($participant_arr[$keyname],ENT_QUOTES) . "\">\n";
 		      }
 		    }
 		  }

@@ -49,6 +49,7 @@ if (!empty($conid)) {
 // LOCALIZATIONS
 $title="Logout Confirmation";
 $description="<P align=\"center\">You have logged out from Zambia</P>\n";
+$additionalinfo="<H2 class=\"head\" align=\"center\"><A HREF=\"http://$conurl\">Return</A> to the programming website</H2>\n";
 $additionalinfo="<P align=\"center\"><A HREF=\"http://$relogin\">Log in</A> again.</P>\n";
 
 // Default role is Posting, so at least something familiar shows.

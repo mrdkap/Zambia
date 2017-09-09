@@ -82,22 +82,22 @@ SELECT
     conid,
     if((constartdate > NOW()),
        if((targettime < NOW()),
-	  concat("        <DT>",activity," has already closed.</DT><br />\n"),
+	  concat("                <DT>",activity," has already closed.</DT><br />\n"),
 	  if((activitystart <= NOW()),
-	     concat("        <DT><A HREF=\"",
+	     concat("                <DT><A HREF=\"",
 		    activitynotes,
 		    "\" target=\"_blank\">",
 		    activity,
-		    "</A>:</DT>\n        <DD>Opens ",
+		    "</A>:</DT>\n                <DD>Opens ",
 		    DATE_FORMAT(activitystart,'%b %D'),
-		    "</DD>\n        <DD>Closes ",
+		    "</DD>\n                <DD>Closes ",
 		    DATE_FORMAT(targettime,'%b %D'),
 		    "</DD><br />\n"),
-	     concat("        <DT>",
+	     concat("                <DT>",
 		    activity,
-		    ":</DT>\n        <DD>Opens ",
+		    ":</DT>\n                <DD>Opens ",
 		    DATE_FORMAT(activitystart,'%b %D'),
-		    "</DD>\n        <DD>Closes ",
+		    "</DD>\n                <DD>Closes ",
 		    DATE_FORMAT(targettime,'%b %D'),
 		    "</DD><br />\n"))),"") AS Applications
   FROM
@@ -119,8 +119,8 @@ if (0==($approws=mysql_num_rows($result))) {
   $message.="</P>\n";
 }
 
-$appstringstart="      <DL>\n";
-$appstringend="     </DL>\n";
+$appstringstart="              <DL>\n";
+$appstringend="             </DL>\n";
 for ($i=1; $i<=$approws; $i++) {
   $element_array=mysql_fetch_assoc($result);
   $appstring[$element_array['conid']].=$element_array['Applications'];
@@ -129,20 +129,20 @@ for ($i=1; $i<=$approws; $i++) {
 $title="Upcoming Events:";
 
 // header/footer for each section
-$divfooter ="    </UL>\n";
-$divfooter.="  </DIV>\n";
-$genheader ="  <DIV style=\"float: left; width: 50%; font-size: 1.167em; \">\n";
-$genheader.="    <H3>General Information</H3>\n";
-$genheader.="    <UL>\n";
-$progheader ="  <DIV style=\"float: right; width: 50%; font-size: 1.167em; \">\n";
-$progheader.="    <H3>Programming Information</H3>\n";
-$progheader.="    <UL>\n";
-$volheader ="  <DIV style=\"float: left; width: 50%; font-size: 1.167em; \">\n";
-$volheader.="    <H3>Volunteer Information</H3>\n";
-$volheader.="    <UL>\n";
-$vendheader ="  <DIV style=\"float: right; width: 50%; font-size: 1.167em; \">\n";
-$vendheader.="    <H3>Vending Information</H3>\n";
-$vendheader.="    <UL>\n";
+$divfooter ="            </UL>\n";
+$divfooter.="          </DIV>\n";
+$genheader ="          <DIV style=\"float: left; width: 50%; font-size: 1.167em; \">\n";
+$genheader.="            <H3>General Information</H3>\n";
+$genheader.="            <UL>\n";
+$progheader ="          <DIV style=\"float: right; width: 50%; font-size: 1.167em; \">\n";
+$progheader.="            <H3>Programming Information</H3>\n";
+$progheader.="            <UL>\n";
+$volheader ="          <DIV style=\"float: left; width: 50%; font-size: 1.167em; \">\n";
+$volheader.="            <H3>Volunteer Information</H3>\n";
+$volheader.="            <UL>\n";
+$vendheader ="          <DIV style=\"float: right; width: 50%; font-size: 1.167em; \">\n";
+$vendheader.="            <H3>Vending Information</H3>\n";
+$vendheader.="            <UL>\n";
 
 // Setup for the nav set on the left
 $navstring ="        <P>Upcoming:</P>\n";
@@ -193,22 +193,27 @@ for ($i=1; $i<=$conrows; $i++) {
   // Set the "Previous" barrier.  Once.
   if ($nowis > ($constart + $offset)) {
     if ($onetime < 1) {
-      $webstring.="<DIV style=\"background-color: #ffdb70; display: table; width: 100%;\">\n";
-      $webstring.="  <H1>Previous Events:</H1>\n";
+      $webstring.="        <DIV style=\"background-color: #ffdb70; display: table; width: 100%;\">\n";
+      $webstring.="          <H1>Previous Events:</H1>\n";
       $navstring.="        </UL>\n";
       $navstring.="        <P>Previous:</P>\n";
       $navstring.="        <UL>\n";
-      $webstring.="</DIV>\n";
+      $webstring.="        </DIV>\n        <DIV>\n          <UL>\n";
       $onetime++;
     }
   }
 
   // Name and date the con.
-  $webstring.="<DIV>\n";
-  $webstring.="  <DIV style=\"float: left; width: 100%; background-color: #F0F0F0; \">\n";
-  $webstring.="    <H2><A NAME=\"$conid\"></A>$conname &mdash; $condate</H2>\n";
+  if ($onetime < 1) {
+    $webstring.="        <DIV>\n";
+    $webstring.="          <DIV style=\"float: left; width: 100%; background-color: #F0F0F0; \">\n";
+    $webstring.="            <H2><A NAME=\"$conid\"></A>$conname &mdash; $condate</H2>\n";
+    $webstring.="          </DIV>\n";
+  } else {
+    $webstring.="            <LI><B><A NAME=\"$conid\"></A>$conname</B> &mdash; $condate";
+    $webstring.=" (<A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A>)</LI>\n";
+  }
   $navstring.="          <LI><A HREF=#$conid>$conname &mdash; $condate</A></LI>\n";
-  $webstring.="  </DIV>\n";
 
   // General information block
   $genbody="";
@@ -246,73 +251,75 @@ for ($i=1; $i<=$conrows; $i++) {
   */
   if ($genbody!="") {$webstring.=$genheader . $genbody . $divfooter;}
 
-  // Programming information block
+  // Programming information block only for upcoming events
   $progbody="";
-  if ($phase_array[$conid]['WebApp'] == '0' ) {
-    $progbody.="      <LI><A HREF=\"webpages/KonOpas.php?conid=$conid#info\">All Event Information</A></LI>\n";
-  }
-  if ($phase_array[$conid]['Prog Available'] == '0' ) {
-    $progbody.="      <LI><A HREF=\"webpages/Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
-    /*  Commented out, because now in KonOpas
-    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=desc&conid=$conid\">Class Descriptions</A>\n";
-    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
-    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=tracks&conid=$conid\">Tracks</A>\n";
-    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=trtime&conid=$conid\">Tracks by Time</A>\n";
-    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=trtime&conid=$conid&short=Y\">(short)</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid\">Rooms</A>\n";
-    $progbody.="        <A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
-    $progbody.="      <LI><A HREF=\"webpages/PubsBios.php?conid=$conid\">Presenter Bios</A>\n";
-    $progbody.="        <A HREF=\"webpages/PubsBios.php?conid=$conid&short=Y\">(short)</A></LI>\n";
-    */
-  }
-  if ($phase_array[$conid]['Brainstorm'] == '0' ) {
-    $progbody.="      <LI>\n";
-    $progbody.="      <FORM name=\"brainstormform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
-    $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
-    $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
-    $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
-    $progbody.="        <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
-    $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"Class/Presenter Submission\">\n";
-    $progbody.="      </FORM>\n";
-    $progbody.="      <FORM name=\"brainstormviewform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
-    $progbody.="        <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
-    $progbody.="        <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
-    $progbody.="        <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
-    $progbody.="        <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
-    $progbody.="        <INPUT type=\"submit\" name=\"submit\" value=\"View Suggested Classes\">\n";
-    $progbody.="      </FORM>\n";
-    $progbody.="      </LI>\n";
-  }
-  if ($phase_array[$conid]['Photo Submission'] == '0') {
-    $progbody.="      <LI><A HREF=\"PhotoLoungeProposed.php\">Propose to Submit to the Photo Lounge</A></LI>\n";
-  }
-  if ($phase_array[$conid]['Feedback Available'] == '0') {
-    $progbody.="      <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";
-  }
-  if ($nowis < $constart) {
-    if ($phase_array[$conid]['Photo Submission'] == '0') {
-      $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Photo Submissions/Volunteer Login</A></LI>\n";
-    } else {
-      $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+  if ($onetime < 1) {
+    if ($phase_array[$conid]['WebApp'] == '0' ) {
+      $progbody.="              <LI><A HREF=\"webpages/KonOpas.php?conid=$conid#info\">All Event Information</A></LI>\n";
     }
-  } else {
-    $progbody.="      <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A></LI>\n";
+    if ($phase_array[$conid]['Prog Available'] == '0' ) {
+      $progbody.="              <LI><A HREF=\"webpages/Postgrid.php?conid=$conid\">Schedule Grid</A></LI>\n";
+      /*  Commented out, because now in KonOpas
+      $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=desc&conid=$conid\">Class Descriptions</A>\n";
+      $progbody.="        <A HREF=\"webpages/PubsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
+      $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
+      $progbody.="        <A HREF=\"webpages/PubsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
+      $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=tracks&conid=$conid\">Tracks</A>\n";
+      $progbody.="        <A HREF=\"webpages/PubsSched.php?format=tracks&conid=$conid&short=Y\">(short)</A></LI>\n";
+      $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=trtime&conid=$conid\">Tracks by Time</A>\n";
+      $progbody.="        <A HREF=\"webpages/PubsSched.php?format=trtime&conid=$conid&short=Y\">(short)</A></LI>\n";
+      $progbody.="      <LI><A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid\">Rooms</A>\n";
+      $progbody.="        <A HREF=\"webpages/PubsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
+      $progbody.="      <LI><A HREF=\"webpages/PubsBios.php?conid=$conid\">Presenter Bios</A>\n";
+      $progbody.="        <A HREF=\"webpages/PubsBios.php?conid=$conid&short=Y\">(short)</A></LI>\n";
+      */
+    }
+    if ($phase_array[$conid]['Brainstorm'] == '0' ) {
+      $progbody.="              <LI>\n";
+      $progbody.="                <FORM name=\"brainstormform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+      $progbody.="                  <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+      $progbody.="                  <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+      $progbody.="                  <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+      $progbody.="                  <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
+      $progbody.="                  <INPUT type=\"submit\" name=\"submit\" value=\"Class/Presenter Submission\">\n";
+      $progbody.="                </FORM>\n";
+      $progbody.="                <FORM name=\"brainstormviewform\" method=\"POST\" action=\"webpages/doLogin.php\">\n";
+      $progbody.="                  <INPUT type=\"hidden\" name=\"badgeid\" value=\"100\">\n";
+      $progbody.="                  <INPUT type=\"hidden\" name=\"passwd\" value=\"submit\">\n";
+      $progbody.="                  <INPUT type=\"hidden\" name=\"target\" value=\"brainstorm\">\n";
+      $progbody.="                  <INPUT type=\"hidden\" name=\"newconid\" value=\"$conid\">\n";
+      $progbody.="                  <INPUT type=\"submit\" name=\"submit\" value=\"View Suggested Classes\">\n";
+      $progbody.="                </FORM>\n";
+      $progbody.="              </LI>\n";
+    }
+    if ($phase_array[$conid]['Photo Submission'] == '0') {
+      $progbody.="              <LI><A HREF=\"PhotoLoungeProposed.php\">Propose to Submit to the Photo Lounge</A></LI>\n";
+    }
+    if ($phase_array[$conid]['Feedback Available'] == '0') {
+      $progbody.="              <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";
+    }
+    if ($nowis < $constart) {
+      if ($phase_array[$conid]['Photo Submission'] == '0') {
+	$progbody.="              <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Photo Submissions/Volunteer Login</A></LI>\n";
+      } else {
+	$progbody.="              <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter/Volunteer Login</A></LI>\n";
+      }
+    } else {
+      $progbody.="              <LI><A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A></LI>\n";
+    }
   }
   if ($progbody!="") {$webstring.=$progheader . $progbody . $divfooter;}
 
   // Volunteer information block
   $volbody="";
   if ($phase_array[$conid]['Vol Available'] == '0' ) {
-    $volbody.="      <LI><A HREF=\"webpages/Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
-    $volbody.="      <LI><A HREF=\"webpages/VolsSched.php?format=desc&conid=$conid\">Job Descriptions</A>\n";
-    $volbody.="        <A HREF=\"webpages/VolsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
-    $volbody.="      <LI><A HREF=\"webpages/VolsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
-    $volbody.="        <A HREF=\"webpages/VolsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
-    $volbody.="      <LI><A HREF=\"webpages/VolsSched.php?format=rooms&conid=$conid\">Posts</A>\n";
-    $volbody.="        <A HREF=\"webpages/VolsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $volbody.="              <LI><A HREF=\"webpages/Postgrid.php?volunteer=y&conid=$conid\">Volunteer Grid</A></LI>\n";
+    $volbody.="              <LI><A HREF=\"webpages/VolsSched.php?format=desc&conid=$conid\">Job Descriptions</A>\n";
+    $volbody.="                <A HREF=\"webpages/VolsSched.php?format=desc&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $volbody.="              <LI><A HREF=\"webpages/VolsSched.php?format=sched&conid=$conid\">Schedule</A>\n";
+    $volbody.="                <A HREF=\"webpages/VolsSched.php?format=sched&conid=$conid&short=Y\">(short)</A></LI>\n";
+    $volbody.="              <LI><A HREF=\"webpages/VolsSched.php?format=rooms&conid=$conid\">Posts</A>\n";
+    $volbody.="                <A HREF=\"webpages/VolsSched.php?format=rooms&conid=$conid&short=Y\">(short)</A></LI>\n";
   }
   if ($volbody!="") {$webstring.=$volheader . $volbody . $divfooter;}
 
@@ -334,7 +341,11 @@ for ($i=1; $i<=$conrows; $i++) {
   }
   */
   if ($vendbody!="") {$webstring.=$vendheader . $vendbody . $divfooter;}
-  $webstring.="</DIV>\n";
+
+  // Close the div, if not in previous events:
+  if ($onetime < 1) {
+    $webstring.="        </DIV>\n";
+  }
 
   // Switch the ordering so soonest first of the Upcoming Events section
   if ($onetime < 1) {
@@ -347,7 +358,7 @@ for ($i=1; $i<=$conrows; $i++) {
 }
 $navstring.="        </UL>\n";
 
-$webfinalstring=$message . $webfinalstring;
+$webfinalstring=$message . $webfinalstring . "          </UL>\n        </DIV>\n";
 
 // Now start the display.
 ?>

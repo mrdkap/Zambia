@@ -194,7 +194,7 @@ if ($tmpappstring != "") {
 </div>
 
 <div id="info_view" class="view">
-<p>This is the program guide for <?php echo "<A HREF=\"http://$conurl/webpages/GenInfo.php?conid=$conid\" target=\"_blank\">$connamelong</A>" ?>. It should be suitable for use on most browsers and devices. It is an instance of <a href="http://konopas.org/" target="_blank">KonOpas</a>, an open-source project providing conventions with easy-to-use mobile-friendly guides.
+<p>This is the program guide for <?php echo "<A HREF=\"http://$conurl/webpages/GenInfo.php?conid=$conid\" target=\"_blank\">$connamelong</A>" ?>. It should be suitable for use on most browsers and devices. <?php echo "(<A HREF=\"http://$conurl/\" target=\"_blank\">other events</A>)" ?> It is an instance of <a href="http://konopas.org/" target="_blank">KonOpas</a>, an open-source project providing conventions with easy-to-use mobile-friendly guides.
 
 <p><div id="last-updated">Program and participant data were last updated <span></span>.</div>
 
@@ -244,7 +244,24 @@ if (file_exists("../Local/$conid/Program_Book.pdf")) {
   $genbody.="      <LI><A HREF=\"../Local/$conid/Program_Book.pdf\" target=\"_blank\">Program Book</A></LI>\n";
 }
 $genbody.=$appstring;
-$genbody.="      <LI><A HREF=\"login.php?newconid=$conid\" target=\"_blank\">Presenter/Volunteer Login</A></LI>\n";
+
+/*
+if ($phase_array['Brainstorm'] == '0' ) {
+  $genbody.="      <LI><A HREF=\"BrainstormRedirectLogin.php?conid=$conid\" target=\"blank\">Class/Presenter Submission</A></LI>\n";
+  $genbody.="      <LI><A HREF=\"BrainstormRedirectLogin.php?conid=$conid\" target=\"blank\">View Suggested Classes</A></LI>\n";
+}
+*/
+
+if ($phase_array['Photo Submission'] == '0') {
+  $progbody.="      <LI><A HREF=\"PhotoLoungeProposed.php\">Propose to Submit to the Photo Lounge</A></LI>\n";
+}
+
+if ($phase_array['Photo Submission'] == '0') {
+  $genbody.="      <LI><A HREF=\"login.php?newconid=$conid\" target=\"blank\">Presenter/Photo Submissions/Volunteer Login</A></LI>\n";
+} else {
+  $genbody.="      <LI><A HREF=\"login.php?newconid=$conid\" target=\"blank\">Presenter/Volunteer Login</A></LI>\n";
+}
+
 $genbody.="    </UL>\n  </DIV>\n";
 
 $venueinfo="";
@@ -326,9 +343,9 @@ if (file_exists("../Local/$conid/KRules")) {
 
 // Progbody taken out, with the exception of login and the grid elements, addeed above.
 
-// Brainstorm taken out.
+// Brainstorm commented out above until it can work.
 
-// Photo Submission taken out.
+// Photo Submission added above.
 
 // Volunteer taken out.
 

@@ -110,12 +110,12 @@ EOD;
                 </DIV>
 	    <DIV class="denseform">
 		<SPAN><LABEL for="permroleid">Level of participation (At least one must be selected):</LABEL>
-		    <?php populate_checkbox_block_from_array("permroleid",$participant_arr['permroleid_list'],"permroleid","permrolenotes",$permrole_arr); ?>
+		    <?php echo populate_checkbox_block_from_array("permroleid",$participant_arr['permroleid_list'],"permroleid","permrolenotes",$permrole_arr); ?>
 		</SPAN>
             </DIV>
 	    <DIV class="denseform">
 		<SPAN><LABEL for="conroleid">Con Role (If they have one):</LABEL>
-		    <?php populate_checkbox_block_from_array("conroleid",$participant_arr['conroleid_list'],"hasreport","conrolenotes",$conrole_arr); ?>
+		    <?php echo populate_checkbox_block_from_array("conroleid",$participant_arr['conroleid_list'],"hasreport","conrolenotes",$conrole_arr); ?>
 		</SPAN
             </DIV>
 <?php
@@ -255,7 +255,7 @@ EOD;
 }
 ?>
                 <SPAN><LABEL for="regtype">Registration Type: </LABEL><SELECT name="regtype">
-                    <?php populate_select_from_query("SELECT regtype, regtype FROM RegTypes", $participant_arr['regtype'], "SELECT", FALSE); ?>
+                    <?php echo populate_select_from_query_inline("SELECT regtype, regtype FROM RegTypes", $participant_arr['regtype'], "SELECT", FALSE); ?>
                     </SELECT>
                 </DIV>
             <DIV style="margin: 0.5em; padding: 0em"><TABLE style="margin: 0em; padding: 0em" ><COL width=600><COL>

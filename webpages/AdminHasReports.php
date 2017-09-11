@@ -84,7 +84,7 @@ echo "<FORM name=\"selroles\" class=\"bb\" method=POST action=\"AdminHasReports.
 $query="SELECT conroleid, conrolenotes AS role FROM ConRoles";
 echo "<DIV><LABEL for=\"role\">Select Role </LABEL>\n";
 echo "<SELECT name=\"role\">\n";
-populate_select_from_query($query, $role, "Role:", true);
+echo populate_select_from_query_inline($query, $role, "Role:", true);
 echo "</SELECT></DIV>\n";
 
 // Submit button
@@ -120,7 +120,7 @@ if ((may_I("Maint")) or (may_I("ConChair"))) {
   echo "  <INPUT type=\"hidden\" name=\"role\" value=\"$role\">\n";
   echo "  <SPAN><LABEL for=\"hasreportid\">Who reports to ".$conrole[$role].":<br></LABEL>\n";
   // $label, $element_list, $key, $value, $boxarray
-  populate_checkbox_block_from_array("hasreport",$workname_list,"conroleid","conrolenotes",$conrole_array);
+  echo populate_checkbox_block_from_array("hasreport",$workname_list,"conroleid","conrolenotes",$conrole_array);
   echo "  </SPAN>\n  <BR>\n";
   echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
 

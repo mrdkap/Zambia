@@ -104,7 +104,7 @@ if ((may_I("Maint")) or (may_I("ConChair"))) {
 
   echo "  <SPAN><LABEL for=\"phasetypeid\">Which Phases are currently set:<br></LABEL>\n";
   // $label, $element_list, $key, $value, $boxarray
-  populate_checkbox_block_from_array("phasetypeid",$workname_list,"phasetypeid","phasetypename",$phasetype_array);
+  echo populate_checkbox_block_from_array("phasetypeid",$workname_list,"phasetypeid","phasetypename",$phasetype_array);
   echo "  </SPAN>\n  <BR>\n";
   echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
 

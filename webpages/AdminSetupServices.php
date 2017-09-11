@@ -130,7 +130,7 @@ echo "  <INPUT type=\"hidden\" name=\"update\" value=\"Yes\">\n";
 if ((may_I("SuperProgramming")) or (may_I("SuperLogistics"))) {
   echo "  <HR>\n";
   echo "  <SPAN><LABEL for=\"serviceid\">Which service are available:</LABEL>\n";
-  populate_checkbox_block_from_array("serviceid",$servicename_list,"baseserviceid","baseservicename",$baseservice_array);
+  echo populate_checkbox_block_from_array("serviceid",$servicename_list,"baseserviceid","baseservicename",$baseservice_array);
   echo "  </SPAN>\n  <BR>\n";
   echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
 }
@@ -139,7 +139,7 @@ if ((may_I("SuperProgramming")) or (may_I("SuperLogistics"))) {
 if ((may_I("SuperProgramming")) or (may_I("SuperLogistics"))) {
   echo "  <HR>\n";
   echo "  <SPAN><LABEL for=\"featureid\">Which features are available:</LABEL>\n";
-  populate_checkbox_block_from_array("featureid",$featurename_list,"basefeatureid","basefeaturename",$basefeature_array);
+  echo populate_checkbox_block_from_array("featureid",$featurename_list,"basefeatureid","basefeaturename",$basefeature_array);
   echo "  </SPAN>\n  <BR>\n";
   echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
 }

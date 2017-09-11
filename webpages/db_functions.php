@@ -186,17 +186,41 @@ function populate_select_from_query_inline($query, $default_value, $option_0_tex
    value: The part of the array to get the value out of.
    array: The array of possible items. */
 function populate_checkbox_block_from_array($label, $element_list, $key, $value, $box_array) {
+  $returnstring="";
   $list_array=explode(",",$element_list);
   for ($i=1; $i<=count($box_array); $i++) {
     if(in_array($box_array[$i][$key],$list_array)) {
-      echo "<INPUT type=\"hidden\" name=\"was".$label."[".$box_array[$i][$key]."]\" value=\"indeed\">\n";
-      echo "<INPUT type=\"checkbox\" name=\"".$label."[".$box_array[$i][$key]."]\" value=\"checked\" checked>".$box_array[$i][$value]."\n";
+      $returnstring.="<INPUT type=\"hidden\" name=\"was".$label."[".$box_array[$i][$key]."]\" value=\"indeed\">\n";
+      $returnstring.="<INPUT type=\"checkbox\" name=\"".$label."[".$box_array[$i][$key]."]\" value=\"checked\" checked>".$box_array[$i][$value]."\n";
     } else {
-      echo "<INPUT type=\"hidden\" name=\"was".$label."[".$box_array[$i][$key]."]\" value=\"not\">\n";
-      echo "<INPUT type=\"checkbox\" name=\"".$label."[".$box_array[$i][$key]."]\" value=\"checked\">".$box_array[$i][$value]."\n";
+      $returnstring.="<INPUT type=\"hidden\" name=\"was".$label."[".$box_array[$i][$key]."]\" value=\"not\">\n";
+      $returnstring.="<INPUT type=\"checkbox\" name=\"".$label."[".$box_array[$i][$key]."]\" value=\"checked\">".$box_array[$i][$value]."\n";
     }
   }
-  echo "<INPUT type=\"hidden\" name=\"".$label."_list\" value=\"".$element_list."\">\n";
+  $returnstring.="<INPUT type=\"hidden\" name=\"".$label."_list\" value=\"".$element_list."\">\n";
+  return($returnstring);
+}
+
+/* Function populate_radio_block_from_array($label, $element_list, $key, $value, $button_array)
+   Reads parameters (see below) and an array to work from, and
+   produces a series of radio buttons that can be selected.
+   label: The label for the table output
+   element_list: The list of already selected items
+   key: The part of the array to key off of.
+   value: The part of the array to get the value out of.
+   button_array: The array of possible items. */
+function populate_radio_block_from_array($label, $element_list, $key, $value, $button_array) {
+  $returnstring="";
+  $list_array=explode(",",$element_list);
+  for ($i=1; $i<=count($button_array); $i++) {
+    if(in_array($button_array[$i][$key],$list_array)) {
+      $returnstring.="<INPUT type=\"radio\" name=\"".$label."\" id=\"".$label."\" value=\"".$button_array[$i][$value]."\" checked=\"checked\">".$button_array[$i][$key]."\n";
+    } else {
+      $returnstring.="<INPUT type=\"radio\" name=\"".$label."\" id=\"".$label."\" value=\"".$button_array[$i][$value]."\">".$button_array[$i][$key]."\n";
+    }
+  }
+  $returnstring.="<INPUT type=\"hidden\" name=\"was".$label."\" value=\"".$element_list."\">\n";
+  return($returnstring);
 }
 
 /* Function populate_multiselect_from_table(...)

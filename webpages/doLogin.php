@@ -230,7 +230,7 @@ if ($result and (mysql_num_rows($result)==1)) {
 if (retrieve_participant_from_db($badgeid)==0) {
   if(may_I('Staff')) {
     require ('StaffPage.php');
-  } elseif ((may_I('Vendor')) or ((may_I('public_login')) and ($_POST['target']=="vendor"))) {
+  } elseif ((may_I('Vendor')) or ((may_I('vendor_apply')) and ($_POST['target']=="vendor"))) {
     require ('renderVendorWelcome.php');
   } elseif ((may_I('Participant')) or (may_I('Panelist')) or (may_I('Aide')) or
 	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or

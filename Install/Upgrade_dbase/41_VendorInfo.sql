@@ -259,3 +259,19 @@ CREATE TABLE VendorEditHistory (
   CONSTRAINT `VendorEditHistory_ibfk_4` FOREIGN KEY (`vendoreditcode`) REFERENCES `VendorEditCodes` (`vendoreditcode`),
   CONSTRAINT `VendorEditHistory_ibfk_5` FOREIGN KEY (`vendorstatustypeid`) REFERENCES `VendorStatusTypes` (`vendorstatustypeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `NotesOnVendors` (
+  `noteid` int(11) NOT NULL AUTO_INCREMENT,
+  `badgeid` varchar(15) NOT NULL DEFAULT '',
+  `rbadgeid` varchar(15) NOT NULL DEFAULT '',
+  `conid` int(11) NOT NULL DEFAULT '0',
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `note` text,
+  PRIMARY KEY (`noteid`),
+  KEY `badgeid` (`badgeid`),
+  KEY `rbadgeid` (`rbadgeid`),
+  KEY `conid` (`conid`),
+  CONSTRAINT `NotesOnVendors_ibfk_1` FOREIGN KEY (`badgeid`) REFERENCES `Participants` (`badgeid`),
+  CONSTRAINT `NotesOnVendors_ibfk_2` FOREIGN KEY (`rbadgeid`) REFERENCES `Participants` (`badgeid`),
+  CONSTRAINT `NotesOnVendors_ibfk_3` FOREIGN KEY (`conid`) REFERENCES `ConInfo` (`conid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

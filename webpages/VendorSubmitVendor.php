@@ -5,11 +5,11 @@ $conid=$_SESSION['conid'];
 
 // LOCALIZATIONS
 $_SESSION['return_to_page']='VendorWelcome.php';
-$title="Submit Vendor Application";
+$title="Update Vendor Information";
 $description="<P>Note: items in red must be completed before you can save.</P>\n";
 $additionalinfo="<P>Please make sure all your information is valid, there are no double checks.\n";
 $additionalinfo.="If they are not valid they are not going to resolve properly the chance that we might\n";
-$additionalinfo.="see you at the event decreases exponentially.</P>\n";
+$additionalinfo.="see you at this or future events decreases exponentially.</P>\n";
 $message_error.=$message2;
 
 // Get the permroleid and name for assigning as Vendor

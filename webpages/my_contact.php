@@ -34,7 +34,8 @@ EOD;
 $limit_array=getLimitArray();
 
 // Get the congo information.
-if (getCongoData($badgeid)!=0) {
+$congoinfo=getCongoData($badgeid);
+if ($conginfo=="-1") {
   RenderError($title,$message_error);
   exit();
 }
@@ -233,6 +234,10 @@ list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$de
 $ispresenter="T";
 if ($element_array[1]['badgeid']!=$badgeid) {$ispresenter="F";}
 
+// See if they are a vendor
+$isvendor="F";
+if (may_I("Vendor")) {$isvendor="T";}
+
 // Begin the page display.
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
@@ -368,12 +373,15 @@ current information. This data is downloaded periodically from the registration 
 </div>
 
 <?php
-/* Offer up the bio information, with, if it may be edited, the raw and the edited version, the raw in a text-box
- able to be modified.  If it is too long, the changes are retained across the submission, so they can edit from
- that, rather than starting from scratch, or what is actually in there.  If they go away, and come back, without
- fixing it, then it will be restored to what is in the database.  Currently it is limited to just web and book
- and not good, it should be broadended at some point.  If it may not be edited, it just offers up the edited bios
- so they can be seen. */
+/* Offer up the bio information, with, if it may be edited, the raw
+ and the edited version, the raw in a text-box able to be modified.
+ If it is too long, the changes are retained across the submission, so
+ they can edit from that, rather than starting from scratch, or what
+ is actually in there.  If they go away, and come back, without fixing
+ it, then it will be restored to what is in the database.  Currently
+ it is limited to just web and book and not good, it should be
+ broadended at some point.  If it may not be edited, it just offers up
+ the edited bios so they can be seen. */
 if (may_I('EditBio')) {
   echo "<HR>\n<BR>\n";
   echo "Your name as you wish us to refer to you&nbsp;&nbsp;";
@@ -411,8 +419,14 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
       if (($isstaff!="T") and ($biodest=="staffbook")) { continue; }
       if (($isstaff!="T") and ($biodest=="staffweb")) { continue; }
 
+      // Skip the "dba" category, if is not a vendor
+      if (($isvendor!="T") and ($biotype=="dba")) { continue; }
+
       // Skip the badge-uri and badge-bio cateories
       if (($biodest=="badge") and ($biotype=="uri")) { continue; }
+      if (($biodest=="badge") and ($biotype=="fetlife")) { continue; }
+      if (($biodest=="badge") and ($biotype=="twitter")) { continue; }
+      if (($biodest=="badge") and ($biotype=="facebook")) { continue; }
       if (($biodest=="badge") and ($biotype=="bio")) { continue; }
 
       /* If the edited bio exists, present it.  Add the appropriate

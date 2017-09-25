@@ -882,10 +882,9 @@ function retrieve_participant_from_db($badgeid) {
 }
 
 /* Function getCongoData()
-   Reads CongoDump table
-   from db to populate global array $congoinfo. */
+   Reads CongoDump table from db to return congoinfo array. */
 function getCongoData($badgeid) {
-    global $message_error,$message2,$congoinfo,$link;
+  global $message,$message_error,$message2,$link;
 
     $query= <<<EOD
 SELECT
@@ -908,21 +907,21 @@ SELECT
 EOD;
     $result=mysql_query($query,$link);
     if (!$result) {
-        $message_error=mysql_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
+        $message_error.=mysql_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
         return(-1);
         };
     $rows=mysql_num_rows($result);
     if ($rows!=1) {
-        $message_error=$rows." rows returned for badgeid when 1 expected.<BR>Database Error.<BR>No further execution possible.";
+        $message_error.=$rows." rows returned for badgeid when 1 expected.<BR>Database Error.<BR>No further execution possible.";
         return(-1);
         };
     if (retrieve_participant_from_db($badgeid)!=0) {
-        $message_error=$message2."<BR>In Congo but not in Participants, no further execution possible.";
+        $message_error.=$message2."<BR>In Congo but not in Participants, no further execution possible.";
         return(-1);
         };
     $participant["password"]="";
     $congoinfo=mysql_fetch_array($result, MYSQL_ASSOC);
-    return(0);
+    return($congoinfo);
     }
 
 /* Function retrieve_participantAvailability_from_db()

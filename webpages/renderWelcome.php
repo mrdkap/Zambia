@@ -1,5 +1,5 @@
 <?php
-global $participant,$message,$message_error,$message2,$congoinfo;
+global $participant,$message,$message_error,$message2;
 require_once('PartCommonCode.php');
 
 $title="Participant View";
@@ -7,7 +7,7 @@ $conid=$_SESSION['conid'];
 $message_error.=$message2;
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-getCongoData($badgeid);
+//$congoinfo=getCongoData($badgeid);
 
 /* Get interested state from table.  Below the full table isn't
    generated, because we _only_ want to give them a limited set of
@@ -67,7 +67,7 @@ to your participation again next year.</P>
 <?php } ?>
 
 <P> Dear
-<?php /* echo $congoinfo["firstname"]; echo " "; echo $congoinfo["lastname"]; */ echo $congoinfo["badgename"];?>,
+<?php echo $_SESSION["badgename"]; ?>,
 
 <P> Welcome to the <?php echo $_SESSION['conname']; ?> website.</P>
 

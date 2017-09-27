@@ -7,7 +7,7 @@
 #+KEYWORDS: Zambia, Documentation, FFF branch
 #+MACRO: KEYWORDS Zambia, Documentation, FFF branch
 #+LANGUAGE: en
-#+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:2 num:2 toc:nil @:t ::nil |:t -:t todo:nil tasks:nil tags:nil <:t *:t author:t email:t skip:nil d:t f:t pri:t
+#+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:3 num:3 toc:nil @:t ::nil |:t -:t todo:t tasks:t tags:t <:t *:t author:t email:t skip:nil d:t f:t pri:t
 #+STARTUP: fninline
 #+SETUPFILE: "Headers/setupfile.org"
 #+INCLUDE: "Headers/include.org"
@@ -105,7 +105,7 @@
    of trying to force everything into the other work-flow, as we did on
    an "emergency" and "emergent" basis, originally.
 *** this year's check
-**** DONE VendorAnnualInfo.vendorannualid
+**** DONE combination of badgeid and conid to avoid multiple entries in a year.
 *** id - varchar(15)
     linked to Participants.badgeid
 **** DONE VendorAnnualInfo.badgeid
@@ -388,7 +388,7 @@
     With a catch to see if they are already in our database, using
     their email address
     - not for this year, but yes
-**** TODO final vetting by the vendor folks.
+**** VENDORQA final vetting by the vendor folks.
 *** New Community Table proposal
     With a catch to see if they are already in our database, using
     their email address
@@ -408,6 +408,7 @@
      out the form we are giving, or (which isn't set up yet) a
      returning Vendor, filling out a shorter form, but will all the
      appropriate year information on it.
+     - Waiting on Vendor QA of the words, and the contract.
 **** TODO NELA Approved (3)
      Once a set of the proposals are in, the jury decides if their
      proposal is accepted and acceptable, the NELA Approved button for
@@ -470,10 +471,10 @@
 *** Returning Vendor informational update
     This might not be necessary, based on the above page keeping what
     is set for this year as set.
-**** DONE included in above
+**** DONE included in above Returning set of pages.
 *** Returning Vendor/Community Table Bio update
     Page that they can, at will? update their web or book information.
-**** DONE included in above
+**** DONE included in above Returning set of pages.
 *** Invoice
     Not available until after both they are accepted (by Vendor
     Div Head), and they hit the "generate invoice" button, which
@@ -484,7 +485,7 @@
     they paid, so there is a referece point to the services agreed
     to/paid for.
     - Yes, included in the above
-**** DONE included in above
+**** DONE included in above Returning set of pages.
 *** Ad Copy Submissions
     For those who have agreed to either digital or print ads, this is
     a place for them to upload/submit them.
@@ -500,7 +501,7 @@
     a grouping by Vendor Type, and leaving the ones already moved on
     from this in a different colour, so that those already accepted,
     and their type, will be shown for balance reasons.
-**** TODO in pieces
+**** VENDORQA in pieces
      - first report
      - set of tunable reports
      - voting page, much like other voting pages?
@@ -515,6 +516,11 @@
     previous placements, or links to previous maps or something useful
     along those lines.  Including the current svg of the map.
 **** TODO
+*** Administer Vendor Options
+    Page that has the Amenities and Spaces for this year, pulled from
+    the standard pool.  To be updated by the Vendor Coordinator on an
+    event by event basis.
+**** VENDORQA
 *** Administer Vendor
     Where any changes are made to the vendor information (both that
     they can change and that they can't) for creation/update by Vendor
@@ -546,6 +552,15 @@
       marked specially.
 **** TODO
 ** Flow
+*** Set Amenities
+    Go to the VendorSetupSpaceFeature.php page, and set the
+    appropriate amenities/prices/et al for this year.
+*** Set Spaces
+    Go to the VendorSetupSpaceFeature.php page, and set the
+    appropriate spaces/prices/et al for this year.
+*** Set Sponsorship levels
+*** Set Digital Ad possiblities
+*** Set Printed Ad possibilities
 *** Task List
     Task List element with the call for vendors is created, with the
     appropriate link.

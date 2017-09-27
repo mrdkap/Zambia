@@ -63,6 +63,7 @@ function create_vendor ($participant_arr) {
   if ($participant_arr['conid'] != $_SESSION['conid']) {
     $message_error="You seem to have tried to submit this by hand, somehow, please ask for instructions.";
     RenderError($title,$message_error);
+    exit();
   }
 
   // Get next possible badgeid.
@@ -155,6 +156,7 @@ function create_vendor ($participant_arr) {
     $message_error.="Somehow there are more or less Permission Rows maping to Vendor.";
     $message_error.="Please check your database for inconsistencies, or suggest a change.\n";
     RenderError($title,$message_error);
+    exit();
   }
   $vendorpermrole=$permission_array[1]['permroleid'];
 

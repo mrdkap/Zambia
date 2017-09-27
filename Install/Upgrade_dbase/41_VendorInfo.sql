@@ -1,5 +1,4 @@
 CREATE TABLE VendorAnnualInfo (
-  `vendorannualid` INT(11) NOT NULL auto_increment,
   `conid` INT(11) NOT NULL,
   `badgeid` varchar(15) NOT NULL DEFAULT 0,
   `vendorwhenapplied` datetime NOT NULL,
@@ -10,9 +9,7 @@ CREATE TABLE VendorAnnualInfo (
   `vendoracknowledgement` varchar(50),
   `vendornotes` text,
   `vendordenyreason` text,
-  PRIMARY KEY (`vendorannualid`),
-  KEY `conid` (`conid`),
-  KEY `badgeid` (`badgeid`),
+  PRIMARY KEY (`conid`,`badgeid`),
   CONSTRAINT `VendorAnnualInfo_ibfk_1` FOREIGN KEY (`conid`) REFERENCES `ConInfo` (`conid`),
   CONSTRAINT `VendorAnnualInfo_ibfk_2` FOREIGN KEY (`badgeid`) REFERENCES `Participants` (`badgeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

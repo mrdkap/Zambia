@@ -97,6 +97,10 @@ $dashstring.=":: <A HREF=\"gantt_relative.php\">Gantt Chart</A>\n";
 if (may_I("Liaison")) {
   $dashstring.=":: <A HREF=\"genreport.php?reportname=myliaisonresponsibilities\">Liaison List</A>\n";
 }
+if (may_I("SuperVendor")) {
+  $dashstring.=":: <A HREF=\"VendorSetupSpaceFeature.php\">Vendor Set-up for Spaces and Amenities</A>\n";
+  $dashstring.=":: <A HREF=\"genreport.php?reportname=generalvendreport\">General Vendor Report</A>\n";
+}
 $dashstring.=":: <A HREF=\"SchedulePrint.php?individual=".$_SESSION['badgeid']."\">At Con Schedule</A></CENTER></P>\n";
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);

@@ -10,8 +10,6 @@ $additionalinfo="";
 $message_error.=$message2;
 $conid=$_SESSION['conid'];
 $badgeid=$_SESSION['badgeid'];
-$conname=$_SESSION['conname'];
-$connamelong=$_SESSION['connamelong'];
 
 // If new vendor application submitted, do it.
 if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "New Vendor")) {
@@ -22,8 +20,24 @@ if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "New 
   echo "in</A> at this time.  All updates to your state, and your next steps will be found there.</P>\n";
   echo "<P>If you have any issues please get in touch with the Vendor Coordinator <some address></P>\n";
   correct_footer();
-  exit ();
+  exit();
 }
+
+// If a contract is being signed, apply the name.
+if (($_POST['vendorcontract'] == "Signed") and ($_POST['submit'] == "Vendor Contract")) {
+  $query="SELECT badgeid from VendorAnnualInfo where badgeid=$badgeid and conid=$conid";
+  list($isannualrows,$isannualheader_array,$isannual_array)=queryreport($query,$link,$title,$description,0);
+  if ($isannualrows != 1) {
+    $message_error.="You somehow have not actually managed to sign up for this year.\n";
+    $message_error.="Please, go back to that step, and try again.\n";
+    RenderError($title,$message_error);
+    exit();
+  }
+  $set_array=array("vendoracknowledgement=\"".htmlspecialchars_decode($_POST['vendoracknowledgement'])."\"");
+  $match_string="badgeid=".$badgeid." AND conid=".$conid;
+  $message.=update_table_element_extended_match($link, $title, "VendorAnnualInfo", $set_array, $match_string);
+}
+
 
 // Default status name/id
 $vstatusid=0;
@@ -83,7 +97,6 @@ if (may_I('Vendor')) {
   } // end of local current vendor words
 } elseif (may_I('vendor_apply')) { // Applying to vend at this show
   echo "<!-- <form action=\"https://nelaonline.org/fetish-fair-fleamarket/summer-fleamarket/summer-vendors/vendor-application\" method=\"post\" accept-charset=\"utf-8\" class=\"crud_form\" id=\"\" enctype=\"multipart/form-data\"> -->\n";
-  echo "<FORM name=\"vendorform\" action=\"renderVendorWelcome.php\" method=POST>\n";
   // echo "<FORM name=\"vendorform\" action=\"tmp_form.php\" method=POST>\n";
   $verbiage=get_verbiage("VendorWelcomeApply");
   if ($verbiage != "") {
@@ -95,29 +108,16 @@ if (may_I('Vendor')) {
     echo "with your email address and password.</P>\n";
     echo "<P>If you wish to apply to be a vendor, please fill out the following form:</P>\n";
   } // end of local apply to be vendor words
-  $verbiage=get_verbiage("VendorWelcomeContract");
-  if ($verbiage != "") {
-    echo eval('?>' . $verbiage);
-  } else {
-    echo "<hr>\n";
-    echo "<H2>Vendor Contract</H2>\n";
-    echo "<P>Insert vendor contract here.</P>\n";
-    echo "<P>Enter your full legal name to hereby agree to the $connamelong";
-    echo " Vendor Contract. You will NOT be accepted if you do not agree to the contract.</P>\n";
-    echo "<P><input type=\"text\" name=\"vendoracknowledgement\" value=\"\" id=\"vendoracknowledgement\" maxlength=\"50\"></P>\n";
-  }
-  echo "<P><BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\" value=\"New Vendor\">Update</BUTTON></P>\n";
-  echo "</form>\n";
 } else { // brainstorm/vendor not permitted
     echo "<P>This page should never be seen.</P>\n";
   $verbiage=get_verbiage("VendorWelcome_100");
   if ($verbiage != "") {
     echo eval('?>' . $verbiage);
   } else { 
-    echo "<P>We are not accepting new vendors at this time for $conname.</P>\n";
+    echo "<P>We are not accepting new vendors at this time for " . $_SESSION['conname'] . ".</P>\n";
     echo "<P>You may still use the \"Search\" tab to view the vendors who might be attending and/or those that have been accepted.</P>\n";
   } // end of local not accepting at this time words
 } //end of brainstorm/vendor not permitted
-//echo "<P>Thank you and we look forward to reading your suggestions.</P>\n";
+
 correct_footer(); 
 ?>

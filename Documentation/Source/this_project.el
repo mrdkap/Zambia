@@ -1,8 +1,8 @@
 (setq org-publish-project-alist
       '(("Zambia-html"
-	 :base-directory "~/nelaprog/www/main/Documentation/Source"
+	 :base-directory "~/flea/www/prog/Documentation/Source"
 	 :base-extension "org"
-	 :publishing-directory "~/nelaprog/www/main/Documentation"
+	 :publishing-directory "~/flea/www/prog/Documentation"
 	 :publishing-function org-html-publish-to-html
 	 :preserve-breaks t
 	 :sub-superscript nil
@@ -33,9 +33,9 @@
 	 :html-preamble t)
 
 	("Zambia-pdf"
-	 :base-directory "~/nelaprog/www/main/Documentation/Source"
+	 :base-directory "~/flea/www/prog/Documentation/Source"
 	 :base-extension "org"
-	 :publishing-directory "~/nelaprog/www/main/Documentation/PDF"
+	 :publishing-directory "~/flea/www/prog/Documentation/PDF"
 	 :publishing-function org-latex-publish-to-pdf
 	 :preserve-breaks t
 	 :sub-superscript nil
@@ -67,15 +67,15 @@
 	 :table-of-contents t)
 
 	("Zambia-images"
-	 :base-directory "~/nelaprog/www/main/Documentation/Source/Images"
+	 :base-directory "~/flea/www/prog/Documentation/Source/Images"
 	 :base-extension "jpg\\|gif\\|png"
-	 :publishing-directory "~/nelaprog/www/main/Documentation/Images"
+	 :publishing-directory "~/flea/www/prog/Documentation/Images"
 	 :publishing-function org-publish-attachment)
 
 	("Zambia-other"
-	 :base-directory "~/nelaprog/www/main/Documentation/Source"
+	 :base-directory "~/flea/www/prog/Documentation/Source"
 	 :base-extension "css"
-	 :publishing-directory "~/nelaprog/www/main/Documentation"
+	 :publishing-directory "~/flea/www/prog/Documentation"
 	 :publishing-function org-publish-attachment)
 
 	("Zambia" :components ("Zambia-other" "Zambia-images" "Zambia-pdf" "Zambia-html"))))

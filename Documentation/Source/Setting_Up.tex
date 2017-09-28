@@ -120,25 +120,16 @@ You will need to decide the following before you install initially:
 Is this system going to be a standalone system, or are you going
 to interface it with Congo, or another piece of registration software?
 
-\subsubsection{Single/Multiple installation}
-\label{sec-1-2-2}
-Is this going to be a single instance of Zambia, or are you going
-to have multiple instances of Zambia running on the same machine
-with some shared resources?
-
 \subsubsection{Web server}
-\label{sec-1-2-3}
+\label{sec-1-2-2}
 Where is your web installation location (whatever directory you
 will be putting your files into)?  Often something like
 /var/www/Zambia-Con or /home/username/public\_html/Zambia-Con or
 the like.
 
 \subsubsection{db\_name.php file}
-\label{sec-1-2-4}
+\label{sec-1-2-3}
 This information will go in the db\_name.php file when you install it.
-\begin{itemize}
-\item Required information in the db\_name.php file for the program to run:
-\label{sec-1-2-4-1}
 \begin{itemize}
 \item date\_default\_timezone\_set your timezone.  Mine is set to:
 ('US/Eastern')
@@ -169,29 +160,25 @@ or remembered con instance to be referenced.
 languages you are using for your con.
 \end{itemize}
 
-\item Extremely useful information:
-\label{sec-1-2-4-2}
-Most of this information is in the various database tables,
-mostly ConInfo, but a few others in special users.
+\subsubsection{ConInfo table}
+\label{sec-1-2-4}
+This information is for the ConInfo table, the table that defines
+what your particular ConInstance is like.  There will be an
+"Initial" instance set up by default, if you use the defaults, and
+that can be used to generate other instances from there, as well
+as hold default bits of information.
 \begin{itemize}
 \item Unique con id.
 \item Con short name.
 \item Con long name.
-\item Zambia administrator email.
-\item Brainstorm email.
-\item Programming email.
-\item Registration email.
 \item Number of days the con will run (code has been tested for 1-8.)
 \item Date and time the con will start (In the format of yyyy-mm-dd
 HH:MM:DD for parsing purposes.  Suggested 00:00:00 for the
 start time.)
 \item URL of the con (without the leading \url{http://} in the URL.)
-\item Logo for the con (gif, png, etc.)
-\item Availability Records (starting number of "availability" fields
-to render in the "when I am available" form, 8 is a good
-default.)
-\item Are kids available (This should probably be set to "FALSE", it
-is a hold-over from backwards compatibility.)
+\item Logo for the con (gif, png, etc.)  This is based from the tcpdf
+directory so, if your file is in Zambia-con/Local/Logo.gif then
+the path should be: ../../Zambia-con/Local/Logo.gif
 \item Default Duration of the classes. (How long, in H:MM format that
 the classes are expected to be.)
 \item Duration in Minutes (Should probably be "FALSE": TRUE: in mmm;
@@ -200,22 +187,20 @@ reports.)
 \item Grid Spacer (The time divisions in the fixed grid produced, in
 seconds.  For example 1800 is 60 sec/min and 30 min, and a good
 default.)
-\end{itemize}
-
-\item Very useful information:
-\label{sec-1-2-4-3}
-\begin{itemize}
-\item Guests of Honor badge list (if you have specific featured Guests
-of Honor, they get indicated as a con role.)
+\item Are kids available (This should probably be set to "FALSE", it
+is a hold-over from backwards compatibility.)
 \item Preferred total number of sessions upper limit (so your
 presenters don't oversubscribe themselves 5 is good default for
 a 3-4 day con.)
 \item Preferred daily number of sessions upper limit (3 is a good
 default.)
+\item Availability Records (starting number of "availability" fields
+to render in the "when I am available" form, 8 is a good
+default.)
 \end{itemize}
 
-\item Description minimums and maximums:
-\label{sec-1-2-4-4}
+\subsubsection{Description minimums and maximums}
+\label{sec-1-2-5}
 All of this information goes in the limits database table.  Only
 set a value if you need it, unset values are simply presume there
 is no limit to the information in that direction.
@@ -255,14 +240,25 @@ all names are of at least a specific length.)
 all names are no more than a specific length.)
 \end{itemize}
 
-\item Other interesting settings:
-\label{sec-1-2-4-5}
+\subsubsection{Very useful information}
+\label{sec-1-2-6}
+This information should end up in various tables, as things go.
+You don't need the information for setup, but it is good to have.
+\begin{itemize}
+\item Zambia administrator email.
+\item Brainstorm email - goes in the Brainstorm Person's account.
+\item Programming email - goes in the Programming Person's account.
+\item Guests of Honor badge list - if you have specific featured Guests
+of Honor, they get indicated as a con role.
+\end{itemize}
+
+\subsubsection{Language Settings}
+\label{sec-1-2-7}
 The linguistic settings can be used if your con is in more than
 one language.
 \begin{itemize}
 \item What the second language is, and it's indicator (fr-ca, en-uk)
 \item What will and won't be translated.
-\end{itemize}
 \end{itemize}
 
 \section{Downloading}
@@ -301,6 +297,7 @@ in your crontab, store a running backup will be kept.
 \label{sec-3-3}
 This (or these) will be the con-specific information
 sub-directories.
+There should be a 0 entry, that holds some defaults
 
 \subsection{FooterTemplate.html}
 \label{sec-3-4}
@@ -319,12 +316,15 @@ match your event's presentation.
 If you choose to have images of your participants with their
 bios, make this directory, and any pictures that match the
 badgename of the participant will be put next to the bios.
-the foo could be: badge book, or web
+the foo could be: badge, book, web, staffbadge, staffbook,
+staffweb, etc.
 
 \subsection{Verbiage}
 \label{sec-3-7}
 These files can also live under each of the conid directories, so
 can be distinguished by con instance.
+
+The defaults are under Local/0/Verbiage.
 
 If you wish to customize what is put forth to your participants,
 many of the pages allow for customization.  The list of them will
@@ -802,48 +802,18 @@ The script is invoked as:
 backup_mysql /your/path/to/Zambia-FFF/instance
 \end{verbatim}
 
-\section{Quick and dirty}
-\label{sec-10}
-To build a quick and dirty copy on the same machine as another running version:
-\begin{itemize}
-\item for i in ../Zambia-FFF/* ; do ln -s \$i . ; done
-\item rm Local
-\item rm webpages
-\item mkdir Local webpages
-\item cd webpages
-\item for i in ../../Zambia-FFF/webpages/* ; do ln -s \$i . ; done
-\item cd ../Local
-\item mkdir Verbiage
-\item for i in ../../Zambia-FFF/Local/*.html ; do ln -s \$i . ; done
-\item ln -s ../../Zambia-FFF/Local/Participant\_Images .
-\end{itemize}
-Finally, copy over, and modify the db\_name.php as appropriate
-To update them all do:
-\begin{verbatim}
-for i in FFF-[34]*
-  do
-    pushd $i/webpages
-    for j in ../../Zambia-FFF/webpages/*
-      do
-	ln -s $j .
-      done
-    popd
-  done
-\end{verbatim}
-
 \section{Adding a year instance - Con Structure}
-\label{sec-11}
+\label{sec-10}
 Another Con instance is approaching.  To set up for this, there is
-one file and a number of table additions you need to make.  At some
-point the table additions might have their own form.  Feel free to
-update them any way you are comfortable with at the moment.  The
-update to the Local/db\_name.php file should only be the update to
-the CON\_KEY entry in the file, all the rest should remain the same,
-and probably that should migrate to something database settable at
-some point.  The rest of the information below should be set in your
-database tables.
+one file and a number of table additions you need to make.  The best
+way to initiate this is to log into a similar con instance and use
+the AdminNewConInstance.php page.  If you want to do it by hand,
+here are the updates you have to do.  You might want to update the
+FALLBACK\_KEY in the Local/db\_name.php file, but you shouldn't have
+to, all the rest should remain the same.  The rest of the
+information below should be set in your database tables.
 \subsection{ConInfo}
-\label{sec-11-1}
+\label{sec-10-1}
 The first place to start is setting your ConInfo information.  This
 allows for the con to show up in the index file, and opens all the
 information up for access, addition, and whatever else you want for
@@ -907,7 +877,7 @@ have.
 \end{itemize}
 
 \subsection{Phase}
-\label{sec-11-2}
+\label{sec-10-2}
 This also has to be set up so the appropriate Phase shifting can
 happen.  The phase of the convention will shift, over time, as
 deadlines approach and pass.  Not all of the phasetypeids from the
@@ -962,9 +932,9 @@ phase shift.  Many phases (or few) might be active at any given
 point in time.
 
 \section{Adding a year instance - People}
-\label{sec-12}
+\label{sec-11}
 \subsection{UserHasPermissionRole}
-\label{sec-12-1}
+\label{sec-11-1}
 This need to be set so people can actually log into your con.  This
 defines the access any particular individual might have.
 Individuals might have several sets of accesses, depending on their
@@ -1012,7 +982,7 @@ called Idea Submissions), to permroleid 4 (Brainstorm) so that the
 brainstorm submission system will work.
 
 \subsection{UserHasConRole}
-\label{sec-12-2}
+\label{sec-11-2}
 This is very similar to the UserHasPermissionRole, and was split
 off, because not all Permission Roles want to necessarily be
 advertised, and sometimes a Permission Role is a superset of a Con
@@ -1059,7 +1029,7 @@ Idea Submissions), to conroleid 47 (BrainstormCoord) for tracking
 purposes.
 
 \subsection{HasReports}
-\label{sec-12-3}
+\label{sec-11-3}
 This maps the organizational chart of your convention.  Again while
 this is not a necessary step for the start of your con, and might
 be added to as your con goes on using the AdminHasReports.php page,
@@ -1107,7 +1077,7 @@ You probably want to make sure the BrainstormCoordinator (47),
 reports to Programming (3).
 
 \section{Adding a year instance - Sessions}
-\label{sec-13}
+\label{sec-12}
 The sessions are mostly generated from Brainstorm (and other
 insertions to your database) but there are a few settings that
 should be taken care of, to make sure everything works smoothly.
@@ -1116,7 +1086,7 @@ or the space for things to be advertised differs from year to year.
 Also the requests might change, depending on what is available,
 as well as the rooms
 \subsection{PublicationLimits}
-\label{sec-13-1}
+\label{sec-12-1}
 This tracks the various limits on the publication fields, so that
 you can have restrictions on minimum and/or maximum length of these
 fields.  All the limit checks should be set up such that if you
@@ -1168,7 +1138,7 @@ Then just massage the data slightly, and you have the insert you
 can do to mirror the previous con.
 
 \subsection{Services and Features}
-\label{sec-13-2}
+\label{sec-12-2}
 These two tables are built in the same pattern.  Services are the
 bits that logistics could get to the room, so they could be used
 for the class.  Some of the room features (speakers, microphone)
@@ -1184,13 +1154,13 @@ To select (or update the selection) of services and features
 available for this con-instance, use the AdminSetupServices.php
 page.
 \subsection{Rooms}
-\label{sec-13-3}
+\label{sec-12-3}
 This needs to be fleshed out more.
 
 \section{Adding a year instance - Vendors}
-\label{sec-14}
+\label{sec-13}
 \subsection{VendorSpaces and VendorFeatures}
-\label{sec-14-1}
+\label{sec-13-1}
 These two tables are built in the same pattern. VendorSpaces are
 the size/type of space, and the cost of said space for the con.
 VendorFeatures are all the little up-charges or non-standard things
@@ -1255,10 +1225,10 @@ Then just massage the data slightly, and you have the insert you
 can do to mirror the previous con.
 
 \subsection{More Vendor stuff, pending development.}
-\label{sec-14-2}
+\label{sec-13-2}
 
 \section{Adding a year instance - Feedback}
-\label{sec-15}
+\label{sec-14}
 Setting up feedback for your con is somewhat complex.  I'm not sure
 what motivated me, originally to be so baroque, but I think it was
 flexibility at the time.
@@ -1269,7 +1239,7 @@ It doesn't have to be any particular con instance, nor especially
 the most current one.  Just one has to exist for the constraints to
 work for general feedback.
 \subsection{Adding Questions}
-\label{sec-15-1}
+\label{sec-14-1}
 If your questions are not appropriate for this particular event,
 you might want to add a question type to cover it, in the
 QuestionTypes table, and then add the questions to the
@@ -1292,7 +1262,7 @@ QuestionTypes table above.
 \end{itemize}
 
 \subsection{Setting up the page description (how it is presented)}
-\label{sec-15-2}
+\label{sec-14-2}
 For your event, there might be several different feedback forms you
 want available, so that an individual isn't overwhelmed by the
 number of possible choices.  One of the ways to do this is to break
@@ -1333,7 +1303,7 @@ The values for FeedbackPageHasType are:
 \end{itemize}
 
 \subsection{Setting the TypeHasQuestionType}
-\label{sec-15-3}
+\label{sec-14-3}
 This is implemented to be able to cross-type questions, and make
 sure you wanted those question types to show up for that type of
 schedule element, for this particular event.  It does allow for

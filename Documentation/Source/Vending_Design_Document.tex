@@ -32,7 +32,7 @@
 \let\enumerate\compactenum
 \usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
 \pagestyle{fancy}
-\setcounter{secnumdepth}{2}
+\setcounter{secnumdepth}{3}
 \author{Percy, Amanda, Rob, Iya\thanks{NELA.Percy@gmail.com}}
 \date{May 2017}
 \title{Vending Design Document}
@@ -93,7 +93,7 @@ and the + is her side of the conversation.
 \label{sec-2-1}
 These are the current values that should be migrated to the Zambia
 values if they are not already set.  The latest entries will be
-considered cannonical.  The ones of these in CongoDump will be more
+considered canonical.  The ones of these in CongoDump will be more
 or less fixed and (currently) take an act of Vendor Coordinator (or
 other back-end Zambia person) to update.  
 
@@ -105,69 +105,122 @@ vendor\_business\_name then, that can go in the bio field.
 The logo submission has yet to be determined, but I figure it's
 going to be handled along the same lines as the picture that we
 use for Presenters.
-\begin{itemize}
-\item id
+
+The bulk of the changes are in 41\_VendorInfo.sql
+\subsubsection{id}
 \label{sec-2-1-1}
-CongoDump.badgeid
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.badgeid
+\label{sec-2-1-1-1}
+\end{itemize}
 
-\item vendor\_address
+\subsubsection{vendor\_address}
 \label{sec-2-1-2}
-CongoDump.postaddress1 and CongoDump.postaddress2
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.postaddress1 and CongoDump.postaddress2
+\label{sec-2-1-2-1}
+\end{itemize}
 
-\item vendor\_business\_name
+\subsubsection{vendor\_business\_name}
 \label{sec-2-1-3}
-CongoDump.badgename, Bios - badgeid=id, biotype=name
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.badgename, Bios - badgeid=id, biotype=name
+\label{sec-2-1-3-1}
+\end{itemize}
 
-\item vendor\_city
+\subsubsection{vendor\_city}
 \label{sec-2-1-4}
-CongoDump.postcity
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.postcity
+\label{sec-2-1-4-1}
+\end{itemize}
 
-\item vendor\_contact\_email
+\subsubsection{vendor\_contact\_email}
 \label{sec-2-1-5}
-CongoDump.email
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.email
+\label{sec-2-1-5-1}
+\end{itemize}
 
-\item vendor\_contact\_name
+\subsubsection{vendor\_contact\_name}
 \label{sec-2-1-6}
-CongoDump.firstname, CongoDump.lastname
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.firstname, CongoDump.lastname
+\label{sec-2-1-6-1}
+\end{itemize}
 
-\item vendor\_contact\_phone
+\subsubsection{vendor\_contact\_phone}
 \label{sec-2-1-7}
-CongoDump.phone
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.phone
+\label{sec-2-1-7-1}
+\end{itemize}
 
-\item vendor\_country
+\subsubsection{vendor\_country}
 \label{sec-2-1-8}
-CongoDump.postcountry
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.postcountry
+\label{sec-2-1-8-1}
+\end{itemize}
 
-\item vendor\_description
+\subsubsection{vendor\_description}
 \label{sec-2-1-9}
-Bios - badgeid=id,, biotype=bio 
+\begin{itemize}
+\item {\bfseries\sffamily DONE} Bios - badgeid=id,, biotype=bio
+\label{sec-2-1-9-1}
+\end{itemize}
 
-\item vendor\_state
+\subsubsection{vendor\_state}
 \label{sec-2-1-10}
-CongoDump.poststate
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.poststate
+\label{sec-2-1-10-1}
+\end{itemize}
 
-\item vendor\_website
+\subsubsection{vendor\_website}
 \label{sec-2-1-11}
-Bios - badgeid=id, biotype=url
+\begin{itemize}
+\item {\bfseries\sffamily DONE} Bios - badgeid=id, biotype=url
+\label{sec-2-1-11-1}
+\end{itemize}
 
-\item vendor\_twitter
+\subsubsection{vendor\_twitter}
 \label{sec-2-1-12}
-Bios - badgeid=id, biotype=twitter
+\begin{itemize}
+\item {\bfseries\sffamily DONE} Bios - badgeid=id, biotype=twitter
+\label{sec-2-1-12-1}
+\end{itemize}
 
-\item vendor\_facebook
+\subsubsection{vendor\_facebook}
 \label{sec-2-1-13}
-Bios - badgeid=id, biotype=facebook
+\begin{itemize}
+\item {\bfseries\sffamily DONE} Bios - badgeid=id, biotype=facebook
+\label{sec-2-1-13-1}
+\end{itemize}
 
-\item vendor\_fetlife
+\subsubsection{vendor\_fetlife}
 \label{sec-2-1-14}
-Bios - badgeid=id, biotype=fetlife
+\begin{itemize}
+\item {\bfseries\sffamily DONE} Bios - badgeid=id, biotype=fetlife
+\label{sec-2-1-14-1}
+\end{itemize}
 
-\item vendor\_zipcode
+\subsubsection{vendor\_DBA}
 \label{sec-2-1-15}
-CongoDump.postzip
+\begin{itemize}
+\item {\bfseries\sffamily DONE} Bios - badgeid=id, biotype=dba
+\label{sec-2-1-15-1}
+\end{itemize}
 
-\item vendor\_type
+\subsubsection{vendor\_zipcode}
 \label{sec-2-1-16}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} CongoDump.postzip
+\label{sec-2-1-16-1}
+\end{itemize}
+
+\subsubsection{vendor\_type}
+\label{sec-2-1-17}
 \begin{itemize}
 \item New? possibly a short list of possible with a mapping to the
 vendor?
@@ -175,89 +228,198 @@ vendor?
 short list of pickable things, we might want to make another
 table field "vendor/community table" with allowable "V" or "C"
 as part of the enum.
+\item Vendor\_type should be table, with a selectable (not just pull-down)
+list, and set by them.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} Needs to be created/mapped based on other Types descriptions
+\label{sec-2-1-17-1}
+\begin{itemize}
+\item VendorTypes table vendortypeid, vendortypename, vendortypedesc
+\item VendorIs table badgeid, vendortypeid
+\end{itemize}
 \end{itemize}
 
-\item times\_at\_fff\_untracked
-\label{sec-2-1-17}
+\subsubsection{times\_at\_fff\_untracked}
+\label{sec-2-1-18}
 The number of times they vended at the fff that we currently don't
 have in the database, so that the generated number below can be
 (more) accurately generated.  As we add more instances (as I find
 them) this should probably get adjusted, so it's not artificially
-inflated.
+inflated. 
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorTimesAdj created as a standalone table vaguely similar to Interested
+\label{sec-2-1-18-1}
+badgeid, vendortimesadj
 \end{itemize}
 
 \subsection{Annual}
 \label{sec-2-2}
 Most of these have to either be created, or co-opted, since the way
 that it was being done before is too baroque and complicated.  Easy
-enough to simply make new tables, and resuse little bits, instead
-of trying to force everything into the other workflow, as we did on
-an "emergency" and "emergant" basis, originally.
-\begin{itemize}
-\item id - varchar(15)
+enough to simply make new tables, and reuse little bits, instead
+of trying to force everything into the other work-flow, as we did on
+an "emergency" and "emergent" basis, originally.
+\subsubsection{this year's check}
 \label{sec-2-2-1}
-linked to Participants.badgeid
+\begin{itemize}
+\item {\bfseries\sffamily DONE} combination of badgeid and conid to avoid multiple entries in a year.
+\label{sec-2-2-1-1}
+\end{itemize}
 
-\item conid - int(11)
+\subsubsection{id - varchar(15)}
 \label{sec-2-2-2}
-linked to ConInfo.conid
+linked to Participants.badgeid
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.badgeid
+\label{sec-2-2-2-1}
+\end{itemize}
 
-\item created - datetime
+\subsubsection{conid - int(11)}
 \label{sec-2-2-3}
+linked to ConInfo.conid
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.conid
+\label{sec-2-2-3-1}
+\end{itemize}
+
+\subsubsection{created - timestamp}
+\label{sec-2-2-4}
 \begin{itemize}
 \item when applied I think?
 \item CORRECT
 \end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.vendorwhenapplied
+\label{sec-2-2-4-1}
+\end{itemize}
 
-\item digital\_advertising - Y/N (enum)
-\label{sec-2-2-4}
+\subsubsection{digital\_advertising - complex}
+\label{sec-2-2-5}
 \begin{itemize}
 \item y/n or \$ or type?
 \item do they want it? or how much?
 \item JUST A Y/N
+\item Actually a drop-down / select (not a mulit-select)
+\item three tables
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} a list of the possible default digital advertizing types (BaseDigitalAd)
+\label{sec-2-2-5-1}
+\begin{itemize}
+\item basedigitaladid, basedigitaladname, basedigitaladdesc
 \end{itemize}
 
-\item fff\_sponsorship - Y/N (enum)
-\label{sec-2-2-5}
+\item {\bfseries\sffamily DONE} a list of digital advertizing for this year, the prices, and the conid (DigitalAd)
+\label{sec-2-2-5-2}
+\begin{itemize}
+\item digitaladid, basedigitaladid, conid, digitaladprice, display\_order
+\end{itemize}
+
+\item {\bfseries\sffamily DONE} a mapping of VendorAnnualInfo.vendoranualid (VendorHasDigitalAd)
+\label{sec-2-2-5-3}
+\begin{itemize}
+\item badgeid, digitaladid, digitaladcount
+\end{itemize}
+\end{itemize}
+
+\subsubsection{fff\_sponsorship - complex}
+\label{sec-2-2-6}
 \begin{itemize}
 \item y/n or \$ or level?
 \item will they sponsor us?
 \item JUST A Y/N
+\item Actually as a level.
+\item three tables
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} a list of the possible default digital advertizing types (BaseSponsorLevel)
+\label{sec-2-2-6-1}
+\begin{itemize}
+\item basesponsorlevelid, basesponsorlevelname, basesponsorleveldesc
 \end{itemize}
 
-\item print\_advertising - Y/N (enum)
-\label{sec-2-2-6}
+\item {\bfseries\sffamily DONE} a list of digital advertizing for this year, the prices, and the conid (SponsorLevel)
+\label{sec-2-2-6-2}
+\begin{itemize}
+\item sponsorlevelid, basesponsorlevelid, conid, sponsorprice, display\_order
+\end{itemize}
+
+\item {\bfseries\sffamily DONE} a mapping of VendorAnnualInfo.vendoranualid (VendorHasSponsorLevel)
+\label{sec-2-2-6-3}
+\begin{itemize}
+\item badgeid, sponsorlevelid, sponsorlevelcount
+\end{itemize}
+\end{itemize}
+
+\subsubsection{print\_advertising - complex}
+\label{sec-2-2-7}
 \begin{itemize}
 \item y/n or \$ or type?
 \item do they want it?
 \item JUST A Y/N
+\item Multi-select (drop down) as a possiblity.
+\item Bag stuffer
+\item three tables
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} a list of the possible default digital advertizing types (BaseDigitalAd)
+\label{sec-2-2-7-1}
+\begin{itemize}
+\item baseprintadid, baseprintadname, baseprintaddesc
 \end{itemize}
 
-\item updated - timestamp
-\label{sec-2-2-7}
+\item {\bfseries\sffamily DONE} a list of digital advertizing for this year, the prices, and the conid (DigitalAd)
+\label{sec-2-2-7-2}
+\begin{itemize}
+\item printadid, baseprintadid, conid, printadprice, display\_order
+\end{itemize}
+
+\item {\bfseries\sffamily DONE} a mapping of VendorAnnualInfo.vendoranualid (VendorHasDigitalAd)
+\label{sec-2-2-7-3}
+\begin{itemize}
+\item badgeid, printadid, printadcount
+\end{itemize}
+\end{itemize}
+
+\subsubsection{updated - timestamp}
+\label{sec-2-2-8}
 \begin{itemize}
 \item most recently updated, I believe
 \item CORRECT
 \end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.vendorupdated
+\label{sec-2-2-8-1}
+\end{itemize}
 
-\item vendor\_acknowledgement - varchar(25) (signature)
-\label{sec-2-2-8}
+\subsubsection{vendor\_acknowledgement - varchar(50) (signature)}
+\label{sec-2-2-9}
 \begin{itemize}
 \item Vendor acknowledges \ldots{} something?
 \item VENDOR ACKNOWLEDGES THEY AGREE TO OUR TERMS AND CONDITIONS -
 THIS SHOULD BE AGREED TO ANNUALLY
+\item Possible second page, with what the agreement is.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.vendoracknowledgement
+\label{sec-2-2-9-1}
 \end{itemize}
 
-\item vendor\_additional\_notes / additional\_information - text
-\label{sec-2-2-9}
+\subsubsection{vendor\_additional\_notes / additional\_information - text}
+\label{sec-2-2-10}
 \begin{itemize}
-\item this might also want to be perenial as well, perhaps?
+\item this might also want to be perennial as well, perhaps?
 \item ANNUAL ONLY; THIS IS REGARDING REQUESTS (EX:  FUR ALLERGY, WALL,
 ETC)
 \end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.vendornotes
+\label{sec-2-2-10-1}
+\end{itemize}
 
-\item vendor\_amenities\_foo - ?? (see also VendorFeatures)
-\label{sec-2-2-10}
+\subsubsection{vendor\_amenities\_foo - ?? (see also VendorFeatures)}
+\label{sec-2-2-11}
 \begin{itemize}
 \item A variety of possible fields?  How is this  used?
 \begin{itemize}
@@ -270,90 +432,203 @@ ETC)
 \item RIGHT NOW IT'S SPLIT INTO MULTIPLE LINES WITH MULTI OPTIONS.  \#
 OF TABLES, \# OF CHAIRS, CORNER/END CAP, ELECTRICAL, EXTRA
 BADGES
+\item three tables
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} need to migrate old information somehow, as well as build the three tables
+\label{sec-2-2-11-1}
+\item {\bfseries\sffamily DONE} BaseVendorFeature
+\label{sec-2-2-11-2}
+basevendorfeatureid, basevendorfeaturename, basevendorfeaturedesc
+
+\item {\bfseries\sffamily DONE} VendorFeature based on VendorFeatures
+\label{sec-2-2-11-3}
+vendorfeatureid, basevendorfeatureid, conid, vendorfeatureprice,
+display\_order
+
+\item {\bfseries\sffamily DONE} create VendorHasFeature
+\label{sec-2-2-11-4}
+badgeid, vendorfeature, vendorfeaturecount
 \end{itemize}
 
-\item vendor\_contract - varchar(5)
-\label{sec-2-2-11}
+\subsubsection{vendor\_contract - varchar(5)}
+\label{sec-2-2-12}
 \begin{itemize}
 \item How is this used?
 \item THIS IS INITIALS TO STATE THEY READ AND AGREE TO OUR TERMS ALREADY ABOVE
+\item Probably not used, see above vendoracknowledgement
 \end{itemize}
-
-\item vendor\_invoiced - Y/N (enum)
-\label{sec-2-2-12}
 \begin{itemize}
-\item Were they invoced?
-\item YUP
+\item {\bfseries\sffamily DONE} see VendorAnnualInfo.vendoracknowledgement
+\label{sec-2-2-12-1}
 \end{itemize}
 
-\item vendor\_location - ??
+\subsubsection{vendor\_invoiced - Y/N (enum)}
 \label{sec-2-2-13}
+\begin{itemize}
+\item Were they invoiced?
+\item YUP
+\item more complex, town invoice, and then us invoice.  Details probably
+involved as to what the invoice is for.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} part of Vendor Status
+\label{sec-2-2-13-1}
+\end{itemize}
+
+\subsubsection{vendor\_location - ??}
+\label{sec-2-2-14}
 \begin{itemize}
 \item Where we put them.
 \item YUP
-\item This might want to be slightly more complex, building, room, and booth-number
+\item This might want to be slightly more complex, building, room, and
+booth-number
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} VendorLocation table?
+\label{sec-2-2-14-1}
+\begin{itemize}
+\item badgeid, conid, building, room (tied to rooms?), booth number
+\item Might just do as a free form field for this year, and make it
+more complex for the future.
+\end{itemize}
 \end{itemize}
 
-\item vendor\_payment\_adjustment - decimal(13,4)
-\label{sec-2-2-14}
+\subsubsection{vendor\_payment\_adjustment - decimal(8,2)}
+\label{sec-2-2-15}
 \begin{itemize}
 \item Adjustments to the bill
 \item YUP
+\item chance for adjustments (like shitty corner)
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.vendorpayadj
+\label{sec-2-2-15-1}
 \end{itemize}
 
-\item vendor\_payment\_amount - decimal(13,4)
-\label{sec-2-2-15}
+\subsubsection{vendor\_payment\_amount - decimal(8,2)}
+\label{sec-2-2-16}
 \begin{itemize}
 \item amount they paid, should match invoiced amounts
 \item YUP
+\item differentiated by the above adjustment
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} not sure how it's generated?
+\label{sec-2-2-16-1}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.vendorpaid
+\label{sec-2-2-16-2}
 \end{itemize}
 
-\item vendor\_payment\_received - Y/N (enum)
-\label{sec-2-2-16}
+\subsubsection{vendor\_payment\_received - Y/N (enum)}
+\label{sec-2-2-17}
 \begin{itemize}
 \item check box?
 \item YES
 \item default "N" or maybe blank?
+\item Possibly No (blank?), Warwick, and In-full as field entries.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} part of Vendor Status
+\label{sec-2-2-17-1}
 \end{itemize}
 
-\item vendor\_preferred\_space - ?? (see also VendorSpaces)
-\label{sec-2-2-17}
+\subsubsection{vendor\_preferred\_space - ?? (see also VendorSpaces)}
+\label{sec-2-2-18}
 \begin{itemize}
 \item Where they would like to be put.
 \item NO - THIS IS BOOTH SIZE (SINGLE, DOUBLE, ETC)
+\item What is requested - several options, this is just your
+preference, no guarentees.  (select at most 3)
+\item four tables
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} BaseVendorSpace based on VendorSpaces
+\label{sec-2-2-18-1}
+basevendorspaceid, basevendorspacename, basevendorspacedesc
+
+\item {\bfseries\sffamily DONE} VendorSpace based on VendorSpaces
+\label{sec-2-2-18-2}
+\begin{itemize}
+\item This year's options, based on VendorSpaces
+\item vendorspaceid, basevendorspaceid, conid, vendorspaceprice,
+display\_order
 \end{itemize}
 
-\item vendor\_loadin\_self\_carry - Y/N (enum)
-\label{sec-2-2-18}
+\item {\bfseries\sffamily DONE} VendorPrefSpace
+\label{sec-2-2-18-3}
+badgeid, vendorspace, vendorspacerank (enum 1st, 2nd, 3rd)
+
+\item {\bfseries\sffamily DONE} VendorHasSpace
+\label{sec-2-2-18-4}
+badgeid, vendorspace, vendorspacecount
+\end{itemize}
+
+\subsubsection{vendor\_loadin\_self\_carry - Y/N (enum)}
+\label{sec-2-2-19}
 \begin{itemize}
 \item will they?
 \item This should be Y/n, right?
 \item YES
 \end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.vendorselfcarry
+\label{sec-2-2-19-1}
+\end{itemize}
 
-\item vendor\_sponsorship\_package  - ??
-\label{sec-2-2-19}
+\subsubsection{vendor\_sponsorship\_package  - ??}
+\label{sec-2-2-20}
 \begin{itemize}
 \item what package they wanted?  They actually bought?
 \item THIS IS THE Y/N ABOVE
 \item if this is redundant it should be removed.  If it is the same as
 what is in missing, below, then \ldots{} perhaps not so missing after
 all?
+\item Redundant with the first one.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} with the above.  Make sure the data is migrated appropriately.
+\label{sec-2-2-20-1}
 \end{itemize}
 
-\item vendor\_status / status - Denied/Approved/Accepted/Approved/Paid (enum)
-\label{sec-2-2-20}
+\subsubsection{vendor\_status / status - Denied/Approved/Accepted/Approved/Paid (sub-table)}
+\label{sec-2-2-21}
 \begin{itemize}
 \item STATUS
 \item DENIED, APPROVED, ACCEPTED, APPROVED AND PAID
 \item Approved is in twice?  Should it be 4, Denied, Approved,
 Accepted, Paid?  I'd also add "Proposed" or the like?
+\item Proposed, Applied, NELA Approval, Warwick Invoiced, Pending
+Warwick Approval, Warwick Approval, NELA Invoiced, Paid,
+Accepted, NELA Denied, Warwick Denied, Banned.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} probably based on Interested/InterestedTypes
+\label{sec-2-2-21-1}
+VendorStatusTypes - vendortypeid, display order, vendortypename,
+vendortypedesc -- populated.
+VendorStatus - conid, badgeid, vendorstatustypeid
 \end{itemize}
 
-\item rejected\_reason - text
-\label{sec-2-2-21}
+\subsubsection{rejected\_reason - text}
+\label{sec-2-2-22}
 \begin{itemize}
 \item KEEP, WOULD BE SUBJECT TO CHANGE UNLESS VENDOR IS BANNER
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} VendorAnnualInfo.vendordenyreason
+\label{sec-2-2-22-1}
+\end{itemize}
+
+\subsubsection{Tracking fields similar to participant tracking on what was done.}
+\label{sec-2-2-23}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} based on SessionEditHistory/SessionEditCodes/NotesOnParticipants
+\label{sec-2-2-23-1}
+\begin{itemize}
+\item VendorEditHistory: vbadgeid, conid, badgeid, vendoreditcode,
+vendorstatustypeid, vendorchangets, vendordelta
+\item VendorEdit Codes: vendoreditcode. display\_order, vendoreditname
 \end{itemize}
 \end{itemize}
 
@@ -363,40 +638,16 @@ These are values that I think we need, that don't seem to actually
 exist anywhere else, and should probably be at least tracked, if
 not having several layers to them, so that they can be figured into
 things like costs, and historical data.
-\begin{itemize}
-\item vendor\_sponsor\_level
+\subsubsection{vendor\_actual\_space}
 \label{sec-2-3-1}
-\begin{itemize}
-\item This might be the vendor\_sponsorship\_package piece?
-\item This might get more complex, depending on the offerings
-\end{itemize}
-
-\item digital\_advertising\_level
-\label{sec-2-3-2}
-\begin{itemize}
-\item This might need to be a table of some sort, based on the
-offerings
-\end{itemize}
-
-\item print\_advertising\_level
-\label{sec-2-3-3}
-\begin{itemize}
-\item This might need to be a table of some sort, based on the
-offerings
-\end{itemize}
-
-\item vendor\_actual\_space
-\label{sec-2-3-4}
 \begin{itemize}
 \item single, double, room, etc. probably based on the same
 VendorSpaces/VendorHasVendorSpace etc.
+\item Us modifyable, not them modifiable.
 \end{itemize}
-
-\item vendor\_location\_requests
-\label{sec-2-3-5}
 \begin{itemize}
-\item although this might be under vendor notes?
-\end{itemize}
+\item {\bfseries\sffamily DONE} see above under VendorHasSpace
+\label{sec-2-3-1-1}
 \end{itemize}
 
 \subsection{Generated}
@@ -407,8 +658,7 @@ database, rather than simple values.  The Vendor Invoice Amount
 should also go along with the Vendor Invoice, which lists all the
 things they are paying for, and interfaces with our credit-card
 system.
-\begin{itemize}
-\item vendor\_invoice\_amount - decimal(13,4)
+\subsubsection{vendor\_invoice\_amount - decimal(13,4)}
 \label{sec-2-4-1}
 \begin{itemize}
 \item Money
@@ -418,7 +668,7 @@ on the varieties chosen in vendor\_amenites,
 vendor\_payment\_adjustment, vendor\_actual\_space and others?
 \end{itemize}
 
-\item times\_at\_fff
+\subsubsection{times\_at\_fff}
 \label{sec-2-4-2}
 \begin{itemize}
 \item currently a freeform field, should probably be generated, with a
@@ -426,9 +676,8 @@ special number that adds in, for (currently) untracked events.
 \item SOUNDS GOOD
 \item Base figure above in perennial
 \end{itemize}
-\end{itemize}
 
-\subsection{Structture}
+\subsection{Structure}
 \label{sec-2-5}
 These are the proposed new tables or modifications to existing
 tables that the data will be collected in.  Mostly interesting for
@@ -436,8 +685,7 @@ building purposes, but also for those curious on how things operate
 under the hood, because, I like sharing that way, as opposed to
 keeping things secret and cryptic.  Yes, I know it's called "code"
 because we didn't want you to know what it did, but \ldots{} 
-\begin{itemize}
-\item Vendor Constants
+\subsubsection{Vendor Constants}
 \label{sec-2-5-1}
 \begin{itemize}
 \item Most of these (as listed) are already in the CongoDump table.
@@ -450,7 +698,7 @@ vendor, so might be another table
 \end{itemize}
 \end{itemize}
 
-\item Vendor Yearly Variables
+\subsubsection{Vendor Yearly Variables}
 \label{sec-2-5-2}
 \begin{itemize}
 \item Most just are, as specified in this table
@@ -458,7 +706,7 @@ vendor, so might be another table
 in the other tables entirely.
 \end{itemize}
 
-\item Vendor Features
+\subsubsection{Vendor Features}
 \label{sec-2-5-3}
 Probably just a tweak to this table, and might need to be a
 "standard set" and a "this year set" like BaseFeatures and
@@ -466,14 +714,14 @@ Features does as well as BaseServices and Services does and a
 repurposing of "SessionHasVendorFeature" to
 "VendorHasVendorFeature"
 
-\item Vendor Spaces
+\subsubsection{Vendor Spaces}
 \label{sec-2-5-4}
 Probably just a tweak to this table, and might need to be a
 "standard set" and a "this year set" like BaseFeatures and
 Features does as well as BaseServices and Services does and a
 repurposing of "SessionHasVendorSpace" to "VendorHasVendorSpace"
 
-\item Vendor Location
+\subsubsection{Vendor Location}
 \label{sec-2-5-5}
 Might be it's own table, with conid (linked), badgeid (linked),
 building, floor, room (possibly linked), and booth\_number, and
@@ -482,46 +730,50 @@ they are a room vendor, their booth\_number might not be listed,
 but if there are several vendors in a room, it might be.)  This
 might also allow ties to maps, and possibly the redraw of maps.
 
-\item Vendor Status
+\subsubsection{Vendor Status}
 \label{sec-2-5-6}
 Might want to be it's own table as a mapping, so searches, and
 display\_order could be set.
 
-\item Vendor Sponsorship Package/vendor\_sponsor\_level
+\subsubsection{Vendor Sponsorship Package/vendor\_sponsor\_level}
 \label{sec-2-5-7}
 These three would need to be determined.
 
-\item digital\_advertising\_level
+\subsubsection{digital\_advertising\_level}
 \label{sec-2-5-8}
 These three would need to be determined.
 
-\item print\_advertising\_level
+\subsubsection{print\_advertising\_level}
 \label{sec-2-5-9}
 These three would need to be determined.
-\end{itemize}
+
+\subsubsection{More structure in the 41\_VendorInfo.sql file}
+\label{sec-2-5-10}
 
 \subsection{Still Unknown}
 \label{sec-2-6}
 These are the variables that exist already in the other usage
 space, that I still don't have a handle on.  More explination would
 be very useful.
-\begin{itemize}
-\item created\_by - number
+\subsubsection{created\_by - number}
 \label{sec-2-6-1}
 \begin{itemize}
 \item Not sure what this does?
 \item I THINK IT"S VENDORS NAME VS. I UPDATED, ETC
 \item So \ldots{} how should it be expressed/tracked?
+\item Probably covered by VendorAnnualInfo.vendorupdated tracking (above)
 \end{itemize}
 
-\item ordering\_count - number
+\subsubsection{ordering\_count - number}
 \label{sec-2-6-2}
 \begin{itemize}
 \item Another random number?
 \item YES
 \item Should it be kept?  Removed, what is it's state?  What is it's
 purpose?
-\end{itemize}
+\item timestamp on entry rather than something else, kept in
+timestamp, otherwise \ldots{} who knows.
+\item Probably covered by VendorAnnualInfo.vendorwhenapplied
 \end{itemize}
 
 \section{Front End}
@@ -531,29 +783,64 @@ purpose?
 This should be the comprehensive list of all the pages that either
 the vendors/community table folk need to interact with or those who
 manage them (the Div Head) needs to interact with.
-\begin{itemize}
-\item Returning Vendor sign-in
+\subsubsection{Returning Vendor sign-in}
 \label{sec-3-1-1}
 By number or email address.
+\begin{itemize}
+\item not for this year, but subequent years.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} needs to be finished
+\label{sec-3-1-1-1}
+\begin{itemize}
+\item Update page (subset of new apply page)
+\item apply page (subset of new apply page)
+\end{itemize}
+\end{itemize}
 
-\item Returning Community Table sign-in
+\subsubsection{Returning Community Table sign-in}
 \label{sec-3-1-2}
 By number or email address.  Might simply be switched on one of
 the values in the vending type or on it's own value, and just have
 one place to go?  Since we are collecting pretty much the same
 information for them both?  Or should I be separating them out?
+\begin{itemize}
+\item not for this year, but community table a separate page (at least
+\end{itemize}
+for winter, since they don't have to apply)
+\begin{itemize}
+\item BIG NOTE: any money exchanged makes you a vendor, Be aware
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} Currently simply a subset of vendor information.
+\label{sec-3-1-2-1}
+\end{itemize}
 
-\item New Vendor proposal
+\subsubsection{New Vendor proposal}
 \label{sec-3-1-3}
 With a catch to see if they are already in our database, using
 their email address
+\begin{itemize}
+\item not for this year, but yes
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily VENDORQA} final vetting by the vendor folks.
+\label{sec-3-1-3-1}
+\end{itemize}
 
-\item New Community Table proposal
+\subsubsection{New Community Table proposal}
 \label{sec-3-1-4}
 With a catch to see if they are already in our database, using
 their email address
+\begin{itemize}
+\item not for this year, but yes
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} Currently simply a subset of vendor information.
+\label{sec-3-1-4-1}
+\end{itemize}
 
-\item Returning Vendor/Community Table informational gathering
+\subsubsection{Returning Vendor/Community Table informational gathering}
 \label{sec-3-1-5}
 This can be the same, although there might, again, be a slight
 difference bases on vendor/community table differences.  Also, we
@@ -561,17 +848,127 @@ might want to present last? event's information as defaults, so
 they have to do less typing. Dealing with changes once the state
 has changed to "invoice generated" might require Vendor Div Head
 intervention.
+\begin{itemize}
+\item Steps to do this.  This will be several "pages" as the Welcome
+\end{itemize}
+Page, depending on status.
+\begin{itemize}
+\item {\bfseries\sffamily VENDORQA} Proposed (1) / Applied (2)
+\label{sec-3-1-5-1}
+Either Proposed (by someone else) or Applied (basically filling
+out the form we are giving, or (which isn't set up yet) a
+returning Vendor, filling out a shorter form, but will all the
+appropriate year information on it.
+\begin{itemize}
+\item Waiting on Vendor QA of the words, and the contract.
+\end{itemize}
 
-\item Returning Vendor informational update
+\item {\bfseries\sffamily TODO} NELA Approved (3)
+\label{sec-3-1-5-2}
+Once a set of the proposals are in, the jury decides if their
+proposal is accepted and acceptable, the NELA Approved button for
+them is clicked, email is sent to them letting them know that
+they are a NELA approved vendor, and they should log in (with
+their log in information) to go to the next step.  They see the
+second page when they log in, which has the information about
+what Warwick is doing differently this year, and a link to pull
+down the PDF to be filled in, and a way to submit the filled-out
+PDF.
+\begin{itemize}
+\item Still needs PDF and Submission form.
+\end{itemize}
+
+\item {\bfseries\sffamily TODO} Warwick Invoced (4)
+\label{sec-3-1-5-3}
+Once the PDF has been submitted and/or when the next button has
+been clicked, they are then presented with an invoice for the
+Warwick fees.
+\begin{itemize}
+\item Still needs invoice.
+\end{itemize}
+
+\item {\bfseries\sffamily VENDORQA} Pending Warwick Approval (5)
+\label{sec-3-1-5-4}
+Once the fees have been paid and/or when the next button has been
+clicked, they are given the message, when they log in, that they
+are still pending Warwick's approval.
+
+\item {\bfseries\sffamily TODO} Warwick Approval (6)
+\label{sec-3-1-5-5}
+Once we get Warwick's approval, the button is clicked and they
+will see the message, something to the effect of "Warwick has
+approved, this is your current order, do you want to change
+anything before your invoicing (this is where the various
+digital, print, and sponsorship options, as well as the amenities
+can be changed, as well).
+\begin{itemize}
+\item Still needs update form, probably inserted, for ease rather
+than an click-through.
+\end{itemize}
+
+\item {\bfseries\sffamily TODO} NELA Invoiced (7)
+\label{sec-3-1-5-6}
+Once they indicate that their invoice is fine, the invoice is
+presented.  They then can pay it.
+\begin{itemize}
+\item Still needs invoice.
+\end{itemize}
+
+\item {\bfseries\sffamily VENDORQA} Paid (8)
+\label{sec-3-1-5-7}
+This is the state they will be in once the invoice is paid.  At
+this point, it can flow directly to the next step, but I have
+something (somewhat confusing in my notes) to the effect that
+there wants to be a check \ldots{} sent to them? or sent to us? or
+possibly that we are waiting on a check, or something else, that
+means that they are waiting in this state.
+
+\item {\bfseries\sffamily VENDORQA} Accepted (9)
+\label{sec-3-1-5-8}
+Once this button is clicked, then everything comes up roses, they
+are on our websites, and visible, and all is good in the world.
+
+\item {\bfseries\sffamily VENDORQA} NELA Denied (10)
+\label{sec-3-1-5-9}
+For those vendors who just didn't make the cut (this year?)
+usually would happen after (or instead of) the NELA Approved (3)
+state.
+
+\item {\bfseries\sffamily VENDORQA} Warwick Denied (11)
+\label{sec-3-1-5-10}
+For those vendors who didn't make Warwick's cut this year (and
+can they apply again, subsequent years?  Are we going to track
+the reason Warwick rejected them?  Will we even know the reason?)
+usually would happen after (or instead of) the Warwick Approval
+state.
+
+\item {\bfseries\sffamily VENDORQA} Banned (12)
+\label{sec-3-1-5-11}
+So we track those who are banned, so if they try to apply, we
+know.  Probably clunky, and \ldots{} not sure at what point in the
+process they should be informed.  I'm thinking at about the NELA
+Denied, right after (or instead of) the NELA Approved state as
+well.
+\end{itemize}
+
+\subsubsection{Returning Vendor informational update}
 \label{sec-3-1-6}
 This might not be necessary, based on the above page keeping what
 is set for this year as set.
+\begin{itemize}
+\item {\bfseries\sffamily DONE} included in above Returning set of pages.
+\label{sec-3-1-6-1}
+\end{itemize}
 
-\item Returning Vendor/Community Table Bio update
+\subsubsection{Returning Vendor/Community Table Bio update}
 \label{sec-3-1-7}
 Page that they can, at will? update their web or book information.
+\begin{itemize}
+\item {\bfseries\sffamily DONE} included in above Returning set of pages.
+\label{sec-3-1-7-1}
+\end{itemize}
 
-\item Invoice
+\subsubsection{Invoice}
 \label{sec-3-1-8}
 Not available until after both they are accepted (by Vendor
 Div Head), and they hit the "generate invoice" button, which
@@ -581,13 +978,27 @@ This will (of course) be a comprehensive list of everything they
 agreed to.  The invoice page should continue to be available after
 they paid, so there is a referece point to the services agreed
 to/paid for.
+\begin{itemize}
+\item Yes, included in the above
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily DONE} included in above Returning set of pages.
+\label{sec-3-1-8-1}
+\end{itemize}
 
-\item Ad Copy Submissions
+\subsubsection{Ad Copy Submissions}
 \label{sec-3-1-9}
 For those who have agreed to either digital or print ads, this is
 a place for them to upload/submit them.
+\begin{itemize}
+\item Probably offline, going directly to the AD folk.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} (perhaps, at some point?)
+\label{sec-3-1-9-1}
+\end{itemize}
 
-\item Vendor Jury
+\subsubsection{Vendor Jury}
 \label{sec-3-1-10}
 The page that all the proposed vendors, with certain bits of
 information (to be determined, since I've not seen that page yet
@@ -598,8 +1009,17 @@ probably where any price adjustments happen to the invoice.  Maybe
 a grouping by Vendor Type, and leaving the ones already moved on
 from this in a different colour, so that those already accepted,
 and their type, will be shown for balance reasons.
+\begin{itemize}
+\item {\bfseries\sffamily VENDORQA} in pieces
+\label{sec-3-1-10-1}
+\begin{itemize}
+\item first report
+\item set of tunable reports
+\item voting page, much like other voting pages?
+\end{itemize}
+\end{itemize}
 
-\item Vendor Placement
+\subsubsection{Vendor Placement}
 \label{sec-3-1-11}
 After the invoice is paid? Or perhaps slightly different, if there
 is those that have invoice exceptions allowing for the placement
@@ -609,115 +1029,179 @@ indeed, all paid up.  Also the vendor type should show up here, as
 well, so that similars can either be grouped together, or spread
 apart, as per the decision of the Div Head. May also contain
 previous placements, or links to previous maps or something useful
-along those lines.
+along those lines.  Including the current svg of the map.
+\begin{itemize}
+\item {\bfseries\sffamily TODO} 
+\label{sec-3-1-11-1}
+\end{itemize}
 
-\item Administer Vendor
+\subsubsection{Administer Vendor Options}
 \label{sec-3-1-12}
+Page that has the Amenities and Spaces for this year, pulled from
+the standard pool.  To be updated by the Vendor Coordinator on an
+event by event basis.
+\begin{itemize}
+\item {\bfseries\sffamily VENDORQA} 
+\label{sec-3-1-12-1}
+\end{itemize}
+
+\subsubsection{Administer Vendor}
+\label{sec-3-1-13}
 Where any changes are made to the vendor information (both that
 they can change and that they can't) for creation/update by Vendor
 Div Head.
+\begin{itemize}
+\item {\bfseries\sffamily TODO} 
+\label{sec-3-1-13-1}
+\end{itemize}
 
-\item Vendor Welcome Letter
-\label{sec-3-1-13}
-Generate the (physical) welcome letter to the vendors
-
-\item Vendor Email
+\subsubsection{Vendor Welcome Letter}
 \label{sec-3-1-14}
-Generate (and send) various all-vendor communications
+Generate the (physical) welcome letter to the vendors
+\begin{itemize}
+\item {\bfseries\sffamily TODO} 
+\label{sec-3-1-14-1}
+\end{itemize}
 
-\item Vendor Badges
+\subsubsection{Vendor Email}
 \label{sec-3-1-15}
-Generate the Vendor Badges for printing purposes.
+Generate (and send) various all-vendor communications
+\begin{itemize}
+\item {\bfseries\sffamily TODO} 
+\label{sec-3-1-15-1}
+\end{itemize}
 
-\item Vendor Tents
+\subsubsection{Vendor Badges}
 \label{sec-3-1-16}
+Generate the Vendor Badges for printing purposes.
+\begin{itemize}
+\item No!
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} even if we won't use them.
+\label{sec-3-1-16-1}
+\end{itemize}
+
+\subsubsection{Vendor Tents}
+\label{sec-3-1-17}
 Generate all the vendor "tents" to put on their tables, to mark
 their place.
+\begin{itemize}
+\item Business Name (and DBA?) and Booth \#
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} 
+\label{sec-3-1-17-1}
+\end{itemize}
 
-\item Check-in/Check-out lists
-\label{sec-3-1-17}
+\subsubsection{Check-in/Check-out lists}
+\label{sec-3-1-18}
 All of the vendors expected, so they can be ticked off the list
 when they get there, and, so that when they return whatever they
 have to return at the end of the night (tax forms, possibly?) can
 be ticked off again.
+\begin{itemize}
+\item Dock forms (room vendors vs otherwise) Each one Business Name
+and Booth number.  (several copies)
+\item Master List for check in.  Second for Check out. RI vendor
+marked specially.
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily TODO} 
+\label{sec-3-1-18-1}
 \end{itemize}
 
 \subsection{Flow}
 \label{sec-3-2}
-\begin{itemize}
-\item Task List
+\subsubsection{Set Amenities}
 \label{sec-3-2-1}
+Go to the VendorSetupSpaceFeature.php page, and set the
+appropriate amenities/prices/et al for this year.
+
+\subsubsection{Set Spaces}
+\label{sec-3-2-2}
+Go to the VendorSetupSpaceFeature.php page, and set the
+appropriate spaces/prices/et al for this year.
+
+\subsubsection{Set Sponsorship levels}
+\label{sec-3-2-3}
+\subsubsection{Set Digital Ad possiblities}
+\label{sec-3-2-4}
+\subsubsection{Set Printed Ad possibilities}
+\label{sec-3-2-5}
+\subsubsection{Task List}
+\label{sec-3-2-6}
 Task List element with the call for vendors is created, with the
 appropriate link.
 
-\item Task List
-\label{sec-3-2-2}
+\subsubsection{Task List}
+\label{sec-3-2-7}
 Task List element with the call for community tables is created,
 with the appropriate link.
 
-\item Email
-\label{sec-3-2-3}
+\subsubsection{Email}
+\label{sec-3-2-8}
 Possible email from Vendor Div Head goes out reminding
 vendors/community tables when the call will open and close.
 
-\item Phase Change
-\label{sec-3-2-4}
+\subsubsection{Phase Change}
+\label{sec-3-2-9}
 At the appropriate time, the Con Chair or Zambia bitch open the
 call for vendors.
 
-\item Email
-\label{sec-3-2-5}
+\subsubsection{Email}
+\label{sec-3-2-10}
 Vendor Div Head generates and sends email letting the
 vendors/community tables know that the call is open.
 
-\item Vendors/Community Table folk apply
-\label{sec-3-2-6}
+\subsubsection{Vendors/Community Table folk apply}
+\label{sec-3-2-11}
 They use either the returning or the new pages, select the
 appropriate features, sponsorships, and ads that they want, and
 make sure everything is as expected.
 
-\item (If Rolling Acceptance) Jury
-\label{sec-3-2-7}
+\subsubsection{(If Rolling Acceptance) Jury}
+\label{sec-3-2-12}
 If there is a rolling acceptantce of vendors and/or community
 tables, while the vendor call/community table call is open
 acceptances can roll out and then things can go forward.
 Otherwise \ldots{}
 
-\item Phase Change
-\label{sec-3-2-8}
+\subsubsection{Phase Change}
+\label{sec-3-2-13}
 At the appropriate time, the Con Chair or Zambia bitch close the
 call for vendors.
 
-\item Jury
-\label{sec-3-2-9}
+\subsubsection{Jury}
+\label{sec-3-2-14}
 The (rest of (if rolling acceptance is happening)) vendors and
 community tables get acceptance, which probably is an individual
 email from the Div Head, with any specific to them in information
 included, and an invitation for them to pay their invoice.
 
-\item Invoice
-\label{sec-3-2-10}
+\subsubsection{Invoice}
+\label{sec-3-2-15}
 Vendors then (hopefully, magically, smoothly) pay their agreed-to
 invoices.
 
-\item Ad Copy
-\label{sec-3-2-11}
+\subsubsection{Ad Copy}
+\label{sec-3-2-16}
 All paid for advertizing copy is generated by the vendors or
 community tables is submitted.
 
-\item Placement
-\label{sec-3-2-12}
+\subsubsection{Placement}
+\label{sec-3-2-17}
 Div Head (and anyone else that can be roped into helping)
 schedules the vendors to be put in the appropriate locations on
 the day of the event.
 
-\item Email
-\label{sec-3-2-13}
+\subsubsection{Email}
+\label{sec-3-2-18}
 Final email goes out, with any instruction reminders and if there
 is a manditory vendor meeting, or the like.
 
-\item Welcome Letter
-\label{sec-3-2-14}
+\subsubsection{Welcome Letter}
+\label{sec-3-2-19}
 Welcome lettters generated and printed, possibly stuffed in an
 envelope or folder of some sort.
 This might include some form of their (electronically) signed
@@ -725,22 +1209,28 @@ contract, and maybe invoice highlights.  Definitely includes their
 placement information, and information on how load-in and load-out
 works, etc.
 
-\item Badges
-\label{sec-3-2-15}
+\subsubsection{Badges}
+\label{sec-3-2-20}
 Badges, the appropriate number for each vendor and community
 table, are printed, and possibly stuffed as above.
 
-\item Wrist bands
-\label{sec-3-2-16}
+\subsubsection{Wrist bands}
+\label{sec-3-2-21}
 Are possibly stuffed as above.
 
-\item Check-in/check-out lists printed
-\label{sec-3-2-17}
+\subsubsection{Check-in/check-out lists printed}
+\label{sec-3-2-22}
 So they are available on the day-of.
-\end{itemize}
+
+\section{Things to add, from the new:}
+\label{sec-4}
+\subsection{Logo to be uploaded}
+\label{sec-4-1}
+\subsection{PDF to be updated}
+\label{sec-4-2}
 
 \section{Conclusion}
-\label{sec-4}
+\label{sec-5}
 This should cover all the bits and pieces.  If I missed any, let me
 know so this document can be updated, and the system can be tested.
 Hopfully all will work, and this can go forth as The New Way.  Until

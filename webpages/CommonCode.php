@@ -413,12 +413,12 @@ function vendor_header ($title) {
     // maketab("List",1,"VendorSearch.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     if (may_I('Vendor')) {
-      maketab("Update",may_I('Vendor'),"VendorSubmitVendor.php");
+      maketab("Update Business Info",may_I('Vendor'),"VendorSubmitVendor.php");
     } else {
       maketab("New Vendor",may_I('BrainstormSubmit'),"VendorSubmitVendor.php");
     }
-    // echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-    // maketab("Apply",may_I('vendor_apply'),"VendorApply.php");
+    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+    maketab("Apply/Update Vendor Application",may_I('vendor_apply'),"VendorApply.php");
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     if (may_I('Staff')) {

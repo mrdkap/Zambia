@@ -1,6 +1,7 @@
 <?php
 require_once('VendorCommonCode.php');
 require_once('Vendor_FNC.php');
+require_once('Vendor_FNC2.php');
 global $participant,$message,$message_error,$message2;
 
 // LOCALIZATIONS
@@ -14,6 +15,10 @@ $badgeid=$_SESSION['badgeid'];
 // If new vendor application submitted, do it.
 if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "New Vendor")) {
   $message.=create_vendor($_POST);
+  // Hope to have two passes here eventually, with the same input, so both are serviced.
+  // $message.=edit_vendor_apply($_POST);
+  // $message.=edit_vendor_update($_POST);
+
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<P>Thank you for applying to the " . $_SESSION['conname'] . ".  Please feel free\n";
   echo "to <A HREF=\"doLogin.php?newconid=$conid&badgeid=".$_POST['email']."\">log\n";
@@ -21,6 +26,11 @@ if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "New 
   echo "<P>If you have any issues please get in touch with the Vendor Coordinator <some address></P>\n";
   correct_footer();
   exit();
+}
+
+// If an updated vendor application submitted, do it.
+if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Updated Application")) {
+  $message.=edit_vendor_apply($_POST);
 }
 
 // If a contract is being signed, apply the name.
@@ -70,8 +80,10 @@ EOD;
 
 list($vstatusrows,$vstatusheader_array,$vstatus_array)=queryreport($queryVendorStatus, $link, $title, $description, 0);
 
-$vstatusid=$vstatus_array[1]['vendorstatustypeid'];
-$vstatusname=$vstatus_array[1]['vendorstatustypename'];
+if ($vstatusrows==1) {
+  $vstatusid=$vstatus_array[1]['vendorstatustypeid'];
+  $vstatusname=$vstatus_array[1]['vendorstatustypename'];
+}
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 

@@ -3,10 +3,6 @@
 function create_vendor ($participant_arr) {
   global $link,$message,$message_error;
 
-  //Temporarily setting newbadgeid, because, that is commented out.
-  $newbadgeid=1680;
-
-
   // Get the various length limits
   $limit_array=getLimitArray();
 
@@ -99,7 +95,6 @@ function create_vendor ($participant_arr) {
   $element_array = array('conid', 'badgeid', 'vendorstatustypeid');
   $value_array=array($_SESSION['conid'],$newbadgeid,"2");
   $message.=submit_table_element($link, $title, "VendorStatus", $element_array, $value_array);
-
 
   // Add Bios.
   // We are only updating the raw bios here, so only a 3-depth

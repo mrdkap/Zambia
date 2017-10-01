@@ -31,10 +31,9 @@ if ($badgeid == "100") {
 
 // This may allow the SuperVendor to apply for someone.
 if (may_I('SuperVendor')) {
-  // Collaps the three choices into one
-  if ($_POST["partidl"]!=0) {$_POST["partid"]=$_POST["partidl"];}
-  if ($_POST["partidf"]!=0) {$_POST["partid"]=$_POST["partidf"];}
+  // Collaps the two choices into one
   if ($_POST["partidp"]!=0) {$_POST["partid"]=$_POST["partidp"];}
+  if ($_POST["partide"]!=0) {$_POST["partid"]=$_POST["partide"];}
 
   if (isset($_POST["partid"])) {
     $badgeid=$_POST["partid"];
@@ -84,7 +83,7 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 // Again possible for the SuperVendor to set someone up.
 if (may_I('SuperVendor')) {
   //Choose the individual from the database
-  select_participant($badgeid, '', "VendorApply.php");
+  select_participant($badgeid, 'VENDOR', "VendorApply.php");
   echo "\n<hr>\n";
   echo "<P>Update for: ($badgeid) $pubsname</P>\n";
 }
@@ -136,6 +135,7 @@ $verbiage=get_verbiage("VendorApply");
 if ($verbiage != "") {
   echo "<FORM name=\"vendorform\" action=\"renderVendorWelcome.php\" method=POST>\n";
   echo eval('?>' . $verbiage);
+  echo "  <input type=\"hidden\" name=\"badgeid\" value=\"$badgeid\" id=\"badgeid\">\n";
   echo "  <P><BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\" value=\"Updated Application\">Update</BUTTON></P>\n";
   echo "</FORM>\n";
 } else {

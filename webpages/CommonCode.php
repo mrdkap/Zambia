@@ -1056,6 +1056,12 @@ EOD;
     $limittables='';
     $limitwhere='';
     $emailaddr=" ',email,'";
+  } elseif ($limit=="VENDOR") {
+    $limittables ="    JOIN UserHasPermissionRole USING (badgeid)\n";
+    $limittables.="    JOIN PermissionRoles USING (permroleid)\n";
+    $limitwhere ="  WHERE\n";
+    $limitwhere.="    permrolename in ('Vendor')\n";
+    $emailaddr=" ',email,'";
   } elseif ($limit!='') {
     $query=<<<EOD
 SELECT
@@ -1150,19 +1156,21 @@ EOD;
 
   // Now give the choices
   echo "<FORM name=\"selpartform\" method=POST action=\"".$returnto."\">\n";
-  echo "<DIV><LABEL for=\"partidl\">Select Participant (Lastname)</LABEL>\n";
-  echo "<SELECT name=\"partidl\">\n";
-  populate_select_from_query($query0, $selpartid, "Select Participant (Lastname)", true);
-  echo "</SELECT></DIV>\n";
-  echo "<DIV><LABEL for=\"partidf\">Select Participant (Firstname)</LABEL>\n";
-  echo "<SELECT name=\"partidf\">\n";
-  populate_select_from_query($query1, $selpartid, "Select Participant (Firstname)", true);
-  echo "</SELECT></DIV>\n";
+  if ($limit!="VENDOR") {
+    echo "<DIV><LABEL for=\"partidl\">Select Participant (Lastname)</LABEL>\n";
+    echo "<SELECT name=\"partidl\">\n";
+    populate_select_from_query($query0, $selpartid, "Select Participant (Lastname)", true);
+    echo "</SELECT></DIV>\n";
+    echo "<DIV><LABEL for=\"partidf\">Select Participant (Firstname)</LABEL>\n";
+    echo "<SELECT name=\"partidf\">\n";
+    populate_select_from_query($query1, $selpartid, "Select Participant (Firstname)", true);
+    echo "</SELECT></DIV>\n";
+  }
   echo "<DIV><LABEL for=\"partidp\">Select Participant (Pubsname) </LABEL>\n";
   echo "<SELECT name=\"partidp\">\n";
   populate_select_from_query($query2, $selpartid, "Select Participant (Pubsname)", true);
   echo "</SELECT></DIV>\n";
-  if ($limit=='ALL') {
+  if (($limit=='ALL') or ($limit=="VENDOR")) {
     echo "<DIV><LABEL for=\"partide\">Select Participant (Email Address) </LABEL>\n";
     echo "<SELECT name=\"partide\">\n";
     populate_select_from_query($query3, $selpartid, "Select Participant (Email Address)", true);

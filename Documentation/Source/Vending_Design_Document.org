@@ -471,8 +471,9 @@
     is set for this event as set.
 **** DONE included in above Returning set of pages.
 *** Returning Vendor/Community Table Bio update
-    Page that they can, at will? update their web or book information.
-**** DONE included in above Returning set of pages.
+    Page that they can, at will update their web or book information,
+    along with all their other invormation.
+**** VENDORQA similar to the above set of pages, but allowed always.
 *** Invoice
     Not available until after both they are accepted (by Vendor
     Div Head), and they hit the "generate invoice" button, which
@@ -532,7 +533,10 @@
     Where any changes are made to the vendor information (both that
     they can change and that they can't) for creation/update by Vendor
     Div Head.
-**** TODO
+**** VENDORQA
+     - Still a little wonky, brings back to a less-useful page, but
+       still works.  Can select by email address or by "pubsname"
+       which is the business name.
 *** Vendor Welcome Letter
     Generate the (physical) welcome letter to the vendors
 **** TODO

@@ -68,7 +68,7 @@ function edit_vendor_apply ($work_arr) {
   $conid=$_SESSION['conid'];
 
   // This might want to be changed, for others to apply for one.
-  $badgeid=$_SESSION['badgeid'];
+  $badgeid=$work_arr['badgeid'];
 
   // If no vendor status exists, create one as "Applied"
   $queryVendorStatusType="SELECT vendorstatustypeid FROM VendorStatusTypes WHERE vendorstatustypename='Applied'";
@@ -399,13 +399,13 @@ function edit_vendor_update ($work_arr) {
   $conid=$_SESSION['conid'];
 
   // This might want to be changed, for others to apply for one.
-  $badgeid=$_SESSION['badgeid'];
+  $badgeid=$work_arr['badgeid'];
 
   // Get the various length limits
   $limit_array=getLimitArray();
 
   // Get a set of bioinfo, not for the info, but for the arrays.
-  $bioinfo=getBioData($_SESSION['badgeid']);
+  $bioinfo=getBioData($badgeid);
 
   // Test constraints.
 

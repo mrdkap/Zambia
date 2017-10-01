@@ -1,5 +1,6 @@
 <?php
 require_once('VendorCommonCode.php');
+require_once('Vendor_FNC.php');
 global $link, $message, $message_error;
 
 // LOCALIZATIONS
@@ -7,8 +8,26 @@ $title="Vendor Application";
 $description="<P>Apply (or update your application) for the ". $_SESSION['connamelong'] . "</P>";
 $additionalinfo="";
 $_SESSION['return_to_page']='VendorApply.php';
-$badgeid=$_SESSION['badgeid'];
 $conid=$_SESSION['conid'];
+
+// This might be varied, below.
+$badgeid=$_SESSION['badgeid'];
+
+if ($badgeid == "100") {
+  // Not signing up as badgeid 100 (brainstorm) because, people are clickity.
+  $description="<P>Returning Vendor Application/Update Form.</P>";
+  $additionalinfo ="<P>If you are a returning vendor, please\n";
+  $additionalinfo.="<A HREF=\"login.php?newconid=$conid\">log in</A>\n";
+  $additionalinfo.="with your email address and password.</P>\n";
+  $additionalinfo.="<P>If you wish to apply to be a new vendor, please\n";
+  $additionalinfo.="<A HREF=\"VendorWelcome.php\">Return</A> and fill\n";
+  $additionalinfo.="out the form there.</P>\n";
+
+  topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+
+  correct_footer();
+  exit ();
+}
 
 // This may allow the SuperVendor to apply for someone.
 if (may_I('SuperVendor')) {

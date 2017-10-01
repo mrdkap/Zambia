@@ -1,7 +1,6 @@
 <?php
 require_once('VendorCommonCode.php');
 require_once('Vendor_FNC.php');
-require_once('Vendor_FNC2.php');
 global $participant,$message,$message_error,$message2;
 
 // LOCALIZATIONS
@@ -15,7 +14,9 @@ $badgeid=$_SESSION['badgeid'];
 // If new vendor application submitted, do it.
 if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "New Vendor")) {
   $message.=create_vendor($_POST);
+  $message.="In Applied, New Vendor";
   // Hope to have two passes here eventually, with the same input, so both are serviced.
+  // Needs testing before I do.
   // $message.=edit_vendor_apply($_POST);
   // $message.=edit_vendor_update($_POST);
 
@@ -31,6 +32,13 @@ if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "New 
 // If an updated vendor application submitted, do it.
 if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Updated Application")) {
   $message.=edit_vendor_apply($_POST);
+  $message.="In Updated, Updated Applicaton";
+}
+
+// If an updated vendor application submitted, do it.
+if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Updated Information")) {
+  $message.=edit_vendor_update($_POST);
+  $message.="In Updated, Updated Information";
 }
 
 // If a contract is being signed, apply the name.

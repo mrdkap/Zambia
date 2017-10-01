@@ -260,10 +260,10 @@ that it was being done before is too baroque and complicated.  Easy
 enough to simply make new tables, and reuse little bits, instead
 of trying to force everything into the other work-flow, as we did on
 an "emergency" and "emergent" basis, originally.
-\subsubsection{this year's check}
+\subsubsection{this event's check}
 \label{sec-2-2-1}
 \begin{itemize}
-\item {\bfseries\sffamily DONE} combination of badgeid and conid to avoid multiple entries in a year.
+\item {\bfseries\sffamily DONE} combination of badgeid and conid to avoid multiple entries for an event.
 \label{sec-2-2-1-1}
 \end{itemize}
 
@@ -310,7 +310,7 @@ linked to ConInfo.conid
 \item basedigitaladid, basedigitaladname, basedigitaladdesc
 \end{itemize}
 
-\item {\bfseries\sffamily DONE} a list of digital advertizing for this year, the prices, and the conid (DigitalAd)
+\item {\bfseries\sffamily DONE} a list of digital advertizing for this event, the prices, and the conid (DigitalAd)
 \label{sec-2-2-5-2}
 \begin{itemize}
 \item digitaladid, basedigitaladid, conid, digitaladprice, display\_order
@@ -339,7 +339,7 @@ linked to ConInfo.conid
 \item basesponsorlevelid, basesponsorlevelname, basesponsorleveldesc
 \end{itemize}
 
-\item {\bfseries\sffamily DONE} a list of digital advertizing for this year, the prices, and the conid (SponsorLevel)
+\item {\bfseries\sffamily DONE} a list of digital advertizing for this event, the prices, and the conid (SponsorLevel)
 \label{sec-2-2-6-2}
 \begin{itemize}
 \item sponsorlevelid, basesponsorlevelid, conid, sponsorprice, display\_order
@@ -369,7 +369,7 @@ linked to ConInfo.conid
 \item baseprintadid, baseprintadname, baseprintaddesc
 \end{itemize}
 
-\item {\bfseries\sffamily DONE} a list of digital advertizing for this year, the prices, and the conid (DigitalAd)
+\item {\bfseries\sffamily DONE} a list of digital advertizing for this event, the prices, and the conid (DigitalAd)
 \label{sec-2-2-7-2}
 \begin{itemize}
 \item printadid, baseprintadid, conid, printadprice, display\_order
@@ -550,7 +550,7 @@ basevendorspaceid, basevendorspacename, basevendorspacedesc
 \item {\bfseries\sffamily DONE} VendorSpace based on VendorSpaces
 \label{sec-2-2-18-2}
 \begin{itemize}
-\item This year's options, based on VendorSpaces
+\item This event's options, based on VendorSpaces
 \item vendorspaceid, basevendorspaceid, conid, vendorspaceprice,
 display\_order
 \end{itemize}
@@ -698,7 +698,7 @@ vendor, so might be another table
 \end{itemize}
 \end{itemize}
 
-\subsubsection{Vendor Yearly Variables}
+\subsubsection{Vendor Yearly (by Event) Variables}
 \label{sec-2-5-2}
 \begin{itemize}
 \item Most just are, as specified in this table
@@ -709,7 +709,7 @@ in the other tables entirely.
 \subsubsection{Vendor Features}
 \label{sec-2-5-3}
 Probably just a tweak to this table, and might need to be a
-"standard set" and a "this year set" like BaseFeatures and
+"standard set" and a "this event set" like BaseFeatures and
 Features does as well as BaseServices and Services does and a
 repurposing of "SessionHasVendorFeature" to
 "VendorHasVendorFeature"
@@ -717,7 +717,7 @@ repurposing of "SessionHasVendorFeature" to
 \subsubsection{Vendor Spaces}
 \label{sec-2-5-4}
 Probably just a tweak to this table, and might need to be a
-"standard set" and a "this year set" like BaseFeatures and
+"standard set" and a "this event set" like BaseFeatures and
 Features does as well as BaseServices and Services does and a
 repurposing of "SessionHasVendorSpace" to "VendorHasVendorSpace"
 
@@ -787,14 +787,14 @@ manage them (the Div Head) needs to interact with.
 \label{sec-3-1-1}
 By number or email address.
 \begin{itemize}
-\item not for this year, but subequent years.
-\end{itemize}
-\begin{itemize}
-\item {\bfseries\sffamily TODO} needs to be finished
-\label{sec-3-1-1-1}
-\begin{itemize}
 \item Update page (subset of new apply page)
 \item apply page (subset of new apply page)
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily VENDORQA} needs to be vetted.
+\label{sec-3-1-1-1}
+\begin{itemize}
+\item Possibly add the SuperVendor update here.
 \end{itemize}
 \end{itemize}
 
@@ -821,9 +821,6 @@ for winter, since they don't have to apply)
 With a catch to see if they are already in our database, using
 their email address
 \begin{itemize}
-\item not for this year, but yes
-\end{itemize}
-\begin{itemize}
 \item {\bfseries\sffamily VENDORQA} final vetting by the vendor folks.
 \label{sec-3-1-3-1}
 \end{itemize}
@@ -833,8 +830,9 @@ their email address
 With a catch to see if they are already in our database, using
 their email address
 \begin{itemize}
-\item not for this year, but yes
+\item not for this year, but community table a separate page (at least
 \end{itemize}
+for winter, since they don't have to apply)
 \begin{itemize}
 \item {\bfseries\sffamily TODO} Currently simply a subset of vendor information.
 \label{sec-3-1-4-1}
@@ -858,7 +856,7 @@ Page, depending on status.
 Either Proposed (by someone else) or Applied (basically filling
 out the form we are giving, or (which isn't set up yet) a
 returning Vendor, filling out a shorter form, but will all the
-appropriate year information on it.
+appropriate event information on it.
 \begin{itemize}
 \item Waiting on Vendor QA of the words, and the contract.
 \end{itemize}
@@ -893,7 +891,7 @@ Once the fees have been paid and/or when the next button has been
 clicked, they are given the message, when they log in, that they
 are still pending Warwick's approval.
 
-\item {\bfseries\sffamily TODO} Warwick Approval (6)
+\item {\bfseries\sffamily VENDORQA} Warwick Approval (6)
 \label{sec-3-1-5-5}
 Once we get Warwick's approval, the button is clicked and they
 will see the message, something to the effect of "Warwick has
@@ -901,10 +899,6 @@ approved, this is your current order, do you want to change
 anything before your invoicing (this is where the various
 digital, print, and sponsorship options, as well as the amenities
 can be changed, as well).
-\begin{itemize}
-\item Still needs update form, probably inserted, for ease rather
-than an click-through.
-\end{itemize}
 
 \item {\bfseries\sffamily TODO} NELA Invoiced (7)
 \label{sec-3-1-5-6}
@@ -930,14 +924,14 @@ are on our websites, and visible, and all is good in the world.
 
 \item {\bfseries\sffamily VENDORQA} NELA Denied (10)
 \label{sec-3-1-5-9}
-For those vendors who just didn't make the cut (this year?)
+For those vendors who just didn't make the cut (this event?)
 usually would happen after (or instead of) the NELA Approved (3)
 state.
 
 \item {\bfseries\sffamily VENDORQA} Warwick Denied (11)
 \label{sec-3-1-5-10}
-For those vendors who didn't make Warwick's cut this year (and
-can they apply again, subsequent years?  Are we going to track
+For those vendors who didn't make Warwick's cut this event (and
+can they apply again, subsequent events?  Are we going to track
 the reason Warwick rejected them?  Will we even know the reason?)
 usually would happen after (or instead of) the Warwick Approval
 state.
@@ -954,7 +948,7 @@ well.
 \subsubsection{Returning Vendor informational update}
 \label{sec-3-1-6}
 This might not be necessary, based on the above page keeping what
-is set for this year as set.
+is set for this event as set.
 \begin{itemize}
 \item {\bfseries\sffamily DONE} included in above Returning set of pages.
 \label{sec-3-1-6-1}
@@ -1013,7 +1007,8 @@ and their type, will be shown for balance reasons.
 \item {\bfseries\sffamily VENDORQA} in pieces
 \label{sec-3-1-10-1}
 \begin{itemize}
-\item first report
+\item first report - which allows for changing the Vendor State is
+done.
 \item set of tunable reports
 \item voting page, much like other voting pages?
 \end{itemize}
@@ -1037,7 +1032,7 @@ along those lines.  Including the current svg of the map.
 
 \subsubsection{Administer Vendor Options}
 \label{sec-3-1-12}
-Page that has the Amenities and Spaces for this year, pulled from
+Page that has the Amenities and Spaces for this event, pulled from
 the standard pool.  To be updated by the Vendor Coordinator on an
 event by event basis.
 \begin{itemize}
@@ -1045,45 +1040,60 @@ event by event basis.
 \label{sec-3-1-12-1}
 \end{itemize}
 
-\subsubsection{Administer Vendor}
+\subsubsection{Adminsiter Ad/Sponsor Options}
 \label{sec-3-1-13}
+Page that has the Sponsor Levels, Digital Ads and Print Ads for
+this event, pulled from the standard pool.  To be updated either
+by the Vendor Div Head or the Publications Div Head on an event by
+event basis.
+\begin{itemize}
+\item {\bfseries\sffamily VENDORQA} 
+\label{sec-3-1-13-1}
+\begin{itemize}
+\item Page is done, need the base information so that the event
+information can be selected.
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Administer Vendor}
+\label{sec-3-1-14}
 Where any changes are made to the vendor information (both that
 they can change and that they can't) for creation/update by Vendor
 Div Head.
 \begin{itemize}
 \item {\bfseries\sffamily TODO} 
-\label{sec-3-1-13-1}
-\end{itemize}
-
-\subsubsection{Vendor Welcome Letter}
-\label{sec-3-1-14}
-Generate the (physical) welcome letter to the vendors
-\begin{itemize}
-\item {\bfseries\sffamily TODO} 
 \label{sec-3-1-14-1}
 \end{itemize}
 
-\subsubsection{Vendor Email}
+\subsubsection{Vendor Welcome Letter}
 \label{sec-3-1-15}
-Generate (and send) various all-vendor communications
+Generate the (physical) welcome letter to the vendors
 \begin{itemize}
 \item {\bfseries\sffamily TODO} 
 \label{sec-3-1-15-1}
 \end{itemize}
 
-\subsubsection{Vendor Badges}
+\subsubsection{Vendor Email}
 \label{sec-3-1-16}
+Generate (and send) various all-vendor communications
+\begin{itemize}
+\item {\bfseries\sffamily TODO} 
+\label{sec-3-1-16-1}
+\end{itemize}
+
+\subsubsection{Vendor Badges}
+\label{sec-3-1-17}
 Generate the Vendor Badges for printing purposes.
 \begin{itemize}
 \item No!
 \end{itemize}
 \begin{itemize}
 \item {\bfseries\sffamily TODO} even if we won't use them.
-\label{sec-3-1-16-1}
+\label{sec-3-1-17-1}
 \end{itemize}
 
 \subsubsection{Vendor Tents}
-\label{sec-3-1-17}
+\label{sec-3-1-18}
 Generate all the vendor "tents" to put on their tables, to mark
 their place.
 \begin{itemize}
@@ -1091,11 +1101,11 @@ their place.
 \end{itemize}
 \begin{itemize}
 \item {\bfseries\sffamily TODO} 
-\label{sec-3-1-17-1}
+\label{sec-3-1-18-1}
 \end{itemize}
 
 \subsubsection{Check-in/Check-out lists}
-\label{sec-3-1-18}
+\label{sec-3-1-19}
 All of the vendors expected, so they can be ticked off the list
 when they get there, and, so that when they return whatever they
 have to return at the end of the night (tax forms, possibly?) can
@@ -1108,7 +1118,7 @@ marked specially.
 \end{itemize}
 \begin{itemize}
 \item {\bfseries\sffamily TODO} 
-\label{sec-3-1-18-1}
+\label{sec-3-1-19-1}
 \end{itemize}
 
 \subsection{Flow}
@@ -1116,19 +1126,28 @@ marked specially.
 \subsubsection{Set Amenities}
 \label{sec-3-2-1}
 Go to the VendorSetupSpaceFeature.php page, and set the
-appropriate amenities/prices/et al for this year.
+appropriate amenities/prices/et al for this event.
 
 \subsubsection{Set Spaces}
 \label{sec-3-2-2}
 Go to the VendorSetupSpaceFeature.php page, and set the
-appropriate spaces/prices/et al for this year.
+appropriate spaces/prices/et al for this event.
 
 \subsubsection{Set Sponsorship levels}
 \label{sec-3-2-3}
+Go to the PubsSetupAds.php page, and set the
+appropriate sponsor levels available/prices/et al for this event.
+
 \subsubsection{Set Digital Ad possiblities}
 \label{sec-3-2-4}
+Go to the PubsSetupAds.php page, and set the
+appropriate digital ads available/prices/et al for this event.
+
 \subsubsection{Set Printed Ad possibilities}
 \label{sec-3-2-5}
+Go to the PubsSetupAds.php page, and set the
+appropriate print ads available/prices/et al for this event.
+
 \subsubsection{Task List}
 \label{sec-3-2-6}
 Task List element with the call for vendors is created, with the
@@ -1228,6 +1247,8 @@ So they are available on the day-of.
 \label{sec-4-1}
 \subsection{PDF to be updated}
 \label{sec-4-2}
+\subsection{Invoice to be updated}
+\label{sec-4-3}
 
 \section{Conclusion}
 \label{sec-5}

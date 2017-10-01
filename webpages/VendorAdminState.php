@@ -58,6 +58,14 @@ if (($_POST['update']=='Yes') and ((may_I("Maint")) or (may_I("ConChair")) or (m
     $set_array=array("vendorstatustypeid=".$_POST['vendorstatustypeid']);
     $match_string="badgeid=".$vendorid." AND conid=".$conid;
     $message.=update_table_element_extended_match($link, $title, "VendorStatus", $set_array, $match_string);
+
+    // Submit a note about what was done.
+    $element_array = array('badgeid', 'rbadgeid', 'note','conid');
+    $value_array=array($vendorid,
+		       $_SESSION['badgeid'],
+		       "Changed vendor $vendorid state to " . $_POST['vendorstatustypeid'] . ".",
+		       $_SESSION['conid']);
+    $message.=submit_table_element($link, $title, "NotesOnVendors", $element_array, $value_array);
   }
 }
 

@@ -56,6 +56,36 @@ if (($_POST['vendorcontract'] == "Signed") and ($_POST['submit'] == "Vendor Cont
   $message.=update_table_element_extended_match($link, $title, "VendorAnnualInfo", $set_array, $match_string);
 }
 
+// If the last updated vendor application before the invoice is submitted, do it, and update the state.
+if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Pre-Invoice")) {
+  $message.=edit_vendor_apply($_POST);
+  $message.="In Updated, Pre-Invoice<br \>\n";
+
+  // Promote Vendor Status to "Invoiced"
+  $queryVendorStatusType="SELECT vendorstatustypeid FROM VendorStatusTypes WHERE vendorstatustypename='Invoiced'";
+  list($vendorstatustyperows,$vendorstatustypeheader_array,$vendorstatustype_array)=queryreport($queryVendorStatusType,$link,$title,$description,0);
+  if ($vendorstatustyperows != 1) {
+    $message_error.="Somehow there are more or less Vendor Status Types maping to Invoiced.";
+    $message_error.="Please check your database for inconsistencies, or suggest a change.\n";
+    RenderError($title,$message_error);
+    exit();
+  }
+
+  // Update the value in the table
+  $set_array=array("vendorstatustypeid=".$vendorstatustype_array[1]['vendorstatustypeid']);
+  $match_string="badgeid=".$_SESSION['badgeid']." AND conid=".$conid;
+  $verbose.=update_table_element_extended_match($link, $title, "VendorStatus", $set_array, $match_string);
+
+  // Update a note that it was done.
+  $element_array = array('badgeid', 'rbadgeid', 'note','conid');
+  $value_array=array($_SESSION['badgeid'],
+		     $_SESSION['badgeid'],
+		     "Promoted self (" . $_SESSION['badgename'] . ") to Invoiced.",
+		     $_SESSION['conid']);
+  $verbose.=submit_table_element($link, $title, "NotesOnVendors", $element_array, $value_array);
+
+}
+
 
 // Default status name/id
 $vstatusid=0;

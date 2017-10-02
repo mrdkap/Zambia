@@ -6,7 +6,9 @@ global $link, $message, $message_error;
 // LOCALIZATIONS
 $title="Vendor Application";
 $description="<P>Apply (or update your application) for the ". $_SESSION['connamelong'] . "</P>";
-$additionalinfo="";
+$additionalinfo="<P>Vendor FAQ: ";
+$additionalinfo.="<A HREF=\"http://fetishflea.com/index.php?page=vending-community-tables\">";
+$additionalinfo.="http://fetishflea.com/index.php?page=vending-community-tables</A></P>\n";
 $_SESSION['return_to_page']='VendorApply.php';
 $conid=$_SESSION['conid'];
 

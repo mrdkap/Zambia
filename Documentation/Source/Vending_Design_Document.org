@@ -409,7 +409,7 @@
      returning Vendor, filling out a shorter form, but will all the
      appropriate event information on it.
      - Waiting on Vendor QA of the words, and the contract.
-**** TODO NELA Approved (3)
+**** VENDORQA NELA Approved (3)
      Once a set of the proposals are in, the jury decides if their
      proposal is accepted and acceptable, the NELA Approved button for
      them is clicked, email is sent to them letting them know that
@@ -419,12 +419,12 @@
      what Warwick is doing differently this year, and a link to pull
      down the PDF to be filled in, and a way to submit the filled-out
      PDF.
-     - Still needs PDF and Submission form.
-**** TODO Warwick Invoced (4)
+     - Not sure if we should be auto-moving on.
+**** VENDORQA Warwick Invoced (4)
      Once the PDF has been submitted and/or when the next button has
      been clicked, they are then presented with an invoice for the
      Warwick fees.
-     - Still needs invoice.
+     - Still needs invoice testing, need a credit card for that.
 **** VENDORQA Pending Warwick Approval (5)
      Once the fees have been paid and/or when the next button has been
      clicked, they are given the message, when they log in, that they
@@ -436,10 +436,12 @@
      anything before your invoicing (this is where the various
      digital, print, and sponsorship options, as well as the amenities
      can be changed, as well).
-**** TODO NELA Invoiced (7)
+**** VENDORQA NELA Invoiced (7)
      Once they indicate that their invoice is fine, the invoice is
      presented.  They then can pay it.
-     - Still needs invoice.
+     - Still needs testing, need a credit card for that.
+     - Although the testing might be covered by Warwick Invoiced (4)
+       above.
 **** VENDORQA Paid (8)
      This is the state they will be in once the invoice is paid.  At
      this point, it can flow directly to the next step, but I have
@@ -640,7 +642,6 @@
 * Things to add, from the new:
 ** Logo to be uploaded
 ** PDF to be updated
-** Invoice to be updated
 * Conclusion
   This should cover all the bits and pieces.  If I missed any, let me
   know so this document can be updated, and the system can be tested.

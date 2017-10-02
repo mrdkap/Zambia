@@ -6,7 +6,9 @@ global $participant,$message,$message_error,$message2;
 // LOCALIZATIONS
 $title="Vendor View";
 $description="";
-$additionalinfo="";
+$additionalinfo="<P>Vendor FAQ: ";
+$additionalinfo.="<A HREF=\"http://fetishflea.com/index.php?page=vending-community-tables\">";
+$additionalinfo.="http://fetishflea.com/index.php?page=vending-community-tables</A></P>\n";
 $message_error.=$message2;
 $conid=$_SESSION['conid'];
 $badgeid=$_SESSION['badgeid'];
@@ -35,7 +37,7 @@ if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Upda
   $message.="In Updated, Updated Applicaton";
 }
 
-// If an updated vendor application submitted, do it.
+// If an updated vendor business information submitted, do it.
 if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Updated Information")) {
   $message.=edit_vendor_update($_POST);
   $message.="In Updated, Updated Information";
@@ -51,9 +53,39 @@ if (($_POST['vendorcontract'] == "Signed") and ($_POST['submit'] == "Vendor Cont
     RenderError($title,$message_error);
     exit();
   }
-  $set_array=array("vendoracknowledgement=\"".htmlspecialchars_decode($_POST['vendoracknowledgement'])."\"");
-  $match_string="badgeid=".$badgeid." AND conid=".$conid;
-  $message.=update_table_element_extended_match($link, $title, "VendorAnnualInfo", $set_array, $match_string);
+  // Get the Vendors's name from CongoDump
+  $queryVendorName=<<<EOD
+SELECT
+    concat(firstname, " ", lastname) AS name
+  FROM
+    CongoDump
+  WHERE
+    badgeid=$badgeid
+EOD;
+
+  list($vnamerows,$vnameheader_array,$vname_array)=queryreport($queryVendorName,$link,$title,$description,0);
+
+  // Simplify, so it can be substituted below.
+  $vname=$vname_array[1]['name'];
+
+  if ($vname == htmlspecialchars_decode($_POST['vendoracknowledgement'])) {
+    $set_array=array("vendoracknowledgement=\"".htmlspecialchars_decode($_POST['vendoracknowledgement'])."\"");
+    $match_string="badgeid=".$badgeid." AND conid=".$conid;
+    $message.=update_table_element_extended_match($link, $title, "VendorAnnualInfo", $set_array, $match_string);
+
+    // Update the value in the table
+    $set_array=array("vendorstatustypeid=3");
+    $match_string="badgeid=".$_SESSION['badgeid']." AND conid=".$conid;
+    $verbose.=update_table_element_extended_match($link, $title, "VendorStatus", $set_array, $match_string);
+
+    // Update a note that it was done.
+    $element_array = array('badgeid', 'rbadgeid', 'note','conid');
+    $value_array=array($_SESSION['badgeid'],
+		       $_SESSION['badgeid'],
+		       "Promoted self (" . $_SESSION['badgename'] . ") from Applied.",
+		       $_SESSION['conid']);
+    $verbose.=submit_table_element($link, $title, "NotesOnVendors", $element_array, $value_array);
+  }
 }
 
 // If the last updated vendor application before the invoice is submitted, do it, and update the state.
@@ -85,6 +117,8 @@ if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Pre-
   $verbose.=submit_table_element($link, $title, "NotesOnVendors", $element_array, $value_array);
 
 }
+
+// Need to do something with the returned invoices - TBD - possibly a VendorInvoiceReturned Verbiage.
 
 
 // Default status name/id

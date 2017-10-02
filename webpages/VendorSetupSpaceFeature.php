@@ -253,7 +253,7 @@ EOD;
   // Only show the change tables if permissions match
   if ($limitedview == "F") {
     // sets the price, notes, url, and display_order for each unselected type
-    $workstring.="<FORM name=\"base " . $type[$l] . "form\" action=\"PubsSetupAds.php\" method=POST>\n";
+    $workstring.="<FORM name=\"base " . $type[$l] . "form\" action=\"VendorSetupSpaceFeature.php\" method=POST>\n";
     $workstring.="<P>Set this con's " . $typename[$l] . "s</P>\n";
 
     // continue to include history if requested.
@@ -267,7 +267,7 @@ EOD;
     $workstring.="</FORM>\n";
 
     // shows the current price, max, notes, and display_order for selected Sponsor Levels
-    $workstring.="<FORM name=\"" . $type[$l] . "form\" action=\"PubsSetupAds.php\" method=POST>\n";
+    $workstring.="<FORM name=\"" . $type[$l] . "form\" action=\"VendorSetupSpaceFeature.php\" method=POST>\n";
     $workstring.="<P>Update this con's " . $typename[$l] . "s</P>\n";
 
     // continue to include history if requested.

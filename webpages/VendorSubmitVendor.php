@@ -9,6 +9,9 @@ $description="<P>Password update not necessary for submission.</P>\n";
 $additionalinfo="<P>Please make sure all your information is valid, there are no double checks.\n";
 $additionalinfo.="If they are not valid they are not going to resolve properly the chance that we might\n";
 $additionalinfo.="see you at this or future events decreases exponentially.</P>\n";
+$additionalinfo.="<P>Vendor FAQ: ";
+$additionalinfo.="<A HREF=\"http://fetishflea.com/index.php?page=vending-community-tables\">";
+$additionalinfo.="http://fetishflea.com/index.php?page=vending-community-tables</A></P>\n";
 $_SESSION['return_to_page']='VendorWelcome.php';
 $conid=$_SESSION['conid'];
 

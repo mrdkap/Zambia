@@ -282,6 +282,11 @@ function participant_header ($title) {
     }
     echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
     echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+    if (may_I('Vendor')) {
+      maketab("Vendor View",may_I('Vendor'),"VendorWelcome.php");
+    }
+    echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
+    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     if ((may_I('Participant'))  or (may_I('Panelist')) or (may_I('Aide')) or
 	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or
 	    (may_I('Author')) or (may_I('Organizer')) or (may_I('Performer'))) {

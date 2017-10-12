@@ -210,14 +210,28 @@
 *** vendor_payment_adjustment - decimal(8,2)
     - Adjustments to the bill
     + YUP
-    - chance for adjustments (like shitty corner)
+    - chance for adjustments (like shitty corner, or still owes us money)
 **** DONE VendorAnnualInfo.vendorpayadj
 *** vendor_payment_amount - decimal(8,2)
     - amount they paid, should match invoiced amounts
     + YUP
     - differentiated by the above adjustment
-**** TODO not sure how it's generated?
-**** DONE VendorAnnualInfo.vendorpaid
+    OK, since we have (at least) two invoices per vendor per event, we
+    need to have a table that tracks it.  So extra information can be
+    collected as well.
+    The table should have the badgeid, the conid, the transaction
+    date, the amount billed, the amount paid, the name and description
+    of the transaction, and who they asked the email to be sent to
+    (even though it doesn't actually go there, for some reason, to be
+    discovered later, probably having something to do with the blank
+    "merchmailtemplate" field or "confemailtemplate" field)
+**** VENDORQA VendorInvoice table
+     - Generated from VendorInvoice in Verbiage
+     - Fed from the VendorWelcome_# status pages.
+     - Tracked invoiceid, badgeid, conid, invoiceref (#),
+       invoiceorderid (#), invoicedate, invoiceamt, invoicecost,
+       invoicepaid (all three should agree), invoicename, invoicedesc,
+       invoiceemail, invoiceshipemail (both should agree)
 *** vendor_payment_received - Y/N (enum)
     - check box?
     + YES
@@ -296,6 +310,9 @@
     - possibly a geneerated field, as opposed to a stored one, based
       on the varieties chosen in vendor_amenites,
       vendor_payment_adjustment, vendor_actual_space and others?
+    - These live on the Verbiage VendorWelcome_# pages depending on
+      what they selected.
+    - Warwick seperate from NELA
 *** times_at_fff 
     - currently a freeform field, should probably be generated, with a
       special number that adds in, for (currently) untracked events.
@@ -314,8 +331,9 @@
       - vendor_type
         possibly a short list of possible with a mapping to the
         vendor, so might be another table
-      - times_at_fff_untracked - int(3)
-*** Vendor Yearly (by Event) Variables
+      - times_at_fff_untracked - in VendorTimesAdj
+*** Vendor Yearly (by Event) Variables 
+    - VendorAnnualInfo
     - Most just are, as specified in this table
     - Some might be cross-references to the other tables below, or be
       in the other tables entirely.
@@ -325,11 +343,18 @@
     Features does as well as BaseServices and Services does and a
     repurposing of "SessionHasVendorFeature" to
     "VendorHasVendorFeature"
+    - BaseVendorFeature - list of possiblilities
+    - VendorFeature - list of this event's actual choices
+    - VendorHasFeature - list of which vendor has which choice
 *** Vendor Spaces
     Probably just a tweak to this table, and might need to be a
     "standard set" and a "this event set" like BaseFeatures and
     Features does as well as BaseServices and Services does and a
     repurposing of "SessionHasVendorSpace" to "VendorHasVendorSpace"
+    - BaseVendorSpace - list of possiblilities
+    - VendorSpace - list of this event's actual choices
+    - VendorPrefSpace - list of requested spaces by the vendor
+    - VendorHasSpace - list of which vendor has which choice
 *** Vendor Location
     Might be it's own table, with conid (linked), badgeid (linked),
     building, floor, room (possibly linked), and booth_number, and
@@ -339,18 +364,41 @@
     might also allow ties to maps, and possibly the redraw of maps.
 *** Vendor Status
     Might want to be it's own table as a mapping, so searches, and
-    display_order could be set.
+    display_order could be set.  See the piece below in Front End for
+    each element.
+    - VendorStatusTypes - list of possible statuses
+    - VendorStatus - what status each vendor is at per event
 *** Vendor Sponsorship Package/vendor_sponsor_level
-    These three would need to be determined.
+    - BaseSponsorLevel - list of possiblilities
+    - SponsorLevel - list of this event's actual choices
+    - VendorHasSponsorLevel - list of which vendor has which choice
 *** digital_advertising_level
-    These three would need to be determined.
+    - BaseDigitalAd - list of possiblilities
+    - DigitalAd - list of this event's actual choices
+    - VendorHasDigitalAd - list of which vendor has which choice
 *** print_advertising_level
-    These three would need to be determined.
+    - BasePrintAd - list of possiblilities
+    - PrintAd - list of this event's actual choices
+    - VendorHasPrintAd - list of which vendor has which choice
+*** Types of Vendors (what they vend)
+    - Default list in VendorTyoes
+    - Vendor mapping in VendorIs
+*** Vendor Information Edited
+    List of codes to indicate what was done to the vendor information
+    - VendorEditCodes
+*** Vendor Change History
+    Track what was done, per vendor, to them, when.
+    - VendorEditHistory - Some of the edits
+    - NotesOnVendors - More history
+*** Vendor Invoicing
+    Actually set up for all invoicing, but referenced by vendor
+    - Invoice
 *** More structure in the 41_VendorInfo.sql file
 ** Still Unknown
    These are the variables that exist already in the other usage
    space, that I still don't have a handle on.  More explination would
-   be very useful.
+   be very useful.  Probably actually traced in one of the Vendor
+   Change History tables above.
 *** created_by - number
     - Not sure what this does?
     + I THINK IT"S VENDORS NAME VS. I UPDATED, ETC
@@ -374,7 +422,6 @@
     - Update page (subset of new apply page)
     - apply page (subset of new apply page)
 **** VENDORQA needs to be vetted.
-     - Possibly add the SuperVendor update here.
 *** Returning Community Table sign-in
     By number or email address.  Might simply be switched on one of
     the values in the vending type or on it's own value, and just have
@@ -384,6 +431,8 @@
     for winter, since they don't have to apply)
     - BIG NOTE: any money exchanged makes you a vendor, Be aware
 **** TODO Currently simply a subset of vendor information.
+     - Needs to have differential words put in on indication that is a
+       community table.
 *** New Vendor proposal
     With a catch to see if they are already in our database, using
     their email address
@@ -394,6 +443,8 @@
     - not for this year, but community table a separate page (at least
     for winter, since they don't have to apply)
 **** TODO Currently simply a subset of vendor information.
+     - Needs to have differential words put in on indication that is a
+       community table.
 *** Returning Vendor/Community Table informational gathering
     This can be the same, although there might, again, be a slight
     difference bases on vendor/community table differences.  Also, we
@@ -408,7 +459,8 @@
      out the form we are giving, or (which isn't set up yet) a
      returning Vendor, filling out a shorter form, but will all the
      appropriate event information on it.
-     - Waiting on Vendor QA of the words, and the contract.
+     - Waiting on Vendor QA of the words.
+     - Auto advance to the next.
 **** VENDORQA NELA Approved (3)
      Once a set of the proposals are in, the jury decides if their
      proposal is accepted and acceptable, the NELA Approved button for
@@ -419,16 +471,18 @@
      what Warwick is doing differently this year, and a link to pull
      down the PDF to be filled in, and a way to submit the filled-out
      PDF.
-     - Not sure if we should be auto-moving on.
+     - No auto advance.
 **** VENDORQA Warwick Invoced (4)
      Once the PDF has been submitted and/or when the next button has
      been clicked, they are then presented with an invoice for the
      Warwick fees.
-     - Still needs invoice testing, need a credit card for that.
+     - Still needs final invoice testing by someone not NELA.
+     - Auto Advance to the next.
 **** VENDORQA Pending Warwick Approval (5)
      Once the fees have been paid and/or when the next button has been
      clicked, they are given the message, when they log in, that they
      are still pending Warwick's approval.
+     - No auto advance.
 **** VENDORQA Warwick Approval (6)
      Once we get Warwick's approval, the button is clicked and they
      will see the message, something to the effect of "Warwick has
@@ -436,12 +490,12 @@
      anything before your invoicing (this is where the various
      digital, print, and sponsorship options, as well as the amenities
      can be changed, as well).
-**** VENDORQA NELA Invoiced (7)
+     - Auto Advance to the next.
+**** VENDORQA Invoiced (7)
      Once they indicate that their invoice is fine, the invoice is
      presented.  They then can pay it.
-     - Still needs testing, need a credit card for that.
-     - Although the testing might be covered by Warwick Invoiced (4)
-       above.
+     - Still needs final testing by somone not NELA.
+     - Auto Advance to the next.
 **** VENDORQA Paid (8)
      This is the state they will be in once the invoice is paid.  At
      this point, it can flow directly to the next step, but I have
@@ -449,32 +503,39 @@
      there wants to be a check ... sent to them? or sent to us? or
      possibly that we are waiting on a check, or something else, that
      means that they are waiting in this state.
+     - No auto advance.
 **** VENDORQA Accepted (9)
      Once this button is clicked, then everything comes up roses, they
      are on our websites, and visible, and all is good in the world.
+     - Final state.
 **** VENDORQA NELA Denied (10)
      For those vendors who just didn't make the cut (this event?)
      usually would happen after (or instead of) the NELA Approved (3)
      state.
+     - Final state.
 **** VENDORQA Warwick Denied (11)
      For those vendors who didn't make Warwick's cut this event (and
      can they apply again, subsequent events?  Are we going to track
      the reason Warwick rejected them?  Will we even know the reason?)
      usually would happen after (or instead of) the Warwick Approval
      state.
+     - Final state.
 **** VENDORQA Banned (12)
      So we track those who are banned, so if they try to apply, we
      know.  Probably clunky, and ... not sure at what point in the
      process they should be informed.  I'm thinking at about the NELA
      Denied, right after (or instead of) the NELA Approved state as
      well.
+     - Final state.
 *** Returning Vendor informational update
     This might not be necessary, based on the above page keeping what
     is set for this event as set.
-**** DONE included in above Returning set of pages.
+     - SuperVendor cam also update anyone here.
+**** VENDORQA similar to the above set of pages, but allowed always.
 *** Returning Vendor/Community Table Bio update
     Page that they can, at will update their web or book information,
     along with all their other invormation.
+     - SuperVendor cam also update anyone here.
 **** VENDORQA similar to the above set of pages, but allowed always.
 *** Invoice
     Not available until after both they are accepted (by Vendor
@@ -505,6 +566,8 @@
 **** VENDORQA in pieces
      - first report - which allows for changing the Vendor State is
        done.
+     - second report - just those with possible PDFs waiting to be
+       checked and promoted.
      - set of tunable reports
      - voting page, much like other voting pages?
 *** Vendor Placement
@@ -529,12 +592,11 @@
     by the Vendor Div Head or the Publications Div Head on an event by
     event basis.
 **** VENDORQA
-     - Page is done, need the base information so that the event
-       information can be selected.
 *** Administer Vendor
     Where any changes are made to the vendor information (both that
     they can change and that they can't) for creation/update by Vendor
     Div Head.
+    - Redundant with above "Returning Vendor" pages.
 **** VENDORQA
      - Still a little wonky, brings back to a less-useful page, but
        still works.  Can select by email address or by "pubsname"
@@ -582,10 +644,10 @@
     appropriate print ads available/prices/et al for this event.
 *** Task List
     Task List element with the call for vendors is created, with the
-    appropriate link.
+    appropriate links.
 *** Task List
     Task List element with the call for community tables is created,
-    with the appropriate link.
+    with the appropriate links.
 *** Email
     Possible email from Vendor Div Head goes out reminding
     vendors/community tables when the call will open and close.
@@ -606,7 +668,8 @@
     Otherwise ...
 *** Phase Change
     At the appropriate time, the Con Chair or Zambia bitch close the
-    call for vendors.
+    call for vendors. (This is not necessarily in the right place in
+    the sequence.)
 *** Jury
     The (rest of (if rolling acceptance is happening)) vendors and
     community tables get acceptance, which probably is an individual
@@ -640,8 +703,7 @@
 *** Check-in/check-out lists printed
     So they are available on the day-of.
 * Things to add, from the new:
-** Logo to be uploaded
-** PDF to be updated
+** Logo to be uploaded (PDF)
 * Conclusion
   This should cover all the bits and pieces.  If I missed any, let me
   know so this document can be updated, and the system can be tested.

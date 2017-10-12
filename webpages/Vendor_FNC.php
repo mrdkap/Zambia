@@ -149,7 +149,7 @@ EOD;
       $set_array[]="vendorselfcarry=$vendorselfcarry";
     }
     if ($work_arr['wasvendornotes'] != $work_arr['vendornotes']) {
-      $set_array[]="vendornotes=".htmlspecialchars_decode($work_arr['vendornotes']);
+      $set_array[]="vendornotes='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($work_arr['vendornotes'])))."'";
     }
     if (!empty($set_array)) {
       $match_string="conid=$conid AND badgeid=$badgeid";
@@ -455,10 +455,10 @@ function edit_vendor_update ($work_arr) {
       exit();
     }
     if (mysql_num_rows($result) > 0) {
-      $message_error="There is already an entry with this email address in the system.<br />\n";
-      $message_error.="Please <A HREF\"doLogin.php?newconid=$conid&badgeid=".$work_arr['email']."\">log in</A>\n";
+      $message_error="There is already an entry with this email address in the system.</P>\n";
+      $message_error.="<P>Please <A HREF\"doLogin.php?newconid=$conid&badgeid=".$work_arr['email']."\">log in</A>\n";
       $message_error.="instead of trying to re-create yourself.  If you have forgotton your password ";
-      $message_error.="you will be prompted to have a new one sent.\n";
+      $message_error.="you will be prompted to have a new one sent.</P>\n";
       RenderError($title,$message_error);
       exit();
     }
@@ -673,14 +673,11 @@ function create_vendor ($participant_arr) {
   }
 
   // Already existing email address.
-  $query = "SELECT email FROM CongoDump where email like \"%".$participant_arr['email']."%\"";
-  $result=mysql_query($query,$link);
-  if (!$result) {
-    $message_error="Unable to reach database.<BR>\n$query<BR>\n";
-    RenderError($title,$message_error);
-    exit();
-  }
-  if (mysql_num_rows($result) > 0) {
+  $queryPreExist = "SELECT badgeid FROM CongoDump where email like \"%".$participant_arr['email']."%\"";
+  list($preexistrows,$preexistheader_array,$preexist_array)=queryreport($queryPreExist,$link,$title,$description,0);
+  if ($preexistrows > 0) {
+    $_POST['badgeid']=$preexist_array[1]['badgeid'];
+    $message.=edit_vendor_apply($_POST);
     $message_error="There is already an entry with this email address in the system.<br />\n";
     $message_error.="Please <A HREF\"doLogin.php?newconid=$conid&badgeid=".$participant_arr['email']."\">log in</A>\n";
     $message_error.="instead of trying to re-create yourself.  If you have forgotton your password ";

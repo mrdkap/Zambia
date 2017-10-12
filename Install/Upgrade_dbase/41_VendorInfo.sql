@@ -276,3 +276,22 @@ CREATE TABLE `NotesOnVendors` (
   CONSTRAINT `NotesOnVendors_ibfk_2` FOREIGN KEY (`rbadgeid`) REFERENCES `Participants` (`badgeid`),
   CONSTRAINT `NotesOnVendors_ibfk_3` FOREIGN KEY (`conid`) REFERENCES `ConInfo` (`conid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Invoice` (
+  `invoiceid` int(11) NOT NULL AUTO_INCREMENT,
+  `badgeid` varchar(15) NOT NULL DEFAULT '',
+  `conid` int(11) NOT NULL DEFAULT '0',
+  `invoiceref` int(25),
+  `invoiceorderid` int(25),
+  `invoicedate` date NOT NULL,
+  `invoiceamt` DECIMAL(8, 2),
+  `invoicecost` DECIMAL(8, 2),
+  `invoicepaid` DECIMAL(8, 2),
+  `invoicename` text,
+  `invoicedesc` text,
+  `invoiceemail` varchar(100),
+  `invoiceshipemail` varchar(100),
+  PRIMARY KEY (`invoiceid`),
+  CONSTRAINT `Invoice_ibfk_1` FOREIGN KEY (`badgeid`) REFERENCES `Participants` (`badgeid`),
+  CONSTRAINT `Invoice_ibfk_2` FOREIGN KEY (`conid`) REFERENCES `ConInfo` (`conid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

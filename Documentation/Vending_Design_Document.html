@@ -170,8 +170,7 @@ Percy, Amanda, Rob, Iya &lt;NELA.Percy@gmail.com&gt;
 </li>
 <li><a href="#sec-4">4. Things to add, from the new:</a>
 <ul>
-<li><a href="#sec-4-1">4.1. Logo to be uploaded</a></li>
-<li><a href="#sec-4-2">4.2. PDF to be updated</a></li>
+<li><a href="#sec-4-1">4.1. Logo to be uploaded (PDF)</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5. Conclusion</a></li>
@@ -705,7 +704,7 @@ more complex for the future.
 </li>
 <li>YUP
 </li>
-<li>chance for adjustments (like shitty corner)
+<li>chance for adjustments (like shitty corner, or still owes us money)
 </li>
 </ul>
 </div>
@@ -723,9 +722,32 @@ more complex for the future.
 <li>differentiated by the above adjustment
 </li>
 </ul>
+<p>
+OK, since we have (at least) two invoices per vendor per event, we
+need to have a table that tracks it.  So extra information can be
+collected as well.
+The table should have the badgeid, the conid, the transaction
+date, the amount billed, the amount paid, the name and description
+of the transaction, and who they asked the email to be sent to
+(even though it doesn't actually go there, for some reason, to be
+discovered later, probably having something to do with the blank
+"merchmailtemplate" field or "confemailtemplate" field)
+</p>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> not sure how it's generated?<br  /></li>
-<li><span class="done DONE">DONE</span> VendorAnnualInfo.vendorpaid<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> VendorInvoice table<br  /><div class="outline-text-5" id="text-2-2-16-1">
+<ul class="org-ul">
+<li>Generated from VendorInvoice in Verbiage
+</li>
+<li>Fed from the VendorWelcome_# status pages.
+</li>
+<li>Tracked invoiceid, badgeid, conid, invoiceref (#),
+invoiceorderid (#), invoicedate, invoiceamt, invoicecost,
+invoicepaid (all three should agree), invoicename, invoicedesc,
+invoiceemail, invoiceshipemail (both should agree)
+</li>
+</ul>
+</div>
+</li></ul>
 </div>
 
 <div id="outline-container-sec-2-2-17" class="outline-4">
@@ -930,6 +952,11 @@ system.
 on the varieties chosen in vendor_amenites,
 vendor_payment_adjustment, vendor_actual_space and others?
 </li>
+<li>These live on the Verbiage VendorWelcome_# pages depending on
+what they selected.
+</li>
+<li>Warwick seperate from NELA
+</li>
 </ul>
 </div>
 </div>
@@ -974,7 +1001,7 @@ because we didn't want you to know what it did, but &#x2026;
 possibly a short list of possible with a mapping to the
 vendor, so might be another table
 </li>
-<li>times_at_fff_untracked - int(3)
+<li>times_at_fff_untracked - in VendorTimesAdj
 </li>
 </ul>
 </li>
@@ -986,6 +1013,8 @@ vendor, so might be another table
 <h4 id="sec-2-5-2"><span class="section-number-4">2.5.2</span> Vendor Yearly (by Event) Variables</h4>
 <div class="outline-text-4" id="text-2-5-2">
 <ul class="org-ul">
+<li>VendorAnnualInfo
+</li>
 <li>Most just are, as specified in this table
 </li>
 <li>Some might be cross-references to the other tables below, or be
@@ -1005,6 +1034,14 @@ Features does as well as BaseServices and Services does and a
 repurposing of "SessionHasVendorFeature" to
 "VendorHasVendorFeature"
 </p>
+<ul class="org-ul">
+<li>BaseVendorFeature - list of possiblilities
+</li>
+<li>VendorFeature - list of this event's actual choices
+</li>
+<li>VendorHasFeature - list of which vendor has which choice
+</li>
+</ul>
 </div>
 </div>
 
@@ -1017,6 +1054,16 @@ Probably just a tweak to this table, and might need to be a
 Features does as well as BaseServices and Services does and a
 repurposing of "SessionHasVendorSpace" to "VendorHasVendorSpace"
 </p>
+<ul class="org-ul">
+<li>BaseVendorSpace - list of possiblilities
+</li>
+<li>VendorSpace - list of this event's actual choices
+</li>
+<li>VendorPrefSpace - list of requested spaces by the vendor
+</li>
+<li>VendorHasSpace - list of which vendor has which choice
+</li>
+</ul>
 </div>
 </div>
 
@@ -1039,40 +1086,115 @@ might also allow ties to maps, and possibly the redraw of maps.
 <div class="outline-text-4" id="text-2-5-6">
 <p>
 Might want to be it's own table as a mapping, so searches, and
-display_order could be set.
+display_order could be set.  See the piece below in Front End for
+each element.
 </p>
+<ul class="org-ul">
+<li>VendorStatusTypes - list of possible statuses
+</li>
+<li>VendorStatus - what status each vendor is at per event
+</li>
+</ul>
 </div>
 </div>
 
 <div id="outline-container-sec-2-5-7" class="outline-4">
 <h4 id="sec-2-5-7"><span class="section-number-4">2.5.7</span> Vendor Sponsorship Package/vendor_sponsor_level</h4>
 <div class="outline-text-4" id="text-2-5-7">
-<p>
-These three would need to be determined.
-</p>
+<ul class="org-ul">
+<li>BaseSponsorLevel - list of possiblilities
+</li>
+<li>SponsorLevel - list of this event's actual choices
+</li>
+<li>VendorHasSponsorLevel - list of which vendor has which choice
+</li>
+</ul>
 </div>
 </div>
 
 <div id="outline-container-sec-2-5-8" class="outline-4">
 <h4 id="sec-2-5-8"><span class="section-number-4">2.5.8</span> digital_advertising_level</h4>
 <div class="outline-text-4" id="text-2-5-8">
-<p>
-These three would need to be determined.
-</p>
+<ul class="org-ul">
+<li>BaseDigitalAd - list of possiblilities
+</li>
+<li>DigitalAd - list of this event's actual choices
+</li>
+<li>VendorHasDigitalAd - list of which vendor has which choice
+</li>
+</ul>
 </div>
 </div>
 
 <div id="outline-container-sec-2-5-9" class="outline-4">
 <h4 id="sec-2-5-9"><span class="section-number-4">2.5.9</span> print_advertising_level</h4>
 <div class="outline-text-4" id="text-2-5-9">
-<p>
-These three would need to be determined.
-</p>
+<ul class="org-ul">
+<li>BasePrintAd - list of possiblilities
+</li>
+<li>PrintAd - list of this event's actual choices
+</li>
+<li>VendorHasPrintAd - list of which vendor has which choice
+</li>
+</ul>
 </div>
 </div>
 
 <div id="outline-container-sec-2-5-10" class="outline-4">
-<h4 id="sec-2-5-10"><span class="section-number-4">2.5.10</span> More structure in the 41_VendorInfo.sql file</h4>
+<h4 id="sec-2-5-10"><span class="section-number-4">2.5.10</span> Types of Vendors (what they vend)</h4>
+<div class="outline-text-4" id="text-2-5-10">
+<ul class="org-ul">
+<li>Default list in VendorTyoes
+</li>
+<li>Vendor mapping in VendorIs
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-11" class="outline-4">
+<h4 id="sec-2-5-11"><span class="section-number-4">2.5.11</span> Vendor Information Edited</h4>
+<div class="outline-text-4" id="text-2-5-11">
+<p>
+List of codes to indicate what was done to the vendor information
+</p>
+<ul class="org-ul">
+<li>VendorEditCodes
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-12" class="outline-4">
+<h4 id="sec-2-5-12"><span class="section-number-4">2.5.12</span> Vendor Change History</h4>
+<div class="outline-text-4" id="text-2-5-12">
+<p>
+Track what was done, per vendor, to them, when.
+</p>
+<ul class="org-ul">
+<li>VendorEditHistory - Some of the edits
+</li>
+<li>NotesOnVendors - More history
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-13" class="outline-4">
+<h4 id="sec-2-5-13"><span class="section-number-4">2.5.13</span> Vendor Invoicing</h4>
+<div class="outline-text-4" id="text-2-5-13">
+<p>
+Actually set up for all invoicing, but referenced by vendor
+</p>
+<ul class="org-ul">
+<li>Invoice
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-14" class="outline-4">
+<h4 id="sec-2-5-14"><span class="section-number-4">2.5.14</span> More structure in the 41_VendorInfo.sql file</h4>
 </div>
 </div>
 
@@ -1082,7 +1204,8 @@ These three would need to be determined.
 <p>
 These are the variables that exist already in the other usage
 space, that I still don't have a handle on.  More explination would
-be very useful.
+be very useful.  Probably actually traced in one of the Vendor
+Change History tables above.
 </p>
 </div>
 <div id="outline-container-sec-2-6-1" class="outline-4">
@@ -1148,13 +1271,7 @@ By number or email address.
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> needs to be vetted.<br  /><div class="outline-text-5" id="text-3-1-1-1">
-<ul class="org-ul">
-<li>Possibly add the SuperVendor update here.
-</li>
-</ul>
-</div>
-</li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> needs to be vetted.<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-2" class="outline-4">
@@ -1178,7 +1295,14 @@ for winter, since they don't have to apply)
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> Currently simply a subset of vendor information.<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> Currently simply a subset of vendor information.<br  /><div class="outline-text-5" id="text-3-1-2-1">
+<ul class="org-ul">
+<li>Needs to have differential words put in on indication that is a
+community table.
+</li>
+</ul>
+</div>
+</li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-3" class="outline-4">
@@ -1207,7 +1331,14 @@ their email address
 for winter, since they don't have to apply)
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> Currently simply a subset of vendor information.<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> Currently simply a subset of vendor information.<br  /><div class="outline-text-5" id="text-3-1-4-1">
+<ul class="org-ul">
+<li>Needs to have differential words put in on indication that is a
+community table.
+</li>
+</ul>
+</div>
+</li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-5" class="outline-4">
@@ -1237,7 +1368,9 @@ returning Vendor, filling out a shorter form, but will all the
 appropriate event information on it.
 </p>
 <ul class="org-ul">
-<li>Waiting on Vendor QA of the words, and the contract.
+<li>Waiting on Vendor QA of the words.
+</li>
+<li>Auto advance to the next.
 </li>
 </ul>
 </div>
@@ -1256,7 +1389,7 @@ down the PDF to be filled in, and a way to submit the filled-out
 PDF.
 </p>
 <ul class="org-ul">
-<li>Not sure if we should be auto-moving on.
+<li>No auto advance.
 </li>
 </ul>
 </div>
@@ -1269,7 +1402,9 @@ been clicked, they are then presented with an invoice for the
 Warwick fees.
 </p>
 <ul class="org-ul">
-<li>Still needs invoice testing, need a credit card for that.
+<li>Still needs final invoice testing by someone not NELA.
+</li>
+<li>Auto Advance to the next.
 </li>
 </ul>
 </div>
@@ -1281,6 +1416,10 @@ Once the fees have been paid and/or when the next button has been
 clicked, they are given the message, when they log in, that they
 are still pending Warwick's approval.
 </p>
+<ul class="org-ul">
+<li>No auto advance.
+</li>
+</ul>
 </div>
 </li>
 
@@ -1293,19 +1432,22 @@ anything before your invoicing (this is where the various
 digital, print, and sponsorship options, as well as the amenities
 can be changed, as well).
 </p>
+<ul class="org-ul">
+<li>Auto Advance to the next.
+</li>
+</ul>
 </div>
 </li>
 
-<li><span class="todo VENDORQA">VENDORQA</span> NELA Invoiced (7)<br  /><div class="outline-text-5" id="text-3-1-5-6">
+<li><span class="todo VENDORQA">VENDORQA</span> Invoiced (7)<br  /><div class="outline-text-5" id="text-3-1-5-6">
 <p>
 Once they indicate that their invoice is fine, the invoice is
 presented.  They then can pay it.
 </p>
 <ul class="org-ul">
-<li>Still needs testing, need a credit card for that.
+<li>Still needs final testing by somone not NELA.
 </li>
-<li>Although the testing might be covered by Warwick Invoiced (4)
-above.
+<li>Auto Advance to the next.
 </li>
 </ul>
 </div>
@@ -1320,6 +1462,10 @@ there wants to be a check &#x2026; sent to them? or sent to us? or
 possibly that we are waiting on a check, or something else, that
 means that they are waiting in this state.
 </p>
+<ul class="org-ul">
+<li>No auto advance.
+</li>
+</ul>
 </div>
 </li>
 
@@ -1328,6 +1474,10 @@ means that they are waiting in this state.
 Once this button is clicked, then everything comes up roses, they
 are on our websites, and visible, and all is good in the world.
 </p>
+<ul class="org-ul">
+<li>Final state.
+</li>
+</ul>
 </div>
 </li>
 
@@ -1337,6 +1487,10 @@ For those vendors who just didn't make the cut (this event?)
 usually would happen after (or instead of) the NELA Approved (3)
 state.
 </p>
+<ul class="org-ul">
+<li>Final state.
+</li>
+</ul>
 </div>
 </li>
 
@@ -1348,6 +1502,10 @@ the reason Warwick rejected them?  Will we even know the reason?)
 usually would happen after (or instead of) the Warwick Approval
 state.
 </p>
+<ul class="org-ul">
+<li>Final state.
+</li>
+</ul>
 </div>
 </li>
 
@@ -1359,6 +1517,10 @@ process they should be informed.  I'm thinking at about the NELA
 Denied, right after (or instead of) the NELA Approved state as
 well.
 </p>
+<ul class="org-ul">
+<li>Final state.
+</li>
+</ul>
 </div>
 </li></ul>
 </div>
@@ -1370,8 +1532,12 @@ well.
 This might not be necessary, based on the above page keeping what
 is set for this event as set.
 </p>
+<ul class="org-ul">
+<li>SuperVendor cam also update anyone here.
+</li>
+</ul>
 </div>
-<ul class="org-ul"><li><span class="done DONE">DONE</span> included in above Returning set of pages.<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> similar to the above set of pages, but allowed always.<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-7" class="outline-4">
@@ -1381,6 +1547,10 @@ is set for this event as set.
 Page that they can, at will update their web or book information,
 along with all their other invormation.
 </p>
+<ul class="org-ul">
+<li>SuperVendor cam also update anyone here.
+</li>
+</ul>
 </div>
 <ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> similar to the above set of pages, but allowed always.<br  /></li></ul>
 </div>
@@ -1441,6 +1611,9 @@ and their type, will be shown for balance reasons.
 <li>first report - which allows for changing the Vendor State is
 done.
 </li>
+<li>second report - just those with possible PDFs waiting to be
+checked and promoted.
+</li>
 <li>set of tunable reports
 </li>
 <li>voting page, much like other voting pages?
@@ -1490,14 +1663,7 @@ by the Vendor Div Head or the Publications Div Head on an event by
 event basis.
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /><div class="outline-text-5" id="text-3-1-13-1">
-<ul class="org-ul">
-<li>Page is done, need the base information so that the event
-information can be selected.
-</li>
-</ul>
-</div>
-</li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-14" class="outline-4">
@@ -1508,6 +1674,10 @@ Where any changes are made to the vendor information (both that
 they can change and that they can't) for creation/update by Vendor
 Div Head.
 </p>
+<ul class="org-ul">
+<li>Redundant with above "Returning Vendor" pages.
+</li>
+</ul>
 </div>
 <ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /><div class="outline-text-5" id="text-3-1-14-1">
 <ul class="org-ul">
@@ -1649,7 +1819,7 @@ appropriate print ads available/prices/et al for this event.
 <div class="outline-text-4" id="text-3-2-6">
 <p>
 Task List element with the call for vendors is created, with the
-appropriate link.
+appropriate links.
 </p>
 </div>
 </div>
@@ -1659,7 +1829,7 @@ appropriate link.
 <div class="outline-text-4" id="text-3-2-7">
 <p>
 Task List element with the call for community tables is created,
-with the appropriate link.
+with the appropriate links.
 </p>
 </div>
 </div>
@@ -1722,7 +1892,8 @@ Otherwise &#x2026;
 <div class="outline-text-4" id="text-3-2-13">
 <p>
 At the appropriate time, the Con Chair or Zambia bitch close the
-call for vendors.
+call for vendors. (This is not necessarily in the right place in
+the sequence.)
 </p>
 </div>
 </div>
@@ -1828,10 +1999,7 @@ So they are available on the day-of.
 <h2 id="sec-4"><span class="section-number-2">4</span> Things to add, from the new:</h2>
 <div class="outline-text-2" id="text-4">
 </div><div id="outline-container-sec-4-1" class="outline-3">
-<h3 id="sec-4-1"><span class="section-number-3">4.1</span> Logo to be uploaded</h3>
-</div>
-<div id="outline-container-sec-4-2" class="outline-3">
-<h3 id="sec-4-2"><span class="section-number-3">4.2</span> PDF to be updated</h3>
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> Logo to be uploaded (PDF)</h3>
 </div>
 </div>
 

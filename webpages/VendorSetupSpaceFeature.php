@@ -8,6 +8,7 @@ $description="<P>Create and update this years instances of the Vendor Spaces and
 $additionalinfo="<P>Each section has it's own update button.\n";
 $additionalinfo.="Please do not try to update more than one section at once, ";
 $additionalinfo.="it will not (necessarily) be heeded properly.</P>\n";
+$additionalinfo.="<P>Go to the <A HREF=\"PubsSetupAds.php\">Sponsor and Ad setup page</A>.</P>\n";
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 // Limit the ability to change things

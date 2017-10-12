@@ -136,6 +136,26 @@ if ($result and (mysql_num_rows($result)==1)) {
   $prevconrole=$dbobject->permrolename;
 }
 
+// Was Previous Vendor
+$queryvend=<<<EOF
+SELECT
+    GROUP_CONCAT(DISTINCT conname SEPARATOR ", ") AS ConName,
+  FROM
+      UserHasPermissionRole
+    JOIN PermissionRoles USING (permroleid)
+    JOIN ConInfo USING (conid)
+  WHERE
+    permrolename in ("Vendor") AND
+    badgeid=$badgeid
+  GROUP BY
+    badgeid
+EOF;
+$result=mysql_query($queryvend,$link);
+if ($result and (mysql_num_rows($result)==1)) {
+  $dbobject=mysql_fetch_object($result);
+  $prevconvend=$dbobject->ConName;
+}
+
 // Was Previous Photo Submitter
 $queryphoto=<<<EOF
 SELECT
@@ -223,6 +243,7 @@ if ($result and (mysql_num_rows($result)==1)) {
    adding themselves to a past event.
    Followed by a test to see if they can add themselves to this
    particular event, having been in our database before.  First as a
+   vendor, should check to see if vending is open, then next as a
    presenter, but only if Brainstorm is open, then as a photo
    submitter but only if Photo Submissions is open.
    Finally error out, at the end, exhausting all possibilities.
@@ -249,7 +270,12 @@ if (retrieve_participant_from_db($badgeid)==0) {
     $message_error.="Please pick a <A HREF=\"http://".$_SESSION['conurl']."\">";
     $message_error.="different event</A> or contact a member of the ".$_SESSION['conname']." staff.\n";
     require('logout.php');
-  } elseif (isset($prevconpresent)) {
+} elseif (isset($prevconvend)) {
+      $message.="You previously presented for us at $prevconpresent.\n";
+      $message.="please log in again, with your email address or user\n";
+      $message.="number, and your password.\n";
+      require('login.php');
+} elseif (isset($prevconpresent)) {
     if ($brainstorm_p != "0") {
       set_permission_set(0);
       $message_error.="The event you have chosen, " . $_SESSION['conname'] . "\n";

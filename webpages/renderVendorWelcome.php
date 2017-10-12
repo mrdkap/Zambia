@@ -16,11 +16,11 @@ $badgeid=$_SESSION['badgeid'];
 // If new vendor application submitted, do it.
 if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "New Vendor")) {
   $message.=create_vendor($_POST);
-  $message.="In Applied, New Vendor";
+  // $message.="In Applied, New Vendor";
   // Hope to have two passes here eventually, with the same input, so both are serviced.
   // Needs testing before I do.
-  // $message.=edit_vendor_apply($_POST);
   // $message.=edit_vendor_update($_POST);
+  // $message.=edit_vendor_apply($_POST);
 
   topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   echo "<P>Thank you for applying to the " . $_SESSION['conname'] . ".  Please feel free\n";
@@ -34,13 +34,13 @@ if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "New 
 // If an updated vendor application submitted, do it.
 if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Updated Application")) {
   $message.=edit_vendor_apply($_POST);
-  $message.="In Updated, Updated Applicaton";
+  $message.="Updated Applicaton";
 }
 
 // If an updated vendor business information submitted, do it.
 if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Updated Information")) {
   $message.=edit_vendor_update($_POST);
-  $message.="In Updated, Updated Information";
+  $message.="Updated Information";
 }
 
 // If a contract is being signed, apply the name.
@@ -118,13 +118,63 @@ if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Pre-
 
 }
 
-// Need to do something with the returned invoices - TBD - possibly a VendorInvoiceReturned Verbiage.
+// If there is an invoice submitted, add the data to the invoice table,
+// and go to the next status.
+if (($_POST['return'] == "Submit Order") and
+    ($_POST['MStatus'] == "success") and
+    ($_POST['FinalStatus'] == "success")) {
+  $element_array = array('badgeid', 'conid', 'invoiceref','invoiceorderid','invoicedate','invoiceamt','invoicecost','invoicepaid','invoicename','invoicedesc','invoiceemail','invoiceshipemail');
+  $value_array=array($_SESSION['badgeid'],
+		     $_SESSION['conid'],
+		     $_POST['refnumber'],
+		     $_POST['orderID'],
+		     $_POST['auth_date'],
+		     $_POST['amountcharged'],
+		     $_POST['cost1'],
+		     $_POST['card-amount'],
+		     $_POST['item1'],
+		     $_POST['description1'],
+                     $_POST['email'],
+		     $_POST['shipemail']);
+  $verbose.=submit_table_element($link, $title, "Invoice", $element_array, $value_array);
 
+  // Get the current status information
+  $queryVendorCurrentStatus=<<<EOD
+SELECT
+    vendorstatustypeid
+  FROM
+      VendorStatus
+    JOIN VendorStatusTypes USING (vendorstatustypeid)
+  WHERE
+    badgeid=$badgeid AND
+    conid=$conid
+EOD;
+
+  list($vcstatusrows,$vcstatusheader_array,$vcstatus_array)=queryreport($queryVendorCurrentStatus, $link, $title, $description, 0);
+
+  // promote the current status information to the next status
+  $vcstatusid=$vcstatus_array[1]['vendorstatustypeid'];
+  $vcstatusid++;
+
+  // Update the database with the new status
+  $set_array=array("vendorstatustypeid=".$vcstatusid);
+  $match_string="badgeid=".$_SESSION['badgeid']." AND conid=".$conid;
+  $verbose.=update_table_element_extended_match($link, $title, "VendorStatus", $set_array, $match_string);
+
+  // Update a note that it was done.
+  $element_array = array('badgeid', 'rbadgeid', 'note','conid');
+  $value_array=array($_SESSION['badgeid'],
+		     $_SESSION['badgeid'],
+		     "Paid an invoice (" . $_POST['item1'] . ") and promoted self (" . $_SESSION['badgename'] . ") from " . $vcstatus_array[1]['vendorstatustypeid'] . " to " . $vcstatusid . ".",
+		     $_SESSION['conid']);
+  $verbose.=submit_table_element($link, $title, "NotesOnVendors", $element_array, $value_array);
+}
 
 // Default status name/id
 $vstatusid=0;
 $vstatusname="Waiting To Apply";
 
+// Get this person's Vendor Status
 $queryVendorStatus=<<<EOD
 SELECT
     vendorstatustypeid,
@@ -137,26 +187,19 @@ SELECT
     conid=$conid
 EOD;
 
-// Temporary so I can test things
-/*
-$queryVendorStatus=<<<EOD
-SELECT
-    vendorstatustypeid,
-    vendorstatustypename
-  FROM
-      VendorStatusTypes
-  WHERE
-    vendorstatustypeid=12
-EOD;
-*/
-
 list($vstatusrows,$vstatusheader_array,$vstatus_array)=queryreport($queryVendorStatus, $link, $title, $description, 0);
 
+// Make sure there is only one row.
 if ($vstatusrows==1) {
   $vstatusid=$vstatus_array[1]['vendorstatustypeid'];
   $vstatusname=$vstatus_array[1]['vendorstatustypename'];
+} elseif ($vstatusrows > 1) {
+  $message_error.="There are more than one vendor status rows for this user.";
+  RenderError($title,$message_error);
+  exit();
 }
 
+// Begin the output.  Most of the below is in Verbiage entries.
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 if (may_I('Vendor')) {
@@ -180,7 +223,6 @@ if (may_I('Vendor')) {
     echo "</UL></P>\n";
   } // end of local current vendor words
 } elseif (may_I('vendor_apply')) { // Applying to vend at this show
-  echo "<!-- <form action=\"https://nelaonline.org/fetish-fair-fleamarket/summer-fleamarket/summer-vendors/vendor-application\" method=\"post\" accept-charset=\"utf-8\" class=\"crud_form\" id=\"\" enctype=\"multipart/form-data\"> -->\n";
   // echo "<FORM name=\"vendorform\" action=\"tmp_form.php\" method=POST>\n";
   $verbiage=get_verbiage("VendorWelcomeApply");
   if ($verbiage != "") {

@@ -94,6 +94,15 @@ if ($vstattyperows == 0) {
 
 $vstattype=$vstattype_array[1]['vendorstatustypename'];
   
+// Local add specifically for Warwick information, should probably not be in production code.
+$target_dir = "../Local/$conid/Vendor_Warwick_Submissions";
+$test_file = $target_dir . "/" . $vendorid . "_*_Warwick.pdf";
+$isuploaded=glob($test_file);
+if (count($isuploaded) > 0 ) {
+  $additionalinfo.="<P><A HREF=\"" . $isuploaded[count($isuploaded) - 1 ] . "\">Pull down</A>\n";
+  $additionalinfo.="the latest Warwick PDF submitted.</P>\n";
+}
+
 // Who can modify what:
 if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
   $additionalinfo.="<P>Update the state from $vstattype to the relevent appropriate state now.";

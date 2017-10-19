@@ -37,6 +37,12 @@ if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Upda
   $message.="Updated Applicaton";
 }
 
+// If an application for a vendor is submitted, by them or by SuperVendor, do it.
+if (($_POST['vendorstatustypename'] == "Applied") and ($_POST['submit'] == "Updated Application")) {
+  $message.=edit_vendor_apply($_POST);
+  $message.="Updated Applicaton";
+}
+
 // If an updated vendor business information submitted, do it.
 if (($_POST['vendorstatustypename'] == "Updated") and ($_POST['submit'] == "Updated Information")) {
   $message.=edit_vendor_update($_POST);
@@ -137,6 +143,8 @@ if (($_POST['return'] == "Submit Order") and
                      $_POST['email'],
 		     $_POST['shipemail']);
   $verbose.=submit_table_element($link, $title, "Invoice", $element_array, $value_array);
+
+  error_log("Zambia: Vendor Invoice all information: " . print_r($_POST,true));
 
   // Get the current status information
   $queryVendorCurrentStatus=<<<EOD

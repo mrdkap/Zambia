@@ -293,7 +293,7 @@ for ($i=1; $i<=$conrows; $i++) {
       $progbody.="              </LI>\n";
     }
     if ($phase_array[$conid]['Photo Submission'] == '0') {
-      $progbody.="              <LI><A HREF=\"PhotoLoungeProposed.php\">Propose to Submit to the Photo Lounge</A></LI>\n";
+      $progbody.="              <LI><A HREF=\"webpages/PhotoLoungeProposed.php?conid=$conid\">Propose to Submit to the Photo Lounge</A></LI>\n";
     }
     if ($phase_array[$conid]['Feedback Available'] == '0') {
       $progbody.="              <LI><A HREF=\"webpages/Feedback.php?conid=$conid\">Feedback</A></LI>\n";

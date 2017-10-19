@@ -60,19 +60,6 @@ SELECT
     conid=$conid
 EOD;
 
-// Temporary so I can test things
-/*
-$queryVendorStatus=<<<EOD
-SELECT
-    vendorstatustypeid,
-    vendorstatustypename
-  FROM
-      VendorStatusTypes
-  WHERE
-    vendorstatustypeid=12
-EOD;
-*/
-
 list($vstatusrows,$vstatusheader_array,$vstatus_array)=queryreport($queryVendorStatus, $link, $title, $description, 0);
 
 if ($vstatusrows==1) {
@@ -87,7 +74,7 @@ if (may_I('SuperVendor')) {
   //Choose the individual from the database
   select_participant($badgeid, 'VENDOR', "VendorApply.php");
   echo "\n<hr>\n";
-  echo "<P>Update for: ($badgeid) $pubsname</P>\n";
+  echo "<P>Update for: $badgeid</P>\n";
 }
 
 ?>

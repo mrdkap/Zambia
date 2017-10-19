@@ -277,7 +277,6 @@ EOD;
     }
   }
 
-  // Add Print Ad
   // create/update this event's Print Ads by walking the keys/values
   foreach ($work_arr['wasprintadid'] as $key => $value) {
 

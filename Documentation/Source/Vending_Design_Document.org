@@ -460,8 +460,9 @@
      returning Vendor, filling out a shorter form, but will all the
      appropriate event information on it.
      - Waiting on Vendor QA of the words.
-     - Auto advance to the next.
-**** VENDORQA NELA Approved (3)
+     - Auto advance to the next, this year, subsequent years this will
+       be the spot things pause waiting for NELA Approval
+**** VENDORQA NELA Approved (3) - renamed Warwick Application this year
      Once a set of the proposals are in, the jury decides if their
      proposal is accepted and acceptable, the NELA Approved button for
      them is clicked, email is sent to them letting them know that
@@ -471,8 +472,11 @@
      what Warwick is doing differently this year, and a link to pull
      down the PDF to be filled in, and a way to submit the filled-out
      PDF.
-     - No auto advance.
-**** VENDORQA Warwick Invoced (4)
+     - No auto advance this year, subsequent years this will auto
+       advance to the invoice, once we have approved of them.  If they
+       screw up their form, they can be set back to this level, or
+       have a communication about a screwed up form.
+**** VENDORQA Warwick Invoiced (4)
      Once the PDF has been submitted and/or when the next button has
      been clicked, they are then presented with an invoice for the
      Warwick fees.

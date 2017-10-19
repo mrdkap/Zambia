@@ -181,6 +181,8 @@ SELECT
   FROM
       PhotoLoungePix
     JOIN CongoDump USING (badgeid)
+  WHERE
+    conid=$conid
 EOD;
 }
 

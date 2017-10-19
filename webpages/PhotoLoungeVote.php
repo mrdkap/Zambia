@@ -35,6 +35,8 @@ SELECT
   FROM
       PhotoLoungePix
     JOIN Participants USING (badgeid)
+  WHERE
+    conid=$conid
   ORDER BY
     pubsname
 EOD;
@@ -127,7 +129,8 @@ SELECT
   FROM
       PhotoLoungePix
   WHERE
-    badgeid=$artistid
+    badgeid=$artistid AND
+    conid=$conid
 EOD;
 
 //Retrieve query

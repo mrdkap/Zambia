@@ -46,13 +46,13 @@ if ($_POST['update']=='Yes') {
   foreach ($_POST['wasserviceid'] as $key => $value) {
     if (($_POST['wasserviceid'][$key]=="not") and
 	($_POST['serviceid'][$key]=="checked")) {
-      $element_array = array('servicename', 'conid', 'display_order');
-      $value_array = array($baseservice[$key],$_SESSION['conid'],$key);
+      $element_array = array('servicename', 'baseserviceid', 'conid', 'display_order');
+      $value_array = array($baseservice[$key],$key,$_SESSION['conid'],$key);
       $message.=submit_table_element($link, $title, "Services", $element_array, $value_array);
     }
     if (($_POST['wasserviceid'][$key]=="indeed") and
 	($_POST['serviceid'][$key]!="checked")) {
-      $match_string="display_order=".$key." AND conid=".$_SESSION['conid'];
+      $match_string="baseserviceid=".$key." AND conid=".$_SESSION['conid'];
       $message.=delete_table_element($link, $title, "Services", $match_string);
     }
   }
@@ -61,57 +61,42 @@ if ($_POST['update']=='Yes') {
   foreach ($_POST['wasfeatureid'] as $key => $value) {
     if (($_POST['wasfeatureid'][$key]=="not") and
 	($_POST['featureid'][$key]=="checked")) {
-      $element_array = array('featurename', 'conid', 'display_order');
-      $value_array = array($basefeature[$key],$_SESSION['conid'],$key);
+      $element_array = array('featurename', 'basefeatureid', 'conid', 'display_order');
+      $value_array = array($basefeature[$key],$key,$_SESSION['conid'],$key);
       $message.=submit_table_element($link, $title, "Features", $element_array, $value_array);
     }
     if (($_POST['wasfeatureid'][$key]=="indeed") and
 	($_POST['featureid'][$key]!="checked")) {
-      $match_string="display_order=".$key." AND conid=".$_SESSION['conid'];
+      $match_string="basefeatureid=".$key." AND conid=".$_SESSION['conid'];
       $message.=delete_table_element($link, $title, "Features", $match_string);
     }
   }
-
-  /*
-  foreach (somehow VendorFeatures) {
-    // insert feature/display order into VendorFeatures, with
-  appropriate conid and price
-  }
-  foreach (somehow VendorSpaces) {
-    // insert space/display order into VendorSpaces, with appropriate
-  conid and price
-  }
-  */
 }
 
 /* Fetch the services already offered, this should be done after the
    possible update so any updates will be incorporated.
-   This is a bit chancy, depending on someone not screwing up the
-   display_order.
 */
-$query="SELECT display_order FROM Services where conid=$conid";
+$query="SELECT baseserviceid FROM Services where conid=$conid";
 list($servicerows,$serviceheader_array,$service_array)=queryreport($query,$link,$title,$description,0);
 if (in_array("This report retrieved no results matching the criteria.",array_keys($service_array))) {
   $service_array=array();
 } else {
   for ($i=1; $i<=$servicerows; $i++) {
-    $servicename_array[$i]=$service_array[$i]['display_order'];
+    $servicename_array[$i]=$service_array[$i]['baseserviceid'];
   }
   $servicename_list=implode(",",$servicename_array);
 }
 
 /* Fetch the features already offered, this should be done after the
    possible update so any updates will be incorporated.
-   This is a bit chancy, depending on someone not screwing up the
-   display_order.
 */
-$query="SELECT display_order FROM Features where conid=$conid";
+$query="SELECT basefeatureid FROM Features where conid=$conid";
 list($featurerows,$featureheader_array,$feature_array)=queryreport($query,$link,$title,$description,0);
 if (in_array("This report retrieved no results matching the criteria.",array_keys($feature_array))) {
   $feature_array=array();
 } else {
   for ($i=1; $i<=$featurerows; $i++) {
-    $featurename_array[$i]=$feature_array[$i]['display_order'];
+    $featurename_array[$i]=$feature_array[$i]['basefeatureid'];
   }
   $featurename_list=implode(",",$featurename_array);
 }

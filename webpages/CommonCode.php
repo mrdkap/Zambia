@@ -205,7 +205,7 @@ function staff_header ($title) {
     echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
     maketab("Available Reports",1,"genindex.php");
     echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
-    if ((may_I('Liaison')) or (may_I('Events')) or (may_I('Programming')) or (may_I('SuperLounge'))) {
+    if ((may_I('Liaison')) or (may_I('Events')) or (may_I('Programming')) or (may_I('SuperLounge')) or (may_I('SuperGeneral'))) {
       maketab("Manage Sessions",1,"StaffManageSessions.php");
       echo "</td>\n      <td class=\"tabblocks border0020\">\n          ";
       maketab("Manage Participants &amp; Schedule",1,"StaffManageParticipants.php");

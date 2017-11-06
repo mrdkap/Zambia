@@ -121,10 +121,12 @@ if ((isset($_GET['biotype'])) and (isset($_GET['biolang'])) and (isset($_GET['bi
   $biotype=$_GET['biotype'];
   $biolang=$_GET['biolang'];
   $biodest=$_GET['biodest'];
-  $biostate="edited";
-  $goodstring=$bioinfo[$biotype."_".$biolang."_".$biostate."_".$biodest."_bio"];
-  update_bio_element($link,$title,$goodstring,$badgeid,$biotype,$biolang,"good",$biodest);
-  $bioinfo[$biotype."_".$biolang."_good_".$biodest."_bio"]=$goodstring;
+  $goodstring=$bioinfo[$biotype."_".$biolang."_edited_".$biodest."_bio"];
+  $checkgoodstring=$bioinfo[$biotype."_".$biolang."_good_".$biodest."_bio"];
+  if ($goodstring!=$checkgoodstring) {
+    update_bio_element($link,$title,$goodstring,$badgeid,$biotype,$biolang,"good",$biodest);
+    $bioinfo[$biotype."_".$biolang."_good_".$biodest."_bio"]=$goodstring;
+  }
 }
 
 /* Lock the editing of the participant.
@@ -172,9 +174,28 @@ EOD;
 // Retrieve query
 list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
 
-// See if they are on the appropriate level of staff
+// See if they are a presenter
 $ispresenter="T";
 if ($element_array[1]['badgeid']!=$badgeid) {$ispresenter="F";}
+
+$query = <<<EOD
+SELECT
+    badgeid
+  FROM
+      VendorStatus
+    JOIN VendorStatusTypes USING (vendorstatustypeid)
+  WHERE
+    conid=$conid AND
+    badgeid=$badgeid AND
+    vendorstatustypename not like "%Denied%"
+EOD;
+
+// Retrieve query
+list($elements,$header_array,$element_array)=queryreport($query,$link,$title,$description,0);
+
+// See if they are a vendor
+$isvendor="T";
+if ($element_array[1]['badgeid']!=$badgeid) {$isvendor="F";}
 
 // Begin the presenations
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
@@ -220,9 +241,19 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
 	if (($isstaff!="T") and ($biodest=="staffbook")) { continue; }
 	if (($isstaff!="T") and ($biodest=="staffweb")) { continue; }
 
+	// Skip the "vendor" categories, if is not vendor
+        if (($isvendor!="T") and ($biotype=="dba")) { continue; }
+
+        // If is vendor, skip the "pronoun" categories
+        if (($isvendor=="T") and ($biotype=="pronoun")) { continue; }
+
 	// Skip the badge-uri and badge-bio cateories
 	if (($biodest=="badge") and ($biotype=="uri")) { continue; }
 	if (($biodest=="badge") and ($biotype=="bio")) { continue; }
+	if (($biodest=="badge") and ($biotype=="fetlife")) { continue; }
+	if (($biodest=="badge") and ($biotype=="facebook")) { continue; }
+	if (($biodest=="badge") and ($biotype=="twitter")) { continue; }
+	if (($biodest=="badge") and ($biotype=="dba")) { continue; }
 
 	// Skip the non-staff, badge-picture category
 	if (($isstaff!="T") and ($biodest=="badge") and ($biotype=="picture")) { continue; }

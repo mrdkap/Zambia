@@ -13,6 +13,7 @@ $additionalinfo ="<P>This report is limited to participants who are currently li
 $staffadditionalinfo="<P>These are the con staff members who have reports.</P>\n";
 $descadditionalinfo="<P>These are the descriptions for the schedule elements for this event.</P>\n";
 $volsadditionalinfo="<P>These are the volunteers who need badges.</P>\n";
+$vendoradditionalinfo="<P>These are the vendors who are possibly vending this year.</P>\n";
 $message_error.=$message2;
 
 if (!empty($_GET['badgeids'])) {
@@ -31,6 +32,7 @@ if (!empty($_GET['badgeids'])) {
 $additionalinfo.=$addinfo;
 $staffadditionalinfo.=$addinfo;
 $volsadditionalinfo.=$addinfo;
+$vendoradditionalinfo.=$addinfo;
 $descadditionalinfo.="<P>Still to come. Easier to edit elswhere still: \n";
 $descadditionalinfo.="<A HREF=genreport.php?reportname=conflictsessdesc>Missing Web or ";
 $descadditionalinfo.="Program Book Description</A>::<A HREF=StaffSched.php?format=desc>";
@@ -63,6 +65,7 @@ if (isset($_GET['unlock'])) {
      permrolename like '%Super%')
 */
 
+// Presenters
 $query1= <<<EOD
 SELECT
     DISTINCT B.badgeid,
@@ -181,7 +184,7 @@ while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
   $count_staff_col[$row['col']]++;
  }
 
-//Descriptions (hacked at the moment)
+// Descriptions (hacked at the moment)
 $query3=<<<EOD
 SELECT
     sessionid AS badgeid,
@@ -238,6 +241,7 @@ while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
   $count_desc_col[$row['col']]++;
  }
 
+// Volunteers
 $query4= <<<EOD
 SELECT
     DISTINCT B.badgeid,
@@ -298,6 +302,65 @@ while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
   $count_vols_col[$row['col']]++;
  }
 
+// Vendors
+$query5= <<<EOD
+SELECT
+    DISTINCT B.badgeid,
+    biostatename,
+    concat(biolang, " ", biotypename, " ", biodestname) AS col,
+    LB.pubsname AS lockedby,
+    P.pubsname,
+    biotext
+  FROM
+      Participants P
+    JOIN Bios B USING (badgeid)
+    JOIN BioTypes USING (biotypeid)
+    JOIN BioStates USING (biostateid)
+    JOIN BioDests USING (biodestid)
+    JOIN UserHasPermissionRole USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN VendorStatus USING (badgeid,conid)
+    JOIN VendorStatusTypes USING (vendorstatustypeid)
+    LEFT JOIN Participants LB on B.biolockedby = LB.badgeid
+  WHERE
+    vendorstatustypename NOT like "%Denied%" AND
+    conid=$conid AND
+    biotypename not in ('web','book') AND
+    biodestname not in ('staffweb','staffbook') AND
+    permrolename in ('Vendor')
+EOD;
+
+// Specific set of badgeids.
+if ((!empty($_GET['badgeids'])) and ($_GET['qno']==5)) {
+  $query5.=" AND B.badgeid in (".$badgeid_list.")";
+ }
+
+// Specific languages.
+if (isset($LanguageList)) {
+  $query5.=" AND biolang in $LanguageList";
+ }
+
+// Give some semblance of order to the names
+$query5.=" ORDER BY P.pubsname";
+
+if (($result=mysql_query($query5,$link))===false) {
+  $message_error.=$query5."<BR>\nError retrieving data from database.\n";
+  RenderError($title,$message_error);
+  exit();
+ }
+
+$numvendorrows=mysql_num_rows($result);
+
+while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+  $check_vendor_element[$row['badgeid']][$row['col']][$row['biostatename']]=$row['biotext'];
+  $count_vendor_badgeid[$row['badgeid']]++;
+  $vendor_pubsname[$row['badgeid']]=$row['pubsname'];
+  if (isset($row['lockedby'])) {
+    $vendor_lockedby[$row['badgeid']]=$row['lockedby'];
+   }
+  $count_vendor_col[$row['col']]++;
+ }
+
 // Set up the necessary switches so we can know what exactly is being operated on.
 if ($numrows > 0) {
   $printquery1=renderbiosreport($badgeid_list,1,$check_element,$numrows,$count_badgeid,$count_col,$pubsname,$lockedby);
@@ -323,6 +386,12 @@ if ($numvolsrows > 0) {
   $printquery4="<TABLE><TR><TH>There are no volunteer bios to edit which match your selection.</TH></TR></TABLE>\n";
 }
 
+if ($numvendorrows > 0) {
+  $printquery5=renderbiosreport($badgeid_list,5,$check_vendor_element,$numvendorrows,$count_vendor_badgeid,$count_vendor_col,$vendor_pubsname,$vendor_lockedby);
+} else {
+  $printquery1="<TABLE><TR><TH>There are no presenter bios to edit which match your selection.</TH></TR></TABLE>\n";
+}
+
 //Start the page
 if (!empty($_GET['badgeids'])) {
   if ($_GET['qno']=="1") {
@@ -340,6 +409,10 @@ if (!empty($_GET['badgeids'])) {
     $additionalinfo=$volsadditionalinfo;
     topofpagereport($title,$description,$additionalinfo,$message,$message_error);
     echo $printquery4;
+  } elseif ($_GET['qno']=="5") {
+    $additionalinfo=$vendoradditionalinfo;
+    topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+    echo $printquery5;
   } else {
     topofpagereport($title,$description,$additionalinfo,$message,$message_error);
     echo "<P>Query Number: " . $_GET['qno'] . " doesn't match any allowed values.</P>\n";
@@ -353,6 +426,8 @@ if (!empty($_GET['badgeids'])) {
   echo $printquery3;
   echo $volsadditionalinfo;
   echo $printquery4;
+  echo $vendoradditionalinfo;
+  echo $printquery5;
 }
 
 // End the page correctly

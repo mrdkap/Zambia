@@ -587,16 +587,22 @@ function edit_vendor_update ($work_arr) {
 	$biodest=$bioinfo['biodest_array'][$l];
 	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-	// Length-check the values.
+	// Clean up the biotext.
 	$biotext=stripslashes(htmlspecialchars_decode($work_arr[$keyname]));
-	if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($biotext)>$limit_array['max'][$biodest][$biotype])) {
-	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
-	  $message.=" too long (".strlen($biotext)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
-	} elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($biotext)<$limit_array['min'][$biodest][$biotype])) {
-	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
-	  $messaage.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
-	} else {
-	  update_bio_element($link,$title,$biotext,$badgeid,$biotype,$biolang,$biostate,$biodest);
+
+	// See if there's an update to be checked.
+	if ($biotext != $bioinfo[$keyname]) {
+
+	  // Length-check the values.
+	  if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($biotext)>$limit_array['max'][$biodest][$biotype])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	    $message.=" too long (".strlen($biotext)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
+	  } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($biotext)<$limit_array['min'][$biodest][$biotype])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	    $messaage.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
+	  } else {
+	    update_bio_element($link,$title,$biotext,$badgeid,$biotype,$biolang,$biostate,$biodest);
+	  }
 	}
       }
     }
@@ -742,16 +748,22 @@ function create_vendor ($participant_arr) {
 	$biodest=$bioinfo['biodest_array'][$l];
 	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
-	// Length-check the values.
+	// Clean up the biotext.
 	$biotext=stripslashes(htmlspecialchars_decode($participant_arr[$keyname]));
-	if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($biotext)>$limit_array['max'][$biodest][$biotype])) {
-	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
-	  $message.=" too long (".strlen($biotext)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
-	} elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($biotext)<$limit_array['min'][$biodest][$biotype])) {
-	  $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
-	  $messaage.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
-	} else {
-	  update_bio_element($link,$title,$biotext,$newbadgeid,$biotype,$biolang,$biostate,$biodest);
+
+	// See if there's an update to be checked.
+	if ($biotext != $bioinfo[$keyname]) {
+
+	  // Length-check the values.
+	  if ((isset($limit_array['max'][$biodest][$biotype])) and (strlen($biotext)>$limit_array['max'][$biodest][$biotype])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	    $message.=" too long (".strlen($biotext)." characters), the limit is ".$limit_array['max'][$biodest][$biotype]." characters.";
+	  } elseif ((isset($limit_array['min'][$biodest][$biotype])) and (strlen($biotext)<$limit_array['min'][$biodest][$biotype])) {
+	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
+	    $messaage.=" too short (".strlen($biotext)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
+	  } else {
+	    update_bio_element($link,$title,$biotext,$newbadgeid,$biotype,$biolang,$biostate,$biodest);
+	  }
 	}
       }
     }

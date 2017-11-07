@@ -212,18 +212,20 @@ EOD;
 	$keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
 
 	// Set the values.
-	$participant_arr[$keyname]=$bioinfo[$keyname];
+	if (!empty($bioinfo[$keyname])) {
+	  $participant_arr[$keyname]=$bioinfo[$keyname];
+	}
       }
     }
   }
   RenderEditCreateParticipant($title,$action,$participant_arr);
   echo "<DIV class=\"sectionheader\">\n";
   $printname=htmlspecialchars($participant_arr['pubsname']);
-  echo "<A HREF=AdminParticipants.php?partid=$selpartid>Edit password for $printname</A> ::\n";
   if (may_I(SuperLiaison)) {
     echo "<A HREF=StaffEditCompensation.php?partid=$selpartid>Set Compensation for $printname</A> ::\n";
   }
   if (may_I(SuperProgramming) || may_I(SuperLiaison) || may_I(Liaison)) {
+    echo "<A HREF=AdminParticipants.php?partid=$selpartid>Edit password for $printname</A> ::\n";
     echo "<A HREF=StaffSched.php?format=desc&conid=$conid&feedback=Y&badgeid=$selpartid>Show feedback for $printname</A> :: \n";
     echo "<A HREF=ClassIntroPrint.php?individual=$selpartid>Print Intros for $printname</A> ::\n";
     echo "<A HREF=WelcomeLettersPrint.php?individual=$selpartid>Print Welcome Letter for $printname</A> ::\n";

@@ -52,13 +52,52 @@ EOD;
     $conrole_arr=array();
   }
 
-    // Get the various length limits
-    $limit_array=getLimitArray();
+  // Get the various length limits
+  $limit_array=getLimitArray();
 
-    //error_log("Zambia: ".print_r($participant_arr,TRUE));
+  //error_log("Zambia: ".print_r($participant_arr,TRUE));
 
-    //Get the bioinfo
-    $bioinfo=getBioData($_SESSION['badgeid']);
+  //Get the bioinfo
+  $bioinfo=getBioData($_SESSION['badgeid']);
+
+  // Get the issstaff, ispresenter, and isvendor values
+  $ispermlist=$participant_arr['permroleid_list'];
+  $queryIsPerm= <<<EOD
+SELECT
+    permroleid,
+    permrolename
+  FROM
+      PermissionRoles
+  WHERE
+    permroleid in ($ispermlist)
+EOD;
+
+  list($ispermrolerows,$ispermroleheader_array,$ispermrole_array)=queryreport($queryIsPerm,$link,$title,$description,0);
+
+  $isstaff="F";
+  $isvendor="F";
+  $ispresenter="F";
+  for ($i=1; $i<=$ispermrolerows; $i++) {
+    $istest=$ispermrole_array[$i]['permrolename'];
+    if ($istest == "Vendor") {
+      $isvendor="T";
+    }
+    if (strpos($istest,"Super") === FALSE) {
+    } else {
+      $isstaff="T";
+    }
+    if (($istest == "Participant") or
+	($istest == "Panelist") or
+	($istest == "Host") or
+	($istest == "Demo") or
+	($istest == "Teacher") or
+	($istest == "Presenter") or
+	($istest == "Author") or
+	($istest == "Organizer") or
+	($istest == "Performer")) {
+      $ispresenter="T";
+    }
+  }
 
   ?>
     <DIV class="formbox">
@@ -153,22 +192,8 @@ EOD;
 		  (may_I("SuperVendor")) or
 		  (may_I("Liaison")) or
 		  (may_I("SuperLiaison"))) {
+
 		/* temporary hack, to help migrate the bios from a 3-depth to a 4-depth array */
-		if (((!isset($participant_arr['bio_en-us_raw_web_bio'])) or
-		     ($participant_arr['bio_en-us_raw_web_bio'] == "")) and 
-		    ($participant_arr['web_en-us_raw_web_bio'] != "")) {
-		  $participant_arr['bio_en-us_raw_web_bio'] = $participant_arr['web_en-us_raw_web_bio'];
-		}
-		if (((!isset($participant_arr['bio_en-us_raw_book_bio'])) or
-		     ($participant_arr['bio_en-us_raw_book_bio'] == "")) and 
-		    ($participant_arr['book_en-us_raw_web_bio'] != "")) {
-		  $participant_arr['bio_en-us_raw_book_bio'] = $participant_arr['book_en-us_raw_web_bio'];
-		}
-		if (((!isset($participant_arr['bio_en-us_raw_book_bio'])) or
-		     ($participant_arr['bio_en-us_raw_book_bio'] == "")) and 
-		    ($participant_arr['book_en-us_raw_book_bio'] != "")) {
-		  $participant_arr['bio_en-us_raw_book_bio'] = $participant_arr['book_en-us_raw_book_bio'];
-		}
 		if ((!isset($participant_arr['name_en-us_raw_web_bio'])) or
 		    ($participant_arr['name_en-us_raw_web_bio'] == "")) {
 		  $participant_arr['name_en-us_raw_web_bio'] = $participant_arr['pubsname'];
@@ -195,6 +220,31 @@ EOD;
 		      // $biostate=$bioinfo['biostate_array'][$k];
 		      $biodest=$bioinfo['biodest_array'][$l];
 		      $keyname=$biotype."_".$biolang."_".$biostate."_".$biodest."_bio";
+
+		      /* // Skip the "presenter" categories, if is not a presenter
+			 if (($ispresenter!="T") and ($biodest=="book")) { continue; }
+			 if (($ispresenter!="T") and ($biodest=="web")) { continue; } */
+
+		      // Skip the "staff" categories, if is not staff
+		      if (($isstaff!="T") and ($biodest=="staffbook")) { continue; }
+		      if (($isstaff!="T") and ($biodest=="staffweb")) { continue; }
+
+		      // Skip the "vendor" categories, if is not vendor
+		      if (($isvendor!="T") and ($biotype=="dba")) { continue; }
+
+		      // If is vendor, skip the "pronoun" categories
+		      if (($isvendor=="T") and ($biotype=="pronoun")) { continue; }
+
+		      // Skip the badge-uri and badge-bio cateories
+		      if (($biodest=="badge") and ($biotype=="uri")) { continue; }
+		      if (($biodest=="badge") and ($biotype=="bio")) { continue; }
+		      if (($biodest=="badge") and ($biotype=="fetlife")) { continue; }
+		      if (($biodest=="badge") and ($biotype=="facebook")) { continue; }
+		      if (($biodest=="badge") and ($biotype=="twitter")) { continue; }
+		      if (($biodest=="badge") and ($biotype=="dba")) { continue; }
+
+		      // Skip the non-staff, badge-picture category
+		      if (($isstaff!="T") and ($biodest=="badge") and ($biotype=="picture")) { continue; }
 
 		      if ($action != "migrate") {
 			echo "            <DIV class=\"denseform\">\n";

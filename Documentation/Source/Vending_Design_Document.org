@@ -211,7 +211,8 @@
     - Adjustments to the bill
     + YUP
     - chance for adjustments (like shitty corner, or still owes us money)
-**** DONE VendorAnnualInfo.vendorpayadj
+    - description field to say why there was an adjustment
+**** DONE VendorAnnualInfo.vendorpayadj, VendorAnnualInfo.vendorpayadjdesc
 *** vendor_payment_amount - decimal(8,2)
     - amount they paid, should match invoiced amounts
     + YUP
@@ -221,11 +222,13 @@
     collected as well.
     The table should have the badgeid, the conid, the transaction
     date, the amount billed, the amount paid, the name and description
-    of the transaction, and who they asked the email to be sent to
-    (even though it doesn't actually go there, for some reason, to be
-    discovered later, probably having something to do with the blank
-    "merchmailtemplate" field or "confemailtemplate" field)
-**** VENDORQA VendorInvoice table
+    of the transaction, and who they asked the email to be sent to.
+    We need some feedback from the vendors to see if they are getting
+    a copy of their invoice via email.  Otherwise I have to track down
+    why it doesn't actually go there, (probably having something to do
+    with the blank "merchmailtemplate" field or "confemailtemplate"
+    field)
+**** DONE Invoice table
      - Generated from VendorInvoice in Verbiage
      - Fed from the VendorWelcome_# status pages.
      - Tracked invoiceid, badgeid, conid, invoiceref (#),
@@ -307,12 +310,13 @@
 *** vendor_invoice_amount - decimal(13,4)
     - Money
     + YUP
-    - possibly a geneerated field, as opposed to a stored one, based
+    - possibly a generated field, as opposed to a stored one, based
       on the varieties chosen in vendor_amenites,
       vendor_payment_adjustment, vendor_actual_space and others?
     - These live on the Verbiage VendorWelcome_# pages depending on
       what they selected.
     - Warwick seperate from NELA
+    - Need final work on this.
 *** times_at_fff 
     - currently a freeform field, should probably be generated, with a
       special number that adds in, for (currently) untracked events.
@@ -357,11 +361,12 @@
     - VendorHasSpace - list of which vendor has which choice
 *** Vendor Location
     Might be it's own table, with conid (linked), badgeid (linked),
-    building, floor, room (possibly linked), and booth_number, and
-    then code around it so blanks just don't get reported (aka, if
-    they are a room vendor, their booth_number might not be listed,
-    but if there are several vendors in a room, it might be.)  This
-    might also allow ties to maps, and possibly the redraw of maps.
+    building, floor, room (possibly linked) or maybe map name, and
+    booth_number, and then code around it so blanks just don't get
+    reported (aka, if they are a room vendor, their booth_number might
+    not be listed, but if there are several vendors in a room, it
+    might be.)  This might also allow ties to maps, and possibly the
+    redraw of maps.
 *** Vendor Status
     Might want to be it's own table as a mapping, so searches, and
     display_order could be set.  See the piece below in Front End for
@@ -386,9 +391,11 @@
 *** Vendor Information Edited
     List of codes to indicate what was done to the vendor information
     - VendorEditCodes
+    - Hasn't yet been implemented.
 *** Vendor Change History
     Track what was done, per vendor, to them, when.
-    - VendorEditHistory - Some of the edits
+    - VendorEditHistory - Some of the edits, theoretically with the
+      VendorEditCodes, but ... mostly in NotesOnVendors.
     - NotesOnVendors - More history
 *** Vendor Invoicing
     Actually set up for all invoicing, but referenced by vendor
@@ -421,7 +428,7 @@
     By number or email address.
     - Update page (subset of new apply page)
     - apply page (subset of new apply page)
-**** VENDORQA needs to be vetted.
+**** VENDORQA needs to be vetted/tested.
 *** Returning Community Table sign-in
     By number or email address.  Might simply be switched on one of
     the values in the vending type or on it's own value, and just have
@@ -462,6 +469,8 @@
      - Waiting on Vendor QA of the words.
      - Auto advance to the next, this year, subsequent years this will
        be the spot things pause waiting for NELA Approval
+***** TODO Currently we don't distinguish between Proposed and Applied
+      Find where this is failing and fix. 
 **** VENDORQA NELA Approved (3) - renamed Warwick Application this year
      Once a set of the proposals are in, the jury decides if their
      proposal is accepted and acceptable, the NELA Approved button for
@@ -498,6 +507,8 @@
 **** VENDORQA Invoiced (7)
      Once they indicate that their invoice is fine, the invoice is
      presented.  They then can pay it.
+     - MISSING pay adjustment, and booth type at least
+     - MISSING possible multipe booth types.
      - Still needs final testing by somone not NELA.
      - Auto Advance to the next.
 **** VENDORQA Paid (8)
@@ -531,6 +542,10 @@
      Denied, right after (or instead of) the NELA Approved state as
      well.
      - Final state.
+**** TODO Write "advance to next"
+     Default increment 1, but able to be incremented otherwise by
+     flag, or something, so that all the unique code can be collaped
+     down to something simpler.
 *** Returning Vendor informational update
     This might not be necessary, based on the above page keeping what
     is set for this event as set.
@@ -540,6 +555,9 @@
     Page that they can, at will update their web or book information,
     along with all their other invormation.
      - SuperVendor cam also update anyone here.
+     - There is only a subset of the information available here, so
+       the vendor coordinators, or someone else (currently the Zambia
+       Librarian) is keeping everything in sync.
 **** VENDORQA similar to the above set of pages, but allowed always.
 *** Invoice
     Not available until after both they are accepted (by Vendor
@@ -557,6 +575,17 @@
     a place for them to upload/submit them.
     - Probably offline, going directly to the AD folk.
 **** TODO (perhaps, at some point?)
+*** Vendor Price Adjustment
+    The page that somehow has the price adjustment, and reasoning
+    behind such price adjustment.
+    This might be included in one of the other (probably Vendor Jury
+    or Vendor Placement) pages below.  Most likey the first of the
+    Vendor Placement pages, but ... being that this is yet undefined,
+    we would have to come up with something.
+    This is a positive or negative number, not a percent.  It should
+    be figured off of whatever is appropriate, and the descripton
+    should accommodate any reasoning.
+**** TODO Need before Invoicing
 *** Vendor Jury
     The page that all the proposed vendors, with certain bits of
     information (to be determined, since I've not seen that page yet
@@ -568,12 +597,20 @@
     from this in a different colour, so that those already accepted,
     and their type, will be shown for balance reasons.
 **** VENDORQA in pieces
-     - first report - which allows for changing the Vendor State is
-       done.
-     - second report - just those with possible PDFs waiting to be
-       checked and promoted.
-     - set of tunable reports
-     - voting page, much like other voting pages?
+***** DONE first report - Vendor State change
+      Which allows for changing the Vendor State is done.
+***** DONE second report - List of those with PDFs
+      The set of Vendors with possible PDFs waiting to be checked and
+      promoted.
+***** TODO set of tunable reports
+      All the reports that allow the Vendor Folks to make
+      determinations on who/how many, etc.  Need vendor feedback to
+      determine what these are and what information they are looking
+      for.
+***** TODO voting page
+      Much like other voting pages, perhaps?  With our current Super
+      Vendors confirring over all the Warwick pieces, this might not
+      be necessary for this year, but still should get written.
 *** Vendor Placement
     After the invoice is paid? Or perhaps slightly different, if there
     is those that have invoice exceptions allowing for the placement
@@ -584,7 +621,14 @@
     apart, as per the decision of the Div Head. May also contain
     previous placements, or links to previous maps or something useful
     along those lines.  Including the current svg of the map.
-**** TODO
+    - Two Pieces.
+**** TODO Initial vendor booth type selection  Need before Invoicing
+     This will be end-cap?  Bedroom vendor?  Single?  Double? Which of
+     their choices get filled? More than one booth? Should be before
+     Invoicing, so Invoicing is correct.
+**** TODO Map Placement
+     Once the booths are assigned, this will get set, so their map
+     coordinates are set.
 *** Administer Vendor Options
     Page that has the Amenities and Spaces for this event, pulled from
     the standard pool.  To be updated by the Vendor Coordinator on an
@@ -607,10 +651,10 @@
        which is the business name.
 *** Vendor Welcome Letter
     Generate the (physical) welcome letter to the vendors
-**** TODO
+**** TODO so it can get printed (either by pubs or by Zambia)
 *** Vendor Email
     Generate (and send) various all-vendor communications
-**** TODO
+**** TODO so there is a record of what is sent.
 *** Vendor Badges
     Generate the Vendor Badges for printing purposes.
     - No!
@@ -619,7 +663,7 @@
     Generate all the vendor "tents" to put on their tables, to mark
     their place.
     - Business Name (and DBA?) and Booth #
-**** TODO
+**** TODO maybe not full tents, but at least large on paper.
 *** Check-in/Check-out lists
     All of the vendors expected, so they can be ticked off the list
     when they get there, and, so that when they return whatever they

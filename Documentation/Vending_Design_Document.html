@@ -706,9 +706,11 @@ more complex for the future.
 </li>
 <li>chance for adjustments (like shitty corner, or still owes us money)
 </li>
+<li>description field to say why there was an adjustment
+</li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="done DONE">DONE</span> VendorAnnualInfo.vendorpayadj<br  /></li></ul>
+<ul class="org-ul"><li><span class="done DONE">DONE</span> VendorAnnualInfo.vendorpayadj, VendorAnnualInfo.vendorpayadjdesc<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-2-2-16" class="outline-4">
@@ -728,13 +730,15 @@ need to have a table that tracks it.  So extra information can be
 collected as well.
 The table should have the badgeid, the conid, the transaction
 date, the amount billed, the amount paid, the name and description
-of the transaction, and who they asked the email to be sent to
-(even though it doesn't actually go there, for some reason, to be
-discovered later, probably having something to do with the blank
-"merchmailtemplate" field or "confemailtemplate" field)
+of the transaction, and who they asked the email to be sent to.
+We need some feedback from the vendors to see if they are getting
+a copy of their invoice via email.  Otherwise I have to track down
+why it doesn't actually go there, (probably having something to do
+with the blank "merchmailtemplate" field or "confemailtemplate"
+field)
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> VendorInvoice table<br  /><div class="outline-text-5" id="text-2-2-16-1">
+<ul class="org-ul"><li><span class="done DONE">DONE</span> Invoice table<br  /><div class="outline-text-5" id="text-2-2-16-1">
 <ul class="org-ul">
 <li>Generated from VendorInvoice in Verbiage
 </li>
@@ -948,7 +952,7 @@ system.
 </li>
 <li>YUP
 </li>
-<li>possibly a geneerated field, as opposed to a stored one, based
+<li>possibly a generated field, as opposed to a stored one, based
 on the varieties chosen in vendor_amenites,
 vendor_payment_adjustment, vendor_actual_space and others?
 </li>
@@ -956,6 +960,8 @@ vendor_payment_adjustment, vendor_actual_space and others?
 what they selected.
 </li>
 <li>Warwick seperate from NELA
+</li>
+<li>Need final work on this.
 </li>
 </ul>
 </div>
@@ -1072,11 +1078,12 @@ repurposing of "SessionHasVendorSpace" to "VendorHasVendorSpace"
 <div class="outline-text-4" id="text-2-5-5">
 <p>
 Might be it's own table, with conid (linked), badgeid (linked),
-building, floor, room (possibly linked), and booth_number, and
-then code around it so blanks just don't get reported (aka, if
-they are a room vendor, their booth_number might not be listed,
-but if there are several vendors in a room, it might be.)  This
-might also allow ties to maps, and possibly the redraw of maps.
+building, floor, room (possibly linked) or maybe map name, and
+booth_number, and then code around it so blanks just don't get
+reported (aka, if they are a room vendor, their booth_number might
+not be listed, but if there are several vendors in a room, it
+might be.)  This might also allow ties to maps, and possibly the
+redraw of maps.
 </p>
 </div>
 </div>
@@ -1161,6 +1168,8 @@ List of codes to indicate what was done to the vendor information
 <ul class="org-ul">
 <li>VendorEditCodes
 </li>
+<li>Hasn't yet been implemented.
+</li>
 </ul>
 </div>
 </div>
@@ -1172,7 +1181,8 @@ List of codes to indicate what was done to the vendor information
 Track what was done, per vendor, to them, when.
 </p>
 <ul class="org-ul">
-<li>VendorEditHistory - Some of the edits
+<li>VendorEditHistory - Some of the edits, theoretically with the
+VendorEditCodes, but &#x2026; mostly in NotesOnVendors.
 </li>
 <li>NotesOnVendors - More history
 </li>
@@ -1271,7 +1281,7 @@ By number or email address.
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> needs to be vetted.<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> needs to be vetted/tested.<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-2" class="outline-4">
@@ -1375,6 +1385,12 @@ be the spot things pause waiting for NELA Approval
 </li>
 </ul>
 </div>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> Currently we don't distinguish between Proposed and Applied<br  /><div class="outline-text-6" id="text-3-1-5-1-1">
+<p>
+Find where this is failing and fix. 
+</p>
+</div>
+</li></ul>
 </li>
 
 <li><span class="todo VENDORQA">VENDORQA</span> NELA Approved (3) - renamed Warwick Application this year<br  /><div class="outline-text-5" id="text-3-1-5-2">
@@ -1449,6 +1465,10 @@ Once they indicate that their invoice is fine, the invoice is
 presented.  They then can pay it.
 </p>
 <ul class="org-ul">
+<li>MISSING pay adjustment, and booth type at least
+</li>
+<li>MISSING possible multipe booth types.
+</li>
 <li>Still needs final testing by somone not NELA.
 </li>
 <li>Auto Advance to the next.
@@ -1526,6 +1546,15 @@ well.
 </li>
 </ul>
 </div>
+</li>
+
+<li><span class="todo TODO">TODO</span> Write "advance to next"<br  /><div class="outline-text-5" id="text-3-1-5-12">
+<p>
+Default increment 1, but able to be incremented otherwise by
+flag, or something, so that all the unique code can be collaped
+down to something simpler.
+</p>
+</div>
 </li></ul>
 </div>
 
@@ -1553,6 +1582,10 @@ along with all their other invormation.
 </p>
 <ul class="org-ul">
 <li>SuperVendor cam also update anyone here.
+</li>
+<li>There is only a subset of the information available here, so
+the vendor coordinators, or someone else (currently the Zambia
+Librarian) is keeping everything in sync.
 </li>
 </ul>
 </div>
@@ -1596,8 +1629,26 @@ a place for them to upload/submit them.
 </div>
 
 <div id="outline-container-sec-3-1-10" class="outline-4">
-<h4 id="sec-3-1-10"><span class="section-number-4">3.1.10</span> Vendor Jury</h4>
+<h4 id="sec-3-1-10"><span class="section-number-4">3.1.10</span> Vendor Price Adjustment</h4>
 <div class="outline-text-4" id="text-3-1-10">
+<p>
+The page that somehow has the price adjustment, and reasoning
+behind such price adjustment.
+This might be included in one of the other (probably Vendor Jury
+or Vendor Placement) pages below.  Most likey the first of the
+Vendor Placement pages, but &#x2026; being that this is yet undefined,
+we would have to come up with something.
+This is a positive or negative number, not a percent.  It should
+be figured off of whatever is appropriate, and the descripton
+should accommodate any reasoning.
+</p>
+</div>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> Need before Invoicing<br  /></li></ul>
+</div>
+
+<div id="outline-container-sec-3-1-11" class="outline-4">
+<h4 id="sec-3-1-11"><span class="section-number-4">3.1.11</span> Vendor Jury</h4>
+<div class="outline-text-4" id="text-3-1-11">
 <p>
 The page that all the proposed vendors, with certain bits of
 information (to be determined, since I've not seen that page yet
@@ -1610,26 +1661,45 @@ from this in a different colour, so that those already accepted,
 and their type, will be shown for balance reasons.
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> in pieces<br  /><div class="outline-text-5" id="text-3-1-10-1">
-<ul class="org-ul">
-<li>first report - which allows for changing the Vendor State is
-done.
-</li>
-<li>second report - just those with possible PDFs waiting to be
-checked and promoted.
-</li>
-<li>set of tunable reports
-</li>
-<li>voting page, much like other voting pages?
-</li>
-</ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> in pieces<br  /><ul class="org-ul"><li><span class="done DONE">DONE</span> first report - Vendor State change<br  /><div class="outline-text-6" id="text-3-1-11-1-1">
+<p>
+Which allows for changing the Vendor State is done.
+</p>
 </div>
+</li>
+
+<li><span class="done DONE">DONE</span> second report - List of those with PDFs<br  /><div class="outline-text-6" id="text-3-1-11-1-2">
+<p>
+The set of Vendors with possible PDFs waiting to be checked and
+promoted.
+</p>
+</div>
+</li>
+
+<li><span class="todo TODO">TODO</span> set of tunable reports<br  /><div class="outline-text-6" id="text-3-1-11-1-3">
+<p>
+All the reports that allow the Vendor Folks to make
+determinations on who/how many, etc.  Need vendor feedback to
+determine what these are and what information they are looking
+for.
+</p>
+</div>
+</li>
+
+<li><span class="todo TODO">TODO</span> voting page<br  /><div class="outline-text-6" id="text-3-1-11-1-4">
+<p>
+Much like other voting pages, perhaps?  With our current Super
+Vendors confirring over all the Warwick pieces, this might not
+be necessary for this year, but still should get written.
+</p>
+</div>
+</li></ul>
 </li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-11" class="outline-4">
-<h4 id="sec-3-1-11"><span class="section-number-4">3.1.11</span> Vendor Placement</h4>
-<div class="outline-text-4" id="text-3-1-11">
+<div id="outline-container-sec-3-1-12" class="outline-4">
+<h4 id="sec-3-1-12"><span class="section-number-4">3.1.12</span> Vendor Placement</h4>
+<div class="outline-text-4" id="text-3-1-12">
 <p>
 After the invoice is paid? Or perhaps slightly different, if there
 is those that have invoice exceptions allowing for the placement
@@ -1641,13 +1711,32 @@ apart, as per the decision of the Div Head. May also contain
 previous placements, or links to previous maps or something useful
 along those lines.  Including the current svg of the map.
 </p>
+<ul class="org-ul">
+<li>Two Pieces.
+</li>
+</ul>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> <br  /></li></ul>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> Initial vendor booth type selection  Need before Invoicing<br  /><div class="outline-text-5" id="text-3-1-12-1">
+<p>
+This will be end-cap?  Bedroom vendor?  Single?  Double? Which of
+their choices get filled? More than one booth? Should be before
+Invoicing, so Invoicing is correct.
+</p>
+</div>
+</li>
+
+<li><span class="todo TODO">TODO</span> Map Placement<br  /><div class="outline-text-5" id="text-3-1-12-2">
+<p>
+Once the booths are assigned, this will get set, so their map
+coordinates are set.
+</p>
+</div>
+</li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-12" class="outline-4">
-<h4 id="sec-3-1-12"><span class="section-number-4">3.1.12</span> Administer Vendor Options</h4>
-<div class="outline-text-4" id="text-3-1-12">
+<div id="outline-container-sec-3-1-13" class="outline-4">
+<h4 id="sec-3-1-13"><span class="section-number-4">3.1.13</span> Administer Vendor Options</h4>
+<div class="outline-text-4" id="text-3-1-13">
 <p>
 Page that has the Amenities and Spaces for this event, pulled from
 the standard pool.  To be updated by the Vendor Coordinator on an
@@ -1657,9 +1746,9 @@ event by event basis.
 <ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /></li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-13" class="outline-4">
-<h4 id="sec-3-1-13"><span class="section-number-4">3.1.13</span> Adminsiter Ad/Sponsor Options</h4>
-<div class="outline-text-4" id="text-3-1-13">
+<div id="outline-container-sec-3-1-14" class="outline-4">
+<h4 id="sec-3-1-14"><span class="section-number-4">3.1.14</span> Adminsiter Ad/Sponsor Options</h4>
+<div class="outline-text-4" id="text-3-1-14">
 <p>
 Page that has the Sponsor Levels, Digital Ads and Print Ads for
 this event, pulled from the standard pool.  To be updated either
@@ -1670,9 +1759,9 @@ event basis.
 <ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /></li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-14" class="outline-4">
-<h4 id="sec-3-1-14"><span class="section-number-4">3.1.14</span> Administer Vendor</h4>
-<div class="outline-text-4" id="text-3-1-14">
+<div id="outline-container-sec-3-1-15" class="outline-4">
+<h4 id="sec-3-1-15"><span class="section-number-4">3.1.15</span> Administer Vendor</h4>
+<div class="outline-text-4" id="text-3-1-15">
 <p>
 Where any changes are made to the vendor information (both that
 they can change and that they can't) for creation/update by Vendor
@@ -1683,7 +1772,7 @@ Div Head.
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /><div class="outline-text-5" id="text-3-1-14-1">
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /><div class="outline-text-5" id="text-3-1-15-1">
 <ul class="org-ul">
 <li>Still a little wonky, brings back to a less-useful page, but
 still works.  Can select by email address or by "pubsname"
@@ -1694,29 +1783,29 @@ which is the business name.
 </li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-15" class="outline-4">
-<h4 id="sec-3-1-15"><span class="section-number-4">3.1.15</span> Vendor Welcome Letter</h4>
-<div class="outline-text-4" id="text-3-1-15">
+<div id="outline-container-sec-3-1-16" class="outline-4">
+<h4 id="sec-3-1-16"><span class="section-number-4">3.1.16</span> Vendor Welcome Letter</h4>
+<div class="outline-text-4" id="text-3-1-16">
 <p>
 Generate the (physical) welcome letter to the vendors
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> <br  /></li></ul>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> so it can get printed (either by pubs or by Zambia)<br  /></li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-16" class="outline-4">
-<h4 id="sec-3-1-16"><span class="section-number-4">3.1.16</span> Vendor Email</h4>
-<div class="outline-text-4" id="text-3-1-16">
+<div id="outline-container-sec-3-1-17" class="outline-4">
+<h4 id="sec-3-1-17"><span class="section-number-4">3.1.17</span> Vendor Email</h4>
+<div class="outline-text-4" id="text-3-1-17">
 <p>
 Generate (and send) various all-vendor communications
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> <br  /></li></ul>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> so there is a record of what is sent.<br  /></li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-17" class="outline-4">
-<h4 id="sec-3-1-17"><span class="section-number-4">3.1.17</span> Vendor Badges</h4>
-<div class="outline-text-4" id="text-3-1-17">
+<div id="outline-container-sec-3-1-18" class="outline-4">
+<h4 id="sec-3-1-18"><span class="section-number-4">3.1.18</span> Vendor Badges</h4>
+<div class="outline-text-4" id="text-3-1-18">
 <p>
 Generate the Vendor Badges for printing purposes.
 </p>
@@ -1728,9 +1817,9 @@ Generate the Vendor Badges for printing purposes.
 <ul class="org-ul"><li><span class="todo TODO">TODO</span> even if we won't use them.<br  /></li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-18" class="outline-4">
-<h4 id="sec-3-1-18"><span class="section-number-4">3.1.18</span> Vendor Tents</h4>
-<div class="outline-text-4" id="text-3-1-18">
+<div id="outline-container-sec-3-1-19" class="outline-4">
+<h4 id="sec-3-1-19"><span class="section-number-4">3.1.19</span> Vendor Tents</h4>
+<div class="outline-text-4" id="text-3-1-19">
 <p>
 Generate all the vendor "tents" to put on their tables, to mark
 their place.
@@ -1740,12 +1829,12 @@ their place.
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> <br  /></li></ul>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> maybe not full tents, but at least large on paper.<br  /></li></ul>
 </div>
 
-<div id="outline-container-sec-3-1-19" class="outline-4">
-<h4 id="sec-3-1-19"><span class="section-number-4">3.1.19</span> Check-in/Check-out lists</h4>
-<div class="outline-text-4" id="text-3-1-19">
+<div id="outline-container-sec-3-1-20" class="outline-4">
+<h4 id="sec-3-1-20"><span class="section-number-4">3.1.20</span> Check-in/Check-out lists</h4>
+<div class="outline-text-4" id="text-3-1-20">
 <p>
 All of the vendors expected, so they can be ticked off the list
 when they get there, and, so that when they return whatever they

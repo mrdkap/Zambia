@@ -62,7 +62,10 @@ EOD;
 
   // Get the issstaff, ispresenter, and isvendor values
   $ispermlist=$participant_arr['permroleid_list'];
-  $queryIsPerm= <<<EOD
+
+  if (!empty($ispermlist)) {
+
+    $queryIsPerm= <<<EOD
 SELECT
     permroleid,
     permrolename
@@ -72,30 +75,31 @@ SELECT
     permroleid in ($ispermlist)
 EOD;
 
-  list($ispermrolerows,$ispermroleheader_array,$ispermrole_array)=queryreport($queryIsPerm,$link,$title,$description,0);
+    list($ispermrolerows,$ispermroleheader_array,$ispermrole_array)=queryreport($queryIsPerm,$link,$title,$description,0);
 
-  $isstaff="F";
-  $isvendor="F";
-  $ispresenter="F";
-  for ($i=1; $i<=$ispermrolerows; $i++) {
-    $istest=$ispermrole_array[$i]['permrolename'];
-    if ($istest == "Vendor") {
-      $isvendor="T";
-    }
-    if (strpos($istest,"Super") === FALSE) {
-    } else {
-      $isstaff="T";
-    }
-    if (($istest == "Participant") or
-	($istest == "Panelist") or
-	($istest == "Host") or
-	($istest == "Demo") or
-	($istest == "Teacher") or
-	($istest == "Presenter") or
-	($istest == "Author") or
-	($istest == "Organizer") or
-	($istest == "Performer")) {
-      $ispresenter="T";
+    $isstaff="F";
+    $isvendor="F";
+    $ispresenter="F";
+    for ($i=1; $i<=$ispermrolerows; $i++) {
+      $istest=$ispermrole_array[$i]['permrolename'];
+      if ($istest == "Vendor") {
+	$isvendor="T";
+      }
+      if (strpos($istest,"Super") === FALSE) {
+      } else {
+	$isstaff="T";
+      }
+      if (($istest == "Participant") or
+	  ($istest == "Panelist") or
+	  ($istest == "Host") or
+	  ($istest == "Demo") or
+	  ($istest == "Teacher") or
+	  ($istest == "Presenter") or
+	  ($istest == "Author") or
+	  ($istest == "Organizer") or
+	  ($istest == "Performer")) {
+	$ispresenter="T";
+      }
     }
   }
 

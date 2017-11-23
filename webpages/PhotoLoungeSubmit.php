@@ -133,7 +133,8 @@ if((isset($_POST["submit"])) and ($_POST["submit"]=="Upload Image")) {
 
   // Allow certain file formats
   if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-     && $imageFileType != "gif" ) {
+     && $imageFileType != "gif" && $imageFileType != "JPG" && $imageFileType != "PNG"
+     && $imageFileType != "JPEG" && $imageFileType != "GIF" ) {
     $uploadOk = 0;
     $message_error.="Sorry, only JPG, JPEG, PNG & GIF files are allowed.<br />";
   }
@@ -212,7 +213,8 @@ echo "  <TR><TD align=right><LABEL for=\"model\">Model(s): </LABEL></TD>";
 echo "    <TD><INPUT type=\"text\" name=\"model\" id=\"model\"></TD></TR>\n";
 // If a model release is being requested.
 if ($modelrelease_p == "Y") {
-  echo "<TR><TD colspan=2 align=center><em>Attach pdf of Model Release(s) below each selected picture.</em></TD></TR>";
+  echo "<TR><TD colspan=2 align=center><em>You will be requested to submit a model release<br />\n";
+  echo "for images selected for the FFF50 Photo Lounge.</em></TD></TR>";
 }
 echo "  <TR><TD align=right><LABEL for=\"location\">Location: </LABEL></TD>";
 echo "    <TD><INPUT type=\"text\" name=\"location\" id=\"location\"></TD></TR>\n";

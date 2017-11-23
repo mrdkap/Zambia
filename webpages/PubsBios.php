@@ -302,6 +302,15 @@ if ($short == "T") {
 	//If there is a URI line
 	$uri=getBioDestEdit('uri',$biolang,$bioinfo);
 
+	// If there is a twitter line
+	$twitter=getBioDestEdit('twitter',$biolang,$bioinfo);
+
+	// If there is a facebook line
+	$facebook=getBioDestEdit('facebook',$biolang,$bioinfo);
+
+	// If there is a fetlife line
+	$fetlife=getBioDestEdit('fetlife',$biolang,$bioinfo);
+
 	//If there is a pronoun line
 	$pronoun=getBioDestEdit('pronoun',$biolang,$bioinfo);
 
@@ -314,14 +323,31 @@ if ($short == "T") {
 	  }
 	  $biostring.=sprintf("%s</TD>\n    <TD>",$picture);
 	}
+
 	$biostring.=sprintf("<P><B>%s</B>",$name);
+
 	if ($bio != "") {
 	  $biostring.=$bio;
 	}
+
 	$biostring.="</P>\n";
+
+	if ($twitter != "") {
+	  $biostring.=sprintf("<P>Twitter: <A HREF=\"https://twitter.com/%s\" target=\"_blank\">@%s</A></P>\n",$twitter,$twitter);
+	}
+
+	if ($facebook != "") {
+	  $biostring.=sprintf("<P>Facebook: <A HREF=\"https://facebook.com/%s\" target=\"_blank\">@%s</A></P>\n",$facebook,$facebook);
+	}
+
+	if ($fetlife != "") {
+	  $biostring.=sprintf("<P>FetLife: <A HREF=\"https://fetlife.com/%s\" target=\"_blank\">%s</A></P>\n",$fetlife,$fetlife);
+	}
+
 	if ($uri != "") {
 	  $biostring.=sprintf("<P>%s</P>\n",$uri);
 	}
+
 	if ($pronoun != "") {
 	  $biostring.=sprintf("  <P>Preferred pronoun: %s</P>\n",$pronoun);
 	}

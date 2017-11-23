@@ -359,6 +359,36 @@ if ($short == "T") {
 	    $accum.=sprintf("%s</P>\n",$bio);
 	  }
 
+	  // Sets the twitter info
+          $twitter=getBioDestEdit('twitter',$biolang,$biodest,$bioinfo);
+	  if ($twitter != "") {
+	    if ($biodest == "web") {
+	      $accum.=sprintf("<P>Twitter: <A HREF=\"https://twitter.com/%s\" target=\"_blank\">@%s</A></P>\n",$twitter,$twitter);
+	    } else {
+	      	      $accum.=sprintf("<P>Twitter: https://twitter.com/%s</P>\n",$twitter);
+	    }
+	  }
+
+	  // Sets the facebook info
+          $facebook=getBioDestEdit('facebook',$biolang,$biodest,$bioinfo);
+	  if ($facebook != "") {
+	    if ($biodest == "web") {
+	      $accum.=sprintf("<P>Facebook: <A HREF=\"https://facebook.com/%s\" target=\"_blank\">@%s</A></P>\n",$facebook,$facebook);
+	    } else {
+	      $accum.=sprintf("<P>Facebook: https://facebook.com/%s</P>\n",$facebook);
+	    }
+	  }
+
+	  // Sets the fetlife info
+          $fetlife=getBioDestEdit('fetlife',$biolang,$biodest,$bioinfo);
+	  if ($fetlife != "") {
+	    if ($biodest == "web") {
+	      $accum.=sprintf("<P>FetLife: <A HREF=\"https://fetlife.com/%s\" target=\"_blank\">%s</A></P>\n",$fetlife,$fetlife);
+	    } else {
+	      $accum.=sprintf("<P>FetLife: https://fetlife.com/%s</P>\n",$fetlife);
+	    }
+	  }
+
 	  // Sets the URI info
           $uri=getBioDestEdit('uri',$biolang,$biodest,$bioinfo);
 	  if ($uri != "") {

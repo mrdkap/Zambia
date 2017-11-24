@@ -161,6 +161,7 @@ SELECT
       ParticipantOnSession
     JOIN Sessions USING (sessionid,conid)
     JOIN PubStatuses USING (pubstatusid)
+    JOIN SessionStatuses USING (statusid)
     JOIN ConInfo USING (conid)
     JOIN (SELECT
         badgeid,
@@ -256,6 +257,7 @@ SELECT
   WHERE
     conid=$conid AND
     pubstatusname in ('Public') AND
+    statusname in ('Scheduled', 'Assigned') AND
     (volunteer IS NULL OR volunteer not in ('1','Yes')) AND
     (introducer IS NULL OR introducer not in ('1','Yes')) AND
     (aidedecamp IS NULL OR aidedecamp not in ('1','Yes'))

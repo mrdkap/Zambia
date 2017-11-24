@@ -151,7 +151,11 @@ SELECT
     concat('"name": [ "',name_good_web,'" ]') AS name,
     concat('"tags": []') AS tags,
     concat('"prog": [ ',GROUP_CONCAT(DISTINCT '"',sessionid,'"' SEPARATOR ", "),' ]') AS prog,
-    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_web/',badgeid,'",',if(uri_good_web IS NULL,"",concat('\n            "url" : "',replace(uri_good_web,'"',''),'"')),'\n        }') AS links,
+    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_web/',badgeid,'",',
+	   if(facebook_good_web IS NULL,"",concat('\n            "fb" : "',replace(facebook_good_web,'"',''),'",')),
+	   if(twitter_good_web IS NULL,"",concat('\n            "twitter" : "',replace(twitter_good_web,'"',''),'",')),
+	   if(fetlife_good_web IS NULL,"",concat('\n            "fl" : "',replace(fetlife_good_web,'"',''),'",')),
+	   if(uri_good_web IS NULL,"",concat('\n            "url" : "',replace(uri_good_web,'"',''),'",')),'\n        }') AS links,
   concat('"bio": "',name_good_web,if(bio_good_web IS NULL,"",replace(bio_good_web,'"',"''")),if(pronoun_good_web IS NULL,"",concat(" Preferred Pronoun: ",pronoun_good_web)),'" ') AS bio
   FROM
       ParticipantOnSession
@@ -197,6 +201,45 @@ SELECT
 	  biostatename in ('good') AND
 	  biodestname in ('web') AND
 	  biolang='en-us') UGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as facebook_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('facebook') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
+	  biolang='en-us') FBGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as twitter_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('twitter') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
+	  biolang='en-us') TWGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as fetlife_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('fetlife') AND
+	  biostatename in ('good') AND
+	  biodestname in ('web') AND
+	  biolang='en-us') FLGW USING (badgeid)
     LEFT JOIN (SELECT
         badgeid,
 	biotext as pronoun_good_web
@@ -534,6 +577,322 @@ EOD;
   $comtbls.="        " . $comtbl_array[$i]['prog'] . ",\n";
   $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['links']) . ",\n";
   $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['bio']) . "\n";
+  $comtbls.="    }\n";
+
+  $comtbls.="];";
+
+} else { // Is in Zambia
+// Vendors Information
+
+$vendorquery = <<<EOD
+SELECT
+    concat('"id": "',badgeid,'"') AS id,
+    concat('"name": [ "',name_good_web,'" ]') AS name,
+    concat('"tags": []') AS tags,
+    concat('"prog": []') AS prog,
+    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_web/',badgeid,'",',
+	   if(facebook_good_web IS NULL,"",concat('\n            "fb" : "',replace(facebook_good_web,'"',''),'",')),
+	   if(twitter_good_web IS NULL,"",concat('\n            "twitter" : "',replace(twitter_good_web,'"',''),'",')),
+	   if(fetlife_good_web IS NULL,"",concat('\n            "fl" : "',replace(fetlife_good_web,'"',''),'",')),
+	   if(uri_good_web IS NULL,"",concat('\n            "url" : "',replace(uri_good_web,'"',''),'",')),'\n        }') AS links,
+    concat('"bio": "',if(bio_good_web IS NULL,"",replace(bio_good_web,'"',"''")),'" ') AS bio
+  FROM
+      Participants
+    JOIN UserHasPermissionRole USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN VendorStatus USING (badgeid,conid)
+    JOIN VendorStatusTypes USING (vendorstatustypeid)
+    JOIN (SELECT
+        badgeid,
+	biotext as name_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('name') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') NGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as bio_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('bio') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+        biolang='en-us') BGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as uri_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('uri') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') UGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as facebook_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('facebook') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') FBGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as twitter_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('twitter') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') TWGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as fetlife_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('fetlife') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') FLGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as pronoun_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('pronoun') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+        biolang='en-us') PGW USING (badgeid)
+    LEFT JOIN (SELECT
+	badgeid,
+	conid,
+	basevendorspacename
+      FROM
+          VendorPrefSpace
+        JOIN VendorSpace USING (vendorspaceid)
+        JOIN BaseVendorSpace USING (basevendorspaceid)) BVS USING (badgeid,conid)
+  WHERE
+    conid=$conid AND
+    vendorstatustypename in ('Accepted') AND
+    permrolename in ('Vendor') AND
+    (basevendorspacename NOT like "%Community Table%" OR basevendorspacename IS NULL)
+  GROUP BY
+    badgeid
+  ORDER BY
+    name_good_web
+EOD;
+
+  // Retrieve query
+  list($vendorrows,$vendorheader_array,$vendor_array)=queryreport($vendorquery,$link,$title,$description,0);
+
+  $vendors.="var vendor = [\n";
+
+  for ($i=1; $i<$vendorrows; $i++) {
+    $vendors.="    {\n";
+    $vendors.="        " . $vendor_array[$i]['id'] . ",\n";
+    $vendors.="        " . $vendor_array[$i]['name'] . ",\n";
+    $vendors.="        " . $vendor_array[$i]['tags'] . ",\n";
+    $vendors.="        " . $vendor_array[$i]['prog'] . ",\n";
+    $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['links']) . ",\n";
+    $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['bio']) . "\n";
+    $vendors.="    },\n";
+  }
+
+  // last run through, without the comma at the end.
+  $vendors.="    {\n";
+  $vendors.="        " . $vendor_array[$i]['id'] . ",\n";
+  $vendors.="        " . $vendor_array[$i]['name'] . ",\n";
+  $vendors.="        " . $vendor_array[$i]['tags'] . ",\n";
+  $vendors.="        " . $vendor_array[$i]['prog'] . ",\n";
+  $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['links']) . ",\n";
+  $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['bio']) . "\n";
+  $vendors.="    }\n";
+
+  $vendors.="];";
+
+  // Community Tables
+  $comtblquery=<<<EOD
+SELECT
+    concat('"id": "',badgeid,'"') AS id,
+    concat('"name": [ "',name_good_web,'" ]') AS name,
+    concat('"tags": []') AS tags,
+    concat('"prog": []') AS prog,
+    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_web/',badgeid,'",',
+	   if(facebook_good_web IS NULL,"",concat('\n            "fb" : "',replace(facebook_good_web,'"',''),'",')),
+	   if(twitter_good_web IS NULL,"",concat('\n            "twitter" : "',replace(twitter_good_web,'"',''),'",')),
+	   if(fetlife_good_web IS NULL,"",concat('\n            "fl" : "',replace(fetlife_good_web,'"',''),'",')),
+	   if(uri_good_web IS NULL,"",concat('\n            "url" : "',replace(uri_good_web,'"',''),'",')),'\n        }') AS links,
+    concat('"bio": "',if(bio_good_web IS NULL,"",replace(bio_good_web,'"',"''")),'" ') AS bio
+  FROM
+      Participants
+    JOIN UserHasPermissionRole USING (badgeid)
+    JOIN PermissionRoles USING (permroleid)
+    JOIN VendorStatus USING (badgeid,conid)
+    JOIN VendorStatusTypes USING (vendorstatustypeid)
+    LEFT JOIN VendorPrefSpace USING (badgeid)
+    JOIN (SELECT
+        badgeid,
+	biotext as name_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('name') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') NGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as bio_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('bio') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+        biolang='en-us') BGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as uri_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('uri') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') UGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as facebook_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('facebook') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') FBGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as twitter_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('twitter') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') TWGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as fetlife_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('fetlife') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+	biolang='en-us') FLGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as pronoun_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('pronoun') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+        biolang='en-us') PGW USING (badgeid)
+    LEFT JOIN (SELECT
+	badgeid,
+	conid,
+	basevendorspacename
+      FROM
+          VendorPrefSpace
+        JOIN VendorSpace USING (vendorspaceid)
+        JOIN BaseVendorSpace USING (basevendorspaceid)) BVS USING (badgeid,conid)
+  WHERE
+    conid=$conid AND
+    vendorstatustypename in ('Accepted') AND
+    permrolename in ('Vendor') AND
+    basevendorspacename like "%Community Table%"
+  GROUP BY
+    badgeid
+  ORDER BY
+    name_good_web
+EOD;
+  // Retrieve query
+  list($comtblrows,$comtblheader_array,$comtbl_array)=queryreport($comtblquery,$link,$title,$description,0);
+
+  $comtbls.="var community = [\n";
+
+  for ($i=1; $i<$comtblrows; $i++) {
+    $comtbls.="    {\n";
+    $comtbls.="        " . $comtbl_array[$i]['id'] . ",\n";
+    $comtbls.="        " . $comtbl_array[$i]['name'] . ",\n";
+    $comtbls.="        " . $comtbl_array[$i]['tags'] . ",\n";
+    $comtbls.="        " . $comtbl_array[$i]['prog'] . ",\n";
+    $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['links']) . ",\n";
+    $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['bio']) . "\n";
+    $comtbls.="    },\n";
+  }
+
+  // last run through, without the comma at the end.
+  $comtbls.="    {\n";
+  $comtbls.="        " . $comtbl_array[$i]['id'] . ",\n";
+  $comtbls.="        " . $comtbl_array[$i]['name'] . ",\n";
+  $comtbls.="        " . $comtbl_array[$i]['tags'] . ",\n";
+  $comtbls.="        " . $comtbl_array[$i]['prog'] . ",\n";
+  $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['links']) . ",\n";
+  $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['bio']) . "\n";
   $comtbls.="    }\n";
 
   $comtbls.="];";

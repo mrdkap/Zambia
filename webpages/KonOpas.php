@@ -498,3 +498,5 @@ if ($phase_array['Vendors Available'] == '0') {
 }
 ?>
 <script src="../../konopas/konopas.min.js"></script>
+<!-- <script src="../../konopas/src/konopas.min.js"></script> -->
+<!-- <script src="../../konopas/src/konopas.js"></script> -->

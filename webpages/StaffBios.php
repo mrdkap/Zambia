@@ -362,30 +362,39 @@ if ($short == "T") {
 	  // Sets the twitter info
           $twitter=getBioDestEdit('twitter',$biolang,$biodest,$bioinfo);
 	  if ($twitter != "") {
-	    if ($biodest == "web") {
-	      $accum.=sprintf("<P>Twitter: <A HREF=\"https://twitter.com/%s\" target=\"_blank\">@%s</A></P>\n",$twitter,$twitter);
-	    } else {
-	      	      $accum.=sprintf("<P>Twitter: https://twitter.com/%s</P>\n",$twitter);
+	    $tw_array=preg_split("/[\s,]+/",$twitter);
+	    foreach ($tw_array as $tw_element) {
+	      if ($biodest == "web") {
+		$accum.=sprintf("<P>Twitter: <A HREF=\"https://twitter.com/%s\" target=\"_blank\">@%s</A></P>\n",$tw_element,$tw_element);
+	      } else {
+		$accum.=sprintf("<P>Twitter: https://twitter.com/%s</P>\n",$tw_element);
+	      }
 	    }
 	  }
 
 	  // Sets the facebook info
           $facebook=getBioDestEdit('facebook',$biolang,$biodest,$bioinfo);
 	  if ($facebook != "") {
-	    if ($biodest == "web") {
-	      $accum.=sprintf("<P>Facebook: <A HREF=\"https://facebook.com/%s\" target=\"_blank\">@%s</A></P>\n",$facebook,$facebook);
-	    } else {
-	      $accum.=sprintf("<P>Facebook: https://facebook.com/%s</P>\n",$facebook);
+	    $fb_array=preg_split("/[\s,]+/",$facebook);
+	    foreach ($fb_array as $fb_element) {
+	      if ($biodest == "web") {
+		$accum.=sprintf("<P>Facebook: <A HREF=\"https://facebook.com/%s\" target=\"_blank\">@%s</A></P>\n",$fb_element,$fb_element);
+	      } else {
+		$accum.=sprintf("<P>Facebook: https://facebook.com/%s</P>\n",$fb_element);
+	      }
 	    }
 	  }
 
 	  // Sets the fetlife info
           $fetlife=getBioDestEdit('fetlife',$biolang,$biodest,$bioinfo);
 	  if ($fetlife != "") {
-	    if ($biodest == "web") {
-	      $accum.=sprintf("<P>FetLife: <A HREF=\"https://fetlife.com/%s\" target=\"_blank\">%s</A></P>\n",$fetlife,$fetlife);
-	    } else {
-	      $accum.=sprintf("<P>FetLife: https://fetlife.com/%s</P>\n",$fetlife);
+	    $fl_array=preg_split("/[\s,]+/",$fetlife);
+	    foreach ($fl_array as $fl_element) {
+	      if ($biodest == "web") {
+		$accum.=sprintf("<P>FetLife: <A HREF=\"https://fetlife.com/%s\" target=\"_blank\">%s</A></P>\n",$fl_element,$fl_element);
+	      } else {
+		$accum.=sprintf("<P>FetLife: https://fetlife.com/%s</P>\n",$fl_element);
+	      }
 	    }
 	  }
 

@@ -333,15 +333,24 @@ if ($short == "T") {
 	$biostring.="</P>\n";
 
 	if ($twitter != "") {
-	  $biostring.=sprintf("<P>Twitter: <A HREF=\"https://twitter.com/%s\" target=\"_blank\">@%s</A></P>\n",$twitter,$twitter);
+	  $tw_array=preg_split("/[\s,]+/",$twitter);
+	  foreach ($tw_array as $tw_element) {
+	    $biostring.=sprintf("<P>Twitter: <A HREF=\"https://twitter.com/%s\" target=\"_blank\">@%s</A></P>\n",$tw_element,$tw_element);
+	  }
 	}
 
 	if ($facebook != "") {
-	  $biostring.=sprintf("<P>Facebook: <A HREF=\"https://facebook.com/%s\" target=\"_blank\">@%s</A></P>\n",$facebook,$facebook);
+	  $fb_array=preg_split("/[\s,]+/",$facebook);
+	  foreach ($fb_array as $fb_element) {
+	    $biostring.=sprintf("<P>Facebook: <A HREF=\"https://facebook.com/%s\" target=\"_blank\">@%s</A></P>\n",$fb_element,$fb_element);
+	  }
 	}
 
 	if ($fetlife != "") {
-	  $biostring.=sprintf("<P>FetLife: <A HREF=\"https://fetlife.com/%s\" target=\"_blank\">%s</A></P>\n",$fetlife,$fetlife);
+	  $fl_array=preg_split("/[\s,]+/",$fetlife);
+	  foreach ($fl_array as $fl_element) {
+	    $biostring.=sprintf("<P>FetLife: <A HREF=\"https://fetlife.com/%s\" target=\"_blank\">%s</A></P>\n",$fl_element,$fl_element);
+	  }
 	}
 
 	if ($uri != "") {

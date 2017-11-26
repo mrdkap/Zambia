@@ -116,7 +116,7 @@ list($elementrows,$header_array,$element_array)=queryreport($programquery,$link,
 
 $program.="var program = [\n";
 
-for ($i=1; $i<$elementrows; $i++) {
+for ($i=1; $i<=$elementrows; $i++) {
   $program.="    {\n";
   $program.="        " . $element_array[$i]['id'] . ",\n";
   $program.="        " . $element_array[$i]['title'] . ",\n";
@@ -129,19 +129,10 @@ for ($i=1; $i<$elementrows; $i++) {
   $program.="    },\n";
 }
 
-// last run through, without the comma at the end.
-$program.="    {\n";
-$program.="        " . $element_array[$i]['id'] . ",\n";
-$program.="        " . $element_array[$i]['title'] . ",\n";
-$program.="        " . $element_array[$i]['tags'] . ",\n";
-$program.="        " . $element_array[$i]['time'] . ",\n";
-$program.="        " . $element_array[$i]['mins'] . ",\n";
-$program.="        " . $element_array[$i]['loc'] . ",\n";
-$program.="        " . $element_array[$i]['people'] . ",\n";
-$program.="        " . str_replace("\n"," ",$element_array[$i]['desc']) . "\n";
-$program.="    }\n";
+// Remove the trailing comma
+$program=rtrim(trim($program), ',');
 
-$program.="];";
+$program.="\n];";
 
 // Bios Information
 
@@ -151,12 +142,12 @@ SELECT
     concat('"name": [ "',name_good_web,'" ]') AS name,
     concat('"tags": []') AS tags,
     concat('"prog": [ ',GROUP_CONCAT(DISTINCT '"',sessionid,'"' SEPARATOR ", "),' ]') AS prog,
-    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_web/',badgeid,'",',
-	   if(facebook_good_web IS NULL,"",concat('\n            "fb" : "',replace(facebook_good_web,'"',''),'",')),
-	   if(twitter_good_web IS NULL,"",concat('\n            "twitter" : "',replace(twitter_good_web,'"',''),'",')),
-	   if(fetlife_good_web IS NULL,"",concat('\n            "fl" : "',replace(fetlife_good_web,'"',''),'",')),
-	   if(uri_good_web IS NULL,"",concat('\n            "url" : "',replace(uri_good_web,'"',''),'",')),'\n        }') AS links,
-  concat('"bio": "',name_good_web,if(bio_good_web IS NULL,"",replace(bio_good_web,'"',"''")),if(pronoun_good_web IS NULL,"",concat(" Preferred Pronoun: ",pronoun_good_web)),'" ') AS bio
+    badgeid,
+    if(facebook_good_web IS NULL,"",replace(facebook_good_web,'"','')) AS facebook,
+    if(twitter_good_web IS NULL,"",replace(twitter_good_web,'"','')) AS twitter,
+    if(fetlife_good_web IS NULL,"",replace(fetlife_good_web,'"','')) AS fetlife,
+    if(uri_good_web IS NULL,"",replace(uri_good_web,'"','')) AS uri,
+    concat('"bio": "',name_good_web,if(bio_good_web IS NULL,"",replace(bio_good_web,'"',"''")),if(pronoun_good_web IS NULL,"",concat(" Preferred Pronoun: ",pronoun_good_web)),'" ') AS bio
   FROM
       ParticipantOnSession
     JOIN Sessions USING (sessionid,conid)
@@ -272,28 +263,53 @@ list($biorows,$bioheader_array,$bio_array)=queryreport($bioquery,$link,$title,$d
 
 $bios.="var people = [\n";
 
-for ($i=1; $i<$biorows; $i++) {
+for ($i=1; $i<=$biorows; $i++) {
   $bios.="    {\n";
   $bios.="        " . $bio_array[$i]['id'] . ",\n";
   $bios.="        " . $bio_array[$i]['name'] . ",\n";
   $bios.="        " . $bio_array[$i]['tags'] . ",\n";
   $bios.="        " . $bio_array[$i]['prog'] . ",\n";
-  $bios.="        " . str_replace("\n"," ",$bio_array[$i]['links']) . ",\n";
+  $tmp_links="";
+  if (file_exists("../Local/Participant_Images_web/" . $bio_array[$i]['badgeid'])) {
+    $tmp_links.="\n" . '            "img": "http://' . $conurl . '/Local/Participant_Images_web/' . $bio_array[$i]['badgeid'] . '"';
+  }
+  if (!empty($bio_array[$i]['facebook'])) {
+    $fb_array=preg_split("/[\s,]+/",$bio_array[$i]['facebook']);
+    foreach ($fb_array as $fb_element) {
+      if (!empty($tmp_links)) {$tmp_links.=',';}
+      $tmp_links.="\n" . '            "fb" : "' . $fb_element . '"';
+    }
+  }
+  if (!empty($bio_array[$i]['twitter'])) {
+    $tw_array=preg_split("/[\s,]+/",$bio_array[$i]['twitter']);
+    foreach ($tw_array as $tw_element) {
+      if (!empty($tmp_links)) {$tmp_links.=',';}
+      $tmp_links.="\n" . '            "twitter" : "' . $tw_element . '"';
+    }
+  }
+  if (!empty($bio_array[$i]['fetlife'])) {
+    $fl_array=preg_split("/[\s,]+/",$bio_array[$i]['fetlife']);
+    foreach ($fl_array as $fl_element) {
+      if (!empty($tmp_links)) {$tmp_links.=',';}
+      $tmp_links.="\n" . '            "fl" : "' . $fl_element . '"';
+    }
+  }
+  if (!empty($bio_array[$i]['uri'])) {
+    if (!empty($tmp_links)) {$tmp_links.=',';}
+    $tmp_links.="\n" . '            "url" : "' . $bio_array[$i]['uri'] . '"';
+  }
+  if (!empty($tmp_links)) {
+    $tmp_links='"links": { ' . $tmp_links . "\n" . '        }';
+    $bios.="        " . str_replace("\n"," ",$tmp_links) . ",\n";
+  }
   $bios.="        " . str_replace("\n"," ",$bio_array[$i]['bio']) . "\n";
   $bios.="    },\n";
 }
 
-// last run through, without the comma at the end.
-$bios.="    {\n";
-$bios.="        " . $bio_array[$i]['id'] . ",\n";
-$bios.="        " . $bio_array[$i]['name'] . ",\n";
-$bios.="        " . $bio_array[$i]['tags'] . ",\n";
-$bios.="        " . $bio_array[$i]['prog'] . ",\n";
-$bios.="        " . str_replace("\n"," ",$bio_array[$i]['links']) . ",\n";
-$bios.="        " . str_replace("\n"," ",$bio_array[$i]['bio']) . "\n";
-$bios.="    }\n";
+// Remove the trailing comma
+$bios=rtrim(trim($bios), ',');
 
-$bios.="];";
+$bios.="\n];";
 
 // Staff Job Descriptions
 
@@ -335,7 +351,7 @@ list($elementrows,$header_array,$element_array)=queryreport($staffdescquery,$lin
 
 $staffdesc.="var program = [\n";
 
-for ($i=1; $i<$elementrows; $i++) {
+for ($i=1; $i<=$elementrows; $i++) {
   $staffdesc.="    {\n";
   $staffdesc.="        " . $element_array[$i]['id'] . ",\n";
   $staffdesc.="        " . $element_array[$i]['title'] . ",\n";
@@ -345,17 +361,10 @@ for ($i=1; $i<$elementrows; $i++) {
   $staffdesc.="    },\n";
 }
 
-// last run through, without the comma at the end.
-$staffdesc.="    {\n";
-$staffdesc.="        " . $element_array[$i]['id'] . ",\n";
-$staffdesc.="        " . $element_array[$i]['title'] . ",\n";
-$staffdesc.="        " . $element_array[$i]['empty'] . ",\n";
-$staffdesc.="        " . $element_array[$i]['people'] . ",\n";
-$staffdesc.="        " . str_replace("\n"," ",$element_array[$i]['desc']) . "\n";
-$staffdesc.="    }\n";
+// Remove the trailing comma
+$staffdesc=rtrim(trim($staffdesc), ',');
 
-$staffdesc.="];";
-
+$staffdesc.="\n];";
 
 // Staff Bios Information
 
@@ -365,7 +374,11 @@ SELECT
     concat('"name": [ "',name_good_staffweb,'" ]') AS name,
     concat('"tags": []') AS tags,
     concat('"prog": [ ',GROUP_CONCAT(DISTINCT '"',conroleid,'"' SEPARATOR ", "),' ]') AS prog,
-    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_staffweb/',badgeid,'",',if(uri_good_staffweb IS NULL,"",concat('\n            "url" : "',replace(uri_good_staffweb,'"',''),'"')),'\n        }') AS links,
+    badgeid,
+    if(facebook_good_staffweb IS NULL,"",replace(facebook_good_staffweb,'"','')) AS facebook,
+    if(twitter_good_staffweb IS NULL,"",replace(twitter_good_staffweb,'"','')) AS twitter,
+    if(fetlife_good_staffweb IS NULL,"",replace(fetlife_good_staffweb,'"','')) AS fetlife,
+    if(uri_good_staffweb IS NULL,"",replace(uri_good_staffweb,'"','')) AS uri,
     concat('"bio": "',if(bio_good_staffweb IS NULL,"",replace(bio_good_staffweb,'"',"''")),if(pronoun_good_staffweb IS NULL,"",concat(" Preferred Pronoun: ",pronoun_good_staffweb)),'" ') AS bio
   FROM
       UserHasConRole
@@ -411,6 +424,45 @@ SELECT
 	  biolang='en-us') UGS USING (badgeid)
     LEFT JOIN (SELECT
         badgeid,
+	biotext as facebook_good_staffweb
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('facebook') AND
+	  biostatename in ('good') AND
+	  biodestname in ('staffweb') AND
+	  biolang='en-us') FBGS USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as twitter_good_staffweb
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('twitter') AND
+	  biostatename in ('good') AND
+	  biodestname in ('staffweb') AND
+	  biolang='en-us') TWGS USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as fetlife_good_staffweb
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	  biotypename in ('fetlife') AND
+	  biostatename in ('good') AND
+	  biodestname in ('staffweb') AND
+	  biolang='en-us') FLGS USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
 	biotext as pronoun_good_staffweb
       FROM
           Bios
@@ -435,28 +487,53 @@ list($staffbiorows,$staffbioheader_array,$staffbio_array)=queryreport($staffbioq
 
 $staffbios.="var people = [\n";
 
-for ($i=1; $i<$staffbiorows; $i++) {
+for ($i=1; $i<=$staffbiorows; $i++) {
   $staffbios.="    {\n";
   $staffbios.="        " . $staffbio_array[$i]['id'] . ",\n";
   $staffbios.="        " . $staffbio_array[$i]['name'] . ",\n";
   $staffbios.="        " . $staffbio_array[$i]['tags'] . ",\n";
   $staffbios.="        " . $staffbio_array[$i]['prog'] . ",\n";
-  $staffbios.="        " . str_replace("\n"," ",$staffbio_array[$i]['links']) . ",\n";
+  $tmp_links="";
+  if (file_exists("../Local/Participant_Images_staffweb/" . $staffbio_array[$i]['badgeid'])) {
+    $tmp_links.="\n" . '            "img": "http://' . $conurl . '/Local/Participant_Images_staffweb/' . $staffbio_array[$i]['badgeid'] . '"';
+  }
+  if (!empty($staffbio_array[$i]['facebook'])) {
+    $fb_array=preg_split("/[\s,]+/",$staffbio_array[$i]['facebook']);
+    foreach ($fb_array as $fb_element) {
+      if (!empty($tmp_links)) {$tmp_links.=',';}
+      $tmp_links.="\n" . '            "fb" : "' . $fb_element . '"';
+    }
+  }
+  if (!empty($staffbio_array[$i]['twitter'])) {
+    $tw_array=preg_split("/[\s,]+/",$staffbio_array[$i]['twitter']);
+    foreach ($tw_array as $tw_element) {
+      if (!empty($tmp_links)) {$tmp_links.=',';}
+      $tmp_links.="\n" . '            "twitter" : "' . $tw_element . '"';
+    }
+  }
+  if (!empty($staffbio_array[$i]['fetlife'])) {
+    $fl_array=preg_split("/[\s,]+/",$staffbio_array[$i]['fetlife']);
+    foreach ($fl_array as $fl_element) {
+      if (!empty($tmp_links)) {$tmp_links.=',';}
+      $tmp_links.="\n" . '            "fl" : "' . $fl_element . '"';
+    }
+  }
+  if (!empty($staffbio_array[$i]['uri'])) {
+    if (!empty($tmp_links)) {$tmp_links.=',';}
+    $tmp_links.="\n" . '            "url" : "' . $staffbio_array[$i]['uri'] . '"';
+  }
+  if (!empty($tmp_links)) {
+    $tmp_links='"links": { ' . $tmp_links . "\n" . '        }';
+    $staffbios.="        " . str_replace("\n"," ",$tmp_links) . ",\n";
+  }
   $staffbios.="        " . str_replace("\n"," ",$staffbio_array[$i]['bio']) . "\n";
   $staffbios.="    },\n";
 }
 
-// last run through, without the comma at the end.
-$staffbios.="    {\n";
-$staffbios.="        " . $staffbio_array[$i]['id'] . ",\n";
-$staffbios.="        " . $staffbio_array[$i]['name'] . ",\n";
-$staffbios.="        " . $staffbio_array[$i]['tags'] . ",\n";
-$staffbios.="        " . $staffbio_array[$i]['prog'] . ",\n";
-$staffbios.="        " . str_replace("\n"," ",$staffbio_array[$i]['links']) . ",\n";
-$staffbios.="        " . str_replace("\n"," ",$staffbio_array[$i]['bio']) . "\n";
-$staffbios.="    }\n";
+// Remove the trailing comma
+$staffbios=rtrim(trim($staffbios), ',');
 
-$staffbios.="];";
+$staffbios.="\n];";
 
 // Vendor information
 
@@ -500,7 +577,7 @@ EOD;
 
   $vendors.="var vendor = [\n";
 
-  for ($i=1; $i<$vendorrows; $i++) {
+  for ($i=1; $i<=$vendorrows; $i++) {
     $vendors.="    {\n";
     $vendors.="        " . $vendor_array[$i]['ID'] . ",\n";
     $vendors.="        " . $vendor_array[$i]['name'] . ",\n";
@@ -511,17 +588,10 @@ EOD;
     $vendors.="    },\n";
   }
 
-  // last run through, without the comma at the end.
-  $vendors.="    {\n";
-  $vendors.="        " . $vendor_array[$i]['ID'] . ",\n";
-  $vendors.="        " . $vendor_array[$i]['name'] . ",\n";
-  $vendors.="        " . $vendor_array[$i]['tags'] . ",\n";
-  $vendors.="        " . $vendor_array[$i]['prog'] . ",\n";
-  $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['links']) . ",\n";
-  $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['bio']) . "\n";
-  $vendors.="    }\n";
+  // Remove the trailing comma
+  $vendors=rtrim(trim($vendors), ',');
 
-  $vendors.="];";
+  $vendors.="\n];";
 
   // Continuing with Community Tables, presuming that if the Vendor table exists,
   // so does the Community Table table.  (Yes, that's an awkward construction.)
@@ -560,7 +630,7 @@ EOD;
 
   $comtbls.="var community = [\n";
 
-  for ($i=1; $i<$comtblrows; $i++) {
+  for ($i=1; $i<=$comtblrows; $i++) {
     $comtbls.="    {\n";
     $comtbls.="        " . $comtbl_array[$i]['ID'] . ",\n";
     $comtbls.="        " . $comtbl_array[$i]['Name'] . ",\n";
@@ -571,17 +641,10 @@ EOD;
     $comtbls.="    },\n";
   }
 
-  // last run through, without the comma at the end.
-  $comtbls.="    {\n";
-  $comtbls.="        " . $comtbl_array[$i]['ID'] . ",\n";
-  $comtbls.="        " . $comtbl_array[$i]['Name'] . ",\n";
-  $comtbls.="        " . $comtbl_array[$i]['tags'] . ",\n";
-  $comtbls.="        " . $comtbl_array[$i]['prog'] . ",\n";
-  $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['links']) . ",\n";
-  $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['bio']) . "\n";
-  $comtbls.="    }\n";
+  // Remove the trailing comma
+  $comtbls=rtrim(trim($comtbls), ',');
 
-  $comtbls.="];";
+  $comtbls.="\n];";
 
 } else { // Is in Zambia
 // Vendors Information
@@ -592,11 +655,11 @@ SELECT
     concat('"name": [ "',name_good_web,'" ]') AS name,
     concat('"tags": []') AS tags,
     concat('"prog": []') AS prog,
-    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_web/',badgeid,'",',
-	   if(facebook_good_web IS NULL,"",concat('\n            "fb" : "',replace(facebook_good_web,'"',''),'",')),
-	   if(twitter_good_web IS NULL,"",concat('\n            "twitter" : "',replace(twitter_good_web,'"',''),'",')),
-	   if(fetlife_good_web IS NULL,"",concat('\n            "fl" : "',replace(fetlife_good_web,'"',''),'",')),
-	   if(uri_good_web IS NULL,"",concat('\n            "url" : "',replace(uri_good_web,'"',''),'",')),'\n        }') AS links,
+    badgeid,
+    if(facebook_good_web IS NULL,"",replace(facebook_good_web,'"','')) AS facebook,
+    if(twitter_good_web IS NULL,"",replace(twitter_good_web,'"','')) AS twitter,
+    if(fetlife_good_web IS NULL,"",replace(fetlife_good_web,'"','')) AS fetlife,
+    if(uri_good_web IS NULL,"",replace(uri_good_web,'"','')) AS uri,
     concat('"bio": "',if(bio_good_web IS NULL,"",replace(bio_good_web,'"',"''")),'" ') AS bio
   FROM
       Participants
@@ -719,28 +782,53 @@ EOD;
 
   $vendors.="var vendor = [\n";
 
-  for ($i=1; $i<$vendorrows; $i++) {
+  for ($i=1; $i<=$vendorrows; $i++) {
     $vendors.="    {\n";
     $vendors.="        " . $vendor_array[$i]['id'] . ",\n";
     $vendors.="        " . $vendor_array[$i]['name'] . ",\n";
     $vendors.="        " . $vendor_array[$i]['tags'] . ",\n";
     $vendors.="        " . $vendor_array[$i]['prog'] . ",\n";
-    $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['links']) . ",\n";
+    $tmp_links="";
+    if (file_exists("../Local/Participant_Images_web/" . $vendor_array[$i]['badgeid'])) {
+      $tmp_links.="\n" . '            "img": "http://' . $conurl . '/Local/Participant_Images_web/' . $vendor_array[$i]['badgeid'] . '"';
+    }
+    if (!empty($vendor_array[$i]['facebook'])) {
+      $fb_array=preg_split("/[\s,]+/",$vendor_array[$i]['facebook']);
+      foreach ($fb_array as $fb_element) {
+	if (!empty($tmp_links)) {$tmp_links.=',';}
+	$tmp_links.="\n" . '            "fb" : "' . $fb_element . '"';
+      }
+    }
+    if (!empty($vendor_array[$i]['twitter'])) {
+      $tw_array=preg_split("/[\s,]+/",$vendor_array[$i]['twitter']);
+      foreach ($tw_array as $tw_element) {
+	if (!empty($tmp_links)) {$tmp_links.=',';}
+	$tmp_links.="\n" . '            "twitter" : "' . $tw_element . '"';
+      }
+    }
+    if (!empty($vendor_array[$i]['fetlife'])) {
+      $fl_array=preg_split("/[\s,]+/",$vendor_array[$i]['fetlife']);
+      foreach ($fl_array as $fl_element) {
+	if (!empty($tmp_links)) {$tmp_links.=',';}
+	$tmp_links.="\n" . '            "fl" : "' . $fl_element . '"';
+      }
+    }
+    if (!empty($vendor_array[$i]['uri'])) {
+      if (!empty($tmp_links)) {$tmp_links.=',';}
+      $tmp_links.="\n" . '            "url" : "' . $vendor_array[$i]['uri'] . '"';
+    }
+    if (!empty($tmp_links)) {
+      $tmp_links='"links": { ' . $tmp_links . "\n" . '        }';
+      $vendors.="        " . str_replace("\n"," ",$tmp_links) . ",\n";
+    }
     $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['bio']) . "\n";
     $vendors.="    },\n";
   }
 
-  // last run through, without the comma at the end.
-  $vendors.="    {\n";
-  $vendors.="        " . $vendor_array[$i]['id'] . ",\n";
-  $vendors.="        " . $vendor_array[$i]['name'] . ",\n";
-  $vendors.="        " . $vendor_array[$i]['tags'] . ",\n";
-  $vendors.="        " . $vendor_array[$i]['prog'] . ",\n";
-  $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['links']) . ",\n";
-  $vendors.="        " . str_replace("\n"," ",$vendor_array[$i]['bio']) . "\n";
-  $vendors.="    }\n";
+  // Remove the trailing comma
+  $vendors=rtrim(trim($vendors), ',');
 
-  $vendors.="];";
+  $vendors.="\n];";
 
   // Community Tables
   $comtblquery=<<<EOD
@@ -749,11 +837,11 @@ SELECT
     concat('"name": [ "',name_good_web,'" ]') AS name,
     concat('"tags": []') AS tags,
     concat('"prog": []') AS prog,
-    concat('"links": { \n            "img": "http://$conurl/Local/Participant_Images_web/',badgeid,'",',
-	   if(facebook_good_web IS NULL,"",concat('\n            "fb" : "',replace(facebook_good_web,'"',''),'",')),
-	   if(twitter_good_web IS NULL,"",concat('\n            "twitter" : "',replace(twitter_good_web,'"',''),'",')),
-	   if(fetlife_good_web IS NULL,"",concat('\n            "fl" : "',replace(fetlife_good_web,'"',''),'",')),
-	   if(uri_good_web IS NULL,"",concat('\n            "url" : "',replace(uri_good_web,'"',''),'",')),'\n        }') AS links,
+    badgeid,
+    if(facebook_good_web IS NULL,"",replace(facebook_good_web,'"','')) AS facebook,
+    if(twitter_good_web IS NULL,"",replace(twitter_good_web,'"','')) AS twitter,
+    if(fetlife_good_web IS NULL,"",replace(fetlife_good_web,'"','')) AS fetlife,
+    if(uri_good_web IS NULL,"",replace(uri_good_web,'"','')) AS uri,
     concat('"bio": "',if(bio_good_web IS NULL,"",replace(bio_good_web,'"',"''")),'" ') AS bio
   FROM
       Participants
@@ -876,28 +964,53 @@ EOD;
 
   $comtbls.="var community = [\n";
 
-  for ($i=1; $i<$comtblrows; $i++) {
+  for ($i=1; $i<=$comtblrows; $i++) {
     $comtbls.="    {\n";
     $comtbls.="        " . $comtbl_array[$i]['id'] . ",\n";
     $comtbls.="        " . $comtbl_array[$i]['name'] . ",\n";
     $comtbls.="        " . $comtbl_array[$i]['tags'] . ",\n";
     $comtbls.="        " . $comtbl_array[$i]['prog'] . ",\n";
-    $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['links']) . ",\n";
+    $tmp_links="";
+    if (file_exists("../Local/Participant_Images_web/" . $comtbl_array[$i]['badgeid'])) {
+      $tmp_links.="\n" . '            "img": "http://' . $conurl . '/Local/Participant_Images_web/' . $comtbl_array[$i]['badgeid'] . '"';
+    }
+    if (!empty($comtbl_array[$i]['facebook'])) {
+      $fb_array=preg_split("/[\s,]+/",$comtbl_array[$i]['facebook']);
+      foreach ($fb_array as $fb_element) {
+	if (!empty($tmp_links)) {$tmp_links.=',';}
+	$tmp_links.="\n" . '            "fb" : "' . $fb_element . '"';
+      }
+    }
+    if (!empty($comtbl_array[$i]['twitter'])) {
+      $tw_array=preg_split("/[\s,]+/",$comtbl_array[$i]['twitter']);
+      foreach ($tw_array as $tw_element) {
+	if (!empty($tmp_links)) {$tmp_links.=',';}
+	$tmp_links.="\n" . '            "twitter" : "' . $tw_element . '"';
+      }
+    }
+    if (!empty($comtbl_array[$i]['fetlife'])) {
+      $fl_array=preg_split("/[\s,]+/",$comtbl_array[$i]['fetlife']);
+      foreach ($fl_array as $fl_element) {
+	if (!empty($tmp_links)) {$tmp_links.=',';}
+	$tmp_links.="\n" . '            "fl" : "' . $fl_element . '"';
+      }
+    }
+    if (!empty($comtbl_array[$i]['uri'])) {
+      if (!empty($tmp_links)) {$tmp_links.=',';}
+      $tmp_links.="\n" . '            "url" : "' . $comtbl_array[$i]['uri'] . '"';
+    }
+    if (!empty($tmp_links)) {
+      $tmp_links='"links": { ' . $tmp_links . "\n" . '        }';
+      $comtbls.="        " . str_replace("\n"," ",$tmp_links) . ",\n";
+    }
     $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['bio']) . "\n";
     $comtbls.="    },\n";
   }
 
-  // last run through, without the comma at the end.
-  $comtbls.="    {\n";
-  $comtbls.="        " . $comtbl_array[$i]['id'] . ",\n";
-  $comtbls.="        " . $comtbl_array[$i]['name'] . ",\n";
-  $comtbls.="        " . $comtbl_array[$i]['tags'] . ",\n";
-  $comtbls.="        " . $comtbl_array[$i]['prog'] . ",\n";
-  $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['links']) . ",\n";
-  $comtbls.="        " . str_replace("\n"," ",$comtbl_array[$i]['bio']) . "\n";
-  $comtbls.="    }\n";
+  // Remove the trailing comma
+  $comtbls=rtrim(trim($comtbls), ',');
 
-  $comtbls.="];";
+  $comtbls.="\n];";
 
 }
 

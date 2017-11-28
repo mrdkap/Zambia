@@ -210,7 +210,17 @@ if ($vstatusrows==1) {
 // Begin the output.  Most of the below is in Verbiage entries.
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-if (may_I('Vendor')) {
+if (may_I('SuperVendor')) { // Force an application for someone
+  echo "<P>As someone with SuperVendor privs, you can create a new vendor here.</P>\n";
+  $badgeid="100";
+  $verbiage=get_verbiage("VendorWelcomeApply");
+  if ($verbiage != "") {
+    echo eval('?>' . $verbiage);
+  } else {
+    echo "<P>Please stand by, this is still under construction.</P>\n";
+    echo "<P>You are the Super Vendor, but this isn't set up yet for this con.</P>\n";
+  }
+} elseif (may_I('Vendor')) {
   echo "<H3>You are currently at the $vstatusname status.</H3>\n";
   $verbiage=get_verbiage("VendorWelcome_" . $vstatusid);
   if ($verbiage != "") {

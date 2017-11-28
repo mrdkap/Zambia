@@ -26,12 +26,12 @@ $programquery = <<<EOD
 SELECT
     concat('"id": "',sessionid,'"') AS id,
     concat('"title": "',replace(title_good_web,'"',"''"),if((subtitle_good_web IS NULL),"",concat(": ",replace(subtitle_good_web,'"',"''"))),'"') AS title,
-    concat('"tags": [ "',trackname,'", "',typename,'" ]') AS tags,
+    concat('"tags": [ "',trackname,'", "',typename,'"',if(title_good_web like "%MASTER CLASS%",', "Master Class"',""), ' ]') AS tags,
     DATE_FORMAT(ADDTIME(constartdate,starttime),'"date": "%Y-%m-%d", "time":  "%H:%i"') AS time,
     concat('"mins": "',TIME_TO_SEC(duration) div 60,'"') AS mins,
     concat('"loc": [ "',roomname,'" ]') AS loc,
     concat('"people": [ ',if ((pubsname is NULL), " ", GROUP_CONCAT(DISTINCT '{ "id": "',badgeid,'", "name": "',pubsname,'" }' SEPARATOR ", ")),' ]') AS people,
-    concat('"desc": "',if(desc_good_web IS NULL,"",replace(desc_good_web,'"',"''")),'"') AS 'desc'
+    concat('"desc": "',if(title_good_web like "%MASTER CLASS%",'<A HREF=https://t.co/hNZv8BjRy2 target=_blank>Sign Up</A><br />',""),if(desc_good_web IS NULL,"",replace(desc_good_web,'"',"''")),'"') AS 'desc'
   FROM
       Sessions
     JOIN Schedule USING (sessionid,conid)

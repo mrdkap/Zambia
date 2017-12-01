@@ -542,6 +542,13 @@
      Denied, right after (or instead of) the NELA Approved state as
      well.
      - Final state.
+**** VENDORQA Duplicate (13)
+     For vendors who somehow have more than one entry in Zambia, and
+     managed to submit more than one entry to be processed for this
+     event.  This will allow us to track and remedy that later.
+**** VENDORQA Withdrew (14)
+     Vendors who have changed their minds, and decided to withdraw
+     from our event.
 **** TODO Write "advance to next"
      Default increment 1, but able to be incremented otherwise by
      flag, or something, so that all the unique code can be collaped

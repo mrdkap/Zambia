@@ -1859,7 +1859,9 @@ function edit_participant ($participant_arr) {
 	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
 	    $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
 	  } else {
-	    update_bio_element($link,$title,$teststring,$participant_arr['partid'],$biotype,$biolang,$biostate,$biodest);
+	    if (isset($participant_arr[$keyname])) {
+	      update_bio_element($link,$title,$teststring,$participant_arr['partid'],$biotype,$biolang,$biostate,$biodest);
+	    }
 	  }
 	}
       }

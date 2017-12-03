@@ -107,7 +107,9 @@ if (isset($_POST['update'])) {
 	    $message.=ucfirst($biostate)." ".ucfirst($biotype)." ".ucfirst($biodest)." (".$biolang.") Biography";
 	    $message.=" too short (".strlen($teststring)." characters), the limit is ".$limit_array['min'][$biodest][$biotype]." characters.";
 	  } else {
-	    update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate,$biodest);
+	    if (isset($_POST[$keyname])) {
+	      update_bio_element($link,$title,$teststring,$badgeid,$biotype,$biolang,$biostate,$biodest);
+	    }
 	  }
 	  $bioinfo[$keyname]=$teststring;
 	}
@@ -282,16 +284,19 @@ for ($i=0; $i<count($bioinfo['biotype_array']); $i++) {
 
 	// Set up the input box.
 	echo "<TEXTAREA $readonly name=\"$keyname\" rows=8 cols=72>".$bioinfo[$keyname]."</TEXTAREA><BR><BR>\n";
+
+	// Only on edited should there be a submit button, or promotion button
+        if ($biostate=="edited") {
+	  echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n";
+	  if (($bioinfo[$biotype."_".$biolang."_raw_".$biodest."_bio"] == $bioinfo[$biotype."_".$biolang."_edited_".$biodest."_bio"]) and
+	      ($bioinfo[$biotype."_".$biolang."_raw_".$biodest."_bio"] != $bioinfo[$biotype."_".$biolang."_good_".$biodest."_bio"])) {
+	    echo " <A HREF=\"StaffEditBios.php?qno=$qno&badgeid=$badgeid&badgeids=$badgeids&biotype=$biotype&biolang=$biolang&biodest=$biodest\">";
+	    echo " Promote ".ucfirst($biotype)." ".ucfirst($biodest)." ($biolang) to good.";
+	    echo "</A>\n";
+	  }
+	  echo "</DIV>\n";
+	}
       }
-      // Every other change submit button.
-      echo "<DIV class=\"submit\" id=\"submit\">\n  <BUTTON class=\"SubmitButton\" type=\"submit\" name=\"submit\">Save Whole Page</BUTTON>\n";
-      if (($bioinfo[$biotype."_".$biolang."_raw_".$biodest."_bio"] == $bioinfo[$biotype."_".$biolang."_edited_".$biodest."_bio"]) and
-	  ($bioinfo[$biotype."_".$biolang."_raw_".$biodest."_bio"] != $bioinfo[$biotype."_".$biolang."_good_".$biodest."_bio"])) {
-	echo " <A HREF=\"StaffEditBios.php?qno=$qno&badgeid=$badgeid&badgeids=$badgeids&biotype=$biotype&biolang=$biolang&biodest=$biodest\">";
-	echo " Promote ".ucfirst($biotype)." ".ucfirst($biodest)." ($biolang) to good.";
-        echo "</A>\n";
-      }
-      echo "</DIV>\n";
     }
   }
 }

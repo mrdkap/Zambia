@@ -20,6 +20,13 @@ $Grid_Spacer=$conname_array[1]['congridspacer'];
 $ConStart=$conname_array[1]['constartdate'];
 $logo=$conname_array[1]['conlogo'];
 
+// Set up the cardinal to ordinal mapping
+$ordinal[0]="";
+$ordinal[1]="2nd";
+$ordinal[2]="3rd";
+$ordinal[3]="4th";
+$ordinal[4]="5th";
+
 // Program (session element) information
 
 $programquery = <<<EOD
@@ -275,23 +282,29 @@ for ($i=1; $i<=$biorows; $i++) {
   }
   if (!empty($bio_array[$i]['facebook'])) {
     $fb_array=preg_split("/[\s,]+/",$bio_array[$i]['facebook']);
+    $ordcount=0;
     foreach ($fb_array as $fb_element) {
       if (!empty($tmp_links)) {$tmp_links.=',';}
-      $tmp_links.="\n" . '            "fb" : "' . $fb_element . '"';
+      $tmp_links.="\n" . '            "fb' . $ordinal[$ordcount] . '" : "' . $fb_element . '"';
+      $ordcount++;
     }
   }
   if (!empty($bio_array[$i]['twitter'])) {
     $tw_array=preg_split("/[\s,]+/",$bio_array[$i]['twitter']);
+    $ordcount=0;
     foreach ($tw_array as $tw_element) {
       if (!empty($tmp_links)) {$tmp_links.=',';}
-      $tmp_links.="\n" . '            "twitter" : "' . $tw_element . '"';
+      $tmp_links.="\n" . '            "twitter' . $ordinal[$ordcount] . '" : "' . $tw_element . '"';
+      $ordcount++;
     }
   }
   if (!empty($bio_array[$i]['fetlife'])) {
     $fl_array=preg_split("/[\s,]+/",$bio_array[$i]['fetlife']);
+    $ordcount=0;
     foreach ($fl_array as $fl_element) {
       if (!empty($tmp_links)) {$tmp_links.=',';}
-      $tmp_links.="\n" . '            "fl" : "' . $fl_element . '"';
+      $tmp_links.="\n" . '            "fl' . $ordinal[$ordcount] . '" : "' . $fl_element . '"';
+      $ordcount++;
     }
   }
   if (!empty($bio_array[$i]['uri'])) {
@@ -499,23 +512,29 @@ for ($i=1; $i<=$staffbiorows; $i++) {
   }
   if (!empty($staffbio_array[$i]['facebook'])) {
     $fb_array=preg_split("/[\s,]+/",$staffbio_array[$i]['facebook']);
+    $ordcount=0;
     foreach ($fb_array as $fb_element) {
       if (!empty($tmp_links)) {$tmp_links.=',';}
-      $tmp_links.="\n" . '            "fb" : "' . $fb_element . '"';
+      $tmp_links.="\n" . '            "fb' . $ordinal[$ordcount] . '" : "' . $fb_element . '"';
+      $ordcount++;
     }
   }
   if (!empty($staffbio_array[$i]['twitter'])) {
     $tw_array=preg_split("/[\s,]+/",$staffbio_array[$i]['twitter']);
+    $ordcount=0;
     foreach ($tw_array as $tw_element) {
       if (!empty($tmp_links)) {$tmp_links.=',';}
-      $tmp_links.="\n" . '            "twitter" : "' . $tw_element . '"';
+      $tmp_links.="\n" . '            "twitter' . $ordinal[$ordcount] . '" : "' . $tw_element . '"';
+      $ordcount++;
     }
   }
   if (!empty($staffbio_array[$i]['fetlife'])) {
     $fl_array=preg_split("/[\s,]+/",$staffbio_array[$i]['fetlife']);
+    $ordcount=0;
     foreach ($fl_array as $fl_element) {
       if (!empty($tmp_links)) {$tmp_links.=',';}
-      $tmp_links.="\n" . '            "fl" : "' . $fl_element . '"';
+      $tmp_links.="\n" . '            "fl' . $ordinal[$ordcount] . '" : "' . $fl_element . '"';
+      $ordcount++;
     }
   }
   if (!empty($staffbio_array[$i]['uri'])) {
@@ -794,23 +813,29 @@ EOD;
     }
     if (!empty($vendor_array[$i]['facebook'])) {
       $fb_array=preg_split("/[\s,]+/",$vendor_array[$i]['facebook']);
+      $ordcount=0;
       foreach ($fb_array as $fb_element) {
 	if (!empty($tmp_links)) {$tmp_links.=',';}
-	$tmp_links.="\n" . '            "fb" : "' . $fb_element . '"';
+	$tmp_links.="\n" . '            "fb' . $ordinal[$ordcount] . '" : "' . $fb_element . '"';
+	$ordcount++;
       }
     }
     if (!empty($vendor_array[$i]['twitter'])) {
       $tw_array=preg_split("/[\s,]+/",$vendor_array[$i]['twitter']);
+      $ordcount=0;
       foreach ($tw_array as $tw_element) {
 	if (!empty($tmp_links)) {$tmp_links.=',';}
-	$tmp_links.="\n" . '            "twitter" : "' . $tw_element . '"';
+	$tmp_links.="\n" . '            "twitter' . $ordinal[$ordcount] . '" : "' . $tw_element . '"';
+	$ordcount++;
       }
     }
     if (!empty($vendor_array[$i]['fetlife'])) {
       $fl_array=preg_split("/[\s,]+/",$vendor_array[$i]['fetlife']);
+      $ordcount=0;
       foreach ($fl_array as $fl_element) {
 	if (!empty($tmp_links)) {$tmp_links.=',';}
-	$tmp_links.="\n" . '            "fl" : "' . $fl_element . '"';
+	$tmp_links.="\n" . '            "fl' . $ordinal[$ordcount] . '" : "' . $fl_element . '"';
+	$ordcount++;
       }
     }
     if (!empty($vendor_array[$i]['uri'])) {
@@ -976,23 +1001,29 @@ EOD;
     }
     if (!empty($comtbl_array[$i]['facebook'])) {
       $fb_array=preg_split("/[\s,]+/",$comtbl_array[$i]['facebook']);
+      $ordcount=0;
       foreach ($fb_array as $fb_element) {
 	if (!empty($tmp_links)) {$tmp_links.=',';}
-	$tmp_links.="\n" . '            "fb" : "' . $fb_element . '"';
+	$tmp_links.="\n" . '            "fb' . $ordinal[$ordcount] . '" : "' . $fb_element . '"';
+	$ordcount++;
       }
     }
     if (!empty($comtbl_array[$i]['twitter'])) {
       $tw_array=preg_split("/[\s,]+/",$comtbl_array[$i]['twitter']);
+      $ordcount=0;
       foreach ($tw_array as $tw_element) {
 	if (!empty($tmp_links)) {$tmp_links.=',';}
-	$tmp_links.="\n" . '            "twitter" : "' . $tw_element . '"';
+	$tmp_links.="\n" . '            "twitter' . $ordinal[$ordcount] . '" : "' . $tw_element . '"';
+	$ordcount++;
       }
     }
     if (!empty($comtbl_array[$i]['fetlife'])) {
       $fl_array=preg_split("/[\s,]+/",$comtbl_array[$i]['fetlife']);
+      $ordcount=0;
       foreach ($fl_array as $fl_element) {
 	if (!empty($tmp_links)) {$tmp_links.=',';}
-	$tmp_links.="\n" . '            "fl" : "' . $fl_element . '"';
+	$tmp_links.="\n" . '            "fl' . $ordinal[$ordcount] . '" : "' . $fl_element . '"';
+	$ordcount++;
       }
     }
     if (!empty($comtbl_array[$i]['uri'])) {

@@ -1069,6 +1069,14 @@ EOD;
     $limitwhere ="  WHERE\n";
     $limitwhere.="    permrolename in ('Vendor')\n";
     $emailaddr=" ',email,'";
+  } elseif ($limit=="VENDORCURRENT") {
+    $limittables ="    JOIN UserHasPermissionRole USING (badgeid)\n";
+    $limittables.="    JOIN PermissionRoles USING (permroleid)\n";
+    $limittables.="    JOIN VendorAnnualInfo USING (badgeid,conid)\n";
+    $limitwhere ="  WHERE\n";
+    $limitwhere.="    permrolename in ('Vendor') AND\n";
+    $limitwhere.="    conid=$conid\n";
+    $emailaddr=" ',email,'";
   } elseif ($limit!='') {
     $query=<<<EOD
 SELECT
@@ -1163,7 +1171,7 @@ EOD;
 
   // Now give the choices
   echo "<FORM name=\"selpartform\" method=POST action=\"".$returnto."\">\n";
-  if ($limit!="VENDOR") {
+  if (($limit!="VENDOR") and ($limit!="VENDORCURRENT")) {
     echo "<DIV><LABEL for=\"partidl\">Select Participant (Lastname)</LABEL>\n";
     echo "<SELECT name=\"partidl\">\n";
     populate_select_from_query($query0, $selpartid, "Select Participant (Lastname)", true);
@@ -1177,7 +1185,7 @@ EOD;
   echo "<SELECT name=\"partidp\">\n";
   populate_select_from_query($query2, $selpartid, "Select Participant (Pubsname)", true);
   echo "</SELECT></DIV>\n";
-  if (($limit=='ALL') or ($limit=="VENDOR")) {
+  if (($limit=='ALL') or ($limit=="VENDOR") or ($limit=="VENDORCURRENT")) {
     echo "<DIV><LABEL for=\"partide\">Select Participant (Email Address) </LABEL>\n";
     echo "<SELECT name=\"partide\">\n";
     populate_select_from_query($query3, $selpartid, "Select Participant (Email Address)", true);

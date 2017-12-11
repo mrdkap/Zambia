@@ -4,6 +4,21 @@ global $link, $message, $message_error;
 
 // Set the vendorid
 $vendorid="";
+
+// See if it is set by the pulldowns
+if (may_I('SuperVendor')) {
+  // Collaps the two choices into one
+  if ($_POST["partidp"]!=0) {$_POST["partid"]=$_POST["partidp"];}
+  if ($_POST["partide"]!=0) {$_POST["partid"]=$_POST["partide"];}
+
+  if (isset($_POST["partid"])) {
+    $vendorid=$_POST["partid"];
+  } elseif (isset($_GET["partid"])) {
+    $vendorid=$_GET["partid"];
+  }
+}
+
+// Supercede the pulldowns if it is explicitly passed.
 if ((!empty($_GET['vendorid'])) and (is_numeric($_GET['vendorid']))) {
   $vendorid=$_GET['vendorid'];
 } elseif ((!empty($_POST['vendorid'])) and (is_numeric($_POST['vendorid']))) {
@@ -27,13 +42,6 @@ $title="Change Vendor Status for $vendorname";
 $description="<P>Select the appropriate status for $vendorname.</P>\n";
 $additionalinfo="";
 $conid=$_SESSION['conid'];
-
-// If there is no vendor selected, exit here.  This might want to have the vendor pulldowns instead.
-if (empty($vendorid)) {
-  $message_error="Please only use this page with a selected vendor.";
-  RenderError($title,$message_error);
-  exit();
-}
 
 /* Fetch the states. */
 $queryVstat=<<<EOD
@@ -70,7 +78,8 @@ if (($_POST['update']=='Yes') and ((may_I("Maint")) or (may_I("ConChair")) or (m
 }
 
 // Fetch the Vendor Status after possible update so any updates will be incorporated.
-$queryVstatType=<<<EOD
+if (!empty($vendorid)) {
+  $queryVstatType=<<<EOD
 SELECT
     vendorstatustypename
   FROM
@@ -81,26 +90,27 @@ SELECT
     badgeid=$vendorid
 EOD;
 
-list($vstattyperows,$vstattypeheader_array,$vstattype_array)=queryreport($queryVstatType,$link,$title,$description,0);
-if ($vstattyperows == 0) {
-  $message_error.="This vendor has yet to apply.";
-  RenderError($title,$message_error);
-  exit();
-} elseif ($vstattyperows != 1) {
-  $message_error.="There are multiple returns for your query: $queryVstatType";
-  RenderError($title,$message_error);
-  exit();
-}
+  list($vstattyperows,$vstattypeheader_array,$vstattype_array)=queryreport($queryVstatType,$link,$title,$description,0);
+  if ($vstattyperows == 0) {
+    $message_error.="This vendor has yet to apply.";
+    RenderError($title,$message_error);
+    exit();
+  } elseif ($vstattyperows != 1) {
+    $message_error.="There are multiple returns for your query: $queryVstatType";
+    RenderError($title,$message_error);
+    exit();
+  }
 
-$vstattype=$vstattype_array[1]['vendorstatustypename'];
+  $vstattype=$vstattype_array[1]['vendorstatustypename'];
   
-// Local add specifically for Warwick information, should probably not be in production code.
-$target_dir = "../Local/$conid/Vendor_Warwick_Submissions";
-$test_file = $target_dir . "/" . $vendorid . "_*_Warwick.pdf";
-$isuploaded=glob($test_file);
-if (count($isuploaded) > 0 ) {
-  $additionalinfo.="<P><A HREF=\"" . $isuploaded[count($isuploaded) - 1 ] . "\">Pull down</A>\n";
-  $additionalinfo.="the latest Warwick PDF submitted.</P>\n";
+  // Local add specifically for Warwick information, should probably not be in production code.
+  $target_dir = "../Local/$conid/Vendor_Warwick_Submissions";
+  $test_file = $target_dir . "/" . $vendorid . "_*_Warwick.pdf";
+  $isuploaded=glob($test_file);
+  if (count($isuploaded) > 0 ) {
+    $additionalinfo.="<P><A HREF=\"" . $isuploaded[count($isuploaded) - 1 ] . "\">Pull down</A>\n";
+    $additionalinfo.="the latest Warwick PDF submitted.</P>\n";
+  }
 }
 
 // Who can modify what:
@@ -116,6 +126,19 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 // Vendor Statuses set only by ConChair, SuperVendor, or the Janitor
 if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
 
+  // Again possible for the SuperVendor to set someone up.
+  if (may_I('SuperVendor')) {
+    //Choose the individual from the database
+    select_participant($vendorid, 'VENDORCURRENT', "VendorAdminState.php");
+  }
+
+  // If there is no vendor selected, exit here.  This might want to have the vendor pulldowns instead.
+  if (empty($vendorid)) {
+    correct_footer();
+    exit();
+  }
+
+  echo "<br /><hr>\n";
   echo "<FORM name=\"updatevendorstat\" class=\"bb\" method=POST action=\"VendorAdminState.php\">\n";
   echo "  <input type=\"hidden\" name=\"update\" value=\"Yes\">\n";
   echo "  <input type=\"hidden\" name=\"vendorid\" value=\"$vendorid\">\n";

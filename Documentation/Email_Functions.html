@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Email Functions in Zambia</title>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Percy Iya" />
+<meta  name="description" content="Zambia is a piece of Con Management Software.  This document is a guide to building the Vendor System for the Zambia FFF-branch instance.  This is still a work in progress."
+ />
+<meta  name="keywords" content="Zambia, Documentation, FFF branch" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Email Functions in Zambia</h1>
+<p>
+Zambia is a piece of Con Management Software.  This document is a guide to building the Vendor System for the Zambia FFF-branch instance.  This is still a work in progress.
+</p>
+<p>
+Email Functions in Zambia
+</p>
+<p>
+Percy Iya &lt;NELA.Percy@gmail.com&gt;
+</p>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. General Design</a></li>
+<li><a href="#sec-2">2. Components</a></li>
+<li><a href="#sec-3">3. "To" lists</a></li>
+<li><a href="#sec-4">4. From/CC</a></li>
+<li><a href="#sec-5">5. Composing email</a></li>
+<li><a href="#sec-6">6. "Mail Merge" style replacements</a></li>
+<li><a href="#sec-7">7. Sending the email</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> General Design</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This is a working guide on how to use the Email portion of Zambia.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Components</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+There are several components to the emailing system in Zambia.
+</p>
+<ul class="org-ul">
+<li>To lists
+</li>
+<li>From/CC addresses
+</li>
+<li>Composing email
+</li>
+<li>"Mail Merge" style replacements
+</li>
+<li>Sending the email
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> "To" lists</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The "To" lists are maintained in the database, as a query.  Many
+queries have been pre-loaded, but you might want to customize or
+build your own.  To do so, there is a good report, and a functional
+tool to help.  The report is:
+</p>
+<ul class="org-ul">
+<li>genreport.php?reportname=emailtolist
+</li>
+</ul>
+<p>
+That will either allow you to edit an existing list, or create a new
+list.  That uses the:
+</p>
+<ul class="org-ul">
+<li>StaffEmailToUpdate.php
+</li>
+</ul>
+<p>
+This page is used to appropriately create or change the query that
+produces the "To" line, and a few other little bits along the way.
+The query needs to produce the following fields:
+</p>
+<ul class="org-ul">
+<li>badgeid
+</li>
+<li>firstname
+</li>
+<li>lastname
+</li>
+<li>email
+</li>
+<li>pubsname
+</li>
+<li>badgename
+</li>
+<li>interestedtypename as itn
+</li>
+</ul>
+<p>
+If you are not really concerned with the interestedtypename (which
+defaults to checking on "Yes") just use concat("Yes") as itn for
+it.  Everything else should exist on all people in the database.
+It is suggested that at least one test email address is set up in
+there, to test the system, being that it depends on software outside
+Zambia to work, and &#x2026; that is not guaranteed to work.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> From/CC</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+These are generated from those who have roles this year in the con.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Composing email</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+This is a two-step process.  One is writing the email, with all the
+attendant information, and the other is checking it to make sure it
+does the right thing.
+The first is accomplished from:
+StaffSendEmailCompose.php
+This should be available under the "Manage Participants &amp; Schedule"
+tab.  If it is not available to you, it might be that you have not
+(yet) been authorized to use the email program.  Please check with
+your Zambia administrator for further information.
+Once on this page, you can set your To:, From:, CC:, Subject:, and
+Body of the email.
+If it is a long, or complex email, it is suggested that you compose
+it in another editor, and then paste it into here.  Although, be
+careful, this is limited to the Latin-8 set of characters, so out of
+band characters (like special quotes, apostrophes, etc) will not
+translate well, if they are in there at all.  (Yes, this is a bug,
+and needs to be tracked down and fixed.)
+Once the email is written, hit the "See it" button (not the "Reset"
+button) and it will take you to the next step.
+The next page will list all the recipients in the top box.  If
+they do not match your expectations, you might have to go back and
+tweak the "To:" query some more.
+The first individual on the list will have their letter in the lower
+box.  Check the letter to make sure it reads the way you wish.  If
+it does, hit "Send".  If it does not, or you need to go back to fix
+the "To:" field, use the "Go Back" button.
+NOTE: Using the "Go Back" button resets the "From:" and "CC:"
+fields, so make sure you set them appropriately, if you use the "Go
+Back" button.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> "Mail Merge" style replacements</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+There are a number of things you can replace in your email so they
+are specific to the person.  They currently are:
+</p>
+<ul class="org-ul">
+<li>$ BADGEID $ 
+</li>
+<li>$ FIRSTNAME $ 
+</li>
+<li>$ LASTNAME $ 
+</li>
+<li>$ EMAILADDR $ 
+</li>
+<li>$ PUBNAME $ 
+</li>
+<li>$ BADGENAME $ 
+</li>
+<li>$ SCHEDULE $ 
+</li>
+<li>$ FULLSCHEDULE $ 
+</li>
+<li>$ BIOS $ 
+</li>
+<li>$ LIAISON $ 
+</li>
+<li>$ HOTELROOM $ 
+</li>
+<li>$ ENTRANCES $ 
+</li>
+<li>$ CONFIRMNUM $ 
+</li>
+</ul>
+<p>
+They are pulled from a number of sources, so &#x2026; they might not work
+as you fully expect them to, but &#x2026; they basically pull what they
+describe from the database, to populate the letter.
+As an example, if you start your email with:
+"Hello  $ PUBSNAME $ ," it will cycle in each of the individual's
+pubsname where the  $ PUBSNAME $  is.  Same with all the other
+replace-tags.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Sending the email</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+The "Send it" button doesn't actually send the email.  We've had a
+few problems with people thinking our email is spam, so there are
+two ways to get the email sent.  Either via the bulk sender, which
+sends a chunk of them at a time automatically, or, you can use the:
+HandSendQueuedMail.php
+This will call up each email individually in your local email
+sending program, so you can check/modify each one, and make sure it
+is sent.  This also allows you to "mark as sent" each email, so if
+you want to mark one as sent, but not actually send it, you can.  It
+gives you finer control over what goes out.
+The bulk emailer currently is only available to the Zambia
+maintainer, at this time, due to errors and difficulties from the
+users.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: June 2015</p>
+<p class="author">Author: Percy Iya</p>
+<p class="email">Email: <a href="mailto:NELA.Percy@gmail.com">NELA.Percy@gmail.com</a></p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

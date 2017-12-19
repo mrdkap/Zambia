@@ -102,16 +102,38 @@ if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
     exit();
   }
 
+  $querySpaceType=<<<EOD
+SELECT
+    basevendorspacename AS "Booth Wanted",
+    vendorprefspacerank as Rank,
+    vendornotes as Notes
+  FROM
+      VendorPrefSpace
+    JOIN VendorSpace USING (vendorspaceid)
+    JOIN BaseVendorSpace USING (basevendorspaceid)
+    JOIN VendorAnnualInfo USING (badgeid,conid)
+  WHERE
+    conid=$conid AND
+    badgeid=$vendorid
+  ORDER BY
+    vendorprefspacerank
+EOD;
+
+// Get the information
+list($spacetrows,$spacetheader_array,$spacet_array)=queryreport($querySpaceType,$link,$title,$description,0);
+
   // First form -- space type
   echo "<br /><hr>\n";
-  echo "<FORM name=\"updatevendorspacetype\" class=\"bb\" method=POST action=\"VendorAssignSpace.php\">\n";
   echo "<P>Something here to do ... something to assign the space.</P>\n";
   echo "<P>We probably need the list of requested spaces, the number of booths requested, so the notes, if they are a sponsor (so get premium spaces), and the features (so we can see if they asked for anything special).</P>\n";
+  echo renderhtmlreport(1,$spacetrows,$spacetheader_array,$spacet_array);
+  echo "<FORM name=\"updatevendorspacetype\" class=\"bb\" method=POST action=\"VendorAssignSpace.php\">\n";
   // Close the form
   echo "</FORM>";
 
   // Second form -- actual location
   echo "<br /><hr>\n";
+  echo "<P>If you need to create the spaces you are assigning (or create more spaces), go <A HREF=\"VendorSetupLocation.php\">here</A>.</P>\n";
   echo "<FORM name=\"updatevendorspaceloc\" class=\"bb\" method=POST action=\"VendorAssignSpace.php\">\n";
   echo "<P>Something here to do ... something to assign the actual location.<P>\n";
   // Close the form

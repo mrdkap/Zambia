@@ -295,3 +295,75 @@ CREATE TABLE `Invoice` (
   CONSTRAINT `Invoice_ibfk_1` FOREIGN KEY (`badgeid`) REFERENCES `Participants` (`badgeid`),
   CONSTRAINT `Invoice_ibfk_2` FOREIGN KEY (`conid`) REFERENCES `ConInfo` (`conid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE BaseLocBuilding (
+  `baselocbuildingid` INT(11) NOT NULL auto_increment,
+  `baselocbuildingname` varchar(50),
+  `baselocbuildingdesc` text,
+  PRIMARY KEY (`baselocbuildingid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE BaseLocFloor (
+  `baselocfloorid` INT(11) NOT NULL auto_increment,
+  `baselocfloorname` varchar(50),
+  `baselocfloordesc` text,
+  PRIMARY KEY (`baselocfloorid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE BaseLocRoom (
+  `baselocroomid` INT(11) NOT NULL auto_increment,
+  `baselocroomname` varchar(50),
+  `baselocroomdesc` text,
+  PRIMARY KEY (`baselocroomid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE BaseLocSubRoom (
+  `baselocsubroomid` INT(11) NOT NULL auto_increment,
+  `baselocsubroomname` varchar(50),
+  `baselocsubroomdesc` text,
+  PRIMARY KEY (`baselocsubroomid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE Location (
+  `locationid` INT(11) NOT NULL auto_increment,
+  `baselocbuildingid` INT(11),
+  `baselocfloorid` INT(11),
+  `baselocroomid` INT(11),
+  `baselocsubroomid` INT(11),
+  `conid` INT(11) NOT NULL,
+  `divisionid` INT(11),
+  `trackid` INT(11),
+  `locationkey` varchar(20),
+  `locationmap` varchar(150),
+  `locationheight` varchar(100),
+  `locationdimensions` varchar(100),
+  `locationarea` varchar(100),
+  `locationnotes` text,
+  `display_order` INT(3) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`locationid`),
+  CONSTRAINT `Location_ibfk_1` FOREIGN KEY (`baselocbuildingid`) REFERENCES `BaseLocBuilding` (`baselocbuildingid`),
+  CONSTRAINT `Location_ibfk_2` FOREIGN KEY (`baselocfloorid`) REFERENCES `BaseLocFloor` (`baselocfloorid`),
+  CONSTRAINT `Location_ibfk_3` FOREIGN KEY (`baselocroomid`) REFERENCES `BaseLocRoom` (`baselocroomid`),
+  CONSTRAINT `Location_ibfk_4` FOREIGN KEY (`baselocsubroomid`) REFERENCES `BaseLocSubRoom` (`baselocsubroomid`),
+  CONSTRAINT `Location_ibfk_5` FOREIGN KEY (`conid`) REFERENCES `ConInfo` (`conid`),
+  CONSTRAINT `Location_ibfk_6` FOREIGN KEY (`divisionid`) REFERENCES `Divisions` (`divisionid`),
+  CONSTRAINT `Location_ibfk_7` FOREIGN KEY (`trackid`) REFERENCES `Tracks` (`trackid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE VendorLocHasTime (
+  `locationtimeid` INT(11) NOT NULL auto_increment,
+  `locationid` INT(11),
+  `locationstart` time,
+  `locationend` time,
+  PRIMARY KEY (`locationtimeid`),
+  CONSTRAINT `VendorLocHasTime_ibfk_1` FOREIGN KEY (`locationid`) REFERENCES `Location` (`locationid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE VendorHasLoc (
+  `badgeid` varchar(15) NOT NULL DEFAULT 0,
+  `locationid` INT(11),
+  `booth` varchar(15),
+  PRIMARY KEY (`badgeid`,`locationid`),
+  CONSTRAINT `VendorHasLoc_ibfk_1` FOREIGN KEY (`badgeid`) REFERENCES `Participants` (`badgeid`),
+  CONSTRAINT `VendorHasLoc_ibfk_2` FOREIGN KEY (`locationid`) REFERENCES `Location` (`locationid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

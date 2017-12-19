@@ -1,6 +1,7 @@
 #+TITLE: Site Map
 
    + [[file:Bio_Editing.org][Bios Editing in Zambia]]
+   + [[file:Email_Functions.org][Email Functions in Zambia]]
    + [[file:NotesForCoders.org][Notes for Coders]]
    + [[file:Panelists_Guide.org][Panelists Guide for Zambia]]
    + [[file:Photo_Lounge.org][Photo Lounge Flow in Zambia]]

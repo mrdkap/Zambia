@@ -360,10 +360,10 @@ CREATE TABLE VendorLocHasTime (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE VendorHasLoc (
-  `badgeid` varchar(15) NOT NULL DEFAULT 0,
+  `badgeid` varchar(15),
   `locationid` INT(11),
   `booth` varchar(15),
-  PRIMARY KEY (`badgeid`,`locationid`),
+  PRIMARY KEY (`badgeid`,`locationid`,`booth`),
   CONSTRAINT `VendorHasLoc_ibfk_1` FOREIGN KEY (`badgeid`) REFERENCES `Participants` (`badgeid`),
   CONSTRAINT `VendorHasLoc_ibfk_2` FOREIGN KEY (`locationid`) REFERENCES `Location` (`locationid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

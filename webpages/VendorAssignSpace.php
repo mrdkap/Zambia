@@ -233,6 +233,21 @@ EOD;
   // Get the information
   list($notesrows,$notesheader_array,$notes_array)=queryreport($queryVendorNotes,$link,$title,$description,0);
 
+  // Pay Adjustments
+  $queryVendorPayAdj=<<<EOD
+SELECT
+    concat("<A HREF=VendorPayAdj.php?vendorid=$vendorid>",vendorpayadj,"</A>") AS Amount,
+    vendorpayadjdesc AS "Payment Adjustment Reason"
+  FROM
+      VendorAnnualInfo
+  WHERE
+    conid=$conid AND
+    badgeid=$vendorid
+EOD;
+
+  // Get the information
+  list($payadjrows,$payadjheader_array,$payadj_array)=queryreport($queryVendorPayAdj,$link,$title,$description,0);
+
   // Features
   $queryFeatureList=<<<EOD
 SELECT
@@ -342,8 +357,11 @@ EOD;
 
   // First form -- space type
   echo "<br /><hr>\n";
-  echo "<P>Something here to do ... something to assign the space.</P>\n";
-  echo "<P>We probably need the list of requested spaces, the number of booths requested, so the notes, if they are a sponsor (so get premium spaces), and the features (so we can see if they asked for anything special).</P>\n";
+  echo "<P>Listed below is the space requested, any notes from the vendor,\n";
+  echo "any pay adjustments to take into consideration, the amenities\n";
+  echo "requested, if they are a sponsor, and to what level, and finally\n";
+  echo "any already actually assigned spaces.</P>\n";
+  echo "To unassign a space, set the count to 0 (Zero)</P>\n";
 
   // Requested space
   if ($spacetrows == 0) {
@@ -357,6 +375,11 @@ EOD;
     echo renderhtmlreport(1,$notesrows,$notesheader_array,$notes_array);
   }
 
+  // Payment Adjustment
+  if ($payadjrows != 0) {
+    echo renderhtmlreport(1,$payadjrows,$payadjheader_array,$payadj_array);
+  }
+
   // Requested features only if such exists
   if ($featurerows != 0) {
     echo renderhtmlreport(1,$featurerows,$featureheader_array,$feature_array);
@@ -367,7 +390,7 @@ EOD;
     echo renderhtmlreport(1,$sponsorrows,$sponsorheader_array,$sponsor_array);
   }
 
-  // Requested space
+  // Assigned spaces
   if ($spacerows != 0) {
     echo renderhtmlreport(1,$spacerows,$spaceheader_array,$space_array);
   }
@@ -387,7 +410,13 @@ EOD;
   // Second form -- actual location.  Only if there is a space type selected.
   if ($spaceirows != 0) {
     echo "<br /><hr>\n";
-    echo "<P>If you need to create the spaces you are assigning (or create more spaces), go <A HREF=\"VendorSetupLocation.php\">here</A>.</P>\n";
+    echo "<P>If you need to create the spaces you are assigning (or create more spaces),\n";
+    echo "go <A HREF=\"VendorSetupLocation.php\">here</A>.</P>\n";
+    echo "<P>To remove an assignment, click the \"Remove:\" checkbox at the end of the row.</P>\n";
+    echo "<P>Booths should just be a number in most cases.  If the room was broken into\n";
+    echo "sub-rooms (rows or clusters or the like) please set them in the\n";
+    echo "<A HREF=\"VendorSetupLocation.php\">Location Setup</A> form.  The \"Key\" set\n";
+    echo "or sub-room name in that form will make the labeling go properly.</P>\n";
 
     // Assigned Locations
     if ($lochasrows != 0) {

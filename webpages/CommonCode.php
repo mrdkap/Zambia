@@ -260,7 +260,7 @@ function participant_header ($title) {
   echo "<hr>\n\n";
   if (isset($_SESSION['badgeid'])) {
     echo "<table width=100% class=\"tabhead\">\n";
-    echo "  <tr class=\"tabrow\">\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+    echo "  <tr class=\"tabrow\">\n    <td class=\"tabblocks border0020\">\n       ";
     if ((may_I('Participant')) or (may_I('Panelist')) or (may_I('Aide')) or
 	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or
 	    (may_I('Author')) or (may_I('Organizer')) or (may_I('Performer'))) {
@@ -271,43 +271,50 @@ function participant_header ($title) {
     if ((may_I('Participant'))  or (may_I('Panelist')) or (may_I('Aide')) or
 	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or
 	    (may_I('Author')) or (may_I('Organizer')) or (may_I('Performer'))) {
-      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      echo "</td>\n    <td class=\"tabblocks border0020\">\n       ";
       maketab("My Availability",may_I('my_availability'),"my_sched_constr.php");
-      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      echo "</td>\n    <td class=\"tabblocks border0020\">\n       ";
       maketab("My Panel Interests",may_I('my_panel_interests'),"PartPanelInterests.php");
-      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      echo "</td>\n    <td class=\"tabblocks border0020\">\n       ";
       maketab("My General Interests",may_I('my_gen_int_write'),"my_interests.php");
-      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      echo "</td>\n";
     }
     if (may_I('Staff')) {
+      echo "    <td class=\"tabblocks border0020\">\n       ";
       maketab("Staff View",may_I('Staff'),"StaffPage.php");
+      echo "</td>\n";
     }
-    echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
     if (may_I('Vendor')) {
+      echo "    <td class=\"tabblocks border0020\">\n       ";
       maketab("Vendor View",may_I('Vendor'),"VendorWelcome.php");
+      echo "</td>\n";
     }
-    echo "</td>\n  </tr>\n  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
-    echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+    echo "  </tr>\n</table>";
+    echo "<table width=100% class=\"tabhead\">\n";
+    echo "  <tr class=\"tabrows\">\n    <td class=\"tabblocks border0020 smallspacer\">&nbsp;";
+    echo "</td>\n";
     if ((may_I('Participant'))  or (may_I('Panelist')) or (may_I('Aide')) or
 	    (may_I('Host')) or (may_I('Demo')) or (may_I('Teacher')) or (may_I('Presenter')) or
 	    (may_I('Author')) or (may_I('Organizer')) or (may_I('Performer'))) {
-      echo "<!-- XXX this should have a may_I -->\n       ";
+      echo "    <td class=\"tabblocks border0020\">\n       ";
       maketab("My Profile",1,"my_contact.php");
-      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      echo "</td>\n    <td class=\"tabblocks border0020\">\n       ";
       maketab("Search Panels",may_I('search_panels'),"my_sessions1.php");
-      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      echo "</td>\n    <td class=\"tabblocks border0020\">\n       ";
       maketab("My Schedule",may_I('my_schedule'),"MySchedule.php");
-      echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+      echo "</td>\n    <td class=\"tabblocks border0020\">\n       ";
       maketab("Submit a Proposal",may_I('my_suggestions_write'),"MyProposals.php");
-      if (may_I('PhotoRev')) {
-	echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
-	maketab("Photo Review",may_I('PhotoRev'),"PhotoLoungePictures.php");
-      }
+      echo "</td>\n";
       if (may_I('PhotoSub')) {
-	echo "</td>\n    <td class=\"tabblocks border0020\" colspan=2>\n       ";
+	echo "    <td class=\"tabblocks border0020\">\n       ";
 	maketab("Photo Submission",may_I('PhotoSub'),"PhotoLoungeSubmit.php");
+	echo "</td>\n";
       }
+    }
+    if (may_I('PhotoRev')) {
+      echo "    <td class=\"tabblocks border0020\">\n       ";
+      maketab("Photo Review",may_I('PhotoRev'),"PhotoLoungePictures.php");
+      echo "</td>\n";
     }
     echo "</td>\n  </tr>\n</table>\n";
     echo "<table class=\"header\">\n  <tr>\n    <td style=\"height:5px\"></td>\n  </tr>\n";

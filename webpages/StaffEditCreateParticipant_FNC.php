@@ -11,6 +11,7 @@ function RenderEditCreateParticipant ($title, $action, $participant_arr) {
   $conid=$_SESSION['conid']; // make it a variable so it can be substituted
   $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
   $perms="'".implode("','",$_SESSION['permission_set'])."'"; // make it a variable so it can be substituted
+  javascript_for_edit_participants();
 
   /* All of the permission roles, their name (for may_I match), and
      their "notes" for Human Readable match. */

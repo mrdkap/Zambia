@@ -192,7 +192,6 @@ function staff_header ($title) {
   echo "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=latin-1\">\n";
   echo "  <title>Zambia -- $ConName -- $title</title>\n";
   echo "  <link rel=\"stylesheet\" href=\"StaffSection.css\" type=\"text/css\">\n";
-  javascript_for_edit_session();
   mousescripts();
   echo "</head>\n";
   echo "<body>\n";
@@ -349,8 +348,6 @@ function brainstorm_header ($title) {
   echo "  <title>Zambia -- $ConName -- $title</title>\n";
   echo "  <link rel=\"stylesheet\" href=\"BrainstormSection.css\" type=\"text/css\">\n";
   echo "  <meta name=\"keywords\" content=\"Questionnaire\">\n";
-  javascript_for_edit_session();
-  javascript_pretty_buttons();
   mousescripts();
   echo "</head>\n";
   echo "<body leftmargin=\"0\" topmargin=\"0\" marginheight=\"0\" marginwidth=\"0\">\n";
@@ -417,8 +414,6 @@ function vendor_header ($title) {
   echo "  <title>Zambia -- $ConName -- $title</title>\n";
   echo "  <link rel=\"stylesheet\" href=\"BrainstormSection.css\" type=\"text/css\">\n";
   echo "  <meta name=\"keywords\" content=\"Questionnaire\">\n";
-  javascript_for_edit_session();
-  javascript_pretty_buttons();
   mousescripts();
   echo "</head>\n";
   echo "<body leftmargin=\"0\" topmargin=\"0\" marginheight=\"0\" marginwidth=\"0\">\n";

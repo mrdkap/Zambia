@@ -485,13 +485,9 @@ involved as to what the invoice is for.
 booth-number
 \end{itemize}
 \begin{itemize}
-\item {\bfseries\sffamily TODO} VendorLocation table?
+\item {\bfseries\sffamily DONE} VendorLocation table
 \label{sec-2-2-14-1}
-\begin{itemize}
-\item badgeid, conid, building, room (tied to rooms?), booth number
-\item Might just do as a free form field for this year, and make it
-more complex for the future.
-\end{itemize}
+Set of tables makes this up.  See below for details
 \end{itemize}
 
 \subsubsection{vendor\_payment\_adjustment - decimal(8,2)}
@@ -830,8 +826,64 @@ Actually set up for all invoicing, but referenced by vendor
 \item Invoice
 \end{itemize}
 
-\subsubsection{More structure in the 41\_VendorInfo.sql file}
+\subsubsection{Vendor Location}
 \label{sec-2-5-14}
+Base Tables:
+\begin{itemize}
+\item BaseLocBuilding
+\item BaseLocFloor
+\item BaseLocRoom
+\item BaseLocSubRoom
+\end{itemize}
+All base location tables are the generics that this particular
+con pulls from to be able to set the Location table.  All have
+id, name, and description.
+ Location Table:
+\begin{itemize}
+\item locationid = key
+\item baselocbuilding = from Base table
+\item baselocfloor = from Base table
+\item baselocroom = from Base table
+\item baselocsubroom = from Base table
+\item conid = conid
+\item divisionid = from Divisions table
+\item trackid = from Tracks table
+\item locationkey = key for printing/map reference
+\item locationmap = url for the map
+\item locationheight = height of the space
+\item locationdimensions = dimensions of the space
+\item locationarea = area of the space
+\item locationnotes = any other notes
+\item display\_order = display order
+\end{itemize}
+VendorLocHasTime Table:
+\begin{itemize}
+\item locationtimeid = key
+\item locationid = from Location table
+\item locationstart = room opens
+\item locationend = room closes
+\end{itemize}
+VendorHasLoc Table:
+\begin{itemize}
+\item badgeid = Who
+\item locationid = Where in the world
+\item booth = Where in the room
+\end{itemize}
+The Base tables should be fairly static, and contain all the
+possibles for combinations.
+The Location table has the specific locations for this con.  This 
+should probably be generalized to be able to be used in the
+schedule frame as well, for programming and events and other
+things, so that some of the griding becomes easier.
+The VendorLocHasTime can have multiple entries per location id,
+so that if there is a start time and an end time, they can be
+noted, and can become constraints for scheduling, and fodder for
+the grid.
+The VendorHasLoc table is where the vendor is actually assigned
+to be.
+
+\subsubsection{More structure in the 41\_VendorInfo.sql file}
+\label{sec-2-5-15}
 
 \subsection{Still Unknown}
 \label{sec-2-6}
@@ -875,7 +927,7 @@ By number or email address.
 \item apply page (subset of new apply page)
 \end{itemize}
 \begin{itemize}
-\item {\bfseries\sffamily VENDORQA} needs to be vetted/tested.
+\item {\bfseries\sffamily VENDORQA} Generic login page
 \label{sec-3-1-1-1}
 \end{itemize}
 
@@ -906,7 +958,7 @@ community table.
 With a catch to see if they are already in our database, using
 their email address
 \begin{itemize}
-\item {\bfseries\sffamily VENDORQA} final vetting by the vendor folks.
+\item {\bfseries\sffamily VENDORQA} Special Brainstorm page
 \label{sec-3-1-3-1}
 \end{itemize}
 
@@ -1090,6 +1142,10 @@ from our event.
 Default increment 1, but able to be incremented otherwise by
 flag, or something, so that all the unique code can be collaped
 down to something simpler.
+
+\item {\bfseries\sffamily VENDORQA} VendorAdminState.php
+\label{sec-3-1-5-15}
+Change a vendor between the various states.
 \end{itemize}
 
 \subsubsection{Returning Vendor informational update}
@@ -1097,10 +1153,10 @@ down to something simpler.
 This might not be necessary, based on the above page keeping what
 is set for this event as set.
 \begin{itemize}
-\item SuperVendor cam also update anyone here.
+\item SuperVendor can also update anyone here.
 \end{itemize}
 \begin{itemize}
-\item {\bfseries\sffamily VENDORQA} similar to the above set of pages, but allowed always.
+\item {\bfseries\sffamily VENDORQA} VendorApply.php
 \label{sec-3-1-6-1}
 \end{itemize}
 
@@ -1109,13 +1165,15 @@ is set for this event as set.
 Page that they can, at will update their web or book information,
 along with all their other invormation.
 \begin{itemize}
-\item SuperVendor cam also update anyone here.
+\item SuperVendor can also update anyone here.
 \item There is only a subset of the information available here, so
 the vendor coordinators, or someone else (currently the Zambia
 Librarian) is keeping everything in sync.
+\item All the information is available on the standard Bios editing
+page as the bottom table.
 \end{itemize}
 \begin{itemize}
-\item {\bfseries\sffamily VENDORQA} similar to the above set of pages, but allowed always.
+\item {\bfseries\sffamily VENDORQA} VendorSubmitVendor.php StaffManageBios.php
 \label{sec-3-1-7-1}
 \end{itemize}
 
@@ -1129,9 +1187,6 @@ This will (of course) be a comprehensive list of everything they
 agreed to.  The invoice page should continue to be available after
 they paid, so there is a referece point to the services agreed
 to/paid for.
-\begin{itemize}
-\item Yes, included in the above
-\end{itemize}
 \begin{itemize}
 \item {\bfseries\sffamily DONE} included in above Returning set of pages.
 \label{sec-3-1-8-1}
@@ -1161,7 +1216,7 @@ This is a positive or negative number, not a percent.  It should
 be figured off of whatever is appropriate, and the descripton
 should accommodate any reasoning.
 \begin{itemize}
-\item {\bfseries\sffamily TODO} Need before Invoicing
+\item {\bfseries\sffamily VENDORQA} VendorPayAdj.php
 \label{sec-3-1-10-1}
 \end{itemize}
 
@@ -1180,11 +1235,11 @@ and their type, will be shown for balance reasons.
 \item {\bfseries\sffamily VENDORQA} in pieces
 \label{sec-3-1-11-1}
 \begin{itemize}
-\item {\bfseries\sffamily DONE} first report - Vendor State change
+\item {\bfseries\sffamily VENDORQA} first report - Vendor State change
 \label{sec-3-1-11-1-1}
 Which allows for changing the Vendor State is done.
 
-\item {\bfseries\sffamily DONE} second report - List of those with PDFs
+\item {\bfseries\sffamily VENDORQA} second report - List of those with PDFs
 \label{sec-3-1-11-1-2}
 The set of Vendors with possible PDFs waiting to be checked and
 promoted.
@@ -1216,19 +1271,32 @@ apart, as per the decision of the Div Head. May also contain
 previous placements, or links to previous maps or something useful
 along those lines.  Including the current svg of the map.
 \begin{itemize}
-\item Two Pieces.
+\item Three Pieces:
 \end{itemize}
 \begin{itemize}
-\item {\bfseries\sffamily TODO} Initial vendor booth type selection  Need before Invoicing
+\item {\bfseries\sffamily MYQA} VendorSetupLocation.php
 \label{sec-3-1-12-1}
+This sets the possible rooms for the locations to be in.
+Still missing:
+\begin{itemize}
+\item removals
+\item updates
+\item other con views
+\end{itemize}
+
+\item {\bfseries\sffamily VENDORQA} VendorAssignSpace.php (top form)
+\label{sec-3-1-12-2}
+Initial vendor booth type selection.
 This will be end-cap?  Bedroom vendor?  Single?  Double? Which of
 their choices get filled? More than one booth? Should be before
 Invoicing, so Invoicing is correct.
 
-\item {\bfseries\sffamily TODO} Map Placement
-\label{sec-3-1-12-2}
+\item {\bfseries\sffamily VENDORQA} VendorAssignSpace.php (bottom form)
+\label{sec-3-1-12-3}
+Map Placement.
 Once the booths are assigned, this will get set, so their map
-coordinates are set.
+coordinates are set.  This only shows up after the Initial vendor
+booth type selection.
 \end{itemize}
 
 \subsubsection{Administer Vendor Options}
@@ -1237,7 +1305,10 @@ Page that has the Amenities and Spaces for this event, pulled from
 the standard pool.  To be updated by the Vendor Coordinator on an
 event by event basis.
 \begin{itemize}
-\item {\bfseries\sffamily VENDORQA} 
+\item needs removal option
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily VENDORQA} VendorSetupSpaceFeature.php
 \label{sec-3-1-13-1}
 \end{itemize}
 
@@ -1248,7 +1319,10 @@ this event, pulled from the standard pool.  To be updated either
 by the Vendor Div Head or the Publications Div Head on an event by
 event basis.
 \begin{itemize}
-\item {\bfseries\sffamily VENDORQA} 
+\item needs removal option
+\end{itemize}
+\begin{itemize}
+\item {\bfseries\sffamily VENDORQA} PubsSetupAds.php
 \label{sec-3-1-14-1}
 \end{itemize}
 
@@ -1261,7 +1335,7 @@ Div Head.
 \item Redundant with above "Returning Vendor" pages.
 \end{itemize}
 \begin{itemize}
-\item {\bfseries\sffamily VENDORQA} 
+\item {\bfseries\sffamily VENDORQA} VendorApply.php VendorSubmitVendor.php StaffManageBios.php
 \label{sec-3-1-15-1}
 \begin{itemize}
 \item Still a little wonky, brings back to a less-useful page, but
@@ -1281,6 +1355,7 @@ Generate the (physical) welcome letter to the vendors
 \subsubsection{Vendor Email}
 \label{sec-3-1-17}
 Generate (and send) various all-vendor communications
+Generic "email from Zambia" works.
 \begin{itemize}
 \item {\bfseries\sffamily TODO} so there is a record of what is sent.
 \label{sec-3-1-17-1}
@@ -1322,7 +1397,7 @@ and Booth number.  (several copies)
 marked specially.
 \end{itemize}
 \begin{itemize}
-\item {\bfseries\sffamily TODO} 
+\item {\bfseries\sffamily TODO} Might just be a report.
 \label{sec-3-1-20-1}
 \end{itemize}
 
@@ -1353,36 +1428,43 @@ appropriate digital ads available/prices/et al for this event.
 Go to the PubsSetupAds.php page, and set the
 appropriate print ads available/prices/et al for this event.
 
-\subsubsection{Task List - Vendors}
+\subsubsection{Set Location possibilities}
 \label{sec-3-2-6}
+Go to the VendorSetupLocation.php page, and set the appropriate
+locations available for the vendors.
+
+\subsubsection{Task List - Vendors}
+\label{sec-3-2-7}
 Create Task List elemement at TaskListUpdate.php?activityid=-1
 with the call for vendors is created, with the appropriate links,
 and with the start and stop dates.
 
 \subsubsection{Task List - Community Tables}
-\label{sec-3-2-7}
+\label{sec-3-2-8}
 Create Task List elemement at TaskListUpdate.php?activityid=-1
 with the call for community tables is created, with the
 appropriate links, and with the start and stop dates.
 
 \subsubsection{Email}
-\label{sec-3-2-8}
+\label{sec-3-2-9}
 Possible email from Vendor Div Head goes out reminding
 vendors/community tables when the call will open and close.
+Might use StaffSendEmailCompose.php
 
 \subsubsection{Phase Change}
-\label{sec-3-2-9}
+\label{sec-3-2-10}
 At the appropriate time, the Con Chair or Zambia bitch will open
 the call for vendors, in line with the appropriate task-list
-activities.
+activities from the AdminPhases.php page.
 
 \subsubsection{Email}
-\label{sec-3-2-10}
+\label{sec-3-2-11}
 Vendor Div Head generates and sends email letting the
 vendors/community tables know that the call is open.
+Possibly using a mailing list, or using StaffSendEmailCompose.php
 
 \subsubsection{Vendors/Community Table folk apply}
-\label{sec-3-2-11}
+\label{sec-3-2-12}
 They use either the returning or the new pages, select the
 appropriate features, sponsorships, and ads that they want, and
 make sure everything is as expected.
@@ -1392,7 +1474,7 @@ make sure everything is as expected.
 \end{itemize}
 
 \subsubsection{(If Rolling Acceptance) Jury}
-\label{sec-3-2-12}
+\label{sec-3-2-13}
 If there is a rolling acceptantce of vendors and/or community
 tables, while the vendor call/community table call is open
 acceptances can roll out and then things can go forward.
@@ -1407,28 +1489,31 @@ Tools:
 Otherwise \ldots{}
 
 \subsubsection{Phase Change}
-\label{sec-3-2-13}
+\label{sec-3-2-14}
 At the appropriate time, the Con Chair or Zambia bitch close the
 call for vendors. (This is not necessarily in the right place in
-the sequence.)
+the sequence.)  From the AdminPhases.php page.
 
 \subsubsection{Jury}
-\label{sec-3-2-14}
+\label{sec-3-2-15}
 The (rest of (if rolling acceptance is happening)) vendors and
 community tables get acceptance, which probably is an individual
 email from the Div Head, with any specific to them in information
-included, and an invitation for them to pay their invoice.
+included, and an invitation for them to pay their invoice.  The
+general booth type is to be assigned on the VendorAssignSpace.php
+page, and any pay adjustment is to be done on the VendorPayAdj.php
+page.
 \begin{itemize}
-\item To be determined how.
+\item The jury pages are yet to be designed.
 \end{itemize}
 
 \subsubsection{Invoice}
-\label{sec-3-2-15}
+\label{sec-3-2-16}
 Vendors then (hopefully, magically, smoothly) pay their agreed-to
 invoices.  By loging in again to do so.
 
 \subsubsection{Ad Copy}
-\label{sec-3-2-16}
+\label{sec-3-2-17}
 All paid for advertizing copy is generated by the vendors or
 community tables is submitted.
 \begin{itemize}
@@ -1436,44 +1521,62 @@ community tables is submitted.
 \end{itemize}
 
 \subsubsection{Placement}
-\label{sec-3-2-17}
+\label{sec-3-2-18}
 Div Head (and anyone else that can be roped into helping)
 schedules the vendors to be put in the appropriate locations on
-the day of the event.
-\begin{itemize}
-\item To be determined how.
-\end{itemize}
+the day of the event on the VendorAssignSpace.php
 
 \subsubsection{Email}
-\label{sec-3-2-18}
+\label{sec-3-2-19}
 Final email goes out, with any instruction reminders and if there
-is a manditory vendor meeting, or the like.
+is a manditory vendor meeting, or the like. Possibly using the
+StaffSendEmailCompose.php page.
 
 \subsubsection{Welcome Letter}
-\label{sec-3-2-19}
+\label{sec-3-2-20}
 Welcome lettters generated and printed, possibly stuffed in an
 envelope or folder of some sort.
 This might include some form of their (electronically) signed
 contract, and maybe invoice highlights.  Definitely includes their
 placement information, and information on how load-in and load-out
 works, etc.
+\begin{itemize}
+\item To be determined how.
+\end{itemize}
 
 \subsubsection{Packet stuffing}
-\label{sec-3-2-20}
+\label{sec-3-2-21}
 Badges, the appropriate number for each vendor and community
 table, are printed, and possibly stuffed as above.  Also
 wristbands, to be applied after IDs are checked, special tickets,
 lunch vouchers, etc.
 
 \subsubsection{Check-in/check-out lists printed}
-\label{sec-3-2-21}
+\label{sec-3-2-22}
 So they are available on the day-of.
+\begin{itemize}
+\item Has yet to be designed, but probably a simple report will do.
+\end{itemize}
 
 \subsubsection{At Con}
-\label{sec-3-2-22}
+\label{sec-3-2-23}
 \begin{itemize}
 \item To be determined how.
 \end{itemize}
+
+\subsubsection{Post Con Final Email}
+\label{sec-3-2-24}
+Sent, possibly using StaffSendEmailCompose.php page or
+the mailing list.
+
+\subsubsection{Other individual notes}
+\label{sec-3-2-25}
+Any other personal notes communicated.
+
+\subsubsection{Report for Treasurer}
+\label{sec-3-2-26}
+Final report from the event due to the treasurer no later than 2
+weeks post-con.
 
 \section{Things to add, from the new:}
 \label{sec-4}

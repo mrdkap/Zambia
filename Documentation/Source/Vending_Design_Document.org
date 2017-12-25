@@ -203,10 +203,8 @@
     + YUP
     - This might want to be slightly more complex, building, room, and
       booth-number
-**** TODO VendorLocation table?
-     - badgeid, conid, building, room (tied to rooms?), booth number
-     - Might just do as a free form field for this year, and make it
-       more complex for the future.
+**** DONE VendorLocation table
+     Set of tables makes this up.  See below for details
 *** vendor_payment_adjustment - decimal(8,2)
     - Adjustments to the bill
     + YUP
@@ -400,6 +398,52 @@
 *** Vendor Invoicing
     Actually set up for all invoicing, but referenced by vendor
     - Invoice
+*** Vendor Location
+    Base Tables:
+    - BaseLocBuilding
+    - BaseLocFloor
+    - BaseLocRoom
+    - BaseLocSubRoom
+    All base location tables are the generics that this particular
+    con pulls from to be able to set the Location table.  All have
+    id, name, and description.
+     Location Table:
+    - locationid = key
+    - baselocbuilding = from Base table
+    - baselocfloor = from Base table
+    - baselocroom = from Base table
+    - baselocsubroom = from Base table
+    - conid = conid
+    - divisionid = from Divisions table
+    - trackid = from Tracks table
+    - locationkey = key for printing/map reference
+    - locationmap = url for the map
+    - locationheight = height of the space
+    - locationdimensions = dimensions of the space
+    - locationarea = area of the space
+    - locationnotes = any other notes
+    - display_order = display order
+    VendorLocHasTime Table:
+    - locationtimeid = key
+    - locationid = from Location table
+    - locationstart = room opens
+    - locationend = room closes
+    VendorHasLoc Table:
+    - badgeid = Who
+    - locationid = Where in the world
+    - booth = Where in the room
+    The Base tables should be fairly static, and contain all the
+    possibles for combinations.
+    The Location table has the specific locations for this con.  This 
+    should probably be generalized to be able to be used in the
+    schedule frame as well, for programming and events and other
+    things, so that some of the griding becomes easier.
+    The VendorLocHasTime can have multiple entries per location id,
+    so that if there is a start time and an end time, they can be
+    noted, and can become constraints for scheduling, and fodder for
+    the grid.
+    The VendorHasLoc table is where the vendor is actually assigned
+    to be.
 *** More structure in the 41_VendorInfo.sql file
 ** Still Unknown
    These are the variables that exist already in the other usage
@@ -428,7 +472,7 @@
     By number or email address.
     - Update page (subset of new apply page)
     - apply page (subset of new apply page)
-**** VENDORQA needs to be vetted/tested.
+**** VENDORQA Generic login page
 *** Returning Community Table sign-in
     By number or email address.  Might simply be switched on one of
     the values in the vending type or on it's own value, and just have
@@ -443,7 +487,7 @@
 *** New Vendor proposal
     With a catch to see if they are already in our database, using
     their email address
-**** VENDORQA final vetting by the vendor folks.
+**** VENDORQA Special Brainstorm page
 *** New Community Table proposal
     With a catch to see if they are already in our database, using
     their email address
@@ -555,19 +599,23 @@
      Default increment 1, but able to be incremented otherwise by
      flag, or something, so that all the unique code can be collaped
      down to something simpler.
+**** VENDORQA VendorAdminState.php
+     Change a vendor between the various states.
 *** Returning Vendor informational update
     This might not be necessary, based on the above page keeping what
     is set for this event as set.
-     - SuperVendor cam also update anyone here.
-**** VENDORQA similar to the above set of pages, but allowed always.
+     - SuperVendor can also update anyone here.
+**** VENDORQA VendorApply.php
 *** Returning Vendor/Community Table Bio update
     Page that they can, at will update their web or book information,
     along with all their other invormation.
-     - SuperVendor cam also update anyone here.
+     - SuperVendor can also update anyone here.
      - There is only a subset of the information available here, so
        the vendor coordinators, or someone else (currently the Zambia
        Librarian) is keeping everything in sync.
-**** VENDORQA similar to the above set of pages, but allowed always.
+     - All the information is available on the standard Bios editing
+       page as the bottom table.
+**** VENDORQA VendorSubmitVendor.php StaffManageBios.php
 *** Invoice
     Not available until after both they are accepted (by Vendor
     Div Head), and they hit the "generate invoice" button, which
@@ -577,7 +625,6 @@
     agreed to.  The invoice page should continue to be available after
     they paid, so there is a referece point to the services agreed
     to/paid for.
-    - Yes, included in the above
 **** DONE included in above Returning set of pages.
 *** Ad Copy Submissions
     For those who have agreed to either digital or print ads, this is
@@ -594,7 +641,7 @@
     This is a positive or negative number, not a percent.  It should
     be figured off of whatever is appropriate, and the descripton
     should accommodate any reasoning.
-**** TODO Need before Invoicing
+**** VENDORQA VendorPayAdj.php
 *** Vendor Jury
     The page that all the proposed vendors, with certain bits of
     information (to be determined, since I've not seen that page yet
@@ -606,9 +653,9 @@
     from this in a different colour, so that those already accepted,
     and their type, will be shown for balance reasons.
 **** VENDORQA in pieces
-***** DONE first report - Vendor State change
+***** VENDORQA first report - Vendor State change
       Which allows for changing the Vendor State is done.
-***** DONE second report - List of those with PDFs
+***** VENDORQA second report - List of those with PDFs
       The set of Vendors with possible PDFs waiting to be checked and
       promoted.
 ***** TODO set of tunable reports
@@ -630,31 +677,42 @@
     apart, as per the decision of the Div Head. May also contain
     previous placements, or links to previous maps or something useful
     along those lines.  Including the current svg of the map.
-    - Two Pieces.
-**** TODO Initial vendor booth type selection  Need before Invoicing
+    - Three Pieces:
+**** MYQA VendorSetupLocation.php
+     This sets the possible rooms for the locations to be in.
+     Still missing:
+     - removals
+     - updates
+     - other con views
+**** VENDORQA VendorAssignSpace.php (top form)
+     Initial vendor booth type selection.
      This will be end-cap?  Bedroom vendor?  Single?  Double? Which of
      their choices get filled? More than one booth? Should be before
      Invoicing, so Invoicing is correct.
-**** TODO Map Placement
+**** VENDORQA VendorAssignSpace.php (bottom form)
+     Map Placement.
      Once the booths are assigned, this will get set, so their map
-     coordinates are set.
+     coordinates are set.  This only shows up after the Initial vendor
+     booth type selection.
 *** Administer Vendor Options
     Page that has the Amenities and Spaces for this event, pulled from
     the standard pool.  To be updated by the Vendor Coordinator on an
     event by event basis.
-**** VENDORQA
+    - needs removal option
+**** VENDORQA VendorSetupSpaceFeature.php
 *** Adminsiter Ad/Sponsor Options
     Page that has the Sponsor Levels, Digital Ads and Print Ads for
     this event, pulled from the standard pool.  To be updated either
     by the Vendor Div Head or the Publications Div Head on an event by
     event basis.
-**** VENDORQA
+    - needs removal option
+**** VENDORQA PubsSetupAds.php    
 *** Administer Vendor
     Where any changes are made to the vendor information (both that
     they can change and that they can't) for creation/update by Vendor
     Div Head.
     - Redundant with above "Returning Vendor" pages.
-**** VENDORQA
+**** VENDORQA VendorApply.php VendorSubmitVendor.php StaffManageBios.php
      - Still a little wonky, brings back to a less-useful page, but
        still works.  Can select by email address or by "pubsname"
        which is the business name.
@@ -663,6 +721,7 @@
 **** TODO so it can get printed (either by pubs or by Zambia)
 *** Vendor Email
     Generate (and send) various all-vendor communications
+    Generic "email from Zambia" works.
 **** TODO so there is a record of what is sent.
 *** Vendor Badges
     Generate the Vendor Badges for printing purposes.
@@ -682,7 +741,7 @@
       and Booth number.  (several copies)
     - Master List for check in.  Second for Check out. RI vendor
       marked specially.
-**** TODO
+**** TODO Might just be a report.
 ** Flow
 *** Set Amenities
     Go to the VendorSetupSpaceFeature.php page, and set the
@@ -699,6 +758,9 @@
 *** Set Printed Ad possibilities
     Go to the PubsSetupAds.php page, and set the
     appropriate print ads available/prices/et al for this event.
+*** Set Location possibilities
+    Go to the VendorSetupLocation.php page, and set the appropriate
+    locations available for the vendors.
 *** Task List - Vendors
     Create Task List elemement at TaskListUpdate.php?activityid=-1
     with the call for vendors is created, with the appropriate links,
@@ -710,13 +772,15 @@
 *** Email
     Possible email from Vendor Div Head goes out reminding
     vendors/community tables when the call will open and close.
+    Might use StaffSendEmailCompose.php
 *** Phase Change
     At the appropriate time, the Con Chair or Zambia bitch will open
     the call for vendors, in line with the appropriate task-list
-    activities.
+    activities from the AdminPhases.php page.
 *** Email
     Vendor Div Head generates and sends email letting the
     vendors/community tables know that the call is open.
+    Possibly using a mailing list, or using StaffSendEmailCompose.php
 *** Vendors/Community Table folk apply
     They use either the returning or the new pages, select the
     appropriate features, sponsorships, and ads that they want, and
@@ -737,13 +801,16 @@
 *** Phase Change
     At the appropriate time, the Con Chair or Zambia bitch close the
     call for vendors. (This is not necessarily in the right place in
-    the sequence.)
+    the sequence.)  From the AdminPhases.php page.
 *** Jury
     The (rest of (if rolling acceptance is happening)) vendors and
     community tables get acceptance, which probably is an individual
     email from the Div Head, with any specific to them in information
-    included, and an invitation for them to pay their invoice.
-     - To be determined how.
+    included, and an invitation for them to pay their invoice.  The
+    general booth type is to be assigned on the VendorAssignSpace.php
+    page, and any pay adjustment is to be done on the VendorPayAdj.php
+    page.
+     - The jury pages are yet to be designed.
 *** Invoice
     Vendors then (hopefully, magically, smoothly) pay their agreed-to
     invoices.  By loging in again to do so.
@@ -754,11 +821,11 @@
 *** Placement
     Div Head (and anyone else that can be roped into helping)
     schedules the vendors to be put in the appropriate locations on
-    the day of the event.
-     - To be determined how.
+    the day of the event on the VendorAssignSpace.php
 *** Email
     Final email goes out, with any instruction reminders and if there
-    is a manditory vendor meeting, or the like.
+    is a manditory vendor meeting, or the like. Possibly using the
+    StaffSendEmailCompose.php page.
 *** Welcome Letter
     Welcome lettters generated and printed, possibly stuffed in an
     envelope or folder of some sort.
@@ -766,6 +833,7 @@
     contract, and maybe invoice highlights.  Definitely includes their
     placement information, and information on how load-in and load-out
     works, etc.
+    - To be determined how.
 *** Packet stuffing
     Badges, the appropriate number for each vendor and community
     table, are printed, and possibly stuffed as above.  Also
@@ -773,8 +841,17 @@
     lunch vouchers, etc.
 *** Check-in/check-out lists printed
     So they are available on the day-of.
+    - Has yet to be designed, but probably a simple report will do.
 *** At Con
      - To be determined how.
+*** Post Con Final Email
+    Sent, possibly using StaffSendEmailCompose.php page or
+    the mailing list.
+*** Other individual notes
+    Any other personal notes communicated.
+*** Report for Treasurer
+    Final report from the event due to the treasurer no later than 2
+    weeks post-con.
 * Things to add, from the new:
 ** Logo to be uploaded (PDF)
 * Conclusion

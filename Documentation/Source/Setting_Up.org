@@ -1,9 +1,9 @@
-#+TITLE: Setting Up Zambia from Scratch
+#+TITLE: Setting Up Zambia from Scratch or New Event
 #+EMAIL: NELA.Percy@gmail.com
 #+AUTHOR: Percy, Bendyogagirl
 #+DATE: July 2011
-#+DESCRIPTION: Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.
-#+META: DESCRIPTION Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.
+#+DESCRIPTION: Zambia is a piece of Conference Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch or set up another con instance in your Zambia FFF-branch instance for your conference.  This is still a work in progress.
+#+MACRO: DESCRIPTION Zambia is a piece of Conference Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch or set up another con instance in your Zambia FFF-branch instance for your conference.  This is still a work in progress.
 #+KEYWORDS: Zambia, Documentation, FFF branch
 #+META: KEYWORDS Zambia, Documentation, FFF branch
 #+LANGUAGE: en

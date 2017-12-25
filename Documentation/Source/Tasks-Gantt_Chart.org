@@ -2,6 +2,8 @@
 #+EMAIL: NELA.Percy@gmail.com
 #+AUTHOR: Percy
 #+DATE: July 2012
+#+DESCRIPTION: Zambia is a piece of Conference Management Software.  This document is a "How To" guide to using the Task List and Gantt Chart in the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+#+MACRO: DESCRIPTION Zambia is a piece of Conference Management Software.  This document is a "How To" guide to using the Task List and Gantt Chart in the Zambia FFF-branch instance for your conference.  This is still a work in progress.
 #+DESCRIPTION: Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.
 #+META: DESCRIPTION Zambia is a piece of Con Management Software.  This document is a "How To" guide to help set up your Zambia FFF-branch instance from scratch for your convention.  This is still a work in progress.
 #+KEYWORDS: Zambia, Documentation, FFF branch

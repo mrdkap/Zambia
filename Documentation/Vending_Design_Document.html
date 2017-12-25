@@ -684,14 +684,10 @@ booth-number
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> VendorLocation table?<br  /><div class="outline-text-5" id="text-2-2-14-1">
-<ul class="org-ul">
-<li>badgeid, conid, building, room (tied to rooms?), booth number
-</li>
-<li>Might just do as a free form field for this year, and make it
-more complex for the future.
-</li>
-</ul>
+<ul class="org-ul"><li><span class="done DONE">DONE</span> VendorLocation table<br  /><div class="outline-text-5" id="text-2-2-14-1">
+<p>
+Set of tables makes this up.  See below for details
+</p>
 </div>
 </li></ul>
 </div>
@@ -1204,7 +1200,102 @@ Actually set up for all invoicing, but referenced by vendor
 </div>
 
 <div id="outline-container-sec-2-5-14" class="outline-4">
-<h4 id="sec-2-5-14"><span class="section-number-4">2.5.14</span> More structure in the 41_VendorInfo.sql file</h4>
+<h4 id="sec-2-5-14"><span class="section-number-4">2.5.14</span> Vendor Location</h4>
+<div class="outline-text-4" id="text-2-5-14">
+<p>
+Base Tables:
+</p>
+<ul class="org-ul">
+<li>BaseLocBuilding
+</li>
+<li>BaseLocFloor
+</li>
+<li>BaseLocRoom
+</li>
+<li>BaseLocSubRoom
+</li>
+</ul>
+<p>
+All base location tables are the generics that this particular
+con pulls from to be able to set the Location table.  All have
+id, name, and description.
+ Location Table:
+</p>
+<ul class="org-ul">
+<li>locationid = key
+</li>
+<li>baselocbuilding = from Base table
+</li>
+<li>baselocfloor = from Base table
+</li>
+<li>baselocroom = from Base table
+</li>
+<li>baselocsubroom = from Base table
+</li>
+<li>conid = conid
+</li>
+<li>divisionid = from Divisions table
+</li>
+<li>trackid = from Tracks table
+</li>
+<li>locationkey = key for printing/map reference
+</li>
+<li>locationmap = url for the map
+</li>
+<li>locationheight = height of the space
+</li>
+<li>locationdimensions = dimensions of the space
+</li>
+<li>locationarea = area of the space
+</li>
+<li>locationnotes = any other notes
+</li>
+<li>display_order = display order
+</li>
+</ul>
+<p>
+VendorLocHasTime Table:
+</p>
+<ul class="org-ul">
+<li>locationtimeid = key
+</li>
+<li>locationid = from Location table
+</li>
+<li>locationstart = room opens
+</li>
+<li>locationend = room closes
+</li>
+</ul>
+<p>
+VendorHasLoc Table:
+</p>
+<ul class="org-ul">
+<li>badgeid = Who
+</li>
+<li>locationid = Where in the world
+</li>
+<li>booth = Where in the room
+</li>
+</ul>
+<p>
+The Base tables should be fairly static, and contain all the
+possibles for combinations.
+The Location table has the specific locations for this con.  This 
+should probably be generalized to be able to be used in the
+schedule frame as well, for programming and events and other
+things, so that some of the griding becomes easier.
+The VendorLocHasTime can have multiple entries per location id,
+so that if there is a start time and an end time, they can be
+noted, and can become constraints for scheduling, and fodder for
+the grid.
+The VendorHasLoc table is where the vendor is actually assigned
+to be.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-15" class="outline-4">
+<h4 id="sec-2-5-15"><span class="section-number-4">2.5.15</span> More structure in the 41_VendorInfo.sql file</h4>
 </div>
 </div>
 
@@ -1281,7 +1372,7 @@ By number or email address.
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> needs to be vetted/tested.<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> Generic login page<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-2" class="outline-4">
@@ -1323,7 +1414,7 @@ With a catch to see if they are already in our database, using
 their email address
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> final vetting by the vendor folks.<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> Special Brainstorm page<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-4" class="outline-4">
@@ -1580,6 +1671,13 @@ flag, or something, so that all the unique code can be collaped
 down to something simpler.
 </p>
 </div>
+</li>
+
+<li><span class="todo VENDORQA">VENDORQA</span> VendorAdminState.php<br  /><div class="outline-text-5" id="text-3-1-5-15">
+<p>
+Change a vendor between the various states.
+</p>
+</div>
 </li></ul>
 </div>
 
@@ -1591,11 +1689,11 @@ This might not be necessary, based on the above page keeping what
 is set for this event as set.
 </p>
 <ul class="org-ul">
-<li>SuperVendor cam also update anyone here.
+<li>SuperVendor can also update anyone here.
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> similar to the above set of pages, but allowed always.<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> VendorApply.php<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-7" class="outline-4">
@@ -1606,15 +1704,18 @@ Page that they can, at will update their web or book information,
 along with all their other invormation.
 </p>
 <ul class="org-ul">
-<li>SuperVendor cam also update anyone here.
+<li>SuperVendor can also update anyone here.
 </li>
 <li>There is only a subset of the information available here, so
 the vendor coordinators, or someone else (currently the Zambia
 Librarian) is keeping everything in sync.
 </li>
+<li>All the information is available on the standard Bios editing
+page as the bottom table.
+</li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> similar to the above set of pages, but allowed always.<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> VendorSubmitVendor.php StaffManageBios.php<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-8" class="outline-4">
@@ -1630,10 +1731,6 @@ agreed to.  The invoice page should continue to be available after
 they paid, so there is a referece point to the services agreed
 to/paid for.
 </p>
-<ul class="org-ul">
-<li>Yes, included in the above
-</li>
-</ul>
 </div>
 <ul class="org-ul"><li><span class="done DONE">DONE</span> included in above Returning set of pages.<br  /></li></ul>
 </div>
@@ -1668,7 +1765,7 @@ be figured off of whatever is appropriate, and the descripton
 should accommodate any reasoning.
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> Need before Invoicing<br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> VendorPayAdj.php<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-11" class="outline-4">
@@ -1686,14 +1783,14 @@ from this in a different colour, so that those already accepted,
 and their type, will be shown for balance reasons.
 </p>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> in pieces<br  /><ul class="org-ul"><li><span class="done DONE">DONE</span> first report - Vendor State change<br  /><div class="outline-text-6" id="text-3-1-11-1-1">
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> in pieces<br  /><ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> first report - Vendor State change<br  /><div class="outline-text-6" id="text-3-1-11-1-1">
 <p>
 Which allows for changing the Vendor State is done.
 </p>
 </div>
 </li>
 
-<li><span class="done DONE">DONE</span> second report - List of those with PDFs<br  /><div class="outline-text-6" id="text-3-1-11-1-2">
+<li><span class="todo VENDORQA">VENDORQA</span> second report - List of those with PDFs<br  /><div class="outline-text-6" id="text-3-1-11-1-2">
 <p>
 The set of Vendors with possible PDFs waiting to be checked and
 promoted.
@@ -1737,12 +1834,29 @@ previous placements, or links to previous maps or something useful
 along those lines.  Including the current svg of the map.
 </p>
 <ul class="org-ul">
-<li>Two Pieces.
+<li>Three Pieces:
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> Initial vendor booth type selection  Need before Invoicing<br  /><div class="outline-text-5" id="text-3-1-12-1">
+<ul class="org-ul"><li><span class="todo MYQA">MYQA</span> VendorSetupLocation.php<br  /><div class="outline-text-5" id="text-3-1-12-1">
 <p>
+This sets the possible rooms for the locations to be in.
+Still missing:
+</p>
+<ul class="org-ul">
+<li>removals
+</li>
+<li>updates
+</li>
+<li>other con views
+</li>
+</ul>
+</div>
+</li>
+
+<li><span class="todo VENDORQA">VENDORQA</span> VendorAssignSpace.php (top form)<br  /><div class="outline-text-5" id="text-3-1-12-2">
+<p>
+Initial vendor booth type selection.
 This will be end-cap?  Bedroom vendor?  Single?  Double? Which of
 their choices get filled? More than one booth? Should be before
 Invoicing, so Invoicing is correct.
@@ -1750,10 +1864,12 @@ Invoicing, so Invoicing is correct.
 </div>
 </li>
 
-<li><span class="todo TODO">TODO</span> Map Placement<br  /><div class="outline-text-5" id="text-3-1-12-2">
+<li><span class="todo VENDORQA">VENDORQA</span> VendorAssignSpace.php (bottom form)<br  /><div class="outline-text-5" id="text-3-1-12-3">
 <p>
+Map Placement.
 Once the booths are assigned, this will get set, so their map
-coordinates are set.
+coordinates are set.  This only shows up after the Initial vendor
+booth type selection.
 </p>
 </div>
 </li></ul>
@@ -1767,8 +1883,12 @@ Page that has the Amenities and Spaces for this event, pulled from
 the standard pool.  To be updated by the Vendor Coordinator on an
 event by event basis.
 </p>
+<ul class="org-ul">
+<li>needs removal option
+</li>
+</ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> VendorSetupSpaceFeature.php<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-14" class="outline-4">
@@ -1780,8 +1900,12 @@ this event, pulled from the standard pool.  To be updated either
 by the Vendor Div Head or the Publications Div Head on an event by
 event basis.
 </p>
+<ul class="org-ul">
+<li>needs removal option
+</li>
+</ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /></li></ul>
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> PubsSetupAds.php<br  /></li></ul>
 </div>
 
 <div id="outline-container-sec-3-1-15" class="outline-4">
@@ -1797,7 +1921,7 @@ Div Head.
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> <br  /><div class="outline-text-5" id="text-3-1-15-1">
+<ul class="org-ul"><li><span class="todo VENDORQA">VENDORQA</span> VendorApply.php VendorSubmitVendor.php StaffManageBios.php<br  /><div class="outline-text-5" id="text-3-1-15-1">
 <ul class="org-ul">
 <li>Still a little wonky, brings back to a less-useful page, but
 still works.  Can select by email address or by "pubsname"
@@ -1823,6 +1947,7 @@ Generate the (physical) welcome letter to the vendors
 <div class="outline-text-4" id="text-3-1-17">
 <p>
 Generate (and send) various all-vendor communications
+Generic "email from Zambia" works.
 </p>
 </div>
 <ul class="org-ul"><li><span class="todo TODO">TODO</span> so there is a record of what is sent.<br  /></li></ul>
@@ -1875,7 +2000,7 @@ marked specially.
 </li>
 </ul>
 </div>
-<ul class="org-ul"><li><span class="todo TODO">TODO</span> <br  /></li></ul>
+<ul class="org-ul"><li><span class="todo TODO">TODO</span> Might just be a report.<br  /></li></ul>
 </div>
 </div>
 
@@ -1933,8 +2058,18 @@ appropriate print ads available/prices/et al for this event.
 </div>
 
 <div id="outline-container-sec-3-2-6" class="outline-4">
-<h4 id="sec-3-2-6"><span class="section-number-4">3.2.6</span> Task List - Vendors</h4>
+<h4 id="sec-3-2-6"><span class="section-number-4">3.2.6</span> Set Location possibilities</h4>
 <div class="outline-text-4" id="text-3-2-6">
+<p>
+Go to the VendorSetupLocation.php page, and set the appropriate
+locations available for the vendors.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2-7" class="outline-4">
+<h4 id="sec-3-2-7"><span class="section-number-4">3.2.7</span> Task List - Vendors</h4>
+<div class="outline-text-4" id="text-3-2-7">
 <p>
 Create Task List elemement at TaskListUpdate.php?activityid=-1
 with the call for vendors is created, with the appropriate links,
@@ -1943,9 +2078,9 @@ and with the start and stop dates.
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-7" class="outline-4">
-<h4 id="sec-3-2-7"><span class="section-number-4">3.2.7</span> Task List - Community Tables</h4>
-<div class="outline-text-4" id="text-3-2-7">
+<div id="outline-container-sec-3-2-8" class="outline-4">
+<h4 id="sec-3-2-8"><span class="section-number-4">3.2.8</span> Task List - Community Tables</h4>
+<div class="outline-text-4" id="text-3-2-8">
 <p>
 Create Task List elemement at TaskListUpdate.php?activityid=-1
 with the call for community tables is created, with the
@@ -1954,40 +2089,42 @@ appropriate links, and with the start and stop dates.
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-8" class="outline-4">
-<h4 id="sec-3-2-8"><span class="section-number-4">3.2.8</span> Email</h4>
-<div class="outline-text-4" id="text-3-2-8">
+<div id="outline-container-sec-3-2-9" class="outline-4">
+<h4 id="sec-3-2-9"><span class="section-number-4">3.2.9</span> Email</h4>
+<div class="outline-text-4" id="text-3-2-9">
 <p>
 Possible email from Vendor Div Head goes out reminding
 vendors/community tables when the call will open and close.
-</p>
-</div>
-</div>
-
-<div id="outline-container-sec-3-2-9" class="outline-4">
-<h4 id="sec-3-2-9"><span class="section-number-4">3.2.9</span> Phase Change</h4>
-<div class="outline-text-4" id="text-3-2-9">
-<p>
-At the appropriate time, the Con Chair or Zambia bitch will open
-the call for vendors, in line with the appropriate task-list
-activities.
+Might use StaffSendEmailCompose.php
 </p>
 </div>
 </div>
 
 <div id="outline-container-sec-3-2-10" class="outline-4">
-<h4 id="sec-3-2-10"><span class="section-number-4">3.2.10</span> Email</h4>
+<h4 id="sec-3-2-10"><span class="section-number-4">3.2.10</span> Phase Change</h4>
 <div class="outline-text-4" id="text-3-2-10">
 <p>
-Vendor Div Head generates and sends email letting the
-vendors/community tables know that the call is open.
+At the appropriate time, the Con Chair or Zambia bitch will open
+the call for vendors, in line with the appropriate task-list
+activities from the AdminPhases.php page.
 </p>
 </div>
 </div>
 
 <div id="outline-container-sec-3-2-11" class="outline-4">
-<h4 id="sec-3-2-11"><span class="section-number-4">3.2.11</span> Vendors/Community Table folk apply</h4>
+<h4 id="sec-3-2-11"><span class="section-number-4">3.2.11</span> Email</h4>
 <div class="outline-text-4" id="text-3-2-11">
+<p>
+Vendor Div Head generates and sends email letting the
+vendors/community tables know that the call is open.
+Possibly using a mailing list, or using StaffSendEmailCompose.php
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2-12" class="outline-4">
+<h4 id="sec-3-2-12"><span class="section-number-4">3.2.12</span> Vendors/Community Table folk apply</h4>
+<div class="outline-text-4" id="text-3-2-12">
 <p>
 They use either the returning or the new pages, select the
 appropriate features, sponsorships, and ads that they want, and
@@ -2002,9 +2139,9 @@ make sure everything is as expected.
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-12" class="outline-4">
-<h4 id="sec-3-2-12"><span class="section-number-4">3.2.12</span> (If Rolling Acceptance) Jury</h4>
-<div class="outline-text-4" id="text-3-2-12">
+<div id="outline-container-sec-3-2-13" class="outline-4">
+<h4 id="sec-3-2-13"><span class="section-number-4">3.2.13</span> (If Rolling Acceptance) Jury</h4>
+<div class="outline-text-4" id="text-3-2-13">
 <p>
 If there is a rolling acceptantce of vendors and/or community
 tables, while the vendor call/community table call is open
@@ -2029,36 +2166,39 @@ Otherwise &#x2026;
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-13" class="outline-4">
-<h4 id="sec-3-2-13"><span class="section-number-4">3.2.13</span> Phase Change</h4>
-<div class="outline-text-4" id="text-3-2-13">
+<div id="outline-container-sec-3-2-14" class="outline-4">
+<h4 id="sec-3-2-14"><span class="section-number-4">3.2.14</span> Phase Change</h4>
+<div class="outline-text-4" id="text-3-2-14">
 <p>
 At the appropriate time, the Con Chair or Zambia bitch close the
 call for vendors. (This is not necessarily in the right place in
-the sequence.)
+the sequence.)  From the AdminPhases.php page.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-14" class="outline-4">
-<h4 id="sec-3-2-14"><span class="section-number-4">3.2.14</span> Jury</h4>
-<div class="outline-text-4" id="text-3-2-14">
+<div id="outline-container-sec-3-2-15" class="outline-4">
+<h4 id="sec-3-2-15"><span class="section-number-4">3.2.15</span> Jury</h4>
+<div class="outline-text-4" id="text-3-2-15">
 <p>
 The (rest of (if rolling acceptance is happening)) vendors and
 community tables get acceptance, which probably is an individual
 email from the Div Head, with any specific to them in information
-included, and an invitation for them to pay their invoice.
+included, and an invitation for them to pay their invoice.  The
+general booth type is to be assigned on the VendorAssignSpace.php
+page, and any pay adjustment is to be done on the VendorPayAdj.php
+page.
 </p>
 <ul class="org-ul">
-<li>To be determined how.
+<li>The jury pages are yet to be designed.
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-15" class="outline-4">
-<h4 id="sec-3-2-15"><span class="section-number-4">3.2.15</span> Invoice</h4>
-<div class="outline-text-4" id="text-3-2-15">
+<div id="outline-container-sec-3-2-16" class="outline-4">
+<h4 id="sec-3-2-16"><span class="section-number-4">3.2.16</span> Invoice</h4>
+<div class="outline-text-4" id="text-3-2-16">
 <p>
 Vendors then (hopefully, magically, smoothly) pay their agreed-to
 invoices.  By loging in again to do so.
@@ -2066,9 +2206,9 @@ invoices.  By loging in again to do so.
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-16" class="outline-4">
-<h4 id="sec-3-2-16"><span class="section-number-4">3.2.16</span> Ad Copy</h4>
-<div class="outline-text-4" id="text-3-2-16">
+<div id="outline-container-sec-3-2-17" class="outline-4">
+<h4 id="sec-3-2-17"><span class="section-number-4">3.2.17</span> Ad Copy</h4>
+<div class="outline-text-4" id="text-3-2-17">
 <p>
 All paid for advertizing copy is generated by the vendors or
 community tables is submitted.
@@ -2080,34 +2220,31 @@ community tables is submitted.
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-17" class="outline-4">
-<h4 id="sec-3-2-17"><span class="section-number-4">3.2.17</span> Placement</h4>
-<div class="outline-text-4" id="text-3-2-17">
+<div id="outline-container-sec-3-2-18" class="outline-4">
+<h4 id="sec-3-2-18"><span class="section-number-4">3.2.18</span> Placement</h4>
+<div class="outline-text-4" id="text-3-2-18">
 <p>
 Div Head (and anyone else that can be roped into helping)
 schedules the vendors to be put in the appropriate locations on
-the day of the event.
-</p>
-<ul class="org-ul">
-<li>To be determined how.
-</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-sec-3-2-18" class="outline-4">
-<h4 id="sec-3-2-18"><span class="section-number-4">3.2.18</span> Email</h4>
-<div class="outline-text-4" id="text-3-2-18">
-<p>
-Final email goes out, with any instruction reminders and if there
-is a manditory vendor meeting, or the like.
+the day of the event on the VendorAssignSpace.php
 </p>
 </div>
 </div>
 
 <div id="outline-container-sec-3-2-19" class="outline-4">
-<h4 id="sec-3-2-19"><span class="section-number-4">3.2.19</span> Welcome Letter</h4>
+<h4 id="sec-3-2-19"><span class="section-number-4">3.2.19</span> Email</h4>
 <div class="outline-text-4" id="text-3-2-19">
+<p>
+Final email goes out, with any instruction reminders and if there
+is a manditory vendor meeting, or the like. Possibly using the
+StaffSendEmailCompose.php page.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2-20" class="outline-4">
+<h4 id="sec-3-2-20"><span class="section-number-4">3.2.20</span> Welcome Letter</h4>
+<div class="outline-text-4" id="text-3-2-20">
 <p>
 Welcome lettters generated and printed, possibly stuffed in an
 envelope or folder of some sort.
@@ -2116,12 +2253,16 @@ contract, and maybe invoice highlights.  Definitely includes their
 placement information, and information on how load-in and load-out
 works, etc.
 </p>
+<ul class="org-ul">
+<li>To be determined how.
+</li>
+</ul>
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-20" class="outline-4">
-<h4 id="sec-3-2-20"><span class="section-number-4">3.2.20</span> Packet stuffing</h4>
-<div class="outline-text-4" id="text-3-2-20">
+<div id="outline-container-sec-3-2-21" class="outline-4">
+<h4 id="sec-3-2-21"><span class="section-number-4">3.2.21</span> Packet stuffing</h4>
+<div class="outline-text-4" id="text-3-2-21">
 <p>
 Badges, the appropriate number for each vendor and community
 table, are printed, and possibly stuffed as above.  Also
@@ -2131,22 +2272,55 @@ lunch vouchers, etc.
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-21" class="outline-4">
-<h4 id="sec-3-2-21"><span class="section-number-4">3.2.21</span> Check-in/check-out lists printed</h4>
-<div class="outline-text-4" id="text-3-2-21">
+<div id="outline-container-sec-3-2-22" class="outline-4">
+<h4 id="sec-3-2-22"><span class="section-number-4">3.2.22</span> Check-in/check-out lists printed</h4>
+<div class="outline-text-4" id="text-3-2-22">
 <p>
 So they are available on the day-of.
 </p>
+<ul class="org-ul">
+<li>Has yet to be designed, but probably a simple report will do.
+</li>
+</ul>
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-22" class="outline-4">
-<h4 id="sec-3-2-22"><span class="section-number-4">3.2.22</span> At Con</h4>
-<div class="outline-text-4" id="text-3-2-22">
+<div id="outline-container-sec-3-2-23" class="outline-4">
+<h4 id="sec-3-2-23"><span class="section-number-4">3.2.23</span> At Con</h4>
+<div class="outline-text-4" id="text-3-2-23">
 <ul class="org-ul">
 <li>To be determined how.
 </li>
 </ul>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2-24" class="outline-4">
+<h4 id="sec-3-2-24"><span class="section-number-4">3.2.24</span> Post Con Final Email</h4>
+<div class="outline-text-4" id="text-3-2-24">
+<p>
+Sent, possibly using StaffSendEmailCompose.php page or
+the mailing list.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2-25" class="outline-4">
+<h4 id="sec-3-2-25"><span class="section-number-4">3.2.25</span> Other individual notes</h4>
+<div class="outline-text-4" id="text-3-2-25">
+<p>
+Any other personal notes communicated.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2-26" class="outline-4">
+<h4 id="sec-3-2-26"><span class="section-number-4">3.2.26</span> Report for Treasurer</h4>
+<div class="outline-text-4" id="text-3-2-26">
+<p>
+Final report from the event due to the treasurer no later than 2
+weeks post-con.
+</p>
 </div>
 </div>
 </div>

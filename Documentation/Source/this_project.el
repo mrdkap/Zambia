@@ -35,7 +35,7 @@
 	("Zambia-pdf"
 	 :base-directory "~/flea/www/prog/Documentation/Source"
 	 :base-extension "org"
-	 :publishing-directory "~/flea/www/prog/Documentation/PDF"
+	 :publishing-directory "~/flea/www/prog/Documentation"
 	 :publishing-function org-latex-publish-to-pdf
 	 :preserve-breaks t
 	 :sub-superscript nil

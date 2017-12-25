@@ -2,8 +2,8 @@
 #+EMAIL: NELA.Percy@gmail.com
 #+AUTHOR: Peter
 #+DATE: March 2010
-#+DESCRIPTION: Zambia is a piece of Conference Management Software.  This document is a general guide assisting in the way of programming the Zambia FFF-branch, as inhereted from the main branch.
-#+META: DESCRIPTION Zambia is a piece of Conference Management Software.  This document is a general guide assisting in the way of programming the Zambia FFF-branch, as inhereted from the main branch.
+#+DESCRIPTION: Zambia is a piece of Conference Management Software.  This document is a general guide assisting in the way of programming the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+#+MACRO: DESCRIPTION Zambia is a piece of Conference Management Software.  This document is a general guide assisting in the way of programming the Zambia FFF-branch instance for your conference.  This is still a work in progress.
 #+KEYWORDS: Zambia, Documentation, FFF branch
 #+META: KEYWORDS Zambia, Documentation, FFF branch
 #+LANGUAGE: en

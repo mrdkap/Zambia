@@ -33,12 +33,12 @@
 \usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
 \pagestyle{fancy}
 \setcounter{secnumdepth}{3}
-\author{Percy Iya\thanks{NELA.Percy@gmail.com}}
+\author{Percy\thanks{NELA.Percy@gmail.com}}
 \date{June 2015}
 \title{Email Functions in Zambia}
 \hypersetup{
   pdfkeywords={Zambia, Documentation, FFF branch},
-  pdfsubject={Zambia is a piece of Con Management Software.  This document is a guide to building the Vendor System for the Zambia FFF-branch instance.  This is still a work in progress.},
+  pdfsubject={Zambia is a piece of Conference Management Software.  This document is a "How To" guide to using the Email Functions in the Zambia FFF-branch instance for your conference.  This is still a work in progress.},
   pdfcreator={}}
 \begin{document}
 
@@ -56,7 +56,7 @@
 \begin{abstract}
 \vspace{5cm}
 {\LARGE{\textbf{Abstract:\\}}}
-Zambia is a piece of Con Management Software.  This document is a guide to building the Vendor System for the Zambia FFF-branch instance.  This is still a work in progress.
+Zambia is a piece of Conference Management Software.  This document is a "How To" guide to using the Email Functions in the Zambia FFF-branch instance for your conference.  This is still a work in progress.
 \end{abstract}
 \newpage
 \renewcommand{\headrulewidth}{1pt}
@@ -65,21 +65,21 @@ Zambia is a piece of Con Management Software.  This document is a guide to build
 Email Functions in Zambia
 }
 \lfoot{
-Percy Iya <NELA.Percy@gmail.com>
+Percy <NELA.Percy@gmail.com>
 }
 \rfoot{\thepage}
 \setcounter{tocdepth}{2}
 \tableofcontents
-\listoftables
-\listoffigures
 \newpage
 \pagenumbering{arabic}
 \section{General Design}
 \label{sec-1}
+
 This is a working guide on how to use the Email portion of Zambia.
 
 \section{Components}
 \label{sec-2}
+
 There are several components to the emailing system in Zambia.
 \begin{itemize}
 \item To lists
@@ -91,20 +91,29 @@ There are several components to the emailing system in Zambia.
 
 \section{"To" lists}
 \label{sec-3}
+
 The "To" lists are maintained in the database, as a query.  Many
 queries have been pre-loaded, but you might want to customize or
 build your own.  To do so, there is a good report, and a functional
-tool to help.  The report is:
-\begin{itemize}
-\item genreport.php?reportname=emailtolist
-\end{itemize}
+tool to help.  The report is on the page:
+
+\label{genreport.php?reportname=emailtolist}
+\underline{
+\href{../webpages/genreport.php?reportname=emailtolist}{genreport.php?reportname=emailtolist}
+}
+
 That will either allow you to edit an existing list, or create a new
-list.  That uses the:
-\begin{itemize}
-\item StaffEmailToUpdate.php
-\end{itemize}
+list.  That uses the page:
+
+\label{StaffEmailToUpdate.php}
+\underline{
+\href{../webpages/StaffEmailToUpdate.php}{StaffEmailToUpdate.php}
+}
+
 This page is used to appropriately create or change the query that
 produces the "To" line, and a few other little bits along the way.
+There is a link to it at the top of the report referenced above.
+
 The query needs to produce the following fields:
 \begin{itemize}
 \item badgeid
@@ -115,89 +124,131 @@ The query needs to produce the following fields:
 \item badgename
 \item interestedtypename as itn
 \end{itemize}
+
 If you are not really concerned with the interestedtypename (which
-defaults to checking on "Yes") just use concat("Yes") as itn for
-it.  Everything else should exist on all people in the database.
-It is suggested that at least one test email address is set up in
-there, to test the system, being that it depends on software outside
-Zambia to work, and \ldots{} that is not guaranteed to work.
+defaults to checking on "Yes") just use concat("Yes") as itn for it.
+Everything else should exist on all people in the database.  It is
+suggested that at least one test email address is set up as the
+first entry, to test the system and be the default "To:" list in
+case it was forgotten to be set.  Having a test address is good
+being that the email process from within Zambia depends on software
+outside Zambia to work, and therefore might not work right from the
+start.
 
 \section{From/CC}
 \label{sec-4}
+
 These are generated from those who have roles this year in the con.
 
 \section{Composing email}
 \label{sec-5}
+
 This is a two-step process.  One is writing the email, with all the
 attendant information, and the other is checking it to make sure it
 does the right thing.
-The first is accomplished from:
-StaffSendEmailCompose.php
+
+The first is accomplished from the page:
+
+\label{StaffSendEmailCompose.php}
+\underline{
+\href{../webpages/StaffSendEmailCompose.php}{StaffSendEmailCompose.php}
+}
+
 This should be available under the "Manage Participants \& Schedule"
 tab.  If it is not available to you, it might be that you have not
 (yet) been authorized to use the email program.  Please check with
 your Zambia administrator for further information.
+
 Once on this page, you can set your To:, From:, CC:, Subject:, and
 Body of the email.
+
 If it is a long, or complex email, it is suggested that you compose
-it in another editor, and then paste it into here.  Although, be
-careful, this is limited to the Latin-8 set of characters, so out of
-band characters (like special quotes, apostrophes, etc) will not
-translate well, if they are in there at all.  (Yes, this is a bug,
-and needs to be tracked down and fixed.)
+it in another editor, and then paste it into the box on this page.
+Although, be careful, this is limited to the Latin-8 set of
+characters, so other characters (like special quotes, apostrophes,
+etc) will not translate well, if they are in there at all.  (Yes,
+this is a bug, and needs to be tracked down and fixed.)
+
 Once the email is written, hit the "See it" button (not the "Reset"
 button) and it will take you to the next step.
+
 The next page will list all the recipients in the top box.  If
-they do not match your expectations, you might have to go back and
-tweak the "To:" query some more.
+they do not match your expectations, you might have open a fresh
+window or tab to go to the page:
+
+\label{StaffEmailToUpdate.php}
+\underline{
+\href{../webpages/StaffEmailToUpdate.php}{StaffEmailToUpdate.php}
+}
+
+to tweak the "To:" query some more.  Use the "Go Back" button, so
+you don't lose your words, and tweak the query in the other window
+or tab, and then move forward again with the "See it" button.
+
 The first individual on the list will have their letter in the lower
 box.  Check the letter to make sure it reads the way you wish.  If
 it does, hit "Send".  If it does not, or you need to go back to fix
 the "To:" field, use the "Go Back" button.
+
 NOTE: Using the "Go Back" button resets the "From:" and "CC:"
 fields, so make sure you set them appropriately, if you use the "Go
 Back" button.
 
 \section{"Mail Merge" style replacements}
 \label{sec-6}
+
 There are a number of things you can replace in your email so they
 are specific to the person.  They currently are:
 \begin{itemize}
-\item $BADGEID$
-\item $FIRSTNAME$
-\item $LASTNAME$
-\item $EMAILADDR$
-\item $PUBNAME$
-\item $BADGENAME$
-\item $SCHEDULE$
-\item $FULLSCHEDULE$
-\item $BIOS$
-\item $LIAISON$
-\item $HOTELROOM$
-\item $ENTRANCES$
-\item $CONFIRMNUM$
+\item \$ BADGEID \$
+\item \$ FIRSTNAME \$
+\item \$ LASTNAME \$
+\item \$ EMAILADDR \$
+\item \$ PUBNAME \$
+\item \$ BADGENAME \$
+\item \$ SCHEDULE \$
+\item \$ FULLSCHEDULE \$
+\item \$ BIOS \$
+\item \$ LIAISON \$
+\item \$ HOTELROOM \$
+\item \$ ENTRANCES \$
+\item \$ CONFIRMNUM \$
 \end{itemize}
-They are pulled from a number of sources, so \ldots{} they might not work
-as you fully expect them to, but \ldots{} they basically pull what they
-describe from the database, to populate the letter.
+
+They are pulled from a number of sources, so they might not work
+as you fully expect them to, but they basically pull what they
+describe from the database to populate the letter.
 As an example, if you start your email with:
-"Hello $PUBSNAME$," it will cycle in each of the individual's
-pubsname where the $PUBSNAME$ is.  Same with all the other
+\begin{verbatim}
+"Hello $PUBSNAME$,"
+\end{verbatim}
+it will cycle in each of the individual's
+pubsname in place of \$ PUBSNAME \$.  Same with all the other
 replace-tags.
 
 \section{Sending the email}
 \label{sec-7}
+
 The "Send it" button doesn't actually send the email.  We've had a
 few problems with people thinking our email is spam, so there are
 two ways to get the email sent.  Either via the bulk sender, which
-sends a chunk of them at a time automatically, or, you can use the:
-HandSendQueuedMail.php
+sends a chunk of them at a time, automatically, or you can use the:
+
+\label{HandSendQueuedMail.php}
+\underline{
+\href{../webpages/HandSendQueuedMail.php}{HandSendQueuedMail.php}
+}
+
 This will call up each email individually in your local email
-sending program, so you can check/modify each one, and make sure it
-is sent.  This also allows you to "mark as sent" each email, so if
-you want to mark one as sent, but not actually send it, you can.  It
-gives you finer control over what goes out.
+sending program, so you can check/modify each one before sending,
+and make sure each email is individually sent. Since you
+individually "mark as sent" each potential email, if you want to
+mark one as sent, but not actually send it, you can. This is useful
+if an address was included accidentally, for example. The hand
+sending process gives you finer control over what goes out.
+
 The bulk emailer currently is only available to the Zambia
-maintainer, at this time, due to errors and difficulties from the
-users.
+maintainer, due to errors and difficulties from the users.  If you
+wish them just to be send on the schedule, please let your Zambia
+maintainer know to kick off the process.
 \end{document}

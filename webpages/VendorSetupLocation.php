@@ -17,12 +17,16 @@ $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $locationid="";
 if ((!empty($_GET['locationid'])) AND (is_numeric($_GET['locationid']))) {
   $locationid=$_GET['locationid'];
+  $additionalinfo.="<P>You are updating a location. ";
+  $additionalinfo.="<A HREF=\"VendorSetupLocation.php\">Add</A> a new one.</P>\n";
 } elseif ((!empty($_POST['locationid'])) AND (is_numeric($_POST['locationid']))) {
   $locationid=$_POST['locationid'];
+  $additionalinfo.="<P>You are updating a location. ";
+  $additionalinfo.="<A HREF=\"VendorSetupLocation.php\">Add</A> a new one.</P>\n";
 }
 
 // Show history
-$hist="F";
+$hist="";
 if ((!empty($_GET['history'])) AND (is_numeric($_GET['history']))) {
   $hist=$_GET['history'];
   $additionalinfo.="<P>To see this with all previous con information included, ";
@@ -66,8 +70,8 @@ if ((!empty($_GET['history'])) AND (is_numeric($_GET['history']))) {
   $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-5) . ">" . ($conid-5) . "</A>.</P>\n";
 }
 
-// If the view is limited, then show just this years,
-// otherwise previous years and this years in the history section.
+// If the view is limited, then show just this years, otherwise
+// appropriate previous years and this years in the history section.
 $wherestring="";
 if ($hist == "") {
   $wherestring="WHERE conid=$conid";
@@ -110,7 +114,7 @@ if (($_POST['submit'] == "Update") AND ($locationid != "")) {
 		       mysql_real_escape_string(stripslashes($_POST['locationarea'])),
 		       mysql_real_escape_string(stripslashes($_POST['locationnotes'])),
 		       mysql_real_escape_string(stripslashes($_POST['display_order'])));
-  //$message.=submit_table_element($link, $title, "Location", $element_array, $value_array);
+  $message.=submit_table_element($link, $title, "Location", $element_array, $value_array);
 
   // Somehow, do time
   /*
@@ -211,6 +215,13 @@ EOD;
   list($hlocrows,$hlocheader_array,$hloc_array)=queryreport($queryHasLocation,$link,$title,$description,0);
 }
 
+// Some Vendor Defaults
+if ($hlocrows == 0) {
+  $hloc_array[1]['baselocsubroomid']=0;
+  $hloc_array[1]['divisionid']=8;
+  $hloc_array[1]['trackid']=0;
+}
+
 // All base buildings
 $queryBuilding=<<<EOD
 SELECT
@@ -236,6 +247,8 @@ SELECT
     baselocroomname
   FROM
       BaseLocRoom
+  ORDER BY
+    baselocroomname
 EOD;
 
 // All base sub-room divisions

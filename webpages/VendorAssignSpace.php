@@ -131,7 +131,7 @@ EOD;
 
 	// Check for already assigned to someone else, already assined to this someone, or removal
 	if ($_POST['vendorid'] != $lochas_array[$i]['badgeid']) {
-	  $message_error.="This area is already assigned.  Please check your assignments and try again.\n";
+	  $message_error.="This area " . $lochas_array[$i]['locationid'] . " " . $lochas_array[$i]['booth'] . " is already assigned.  Please check your assignments and try again.\n";
 	} elseif ($_POST['remove']=="remove") {
 	  $match_string="badgeid=".$_POST['vendorid']." AND locationid=".$_POST['locationid']." AND booth='".$_POST['booth']."'";
 	  $message.=delete_table_element($link, $title, "VendorHasLoc", $match_string);
@@ -200,6 +200,8 @@ if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
     exit();
   }
 
+  echo "<P><A HREF=\"".$_SESSION['return_to_page']."\">Return to report</A></P>";
+
   // Wanted Space
   $querySpaceType=<<<EOD
 SELECT
@@ -251,7 +253,7 @@ EOD;
   // Features
   $queryFeatureList=<<<EOD
 SELECT
-    basevendorfeaturename AS "Amenity Wanted",
+    concat(basevendorfeaturename, if((vendorfeaturenotes IS NOT NULL) AND (vendorfeaturenotes != ""),concat(" - ", vendorfeaturenotes),"")) AS "Amenity Wanted",
     vendorfeaturecount as "How Many"
   FROM
       VendorHasFeature
@@ -321,9 +323,9 @@ EOD;
   $queryLocation=<<<EOD
 SELECT
     locationid,
-    concat(baselocbuildingname, " ",
+    concat(baselocroomname, " ",
 	   baselocfloorname, " ",
-	   baselocroomname, " ",
+	   baselocbuildingname, " ",
 	   if(baselocsubroomid != 0,concat(baselocsubroomname, " "),""),
 	   if(locationheight != "",concat("Height: ", locationheight, " "),""),
 	   if(locationdimensions != "",concat("Dimensions: ", locationdimensions, " "),""),
@@ -361,7 +363,7 @@ EOD;
   echo "any pay adjustments to take into consideration, the amenities\n";
   echo "requested, if they are a sponsor, and to what level, and finally\n";
   echo "any already actually assigned spaces.</P>\n";
-  echo "To unassign a space, set the count to 0 (Zero)</P>\n";
+  echo "<P>To unassign a space, set the count to 0 (Zero)</P>\n";
 
   // Requested space
   if ($spacetrows == 0) {

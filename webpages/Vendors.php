@@ -98,7 +98,10 @@ if (file_exists("../Local/$conid/Vendor_List")) {
 $query = <<<EOD
 SELECT
     DISTINCT pubsname AS 'Participants',
-    if((secondtitle!=''),concat('<A NAME=\"', sessionid, '\">', secondtitle, '</A>'),"") AS 'Location',
+    concat(if((secondtitle!=''),
+	      concat('<A NAME=\"', sessionid, '\">', secondtitle, '</A>'),
+	      ""),
+	   if((actualvendorloc!=''),actualvendorloc,"")) AS 'Location',
     pubsname,
     badgeid
   FROM
@@ -107,6 +110,34 @@ SELECT
     JOIN PermissionRoles USING (permroleid)
     JOIN VendorStatus USING (badgeid,conid)
     JOIN VendorStatusTypes USING (vendorstatustypeid)
+    LEFT JOIN (SELECT
+        badgeid,
+        locationid,
+	GROUP_CONCAT(if(locationkey IS NULL,
+	   "",
+	   concat(' <A NAME="', locationid, '">',
+		  if(booth!="",
+		     concat(baselocroomname, " ", locationkey, booth),
+		     if(baselocsubroomid !=0,
+			if(baselocsubroomname REGEXP "^[A-Z,a-z,0-9]$",
+			   concat(locationkey,
+				  " ",
+				  baselocroomname,
+				  " ",
+				  baselocsubroomname),
+			   concat(locationkey, baselocsubroomname)),
+			concat(locationkey, baselocroomname))),
+		  '</A>')) SEPARATOR ", ") AS actualvendorloc
+      FROM
+          VendorAnnualInfo
+        LEFT JOIN VendorHasLoc USING (badgeid)
+        LEFT JOIN Location USING (locationid,conid)
+        LEFT JOIN BaseLocSubRoom USING (baselocsubroomid)
+        LEFT JOIN BaseLocRoom USING (baselocroomid)
+      WHERE
+        conid=$conid
+      GROUP BY
+        badgeid) AVL USING (badgeid)
     LEFT JOIN ParticipantOnSession USING (badgeid,conid)
     LEFT JOIN Sessions USING (sessionid,conid)
   WHERE

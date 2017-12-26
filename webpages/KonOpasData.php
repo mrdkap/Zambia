@@ -671,7 +671,9 @@ EOD;
 $vendorquery = <<<EOD
 SELECT
     concat('"id": "',badgeid,'"') AS id,
-    concat('"name": [ "',name_good_web,'" ]') AS name,
+  concat('"name": [ "',name_good_web,
+	 if(actualvendorloc!="",concat (" - ", actualvendorloc),""),
+	 '" ]') AS name,
     concat('"tags": []') AS tags,
     concat('"prog": []') AS prog,
     badgeid,
@@ -686,6 +688,28 @@ SELECT
     JOIN PermissionRoles USING (permroleid)
     JOIN VendorStatus USING (badgeid,conid)
     JOIN VendorStatusTypes USING (vendorstatustypeid)
+    JOIN (SELECT
+        badgeid,
+        locationid,
+	GROUP_CONCAT(if(locationkey IS NULL,
+			"",
+			concat(locationkey,
+			       if(booth!="",
+				  booth,
+				  if(baselocsubroomid !=0,
+				     baselocsubroomname,
+				     baselocroomname))))
+		     SEPARATOR ", ") AS actualvendorloc
+      FROM
+          VendorAnnualInfo
+        LEFT JOIN VendorHasLoc USING (badgeid)
+        LEFT JOIN Location USING (locationid,conid)
+        LEFT JOIN BaseLocSubRoom USING (baselocsubroomid)
+        LEFT JOIN BaseLocRoom USING (baselocroomid)
+      WHERE
+        conid=$conid
+      GROUP BY
+        badgeid) AVL USING (badgeid)
     JOIN (SELECT
         badgeid,
 	biotext as name_good_web

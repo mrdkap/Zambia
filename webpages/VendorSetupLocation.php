@@ -9,19 +9,9 @@ $additionalinfo="<P>Each section has it's own update button.\n";
 $additionalinfo.="Please do not try to update more than one section at once, ";
 $additionalinfo.="it will not (necessarily) be heeded properly.</P>\n";
 $additionalinfo.="<P>Time is still broken, and currently a by-hand job.</P>\n";
+$additionalinfo.="<P>This page is limited to a few select people who can change it, ";
+$additionalinfo.="basically the Con Chair and the Super Vendor folks.</P>\n";
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
-
-// Limit the ability to change things
-if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
-  $additionalinfo.="<P>This page is limited to a few select people who can change it, ";
-  $additionalinfo.="basically the Con Chair and the Super Vendor folks.</P>\n";
-  $limitedview="F";
-} else {
-  $additionalinfo.="<P>You can view the settings but you do not have sufficient ";
-  $additionalinfo.="permissions to change them.  If you think this is in error, talk ";
-  $additionalinfo.="to someone in charge.</P>\n";
-  $limitedview="T";
-}
 
 // Specific Location
 $locationid="";
@@ -33,25 +23,56 @@ if ((!empty($_GET['locationid'])) AND (is_numeric($_GET['locationid']))) {
 
 // Show history
 $hist="F";
-if ((!empty($_GET['history'])) AND ($_GET['history'] == "Y")) {
-  $hist="T";
-  $additionalinfo.="<P>To see this without the clutter of the previous con information, ";
-  $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
-} elseif ((!empty($_POST['history'])) AND ($_POST['history'] == "Y")) {
-  $hist="T";
-  $additionalinfo.="<P>To see this without the clutter of the previous con information, ";
-  $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
-} else {
-  $additionalinfo.="<P>To see this with previous con information included, ";
+if ((!empty($_GET['history'])) AND (is_numeric($_GET['history']))) {
+  $hist=$_GET['history'];
+  $additionalinfo.="<P>To see this with all previous con information included, ";
   $additionalinfo.="<A HREF=VendorSetupLocation.php?history=Y>click here</A>.</P>\n";
+  $additionalinfo.="<P>To see this without the clutter of the previous con information, ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
+} elseif ((!empty($_POST['history'])) AND (is_numeric($_POST['history']))) {
+  $hist=$_GET['history'];
+  $additionalinfo.="<P>To see this with all previous con information included, ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=Y>click here</A>.</P>\n";
+  $additionalinfo.="<P>To see this without the clutter of the previous con information, ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
+} elseif ((!empty($_GET['history'])) AND ($_GET['history'] == "Y")) {
+  $hist="Y";
+  $additionalinfo.="<P>To see this without the clutter of the previous con information, ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
+  $additionalinfo.="<P>To see this with a perticular previous con information included: ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-1) . ">" . ($conid-1) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-2) . ">" . ($conid-2) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-3) . ">" . ($conid-3) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-4) . ">" . ($conid-4) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-5) . ">" . ($conid-5) . "</A>.</P>\n";
+} elseif ((!empty($_POST['history'])) AND ($_POST['history'] == "Y")) {
+  $hist="Y";
+  $additionalinfo.="<P>To see this without the clutter of the previous con information, ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
+  $additionalinfo.="<P>To see this with a perticular previous con information included: ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-1) . ">" . ($conid-1) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-2) . ">" . ($conid-2) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-3) . ">" . ($conid-3) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-4) . ">" . ($conid-4) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-5) . ">" . ($conid-5) . "</A>.</P>\n";
+} else {
+  $additionalinfo.="<P>To see this with all previous con information included, ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=Y>click here</A>.</P>\n";
+  $additionalinfo.="<P>To see this with a perticular previous con information included: ";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-1) . ">" . ($conid-1) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-2) . ">" . ($conid-2) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-3) . ">" . ($conid-3) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-4) . ">" . ($conid-4) . "</A>, \n";
+  $additionalinfo.="<A HREF=VendorSetupLocation.php?history=" . ($conid-5) . ">" . ($conid-5) . "</A>.</P>\n";
 }
 
 // If the view is limited, then show just this years,
 // otherwise previous years and this years in the history section.
 $wherestring="";
-if ($limitedview == "T") {
-  $hist="T";
+if ($hist == "") {
   $wherestring="WHERE conid=$conid";
+} elseif (is_numeric($hist)) {
+  $wherestring="WHERE conid=$conid or conid=$hist";
 }
 
 // Update Element
@@ -249,8 +270,10 @@ SELECT
 EOD;
 
 // if history is requested, display it
-if ($hist=="T") {
+if ($hist=="Y") {
   $workstring="<P>All event's Vendor Locations.</P>\n";
+} elseif (is_numeric($hist)) {
+  $workstring.="<P>Two events' Vendor Locations.</P>\n";
 } else {
   $workstring="<P>This event's Vendor Locations.</P>\n";
 }
@@ -259,129 +282,131 @@ if ($hist=="T") {
 $workstring.=renderhtmlreport(1,$rows,$header_array,$report_array);
 
 // Only show the change tables if permissions match
-if ($limitedview == "F") {
-  if ($locationid != "") {
-    $workstring.="<P><strong>Update this entry</strong></P>\n";
-  }
-  $workstring.="<FORM name=\"locform\" action=\"VendorSetupLocation.php\" method=POST>\n";
-  $workstring.="  <INPUT type=\"hidden\" name=\"locationid\" id=\"locationid\" value=\"$locationid\">\n";
-
-  // continue to include history if requested.
-  if ($hist=="T") {
-    $workstring.="  <INPUT type=\"hidden\" name=\"history\" id=\"history\" value=\"Y\">\n";
-  }
-
-  $workstring.="  <TABLE>\n";
-  $workstring.="    <TR>\n";
-
-  // Building
-  $workstring.="      <TD colspan=2>\n";
-  $workstring.="        <SPAN><LABEL for=\"baselocbuildingid\">Building: </LABEL><SELECT name=\"baselocbuildingid\">\n";
-  $workstring.=populate_select_from_query_inline($queryBuilding, $hloc_array[1]['baselocbuildingid'], "SELECT", true);
-  $workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
-  $workstring.="        <INPUT type=\"hidden\" name=\"wasbaselocbuildingid\" id=\"wasbaselocbuildingid\" value=\"" . $hloc_array[1]['baselocbuildingid'] . "\">\n";
-
-  // Floor
-  $workstring.="      <TD>\n";
-  $workstring.="        <SPAN><LABEL for=\"baselocfloorid\">Floor: </LABEL><SELECT name=\"baselocfloorid\">\n";
-  $workstring.=populate_select_from_query_inline($queryFloor, $hloc_array[1]['baselocfloorid'], "SELECT", true);
-  $workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
-  $workstring.="        <INPUT type=\"hidden\" name=\"wasbaselocfloorid\" id=\"wasbaselocfloorid\" value=\"" . $hloc_array[1]['baselocfloorid'] . "\">\n";
-
-  $workstring.="    </TR>\n    <TR>\n";
-  // Room
-  $workstring.="      <TD colspan=2>\n";
-  $workstring.="        <SPAN><LABEL for=\"baselocroomid\">Room: </LABEL><SELECT name=\"baselocroomid\">\n";
-  $workstring.=populate_select_from_query_inline($queryRoom, $hloc_array[1]['baselocroomid'], "SELECT", true);
-  $workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
-  $workstring.="        <INPUT type=\"hidden\" name=\"wasbaselocroomid\" id=\"wasbaselocroomid\" value=\"" . $hloc_array[1]['baselocroomid'] . "\">\n";
-
-  // Subroom
-  $workstring.="      <TD>\n";
-  $workstring.="        <SPAN><LABEL for=\"baselocsubroomid\">Subroom: </LABEL><SELECT name=\"baselocsubroomid\">\n";
-  $workstring.=populate_select_from_query_inline($querySubRoom, $hloc_array[1]['baselocsubroomid'], "SELECT", true);
-  $workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
-  $workstring.="        <INPUT type=\"hidden\" name=\"wasbaselocsubroomid\" id=\"wasbaselocsubroomid\" value=\"" . $hloc_array[1]['baselocsubroomid'] . "\">\n";
-
-  // Conid should be set above.
-
-  $workstring.="    </TR>\n    <TR>\n";
-  // Division
-  $workstring.="      <TD>\n";
-  $workstring.="        <SPAN><LABEL for=\"divisionid\">Division: </LABEL><SELECT name=\"divisionid\">\n";
-  $workstring.=populate_select_from_query_inline($queryDivision, $hloc_array[1]['divisionid'], "SELECT", true);
-  $workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
-  $workstring.="        <INPUT type=\"hidden\" name=\"wasdivisionid\" id=\"wasdivisionid\" value=\"" . $hloc_array[1]['divisionid'] . "\">\n";
-
-  // Track
-  $workstring.="      <TD colspan=2>\n";
-  $workstring.="        <SPAN><LABEL for=\"trackid\">Track: </LABEL><SELECT name=\"trackid\">\n";
-  $workstring.=populate_select_from_query_inline($queryTracks, $hloc_array[1]['trackid'], "SELECT", true);
-  $workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
-  $workstring.="        <INPUT type=\"hidden\" name=\"wastrackid\" id=\"wastrackid\" value=\"" . $hloc_array[1]['trackid'] . "\">\n";
-
-  $workstring.="    </TR>\n  <TR>\n";
-  $workstring.="      <TD>\n";
-  $workstring.="        <LABEL for=\"locationkey\">Key:</LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"locationkey\" id=\"locationkey\" value=\"" . $hloc_array[1]['locationkey'] . "\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"waslocationkey\" id=\"waslocationkey\" value=\"" . $hloc_array[1]['locationkey'] . "\">\n";
-  $workstring.="      </TD>\n";
-  $workstring.="      <TD colspan=2>\n";
-  $workstring.="        <LABEL for=\"locationmap\">Map:</LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"locationmap\" id=\"locationmap\" size=42 value=\"" . $hloc_array[1]['locationmap'] . "\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"waslocationmap\" id=\"waslocationmap\" value=\"" . $hloc_array[1]['locationmap'] . "\">\n";
-  $workstring.="      </TD>\n";
-
-  $workstring.="    </TR>\n  <TR>\n";
-
-  $workstring.="      <TD>\n";
-  $workstring.="        <LABEL for=\"locationheight\">Height:</LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"locationheight\" id=\"locationheight\" value=\"" . $hloc_array[1]['locationheight'] . "\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"waslocationheight\" id=\"waslocationheight\" value=\"" . $hloc_array[1]['locationheight'] . "\">\n";
-  $workstring.="      </TD>\n";
-  $workstring.="      <TD>\n";
-  $workstring.="        <LABEL for=\"locationdimensions\">Dimensions:</LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"locationdimensions\" id=\"locationdimensions\" value=\"" . $hloc_array[1]['locationdimensions'] . "\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"waslocationdimensions\" id=\"waslocationdimensions\" value=\"" . $hloc_array[1]['locationdimensions'] . "\">\n";
-  $workstring.="      </TD>\n";
-  $workstring.="      <TD>\n";
-  $workstring.="        <LABEL for=\"locationarea\">Area:</LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"locationarea\" id=\"locationarea\" value=\"" . $hloc_array[1]['locationarea'] . "\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"waslocationarea\" id=\"waslocationarea\" value=\"" . $hloc_array[1]['locationarea'] . "\">\n";
-  $workstring.="      </TD>\n";
-
-  $workstring.="    </TR>\n  <TR>\n";
-
-  $workstring.="      <TD>\n";
-  $workstring.="        <LABEL for=\"locationstart\">Start Time:</LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"locationstart\" id=\"locationstart\" size=6 value=\"00:00:00\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"waslocationstart\" id=\"waslocationstart\" value=\"" . $hloc_array[1]['locationstart'] . "\">\n";
-  $workstring.="      </TD>\n";
-  $workstring.="      <TD>\n";
-  $workstring.="        <LABEL for=\"locationend\">End Time:</LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"locationend\" id=\"locationend\" size=6 value=\"00:00:00\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"waslocationend\" id=\"waslocationend\" value=\"" . $hloc_array[1]['locationend'] . "\">\n";
-  $workstring.="      </TD>\n";
-  $workstring.="      <TD>\n";
-  $workstring.="        <LABEL for=\"display_order\">Display Order: </LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"display_order\" id=\"display_order\" value=\"" . $hloc_array[1]['display_order'] . "\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"wasdisplay_order\" id=\"wasdisplay_order\" value=\"" . $hloc_array[1]['display_order'] . "\">\n";
-  $workstring.="      </TD>\n";
-
-  $workstring.="    </TR>\n  <TR>\n";
-
-  $workstring.="      <TD colspan=3>\n";
-  $workstring.="        <LABEL for=\"locationnotes\">Notes:</LABEL>\n";
-  $workstring.="        <input type=\"text\" name=\"locationnotes\" id=\"locationnotes\" size=63 value=\"" . $hloc_array[1]['locationnotes'] . "\">\n";
-  $workstring.="        <input type=\"hidden\" name=\"waslocationnotes\" id=\"waslocationnotes\" value=\"" . $hloc_array[1]['locationnotes'] . "\">\n";
-  $workstring.="      </TD>\n";
-  $workstring.="    </TR>\n  </TABLE>\n";
-  $workstring.="<P><BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\" value=\"Update\">Update</BUTTON></P>\n</FORM>\n";
+if ($locationid != "") {
+  $workstring.="<P><strong>Update this entry</strong></P>\n";
 }
+$workstring.="<FORM name=\"locform\" action=\"VendorSetupLocation.php\" method=POST>\n";
+$workstring.="  <INPUT type=\"hidden\" name=\"locationid\" id=\"locationid\" value=\"$locationid\">\n";
+
+// continue to include history if requested.
+if ($hist=="T") {
+  $workstring.="  <INPUT type=\"hidden\" name=\"history\" id=\"history\" value=\"Y\">\n";
+}
+
+$workstring.="  <TABLE>\n";
+$workstring.="    <TR>\n";
+
+// Building
+$workstring.="      <TD colspan=2>\n";
+$workstring.="        <SPAN><LABEL for=\"baselocbuildingid\">Building: </LABEL><SELECT name=\"baselocbuildingid\">\n";
+$workstring.=populate_select_from_query_inline($queryBuilding, $hloc_array[1]['baselocbuildingid'], "SELECT", true);
+$workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
+$workstring.="        <INPUT type=\"hidden\" name=\"wasbaselocbuildingid\" id=\"wasbaselocbuildingid\" value=\"" . $hloc_array[1]['baselocbuildingid'] . "\">\n";
+
+// Floor
+$workstring.="      <TD>\n";
+$workstring.="        <SPAN><LABEL for=\"baselocfloorid\">Floor: </LABEL><SELECT name=\"baselocfloorid\">\n";
+$workstring.=populate_select_from_query_inline($queryFloor, $hloc_array[1]['baselocfloorid'], "SELECT", true);
+$workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
+$workstring.="        <INPUT type=\"hidden\" name=\"wasbaselocfloorid\" id=\"wasbaselocfloorid\" value=\"" . $hloc_array[1]['baselocfloorid'] . "\">\n";
+
+$workstring.="    </TR>\n    <TR>\n";
+// Room
+$workstring.="      <TD colspan=2>\n";
+$workstring.="        <SPAN><LABEL for=\"baselocroomid\">Room: </LABEL><SELECT name=\"baselocroomid\">\n";
+$workstring.=populate_select_from_query_inline($queryRoom, $hloc_array[1]['baselocroomid'], "SELECT", true);
+$workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
+$workstring.="        <INPUT type=\"hidden\" name=\"wasbaselocroomid\" id=\"wasbaselocroomid\" value=\"" . $hloc_array[1]['baselocroomid'] . "\">\n";
+
+// Subroom
+$workstring.="      <TD>\n";
+$workstring.="        <SPAN><LABEL for=\"baselocsubroomid\">Subroom: </LABEL><SELECT name=\"baselocsubroomid\">\n";
+$workstring.=populate_select_from_query_inline($querySubRoom, $hloc_array[1]['baselocsubroomid'], "SELECT", true);
+$workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
+$workstring.="        <INPUT type=\"hidden\" name=\"wasbaselocsubroomid\" id=\"wasbaselocsubroomid\" value=\"" . $hloc_array[1]['baselocsubroomid'] . "\">\n";
+
+// Conid should be set above.
+
+$workstring.="    </TR>\n    <TR>\n";
+// Division
+$workstring.="      <TD>\n";
+$workstring.="        <SPAN><LABEL for=\"divisionid\">Division: </LABEL><SELECT name=\"divisionid\">\n";
+$workstring.=populate_select_from_query_inline($queryDivision, $hloc_array[1]['divisionid'], "SELECT", true);
+$workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
+$workstring.="        <INPUT type=\"hidden\" name=\"wasdivisionid\" id=\"wasdivisionid\" value=\"" . $hloc_array[1]['divisionid'] . "\">\n";
+
+// Track
+$workstring.="      <TD colspan=2>\n";
+$workstring.="        <SPAN><LABEL for=\"trackid\">Track: </LABEL><SELECT name=\"trackid\">\n";
+$workstring.=populate_select_from_query_inline($queryTracks, $hloc_array[1]['trackid'], "SELECT", true);
+$workstring.="        </SELECT>&nbsp;&nbsp;</SPAN>\n    </TD>\n";
+$workstring.="        <INPUT type=\"hidden\" name=\"wastrackid\" id=\"wastrackid\" value=\"" . $hloc_array[1]['trackid'] . "\">\n";
+
+$workstring.="    </TR>\n  <TR>\n";
+$workstring.="      <TD>\n";
+$workstring.="        <LABEL for=\"locationkey\">Key:</LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"locationkey\" id=\"locationkey\" value=\"" . $hloc_array[1]['locationkey'] . "\">\n";
+$workstring.="        <input type=\"hidden\" name=\"waslocationkey\" id=\"waslocationkey\" value=\"" . $hloc_array[1]['locationkey'] . "\">\n";
+$workstring.="      </TD>\n";
+$workstring.="      <TD colspan=2>\n";
+$workstring.="        <LABEL for=\"locationmap\">Map:</LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"locationmap\" id=\"locationmap\" size=42 value=\"" . $hloc_array[1]['locationmap'] . "\">\n";
+$workstring.="        <input type=\"hidden\" name=\"waslocationmap\" id=\"waslocationmap\" value=\"" . $hloc_array[1]['locationmap'] . "\">\n";
+$workstring.="      </TD>\n";
+
+$workstring.="    </TR>\n  <TR>\n";
+
+$workstring.="      <TD>\n";
+$workstring.="        <LABEL for=\"locationheight\">Height:</LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"locationheight\" id=\"locationheight\" value=\"" . $hloc_array[1]['locationheight'] . "\">\n";
+$workstring.="        <input type=\"hidden\" name=\"waslocationheight\" id=\"waslocationheight\" value=\"" . $hloc_array[1]['locationheight'] . "\">\n";
+$workstring.="      </TD>\n";
+$workstring.="      <TD>\n";
+$workstring.="        <LABEL for=\"locationdimensions\">Dimensions:</LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"locationdimensions\" id=\"locationdimensions\" value=\"" . $hloc_array[1]['locationdimensions'] . "\">\n";
+$workstring.="        <input type=\"hidden\" name=\"waslocationdimensions\" id=\"waslocationdimensions\" value=\"" . $hloc_array[1]['locationdimensions'] . "\">\n";
+$workstring.="      </TD>\n";
+$workstring.="      <TD>\n";
+$workstring.="        <LABEL for=\"locationarea\">Area:</LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"locationarea\" id=\"locationarea\" value=\"" . $hloc_array[1]['locationarea'] . "\">\n";
+$workstring.="        <input type=\"hidden\" name=\"waslocationarea\" id=\"waslocationarea\" value=\"" . $hloc_array[1]['locationarea'] . "\">\n";
+$workstring.="      </TD>\n";
+
+$workstring.="    </TR>\n  <TR>\n";
+
+$workstring.="      <TD>\n";
+$workstring.="        <LABEL for=\"locationstart\">Start Time:</LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"locationstart\" id=\"locationstart\" size=6 value=\"00:00:00\">\n";
+$workstring.="        <input type=\"hidden\" name=\"waslocationstart\" id=\"waslocationstart\" value=\"" . $hloc_array[1]['locationstart'] . "\">\n";
+$workstring.="      </TD>\n";
+$workstring.="      <TD>\n";
+$workstring.="        <LABEL for=\"locationend\">End Time:</LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"locationend\" id=\"locationend\" size=6 value=\"00:00:00\">\n";
+$workstring.="        <input type=\"hidden\" name=\"waslocationend\" id=\"waslocationend\" value=\"" . $hloc_array[1]['locationend'] . "\">\n";
+$workstring.="      </TD>\n";
+$workstring.="      <TD>\n";
+$workstring.="        <LABEL for=\"display_order\">Display Order: </LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"display_order\" id=\"display_order\" value=\"" . $hloc_array[1]['display_order'] . "\">\n";
+$workstring.="        <input type=\"hidden\" name=\"wasdisplay_order\" id=\"wasdisplay_order\" value=\"" . $hloc_array[1]['display_order'] . "\">\n";
+$workstring.="      </TD>\n";
+
+$workstring.="    </TR>\n  <TR>\n";
+
+$workstring.="      <TD colspan=3>\n";
+$workstring.="        <LABEL for=\"locationnotes\">Notes:</LABEL>\n";
+$workstring.="        <input type=\"text\" name=\"locationnotes\" id=\"locationnotes\" size=63 value=\"" . $hloc_array[1]['locationnotes'] . "\">\n";
+$workstring.="        <input type=\"hidden\" name=\"waslocationnotes\" id=\"waslocationnotes\" value=\"" . $hloc_array[1]['locationnotes'] . "\">\n";
+$workstring.="      </TD>\n";
+$workstring.="    </TR>\n  </TABLE>\n";
+$workstring.="<P><BUTTON type=\"submit\" name=\"submit\" class=\"SubmitButton\" value=\"Update\">Update</BUTTON></P>\n</FORM>\n";
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
-echo $workstring;
+if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
+  echo $workstring;
+} else {
+  echo "<P>We're sorry you do not have permission to view this page at this time.</P>\n";
+}
 
 correct_footer();
 ?>

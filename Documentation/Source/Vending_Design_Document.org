@@ -599,13 +599,13 @@
      Default increment 1, but able to be incremented otherwise by
      flag, or something, so that all the unique code can be collaped
      down to something simpler.
-**** VENDORQA VendorAdminState.php
+**** VENDORQA [[../webpages/VendorAdminState.php][VendorAdminState.php]]
      Change a vendor between the various states.
 *** Returning Vendor informational update
     This might not be necessary, based on the above page keeping what
     is set for this event as set.
      - SuperVendor can also update anyone here.
-**** VENDORQA VendorApply.php
+**** VENDORQA [[../webpages/VendorApply.php][VendorApply.php]]
 *** Returning Vendor/Community Table Bio update
     Page that they can, at will update their web or book information,
     along with all their other invormation.
@@ -615,7 +615,7 @@
        Librarian) is keeping everything in sync.
      - All the information is available on the standard Bios editing
        page as the bottom table.
-**** VENDORQA VendorSubmitVendor.php StaffManageBios.php
+**** VENDORQA [[../webpages/VendorSubmitVendor.php][VendorSubmitVendor.php]] [[../webpages/StaffManageBios.php][StaffManageBios.php]]
 *** Invoice
     Not available until after both they are accepted (by Vendor
     Div Head), and they hit the "generate invoice" button, which
@@ -641,7 +641,7 @@
     This is a positive or negative number, not a percent.  It should
     be figured off of whatever is appropriate, and the descripton
     should accommodate any reasoning.
-**** VENDORQA VendorPayAdj.php
+**** VENDORQA [[../webpages/VendorPayAdj.php][VendorPayAdj.php]]
 *** Vendor Jury
     The page that all the proposed vendors, with certain bits of
     information (to be determined, since I've not seen that page yet
@@ -678,18 +678,18 @@
     previous placements, or links to previous maps or something useful
     along those lines.  Including the current svg of the map.
     - Three Pieces:
-**** MYQA VendorSetupLocation.php
+**** MYQA [[../webpages/VendorSetupLocation.php][VendorSetupLocation.php]]
      This sets the possible rooms for the locations to be in.
      Still missing:
      - removals
      - updates
      - other con views
-**** VENDORQA VendorAssignSpace.php (top form)
+**** VENDORQA [[../webpages/VendorAssignSpace.php][VendorAssignSpace.php]] (top form)
      Initial vendor booth type selection.
      This will be end-cap?  Bedroom vendor?  Single?  Double? Which of
      their choices get filled? More than one booth? Should be before
      Invoicing, so Invoicing is correct.
-**** VENDORQA VendorAssignSpace.php (bottom form)
+**** VENDORQA [[../webpages/VendorAssignSpace.php][VendorAssignSpace.php]] (bottom form)
      Map Placement.
      Once the booths are assigned, this will get set, so their map
      coordinates are set.  This only shows up after the Initial vendor
@@ -699,20 +699,20 @@
     the standard pool.  To be updated by the Vendor Coordinator on an
     event by event basis.
     - needs removal option
-**** VENDORQA VendorSetupSpaceFeature.php
+**** VENDORQA [[../webpages/VendorSetupSpaceFeature.php][VendorSetupSpaceFeature.php]]
 *** Adminsiter Ad/Sponsor Options
     Page that has the Sponsor Levels, Digital Ads and Print Ads for
     this event, pulled from the standard pool.  To be updated either
     by the Vendor Div Head or the Publications Div Head on an event by
     event basis.
     - needs removal option
-**** VENDORQA PubsSetupAds.php    
+**** VENDORQA [[../webpages/PubsSetupAds.php][PubsSetupAds.php]]
 *** Administer Vendor
     Where any changes are made to the vendor information (both that
     they can change and that they can't) for creation/update by Vendor
     Div Head.
     - Redundant with above "Returning Vendor" pages.
-**** VENDORQA VendorApply.php VendorSubmitVendor.php StaffManageBios.php
+**** VENDORQA [[../webpages/VendorApply.php][VendorApply.php]] [[../webpages/VendorSubmitVendor.php][VendorSubmitVendor.php]] [[../webpages/StaffManageBios.php][StaffManageBios.php]]
      - Still a little wonky, brings back to a less-useful page, but
        still works.  Can select by email address or by "pubsname"
        which is the business name.
@@ -743,36 +743,38 @@
       marked specially.
 **** TODO Might just be a report.
 ** Flow
+   Most of the tools available across the flow also can be referenced
+   on the [[../webpages/StaffManageVendors.php][StaffManageVendors.php]] page.
 *** Set Amenities
-    Go to the VendorSetupSpaceFeature.php page, and set the
+    Go to the [[../webpages/VendorSetupSpaceFeature.php][VendorSetupSpaceFeature.php]] page, and set the
     appropriate amenities/prices/et al for this event.
 *** Set Spaces
-    Go to the VendorSetupSpaceFeature.php page, and set the
+    Go to the [[../webpages/VendorSetupSpaceFeature.php][VendorSetupSpaceFeature.php]] page, and set the
     appropriate spaces/prices/et al for this event.
 *** Set Sponsorship levels
-    Go to the PubsSetupAds.php page, and set the
+    Go to the [[../webpages/PubsSetupAds.php][PubsSetupAds.php]] page, and set the
     appropriate sponsor levels available/prices/et al for this event.
 *** Set Digital Ad possiblities
-    Go to the PubsSetupAds.php page, and set the
+    Go to the [[../webpages/PubsSetupAds.php][PubsSetupAds.php]] page, and set the
     appropriate digital ads available/prices/et al for this event.
 *** Set Printed Ad possibilities
-    Go to the PubsSetupAds.php page, and set the
+    Go to the [[../webpages/PubsSetupAds.php][PubsSetupAds.php]] page, and set the
     appropriate print ads available/prices/et al for this event.
 *** Set Location possibilities
-    Go to the VendorSetupLocation.php page, and set the appropriate
+    Go to the [[../webpages/VendorSetupLocation.php][VendorSetupLocation.php]] page, and set the appropriate
     locations available for the vendors.
 *** Task List - Vendors
-    Create Task List elemement at TaskListUpdate.php?activityid=-1
+    Create Task List elemement at [[../webpages/TaskListUpdate.php?activityid=-1][TaskListUpdate.php?activityid=-1]]
     with the call for vendors is created, with the appropriate links,
     and with the start and stop dates.
 *** Task List - Community Tables
-    Create Task List elemement at TaskListUpdate.php?activityid=-1
+    Create Task List elemement at [[../webpages/TaskListUpdate.php?activityid=-1][TaskListUpdate.php?activityid=-1]]
     with the call for community tables is created, with the
     appropriate links, and with the start and stop dates.
 *** Email
     Possible email from Vendor Div Head goes out reminding
     vendors/community tables when the call will open and close.
-    Might use StaffSendEmailCompose.php
+    Might use [[../webpages/StaffSendEmailCompose.php][StaffSendEmailCompose.php]]
 *** Phase Change
     At the appropriate time, the Con Chair or Zambia bitch will open
     the call for vendors, in line with the appropriate task-list
@@ -780,7 +782,7 @@
 *** Email
     Vendor Div Head generates and sends email letting the
     vendors/community tables know that the call is open.
-    Possibly using a mailing list, or using StaffSendEmailCompose.php
+    Possibly using a mailing list, or using [[../webpages/StaffSendEmailCompose.php][StaffSendEmailCompose.php]]
 *** Vendors/Community Table folk apply
     They use either the returning or the new pages, select the
     appropriate features, sponsorships, and ads that they want, and
@@ -792,10 +794,10 @@
     tables, while the vendor call/community table call is open
     acceptances can roll out and then things can go forward.
     Tools: 
-     + genindex.php?gflowname=Vend
-     + VendorAdminState.php
-     + VendorSubmitVendor.php
-     + VendorApply.php
+     + [[../webpages/genindex.php?gflowname=Vend][genindex.php?gflowname=Vend]]
+     + [[../webpages/VendorAdminState.php][VendorAdminState.php]]
+     + [[../webpages/VendorSubmitVendor.php][VendorSubmitVendor.php]]
+     + [[../webpages/VendorApply.php][VendorApply.php]]
      + Other tools TBD.
     Otherwise ...
 *** Phase Change
@@ -807,8 +809,8 @@
     community tables get acceptance, which probably is an individual
     email from the Div Head, with any specific to them in information
     included, and an invitation for them to pay their invoice.  The
-    general booth type is to be assigned on the VendorAssignSpace.php
-    page, and any pay adjustment is to be done on the VendorPayAdj.php
+    general booth type is to be assigned on the [[../webpages/VendorAssignSpace.php][VendorAssignSpace.php]]
+    page, and any pay adjustment is to be done on the [[../webpages/VendorPayAdj.php][VendorPayAdj.php]]
     page.
      - The jury pages are yet to be designed.
 *** Invoice
@@ -821,11 +823,11 @@
 *** Placement
     Div Head (and anyone else that can be roped into helping)
     schedules the vendors to be put in the appropriate locations on
-    the day of the event on the VendorAssignSpace.php
+    the day of the event on the [[../webpages/VendorAssignSpace.php][VendorAssignSpace.php]]
 *** Email
     Final email goes out, with any instruction reminders and if there
     is a manditory vendor meeting, or the like. Possibly using the
-    StaffSendEmailCompose.php page.
+    [[../webpages/StaffSendEmailCompose.php][StaffSendEmailCompose.php]] page.
 *** Welcome Letter
     Welcome lettters generated and printed, possibly stuffed in an
     envelope or folder of some sort.
@@ -845,7 +847,7 @@
 *** At Con
      - To be determined how.
 *** Post Con Final Email
-    Sent, possibly using StaffSendEmailCompose.php page or
+    Sent, possibly using [[../webpages/StaffSendEmailCompose.php][StaffSendEmailCompose.php]] page or
     the mailing list.
 *** Other individual notes
     Any other personal notes communicated.

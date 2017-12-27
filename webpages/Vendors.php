@@ -98,10 +98,7 @@ if (file_exists("../Local/$conid/Vendor_List")) {
 $query = <<<EOD
 SELECT
     DISTINCT pubsname AS 'Participants',
-    concat(if((secondtitle!=''),
-	      concat('<A NAME=\"', sessionid, '\">', secondtitle, '</A>'),
-	      ""),
-	   if((actualvendorloc!=''),actualvendorloc,"")) AS 'Location',
+    if(actualvendorloc!='',actualvendorloc,"") AS 'Location',
     pubsname,
     badgeid
   FROM
@@ -113,33 +110,39 @@ SELECT
     LEFT JOIN (SELECT
         badgeid,
         locationid,
+	conid,
 	GROUP_CONCAT(if(locationkey IS NULL,
-	   "",
-	   concat(' <A NAME="', locationid, '">',
-		  if(booth!="",
-		     concat(baselocroomname, " ", locationkey, booth),
-		     if(baselocsubroomid !=0,
-			if(baselocsubroomname REGEXP "^[A-Z,a-z,0-9]$",
-			   concat(locationkey,
-				  " ",
-				  baselocroomname,
-				  " ",
-				  baselocsubroomname),
-			   concat(locationkey, baselocsubroomname)),
-			concat(locationkey, baselocroomname))),
-		  '</A>')) SEPARATOR ", ") AS actualvendorloc
+          "",
+          concat('<A NAME="',
+            locationid,
+            '">',
+            if(booth!="",
+              concat(baselocroomname, " ", locationkey, booth),
+              if(baselocsubroomname!="",
+                concat(baselocroomname, " ", locationkey, baselocsubroomname),
+                concat(locationkey, baselocroomname))),
+            '</A>')) SEPARATOR ", ") AS actualvendorloc
       FROM
           VendorAnnualInfo
-        LEFT JOIN VendorHasLoc USING (badgeid)
-        LEFT JOIN Location USING (locationid,conid)
-        LEFT JOIN BaseLocSubRoom USING (baselocsubroomid)
-        LEFT JOIN BaseLocRoom USING (baselocroomid)
+	LEFT JOIN (SELECT
+	    badgeid,
+	    locationkey,
+	    locationid,
+	    booth,
+	    baselocsubroomname,
+	    baselocroomname,
+            conid
+          FROM
+              VendorHasLoc
+            JOIN Location USING (locationid)
+            JOIN BaseLocSubRoom USING (baselocsubroomid)
+            JOIN BaseLocRoom USING (baselocroomid)
+          WHERE
+	    conid=$conid) SUBAVL USING (badgeid,conid)
       WHERE
         conid=$conid
       GROUP BY
-        badgeid) AVL USING (badgeid)
-    LEFT JOIN ParticipantOnSession USING (badgeid,conid)
-    LEFT JOIN Sessions USING (sessionid,conid)
+	badgeid) AVL USING (badgeid,conid)
   WHERE
     vendorstatustypename in ('Accepted') AND
     permrolename in ('Vendor') AND

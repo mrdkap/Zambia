@@ -34,7 +34,7 @@ if ((!empty($_GET['history'])) AND (is_numeric($_GET['history']))) {
   $additionalinfo.="<P>To see this without the clutter of the previous con information, ";
   $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
 } elseif ((!empty($_POST['history'])) AND (is_numeric($_POST['history']))) {
-  $hist=$_GET['history'];
+  $hist=$_POST['history'];
   $additionalinfo.="<P>To see this with all previous con information included, ";
   $additionalinfo.="<A HREF=VendorSetupLocation.php?history=Y>click here</A>.</P>\n";
   $additionalinfo.="<P>To see this without the clutter of the previous con information, ";
@@ -302,8 +302,8 @@ $workstring.="<FORM name=\"locform\" action=\"VendorSetupLocation.php\" method=P
 $workstring.="  <INPUT type=\"hidden\" name=\"locationid\" id=\"locationid\" value=\"$locationid\">\n";
 
 // continue to include history if requested.
-if ($hist=="T") {
-  $workstring.="  <INPUT type=\"hidden\" name=\"history\" id=\"history\" value=\"Y\">\n";
+if ($hist != "") {
+  $workstring.="  <INPUT type=\"hidden\" name=\"history\" id=\"history\" value=\"$hist\">\n";
 }
 
 $workstring.="  <TABLE>\n";

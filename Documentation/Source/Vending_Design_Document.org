@@ -598,7 +598,9 @@
 **** TODO Write "advance to next"
      Default increment 1, but able to be incremented otherwise by
      flag, or something, so that all the unique code can be collaped
-     down to something simpler.
+     down to something simpler.  And also should have something
+     per-con, and perhaps different between vendors and community
+     tables the list of applicable stages to be incremented between.
 **** VENDORQA [[../webpages/VendorAdminState.php][VendorAdminState.php]]
      Change a vendor between the various states.
 *** Returning Vendor informational update
@@ -678,12 +680,9 @@
     previous placements, or links to previous maps or something useful
     along those lines.  Including the current svg of the map.
     - Three Pieces:
-**** MYQA [[../webpages/VendorSetupLocation.php][VendorSetupLocation.php]]
-     This sets the possible rooms for the locations to be in.
-     Still missing:
-     - removals
-     - updates
-     - other con views
+**** VENDORQA [[../webpages/VendorSetupLocation.php][VendorSetupLocation.php]]
+     This sets the possible rooms, times, division, (possible) track,
+     key, map, and general information for the locations to be in.
 **** VENDORQA [[../webpages/VendorAssignSpace.php][VendorAssignSpace.php]] (top form)
      Initial vendor booth type selection.
      This will be end-cap?  Bedroom vendor?  Single?  Double? Which of

@@ -1,0 +1,216 @@
+\documentclass[captions=tablesignature]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{booktabs}
+\usepackage[scaled]{beraserif}
+\usepackage[scaled]{berasans}
+\usepackage[scaled]{beramono}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{fancyhdr}
+\usepackage{subfig}
+\usepackage{listings}
+\lstnewenvironment{common-lispcode}
+{\lstset{language={HTML},basicstyle={\ttfamily\footnotesize},frame=single,breaklines=true}}
+{}
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\description\compactdesc
+\let\enumerate\compactenum
+\usepackage[letterpaper,includeheadfoot,top=12.5mm,bottom=25mm,left=19mm,right=19mm]{geometry}
+\pagestyle{fancy}
+\setcounter{secnumdepth}{3}
+\author{Percy\thanks{NELA.Percy@gmail.com}}
+\date{March 2012}
+\title{Presenter Flow in Zambia}
+\hypersetup{
+  pdfkeywords={Zambia, Documentation, FFF branch},
+  pdfsubject={Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in a path of pulling the publications out of the Zambia FFF-branch instance for your conference.  This is still a work in progress.},
+  pdfcreator={}}
+\begin{document}
+
+\maketitle
+\pagenumbering{roman}
+\thispagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{}
+\rhead{}
+\chead{}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+\begin{abstract}
+\vspace{5cm}
+{\LARGE{\textbf{Abstract:\\}}}
+Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in a path of pulling the publications out of the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+\end{abstract}
+\newpage
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+\chead{
+Presenter Flow in Zambia
+}
+\lfoot{
+Percy <NELA.Percy@gmail.com>
+}
+\rfoot{\thepage}
+\setcounter{tocdepth}{3}
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+\pagenumbering{arabic}
+\section{Introduction}
+\label{sec-1}
+
+There is a certain pattern to the flow of dealing with the
+publications, with an eye mostly to the concept of a book or
+pamphelet as a hard-copy guide available for your con.  There are
+several pieces to this, from ads and sponsors, to the vending and
+presenter data that go into that publication, but this also
+describes things like the presenter, volunteer, vendor, and general
+attendee packets as well.
+\section{General Flow}
+\label{sec-2}
+\subsection{Set Sponsorship levels}
+\label{sec-2-1}
+Go to the \href{../webpages/PubsSetupAds.php}{PubsSetupAds.php} page, and set the
+appropriate sponsor levels available/prices/et al for this event.
+
+\subsection{Set Digital Ad possiblities}
+\label{sec-2-2}
+Go to the \href{../webpages/PubsSetupAds.php}{PubsSetupAds.php} page, and set the
+appropriate digital ads available/prices/et al for this event.
+
+\subsection{Set Printed Ad possibilities}
+\label{sec-2-3}
+Go to the \href{../webpages/PubsSetupAds.php}{PubsSetupAds.php} page, and set the
+appropriate print ads available/prices/et al for this event.
+\subsection{Task List}
+\label{sec-2-4}
+
+Create \href{../webpages/TaskListUpdate.php?activityid=-1}{"Task List"} entries to track timing across the event.
+
+Things to consider: 
+\begin{itemize}
+\item informational deadlines as editing is needed
+\item book/pamphelet deadlines
+\item handouts deadlines, printing (including count), and distributing
+\item packet information deadlines and contents
+\item signage deadlines and placement timing
+\item Social Media deadlines, rolling and fixed
+\item BEO deadlines
+\item Feedback Form deadlines - printing, collecting, input, and
+reporting
+\item Sponsor Banner deadlines
+\item Sponsor Class deadlines (including negotiation times with the
+class presenters)
+\end{itemize}
+
+\subsection{PublicationLimits}
+\label{sec-2-5}
+
+Set up the publication limits for the data collected on the
+presenters, session elements, vendors, and volunteers.  This is
+described in more depth in the \texttt{"Setting Up"} \texttt{(PDF)} document.
+
+\section{Program Book/Pamphelet}
+\label{sec-3}
+
+Most of the programming book elements can be found in the \href{../webpages/PreconPrinting.php}{"Printing"}
+page:
+\begin{itemize}
+\item \href{../webpages/BookBios.php}{Bios} \href{../webpages/BookBios.php?pic_p=N}{(without images)} \href{../webpages/BookBios.php?short=Y}{(short)}
+\item \href{../webpages/BookStaffBios.php}{Staff Bios} \href{../webpages/BookStaffBios.php?pic_p=N}{(without images)} \href{../webpages/BookStaffBios.php?short=Y}{(short)}
+\item \href{../webpages/BookSched.php?format=desc}{Descriptions} \href{../webpages/BookSched.php?format=desc&short=Y}{(short)}
+\item \href{../webpages/BookSched.php?format=sched}{Schedule} \href{../webpages/BookSched.php?format=sched&short=Y}{(short)}
+\item \href{../webpages/BookSched.php?format=tracks}{Track list by Name} \href{../webpages/BookSched.php?format=tracks&short=N}{(short)}
+\item \href{../webpages/BookSched.php?format=trtime}{Track list by Time} \href{../webpages/BookSched.php?format=trtime&short=Y}{(short)}
+\item \href{../webpages/BookSched.php?format=rooms}{Rooms} \href{../webpages/BookSched.php?format=rooms&short=Y}{(short)}
+\item If written the letter from the con chair(s), the board chair(s),
+the rules, the FAQ, maps, etc are all in the Local/conid/
+directory for inclusion e.g. Local/2/FAQ
+\item Ads are still done elsewhere
+\end{itemize}
+
+Not always is all the information in Zambia by the time it is being
+collected to print, so \ldots{} if there are tags like: \textbf{\textbf{\textbf{EDIT PLEASE}}}
+that usually means that some information is missing.  Please see the
+\texttt{"Bios Editing"} \texttt{(PDF)} document for further instructions.  Also if a
+picture is listed as: Picture for editing at: (path)/Local/logo.gif
+it usually means there isn't a picture available.
+
+\section{Presenter, Volunteer, Class, and Vendor Packets}
+\label{sec-4}
+
+Much of what goes into the packets are the same or simiar across
+several of them.  There should be at least one "Packet Stuffing"
+Task that has the details in it.
+\section{Photo Lounge Contact Sheet}
+\label{sec-5}
+
+This is available on the \href{../webpages/PhotoLoungeContactSheet.php}{Photo Lounge Contact Sheet} page.
+
+This usually has two or three laminated copies printed and then
+punched on a ring, so people can look, but they get the impression
+that they are not there for the taking.  At one event, a pad of
+sticky notes and a pen were also attached to the ring, so that if
+someone wanted to note down a particular photo, or artist for
+getting prints from, or to do work with, that was available.
+
+\section{Room Logistics}
+\label{sec-6}
+
+The \href{../webpages/LogisticsPrint.php}{"Room States"} and the \href{../webpages/genreport.php?reportid=188}{"Beo Form"} are a good place to start
+working on printing out the BEOs so they can be checked, turned in
+to the hotel and then signed off on, with the hotel.  It is often
+useful to check the information first on a few reports like the
+\href{../webpages/genreport.php?reportid=137}{"Combined Roomsets for Programming"}, or the \href{../webpages/genreport.php?reportid=100}{"Combined Roomset"}.
+
+\section{Social Media Spreadsheet}
+\label{sec-7}
+
+This spreadsheet \href{../webpages/SocialMediaSpreadsheet.php}{"SocialMediaSpreadsheet.php"} has sections for each
+of the types of information that might want to be disseminated.
+There are a bunch of sections, from presenters to community tables,
+etc.
+
+\section{Grids}
+\label{sec-8}
+
+The grids are automatically produced from the database in several
+different ways.  There is the one for \href{../webpages/KonOpas.php#info}{"KonOpas"}, the printable/live
+ones that are \href{../webpages/Postgrid-wide.php}{"Times x Rooms"} \href{../webpages/Postgrid-wide.php?print_p=y}{(PDF)} or \href{../webpages/Postgrid.php}{"Rooms x Times"} \href{../webpages/Postgrid.php?print_p=y}{(PDF)} and a
+\href{../webpages/manualGRIDS.php}{bunch of others}.
+
+\section{Feedback}
+\label{sec-9}
+
+Set up the feedback forms, for online and publication purposes.
+This allows the feedback on the classes to be collected, entered,
+and tracked, both for the presenter's benefit (to help them improve
+their classes) and for the program committee's benefit (to help them
+both select who from the past, what classes landed and what didn't
+and what size rooms and timing is better for what).  This is
+described in more depth in the \texttt{"Setting Up"} \texttt{(PDF)} document.
+
+\section{Feedback Forms}
+\label{sec-10}
+
+These should be available on the \href{../webpages/StaffFeedback.php}{"Feedback forms"} page once the
+above procedure is followed appropriately.
+\end{document}

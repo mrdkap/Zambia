@@ -645,15 +645,35 @@ is an advantage to all.
 #+begin_src html :exports both :results silent
   backup_mysql /your/path/to/Zambia-FFF/instance
 #+end_src
+* Adding a year instance - Tools
+  + Con Creation: [[../webpages/AdminNewConInstance.php][AdminNewConInstance.php]]
+  + Con Info: [[../webpages/AdminConInstance.php][AdminConInstance.php]]
+  + Phase state: [[../webpages/AdminPhases.php][AdminPhases.php]]
+  + Permissions/Con Role: [[../webpages/StaffEditCreateParticipant.php?action=migrate][Migrate Participant]], [[../webpages/StaffEditCreateParticipant.php?action=edit][Edit Participant]]
+  + Has Reports: [[../webpages/AdminHasReports.php][AdminHasReports.php]]
+  + Manage Participants and Schedule: [[../webpages/StaffManageParticipants.php][Manage Participants & Schedule]]
+  + Services and Features: [[../webpages/AdminSetupServices.php][AdminSetupServices.php]]
+  + Create Sessions: [[../webpages/CreateSession.php][Create a New Session]]
+  + Manage Sessions: [[../webpages/StaffManageSessions.php][Manage Sessions]]
+  + WebApp information update: [[../webpages/KonOpasData.php][Publish to KonOpas/WebApp]]
 * Adding a year instance - Con Structure
+
   Another Con instance is approaching.  To set up for this, there is
   one file and a number of table additions you need to make.  The best
   way to initiate this is to log into a similar con instance and use
-  the AdminNewConInstance.php page.  If you want to do it by hand,
-  here are the updates you have to do.  You might want to update the
-  FALLBACK_KEY in the Local/db_name.php file, but you shouldn't have
-  to, all the rest should remain the same.  The rest of the
-  information below should be set in your database tables.
+  the [[../webpages/AdminNewConInstance.php]["AdminNewConInstance.php"]] page.  This takes care of letting you
+  create the basic con information, the Local directory relevant for
+  your con, at least one Phase element, for the phase step below, and
+  copies over the Permission Roles, Con Roles, Reports, and
+  Publication Limits from the selected con instance.  The con
+  information can be altered later, if you so desire on the
+  [[../webpages/AdminConInstance.php]["AdminConInstance.php"]] page.
+
+  If you want to do it by hand, here are the updates you have to do.
+  You might want to update the FALLBACK_KEY in the Local/db_name.php
+  file, but you shouldn't have to, all the rest should remain the
+  same.  The rest of the information below should be set in your
+  database tables.
 ** ConInfo
    The first place to start is setting your ConInfo information.  This
    allows for the con to show up in the index file, and opens all the
@@ -720,7 +740,7 @@ is an advantage to all.
    deadlines approach and pass.  Not all of the phasetypeids from the
    PhaseTypes table need to be there, but, it is easier if they are,
    so all you have to do is change the phasestate, using the
-   AdminPhases.php page and the appropriate phase changes state.  If
+   [[../webpages/AdminPhases.php]["AdminPhases.php"]] page and the appropriate phase changes state.  If
    you wish to see what values were set for a previous instance of
    your con (to make sure you have the right values), you might want
    to use a query (replacing the $conid with the previous con you want
@@ -767,14 +787,31 @@ is an advantage to all.
    point in time.
 * Adding a year instance - People
 ** UserHasPermissionRole
+
    This need to be set so people can actually log into your con.  This
    defines the access any particular individual might have.
    Individuals might have several sets of accesses, depending on their
    roles, some cover more than one area, others do not.  This gets
    somewhat complex, in the interweaving of some other tables, but,
-   theoretically that was set up, and still should hold true from
-   previous instances of your con.  Of course, tweaking from year to
-   year might need to happen.  If you wish to see who had which
+   most probably that was already set up, and still should hold true from
+   previous instances of your con.  You should have the same access,
+   because of the use of the [[../webpages/AdminNewConInstance.php]["AdminNewConInstance.php"]] page, above.
+
+   Of course, tweaking from year to year might need to happen.  The
+   easiest way to do so is to use the 
+   [[../webpages/StaffEditCreateParticipant.php?action=migrate]["Migrate Participant from another con-instance"]] link under the
+   [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab  
+   to give each the right permissions. If a person's permissions need
+   to be changed, they can be updated either on the migration page
+   listed above, or on the [[../webpages/StaffEditCreateParticipant.php?action=edit]["Edit Participant"]] page. The use of that
+   page is well documented in the [[Presenter_Flow.html]["Presenter Flow"]] [[Presenter_Flow.pdf][(PDF)]] document in
+   this directory.
+
+   You probably also want to make sure the 100-user (the Brainstorm
+   User called Idea Submissions), has permroleid 4 (Brainstorm) so
+   that the brainstorm submission system will work.
+
+   To set this up by hand, or if you wish to see who had which
    leadership roles in a previous instance of your con (to make sure
    you are rolling forward with the right roles), you might want to
    use a query (replacing the $conid with the previous con you want to
@@ -798,29 +835,28 @@ is an advantage to all.
      have for this con.
    + conid: The con that these permission are for.  This should be set
      to whatever conid you are creating.
-
-   If you want to only add your particular badgeid, permroleid, conid
-   information, and then use the "Migrate Participant from another
-   con-instance" link under the "Manage Participants & Schedule" tab 
-   to give each the right permissions, that will work as well.  But at
-   least you will need to be set up, so you can grant other people
-   access.  The use of that page is well documented in the
-   Presenter_Flow document in this directory.
-
-   You probably also want to add the 100-user (the Brainstorm User
-   called Idea Submissions), to permroleid 4 (Brainstorm) so that the
-   brainstorm submission system will work.
 ** UserHasConRole
+
    This is very similar to the UserHasPermissionRole, and was split
    off, because not all Permission Roles want to necessarily be
    advertised, and sometimes a Permission Role is a superset of a Con
-   Role that actually wants to be called out.  While this is not a
-   necessary step, it is a good one to follow, so people know who is
-   responsible for what, when they visit your webpage. If you wish to
-   see who had which leadership roles in a previous instance of your
-   con (to make sure you are rolling forward with the right roles),
-   you might want to use a query (replacing the $conid with the
-   previous con you want to model on) like:
+   Role that actually wants to be called out.
+
+   Also, similar to UserHasPermissionRole, this should have been
+   populated by the use of the use of the [[../webpages/AdminNewConInstance.php]["AdminNewConInstance.php"]]
+   page, above, and can be modified on either the [[../webpages/StaffEditCreateParticipant.php?action=migrate]["Migrate Participant"]]
+   page or the [[../webpages/StaffEditCreateParticipant.php?action=edit]["Edit Participant"]] page mentioned above.
+
+   You probably want to make sure the 100-user (the Brainstorm User
+   called Idea Submissions), has conroleid 47 (BrainstormCoord) for
+   tracking purposes.
+
+   While this is not a necessary step, it is a good one to follow, so
+   people know who is responsible for what, when they visit your
+   webpage. If you wish to see who had which leadership roles in a
+   previous instance of your con (to make sure you are rolling forward
+   with the right roles), you might want to use a query (replacing the
+   $conid with the previous con you want to model on) like:
 #+begin_src html :exports both :results silent
     SELECT
         concat(badgeid," - ",pubsname) AS Who,
@@ -849,18 +885,21 @@ is an advantage to all.
    least you will need to be set up, so you can grant other people
    access.  The use of that page is well documented in the
    Presenter_Flow document in this directory.
-
-   You probably want to add the 100-user (the Brainstorm User called
-   Idea Submissions), to conroleid 47 (BrainstormCoord) for tracking
-   purposes.
 ** HasReports
+
    This maps the organizational chart of your convention.  Again while
    this is not a necessary step for the start of your con, and might
-   be added to as your con goes on using the AdminHasReports.php page,
-   usually you know what the table of your organization will be, even
-   if you don't yet know who will be filling those roles.  To see what
-   was before you can use a query (replacing the $conid with the
-   previous con you want to model on) like:
+   be prepopulated when you used the [[../webpages/AdminNewConInstance.php]["AdminNewConInstance.php"]] or can
+   be modified as your con goes on using the [[../webpages/AdminHasReports.php]["AdminHasReports.php"]]
+   page, usually you know what the table of your organization will be,
+   even if you don't yet know who will be filling those roles.
+
+   You probably want to make sure the BrainstormCoordinator (47),
+   reports to Programming (3).
+
+   If you wish to work this by hand, you can see what was before you
+   can use a query (replacing the $conid with the previous con you
+   want to model on) like:
 #+begin_src html :exports both :results silent
     SELECT
         concat(HR.conroleid," - ",CR.conrolename) AS Role,
@@ -894,18 +933,23 @@ is an advantage to all.
 #+end_src
    Then just massage the data slightly, and you have the insert you
    can do to mirror the previous con.
+** Continued Interaction
 
-   You probably want to make sure the BrainstormCoordinator (47),
-   reports to Programming (3).
+   Most of the continued interaction can be mostly handled under the
+   [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] page.
 * Adding a year instance - Sessions
-  The sessions are mostly generated from Brainstorm (and other
-  insertions to your database) but there are a few settings that
-  should be taken care of, to make sure everything works smoothly.
-  The limits are set on an event basis, since sometimes publications
-  or the space for things to be advertised differs from year to year.
-  Also the requests might change, depending on what is available,
-  as well as the rooms
+
+  The sessions are mostly generated from Brainstorm, proposals by
+  presenters, and by the [[../webpages/CreateSession.php]["Create a New Session"]] page, but there are a
+  few settings that should be taken care of, to make sure everything
+  works smoothly.  The limits are set on an event basis, since
+  sometimes publications or the space for things to be advertised
+  differs from year to year.  Also the requests might change,
+  depending on what is available, as well as the rooms
 ** PublicationLimits
+
+   This still needs an in-Zambia tool to modify/set these.
+
    This tracks the various limits on the publication fields, so that
    you can have restrictions on minimum and/or maximum length of these
    fields.  All the limit checks should be set up such that if you
@@ -954,6 +998,7 @@ is an advantage to all.
    Then just massage the data slightly, and you have the insert you
    can do to mirror the previous con.
 ** Services and Features
+
    These two tables are built in the same pattern.  Services are the
    bits that logistics could get to the room, so they could be used
    for the class.  Some of the room features (speakers, microphone)
@@ -966,12 +1011,21 @@ is an advantage to all.
    easily.
 
    To select (or update the selection) of services and features
-   available for this con-instance, use the AdminSetupServices.php
+   available for this con-instance, use the [[../webpages/AdminSetupServices.php]["AdminSetupServices.php"]]
    page.
 
 ** Rooms
+
    This needs to be fleshed out more.
+** Continued Interaction
+
+   Most of the continued interaction can be mostly handled under the
+   [[../webpages/StaffManageSessions.php]["Manage Sessions"]] page.
 * Adding a year instance - Vendors
+
+  This is covered extensively, and in a more updated fashion in the
+  [[Vending_Design_Document.html]["Vending Design Document"]] [[Vending_Design_Document.pdf][(PDF)]].  The below is still here fore
+  legacy purposes until cleaned up.
 ** VendorSpaces and VendorFeatures
    These two tables are built in the same pattern. VendorSpaces are
    the size/type of space, and the cost of said space for the con.
@@ -1033,8 +1087,8 @@ is an advantage to all.
 #+end_src
    Then just massage the data slightly, and you have the insert you
    can do to mirror the previous con.
-** More Vendor stuff, pending development.
 * Adding a year instance - Feedback
+
   Setting up feedback for your con is somewhat complex.  I'm not sure
   what motivated me, originally to be so baroque, but I think it was
   flexibility at the time.
@@ -1045,6 +1099,7 @@ is an advantage to all.
   the most current one.  Just one has to exist for the constraints to
   work for general feedback.
 ** Adding Questions
+
    If your questions are not appropriate for this particular event,
    you might want to add a question type to cover it, in the
    QuestionTypes table, and then add the questions to the
@@ -1062,6 +1117,7 @@ is an advantage to all.
    + questiontypeid: What type of question it is, referencing the
      QuestionTypes table above.
 ** Setting up the page description (how it is presented)
+
    For your event, there might be several different feedback forms you
    want available, so that an individual isn't overwhelmed by the
    number of possible choices.  One of the ways to do this is to break
@@ -1097,6 +1153,7 @@ is an advantage to all.
    + fpageid: From the FeedbackPages table.
    + typeid: From the Types table.
 ** Setting the TypeHasQuestionType
+
    This is implemented to be able to cross-type questions, and make
    sure you wanted those question types to show up for that type of
    schedule element, for this particular event.  It does allow for
@@ -1111,3 +1168,21 @@ is an advantage to all.
    + typeid: From the Types table.
    + questiontypeid: From the QuestionTypes table.
    + conid: For which event is being run.
+* Adding a year instance - App/KonOpas
+
+  You should have already set up the KonOpas instance with your
+  event.  The modifications done to the 0.8 verson of KonOpas to make
+  it as fully compatable as possible, should have been bundled with
+  the Zambia software.  So all you should have to do is publish your
+  static data, whenever you do a (major) update.  This is done from
+  the [[../webpages/KonOpasData.php]["Publish to KonOpas/WebApp"]] link off of the [[../webpages/StaffManageSessions.php][Manage Sessions]] page.
+* Other Useful Documentation
+  + [[Bio_Editing.html][Bio Editing]] [[Bio_Editing.pdf][(PDF)]]
+  + [[Email_Functions.html][Email Functions]] [[Email_Functions.pdf][(PDF)]]
+  + [[Panelists_Guide.html][Panelists Guild]] [[Panelists_Guide.pdf][(PDF)]]
+  + [[Photo_Lounge.html][Photo Lounge Guide]] [[Photo_Lounge.pdf][(PDF)]]
+  + [[Presenter_Flow.html][Presenter Flow]] [[Presenter_Flow.pdf][(PDF)]]
+  + [[Publication_Flow.html][Publication Flow]] [[Publication_Flow.pdf][(PDF)]]
+  + [[Tasks-Gantt_Chart.html][Tasks and Gantt Chart]] [[Tasks-Gantt_Chart.pdf][(PDF)]]
+  + [[Time_Card.html][Time Cards]] [[Time_Card.pdf][(PDF)]]
+  + [[Vending_Design_Document.html][Vending Guide]] [[Vending_Design_Document.pdf][(PDF)]]

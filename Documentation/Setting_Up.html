@@ -212,39 +212,43 @@ Percy, Bendyogagirl &lt;NELA.Percy@gmail.com&gt;
 </ul>
 </li>
 <li><a href="#sec-9">9. Backing up</a></li>
-<li><a href="#sec-10">10. Adding a year instance - Con Structure</a>
+<li><a href="#sec-10">10. Adding a year instance - Tools</a></li>
+<li><a href="#sec-11">11. Adding a year instance - Con Structure</a>
 <ul>
-<li><a href="#sec-10-1">10.1. ConInfo</a></li>
-<li><a href="#sec-10-2">10.2. Phase</a></li>
+<li><a href="#sec-11-1">11.1. ConInfo</a></li>
+<li><a href="#sec-11-2">11.2. Phase</a></li>
 </ul>
 </li>
-<li><a href="#sec-11">11. Adding a year instance - People</a>
+<li><a href="#sec-12">12. Adding a year instance - People</a>
 <ul>
-<li><a href="#sec-11-1">11.1. UserHasPermissionRole</a></li>
-<li><a href="#sec-11-2">11.2. UserHasConRole</a></li>
-<li><a href="#sec-11-3">11.3. HasReports</a></li>
+<li><a href="#sec-12-1">12.1. UserHasPermissionRole</a></li>
+<li><a href="#sec-12-2">12.2. UserHasConRole</a></li>
+<li><a href="#sec-12-3">12.3. HasReports</a></li>
+<li><a href="#sec-12-4">12.4. Continued Interaction</a></li>
 </ul>
 </li>
-<li><a href="#sec-12">12. Adding a year instance - Sessions</a>
+<li><a href="#sec-13">13. Adding a year instance - Sessions</a>
 <ul>
-<li><a href="#sec-12-1">12.1. PublicationLimits</a></li>
-<li><a href="#sec-12-2">12.2. Services and Features</a></li>
-<li><a href="#sec-12-3">12.3. Rooms</a></li>
+<li><a href="#sec-13-1">13.1. PublicationLimits</a></li>
+<li><a href="#sec-13-2">13.2. Services and Features</a></li>
+<li><a href="#sec-13-3">13.3. Rooms</a></li>
+<li><a href="#sec-13-4">13.4. Continued Interaction</a></li>
 </ul>
 </li>
-<li><a href="#sec-13">13. Adding a year instance - Vendors</a>
+<li><a href="#sec-14">14. Adding a year instance - Vendors</a>
 <ul>
-<li><a href="#sec-13-1">13.1. VendorSpaces and VendorFeatures</a></li>
-<li><a href="#sec-13-2">13.2. More Vendor stuff, pending development.</a></li>
+<li><a href="#sec-14-1">14.1. VendorSpaces and VendorFeatures</a></li>
 </ul>
 </li>
-<li><a href="#sec-14">14. Adding a year instance - Feedback</a>
+<li><a href="#sec-15">15. Adding a year instance - Feedback</a>
 <ul>
-<li><a href="#sec-14-1">14.1. Adding Questions</a></li>
-<li><a href="#sec-14-2">14.2. Setting up the page description (how it is presented)</a></li>
-<li><a href="#sec-14-3">14.3. Setting the TypeHasQuestionType</a></li>
+<li><a href="#sec-15-1">15.1. Adding Questions</a></li>
+<li><a href="#sec-15-2">15.2. Setting up the page description (how it is presented)</a></li>
+<li><a href="#sec-15-3">15.3. Setting the TypeHasQuestionType</a></li>
 </ul>
 </li>
+<li><a href="#sec-16">16. Adding a year instance - App/KonOpas</a></li>
+<li><a href="#sec-17">17. Other Useful Documentation</a></li>
 </ul>
 </div>
 </div>
@@ -1333,22 +1337,60 @@ The script is invoked as:
 </div>
 
 <div id="outline-container-sec-10" class="outline-2">
-<h2 id="sec-10"><span class="section-number-2">10</span> Adding a year instance - Con Structure</h2>
+<h2 id="sec-10"><span class="section-number-2">10</span> Adding a year instance - Tools</h2>
 <div class="outline-text-2" id="text-10">
+<ul class="org-ul">
+<li>Con Creation: <a href="../webpages/AdminNewConInstance.php">AdminNewConInstance.php</a>
+</li>
+<li>Con Info: <a href="../webpages/AdminConInstance.php">AdminConInstance.php</a>
+</li>
+<li>Phase state: <a href="../webpages/AdminPhases.php">AdminPhases.php</a>
+</li>
+<li>Permissions/Con Role: <a href="../webpages/StaffEditCreateParticipant.php?action=migrate">Migrate Participant</a>, <a href="../webpages/StaffEditCreateParticipant.php?action=edit">Edit Participant</a>
+</li>
+<li>Has Reports: <a href="../webpages/AdminHasReports.php">AdminHasReports.php</a>
+</li>
+<li>Manage Participants and Schedule: <a href="../webpages/StaffManageParticipants.php">Manage Participants &amp; Schedule</a>
+</li>
+<li>Services and Features: <a href="../webpages/AdminSetupServices.php">AdminSetupServices.php</a>
+</li>
+<li>Create Sessions: <a href="../webpages/CreateSession.php">Create a New Session</a>
+</li>
+<li>Manage Sessions: <a href="../webpages/StaffManageSessions.php">Manage Sessions</a>
+</li>
+<li>WebApp information update: <a href="../webpages/KonOpasData.php">Publish to KonOpas/WebApp</a>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-11" class="outline-2">
+<h2 id="sec-11"><span class="section-number-2">11</span> Adding a year instance - Con Structure</h2>
+<div class="outline-text-2" id="text-11">
 <p>
 Another Con instance is approaching.  To set up for this, there is
 one file and a number of table additions you need to make.  The best
 way to initiate this is to log into a similar con instance and use
-the AdminNewConInstance.php page.  If you want to do it by hand,
-here are the updates you have to do.  You might want to update the
-FALLBACK_KEY in the Local/db_name.php file, but you shouldn't have
-to, all the rest should remain the same.  The rest of the
-information below should be set in your database tables.
+the <a href="../webpages/AdminNewConInstance.php">"AdminNewConInstance.php"</a> page.  This takes care of letting you
+create the basic con information, the Local directory relevant for
+your con, at least one Phase element, for the phase step below, and
+copies over the Permission Roles, Con Roles, Reports, and
+Publication Limits from the selected con instance.  The con
+information can be altered later, if you so desire on the
+<a href="../webpages/AdminConInstance.php">"AdminConInstance.php"</a> page.
+</p>
+
+<p>
+If you want to do it by hand, here are the updates you have to do.
+You might want to update the FALLBACK_KEY in the Local/db_name.php
+file, but you shouldn't have to, all the rest should remain the
+same.  The rest of the information below should be set in your
+database tables.
 </p>
 </div>
-<div id="outline-container-sec-10-1" class="outline-3">
-<h3 id="sec-10-1"><span class="section-number-3">10.1</span> ConInfo</h3>
-<div class="outline-text-3" id="text-10-1">
+<div id="outline-container-sec-11-1" class="outline-3">
+<h3 id="sec-11-1"><span class="section-number-3">11.1</span> ConInfo</h3>
+<div class="outline-text-3" id="text-11-1">
 <p>
 The first place to start is setting your ConInfo information.  This
 allows for the con to show up in the index file, and opens all the
@@ -1433,16 +1475,16 @@ have.
 </div>
 </div>
 
-<div id="outline-container-sec-10-2" class="outline-3">
-<h3 id="sec-10-2"><span class="section-number-3">10.2</span> Phase</h3>
-<div class="outline-text-3" id="text-10-2">
+<div id="outline-container-sec-11-2" class="outline-3">
+<h3 id="sec-11-2"><span class="section-number-3">11.2</span> Phase</h3>
+<div class="outline-text-3" id="text-11-2">
 <p>
 This also has to be set up so the appropriate Phase shifting can
 happen.  The phase of the convention will shift, over time, as
 deadlines approach and pass.  Not all of the phasetypeids from the
 PhaseTypes table need to be there, but, it is easier if they are,
 so all you have to do is change the phasestate, using the
-AdminPhases.php page and the appropriate phase changes state.  If
+<a href="../webpages/AdminPhases.php">"AdminPhases.php"</a> page and the appropriate phase changes state.  If
 you wish to see what values were set for a previous instance of
 your con (to make sure you have the right values), you might want
 to use a query (replacing the $conid with the previous con you want
@@ -1512,21 +1554,43 @@ point in time.
 </div>
 </div>
 
-<div id="outline-container-sec-11" class="outline-2">
-<h2 id="sec-11"><span class="section-number-2">11</span> Adding a year instance - People</h2>
-<div class="outline-text-2" id="text-11">
-</div><div id="outline-container-sec-11-1" class="outline-3">
-<h3 id="sec-11-1"><span class="section-number-3">11.1</span> UserHasPermissionRole</h3>
-<div class="outline-text-3" id="text-11-1">
+<div id="outline-container-sec-12" class="outline-2">
+<h2 id="sec-12"><span class="section-number-2">12</span> Adding a year instance - People</h2>
+<div class="outline-text-2" id="text-12">
+</div><div id="outline-container-sec-12-1" class="outline-3">
+<h3 id="sec-12-1"><span class="section-number-3">12.1</span> UserHasPermissionRole</h3>
+<div class="outline-text-3" id="text-12-1">
 <p>
 This need to be set so people can actually log into your con.  This
 defines the access any particular individual might have.
 Individuals might have several sets of accesses, depending on their
 roles, some cover more than one area, others do not.  This gets
 somewhat complex, in the interweaving of some other tables, but,
-theoretically that was set up, and still should hold true from
-previous instances of your con.  Of course, tweaking from year to
-year might need to happen.  If you wish to see who had which
+most probably that was already set up, and still should hold true from
+previous instances of your con.  You should have the same access,
+because of the use of the <a href="../webpages/AdminNewConInstance.php">"AdminNewConInstance.php"</a> page, above.
+</p>
+
+<p>
+Of course, tweaking from year to year might need to happen.  The
+easiest way to do so is to use the 
+<a href="../webpages/StaffEditCreateParticipant.php?action=migrate">"Migrate Participant from another con-instance"</a> link under the
+<a href="../webpages/StaffManageParticipants.php">"Manage Participants &amp; Schedule"</a> tab  
+to give each the right permissions. If a person's permissions need
+to be changed, they can be updated either on the migration page
+listed above, or on the <a href="../webpages/StaffEditCreateParticipant.php?action=edit">"Edit Participant"</a> page. The use of that
+page is well documented in the <i>"Presenter Flow"</i> <i>(PDF)</i> document in
+this directory.
+</p>
+
+<p>
+You probably also want to make sure the 100-user (the Brainstorm
+User called Idea Submissions), has permroleid 4 (Brainstorm) so
+that the brainstorm submission system will work.
+</p>
+
+<p>
+To set this up by hand, or if you wish to see who had which
 leadership roles in a previous instance of your con (to make sure
 you are rolling forward with the right roles), you might want to
 use a query (replacing the $conid with the previous con you want to
@@ -1560,39 +1624,39 @@ have for this con.
 to whatever conid you are creating.
 </li>
 </ul>
-
-<p>
-If you want to only add your particular badgeid, permroleid, conid
-information, and then use the "Migrate Participant from another
-con-instance" link under the "Manage Participants &amp; Schedule" tab 
-to give each the right permissions, that will work as well.  But at
-least you will need to be set up, so you can grant other people
-access.  The use of that page is well documented in the
-Presenter_Flow document in this directory.
-</p>
-
-<p>
-You probably also want to add the 100-user (the Brainstorm User
-called Idea Submissions), to permroleid 4 (Brainstorm) so that the
-brainstorm submission system will work.
-</p>
 </div>
 </div>
 
-<div id="outline-container-sec-11-2" class="outline-3">
-<h3 id="sec-11-2"><span class="section-number-3">11.2</span> UserHasConRole</h3>
-<div class="outline-text-3" id="text-11-2">
+<div id="outline-container-sec-12-2" class="outline-3">
+<h3 id="sec-12-2"><span class="section-number-3">12.2</span> UserHasConRole</h3>
+<div class="outline-text-3" id="text-12-2">
 <p>
 This is very similar to the UserHasPermissionRole, and was split
 off, because not all Permission Roles want to necessarily be
 advertised, and sometimes a Permission Role is a superset of a Con
-Role that actually wants to be called out.  While this is not a
-necessary step, it is a good one to follow, so people know who is
-responsible for what, when they visit your webpage. If you wish to
-see who had which leadership roles in a previous instance of your
-con (to make sure you are rolling forward with the right roles),
-you might want to use a query (replacing the $conid with the
-previous con you want to model on) like:
+Role that actually wants to be called out.
+</p>
+
+<p>
+Also, similar to UserHasPermissionRole, this should have been
+populated by the use of the use of the <a href="../webpages/AdminNewConInstance.php">"AdminNewConInstance.php"</a>
+page, above, and can be modified on either the <a href="../webpages/StaffEditCreateParticipant.php?action=migrate">"Migrate Participant"</a>
+page or the <a href="../webpages/StaffEditCreateParticipant.php?action=edit">"Edit Participant"</a> page mentioned above.
+</p>
+
+<p>
+You probably want to make sure the 100-user (the Brainstorm User
+called Idea Submissions), has conroleid 47 (BrainstormCoord) for
+tracking purposes.
+</p>
+
+<p>
+While this is not a necessary step, it is a good one to follow, so
+people know who is responsible for what, when they visit your
+webpage. If you wish to see who had which leadership roles in a
+previous instance of your con (to make sure you are rolling forward
+with the right roles), you might want to use a query (replacing the
+$conid with the previous con you want to model on) like:
 </p>
 <div class="org-src-container">
 
@@ -1635,26 +1699,30 @@ least you will need to be set up, so you can grant other people
 access.  The use of that page is well documented in the
 Presenter_Flow document in this directory.
 </p>
-
-<p>
-You probably want to add the 100-user (the Brainstorm User called
-Idea Submissions), to conroleid 47 (BrainstormCoord) for tracking
-purposes.
-</p>
 </div>
 </div>
 
-<div id="outline-container-sec-11-3" class="outline-3">
-<h3 id="sec-11-3"><span class="section-number-3">11.3</span> HasReports</h3>
-<div class="outline-text-3" id="text-11-3">
+<div id="outline-container-sec-12-3" class="outline-3">
+<h3 id="sec-12-3"><span class="section-number-3">12.3</span> HasReports</h3>
+<div class="outline-text-3" id="text-12-3">
 <p>
 This maps the organizational chart of your convention.  Again while
 this is not a necessary step for the start of your con, and might
-be added to as your con goes on using the AdminHasReports.php page,
-usually you know what the table of your organization will be, even
-if you don't yet know who will be filling those roles.  To see what
-was before you can use a query (replacing the $conid with the
-previous con you want to model on) like:
+be prepopulated when you used the <a href="../webpages/AdminNewConInstance.php">"AdminNewConInstance.php"</a> or can
+be modified as your con goes on using the <a href="../webpages/AdminHasReports.php">"AdminHasReports.php"</a>
+page, usually you know what the table of your organization will be,
+even if you don't yet know who will be filling those roles.
+</p>
+
+<p>
+You probably want to make sure the BrainstormCoordinator (47),
+reports to Programming (3).
+</p>
+
+<p>
+If you wish to work this by hand, you can see what was before you
+can use a query (replacing the $conid with the previous con you
+want to model on) like:
 </p>
 <div class="org-src-container">
 
@@ -1704,31 +1772,40 @@ current one) run:
 Then just massage the data slightly, and you have the insert you
 can do to mirror the previous con.
 </p>
+</div>
+</div>
 
+<div id="outline-container-sec-12-4" class="outline-3">
+<h3 id="sec-12-4"><span class="section-number-3">12.4</span> Continued Interaction</h3>
+<div class="outline-text-3" id="text-12-4">
 <p>
-You probably want to make sure the BrainstormCoordinator (47),
-reports to Programming (3).
+Most of the continued interaction can be mostly handled under the
+<a href="../webpages/StaffManageParticipants.php">"Manage Participants &amp; Schedule"</a> page.
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-sec-12" class="outline-2">
-<h2 id="sec-12"><span class="section-number-2">12</span> Adding a year instance - Sessions</h2>
-<div class="outline-text-2" id="text-12">
+<div id="outline-container-sec-13" class="outline-2">
+<h2 id="sec-13"><span class="section-number-2">13</span> Adding a year instance - Sessions</h2>
+<div class="outline-text-2" id="text-13">
 <p>
-The sessions are mostly generated from Brainstorm (and other
-insertions to your database) but there are a few settings that
-should be taken care of, to make sure everything works smoothly.
-The limits are set on an event basis, since sometimes publications
-or the space for things to be advertised differs from year to year.
-Also the requests might change, depending on what is available,
-as well as the rooms
+The sessions are mostly generated from Brainstorm, proposals by
+presenters, and by the <a href="../webpages/CreateSession.php">"Create a New Session"</a> page, but there are a
+few settings that should be taken care of, to make sure everything
+works smoothly.  The limits are set on an event basis, since
+sometimes publications or the space for things to be advertised
+differs from year to year.  Also the requests might change,
+depending on what is available, as well as the rooms
 </p>
 </div>
-<div id="outline-container-sec-12-1" class="outline-3">
-<h3 id="sec-12-1"><span class="section-number-3">12.1</span> PublicationLimits</h3>
-<div class="outline-text-3" id="text-12-1">
+<div id="outline-container-sec-13-1" class="outline-3">
+<h3 id="sec-13-1"><span class="section-number-3">13.1</span> PublicationLimits</h3>
+<div class="outline-text-3" id="text-13-1">
+<p>
+This still needs an in-Zambia tool to modify/set these.
+</p>
+
 <p>
 This tracks the various limits on the publication fields, so that
 you can have restrictions on minimum and/or maximum length of these
@@ -1800,9 +1877,9 @@ can do to mirror the previous con.
 </div>
 </div>
 
-<div id="outline-container-sec-12-2" class="outline-3">
-<h3 id="sec-12-2"><span class="section-number-3">12.2</span> Services and Features</h3>
-<div class="outline-text-3" id="text-12-2">
+<div id="outline-container-sec-13-2" class="outline-3">
+<h3 id="sec-13-2"><span class="section-number-3">13.2</span> Services and Features</h3>
+<div class="outline-text-3" id="text-13-2">
 <p>
 These two tables are built in the same pattern.  Services are the
 bits that logistics could get to the room, so they could be used
@@ -1818,27 +1895,43 @@ easily.
 
 <p>
 To select (or update the selection) of services and features
-available for this con-instance, use the AdminSetupServices.php
+available for this con-instance, use the <a href="../webpages/AdminSetupServices.php">"AdminSetupServices.php"</a>
 page.
 </p>
 </div>
 </div>
-<div id="outline-container-sec-12-3" class="outline-3">
-<h3 id="sec-12-3"><span class="section-number-3">12.3</span> Rooms</h3>
-<div class="outline-text-3" id="text-12-3">
+<div id="outline-container-sec-13-3" class="outline-3">
+<h3 id="sec-13-3"><span class="section-number-3">13.3</span> Rooms</h3>
+<div class="outline-text-3" id="text-13-3">
 <p>
 This needs to be fleshed out more.
 </p>
 </div>
 </div>
+
+<div id="outline-container-sec-13-4" class="outline-3">
+<h3 id="sec-13-4"><span class="section-number-3">13.4</span> Continued Interaction</h3>
+<div class="outline-text-3" id="text-13-4">
+<p>
+Most of the continued interaction can be mostly handled under the
+<a href="../webpages/StaffManageSessions.php">"Manage Sessions"</a> page.
+</p>
+</div>
+</div>
 </div>
 
-<div id="outline-container-sec-13" class="outline-2">
-<h2 id="sec-13"><span class="section-number-2">13</span> Adding a year instance - Vendors</h2>
-<div class="outline-text-2" id="text-13">
-</div><div id="outline-container-sec-13-1" class="outline-3">
-<h3 id="sec-13-1"><span class="section-number-3">13.1</span> VendorSpaces and VendorFeatures</h3>
-<div class="outline-text-3" id="text-13-1">
+<div id="outline-container-sec-14" class="outline-2">
+<h2 id="sec-14"><span class="section-number-2">14</span> Adding a year instance - Vendors</h2>
+<div class="outline-text-2" id="text-14">
+<p>
+This is covered extensively, and in a more updated fashion in the
+<i>"Vending Design Document"</i> <i>(PDF)</i>.  The below is still here fore
+legacy purposes until cleaned up.
+</p>
+</div>
+<div id="outline-container-sec-14-1" class="outline-3">
+<h3 id="sec-14-1"><span class="section-number-3">14.1</span> VendorSpaces and VendorFeatures</h3>
+<div class="outline-text-3" id="text-14-1">
 <p>
 These two tables are built in the same pattern. VendorSpaces are
 the size/type of space, and the cost of said space for the con.
@@ -1928,15 +2021,11 @@ can do to mirror the previous con.
 </p>
 </div>
 </div>
-
-<div id="outline-container-sec-13-2" class="outline-3">
-<h3 id="sec-13-2"><span class="section-number-3">13.2</span> More Vendor stuff, pending development.</h3>
-</div>
 </div>
 
-<div id="outline-container-sec-14" class="outline-2">
-<h2 id="sec-14"><span class="section-number-2">14</span> Adding a year instance - Feedback</h2>
-<div class="outline-text-2" id="text-14">
+<div id="outline-container-sec-15" class="outline-2">
+<h2 id="sec-15"><span class="section-number-2">15</span> Adding a year instance - Feedback</h2>
+<div class="outline-text-2" id="text-15">
 <p>
 Setting up feedback for your con is somewhat complex.  I'm not sure
 what motivated me, originally to be so baroque, but I think it was
@@ -1951,9 +2040,9 @@ the most current one.  Just one has to exist for the constraints to
 work for general feedback.
 </p>
 </div>
-<div id="outline-container-sec-14-1" class="outline-3">
-<h3 id="sec-14-1"><span class="section-number-3">14.1</span> Adding Questions</h3>
-<div class="outline-text-3" id="text-14-1">
+<div id="outline-container-sec-15-1" class="outline-3">
+<h3 id="sec-15-1"><span class="section-number-3">15.1</span> Adding Questions</h3>
+<div class="outline-text-3" id="text-15-1">
 <p>
 If your questions are not appropriate for this particular event,
 you might want to add a question type to cover it, in the
@@ -1990,9 +2079,9 @@ QuestionTypes table above.
 </div>
 </div>
 
-<div id="outline-container-sec-14-2" class="outline-3">
-<h3 id="sec-14-2"><span class="section-number-3">14.2</span> Setting up the page description (how it is presented)</h3>
-<div class="outline-text-3" id="text-14-2">
+<div id="outline-container-sec-15-2" class="outline-3">
+<h3 id="sec-15-2"><span class="section-number-3">15.2</span> Setting up the page description (how it is presented)</h3>
+<div class="outline-text-3" id="text-15-2">
 <p>
 For your event, there might be several different feedback forms you
 want available, so that an individual isn't overwhelmed by the
@@ -2051,9 +2140,9 @@ The values for FeedbackPageHasType are:
 </div>
 </div>
 
-<div id="outline-container-sec-14-3" class="outline-3">
-<h3 id="sec-14-3"><span class="section-number-3">14.3</span> Setting the TypeHasQuestionType</h3>
-<div class="outline-text-3" id="text-14-3">
+<div id="outline-container-sec-15-3" class="outline-3">
+<h3 id="sec-15-3"><span class="section-number-3">15.3</span> Setting the TypeHasQuestionType</h3>
+<div class="outline-text-3" id="text-15-3">
 <p>
 This is implemented to be able to cross-type questions, and make
 sure you wanted those question types to show up for that type of
@@ -2078,6 +2167,46 @@ The values for TypeHasQuestionType are:
 </li>
 </ul>
 </div>
+</div>
+</div>
+
+<div id="outline-container-sec-16" class="outline-2">
+<h2 id="sec-16"><span class="section-number-2">16</span> Adding a year instance - App/KonOpas</h2>
+<div class="outline-text-2" id="text-16">
+<p>
+You should have already set up the KonOpas instance with your
+event.  The modifications done to the 0.8 verson of KonOpas to make
+it as fully compatable as possible, should have been bundled with
+the Zambia software.  So all you should have to do is publish your
+static data, whenever you do a (major) update.  This is done from
+the <a href="../webpages/KonOpasData.php">"Publish to KonOpas/WebApp"</a> link off of the <a href="../webpages/StaffManageSessions.php">Manage Sessions</a> page.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-17" class="outline-2">
+<h2 id="sec-17"><span class="section-number-2">17</span> Other Useful Documentation</h2>
+<div class="outline-text-2" id="text-17">
+<ul class="org-ul">
+<li><i>Bio Editing</i> <i>(PDF)</i>
+</li>
+<li><i>Email Functions</i> <i>(PDF)</i>
+</li>
+<li><i>Panelists Guild</i> <i>(PDF)</i>
+</li>
+<li><i>Photo Lounge Guide</i> <i>(PDF)</i>
+</li>
+<li><i>Presenter Flow</i> <i>(PDF)</i>
+</li>
+<li><i>Publication Flow</i> <i>(PDF)</i>
+</li>
+<li><i>Tasks and Gantt Chart</i> <i>(PDF)</i>
+</li>
+<li><i>Time Cards</i> <i>(PDF)</i>
+</li>
+<li><i>Vending Guide</i> <i>(PDF)</i>
+</li>
+</ul>
 </div>
 </div>
 </div>

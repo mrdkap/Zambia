@@ -1,0 +1,132 @@
+#+TITLE: Presenter Flow in Zambia
+#+EMAIL: NELA.Percy@gmail.com
+#+AUTHOR: Percy
+#+DATE: March 2012
+#+DESCRIPTION: Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in a path of pulling the publications out of the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+#+MACRO: DESCRIPTION Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in a path of pulling the publications out of the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+#+KEYWORDS: Zambia, Documentation, FFF branch
+#+META: KEYWORDS Zambia, Documentation, FFF branch
+#+LANGUAGE: en
+#+OPTIONS: \n:nil ^:nil timestamp:nil creator:nil H:3 num:3 toc:nil @:t ::nil |:t -:t todo:nil tasks:nil tags:nil <:t *:t author:t email:t skip:nil d:t f:t pri:t
+#+STARTUP: fninline
+#+SETUPFILE: "Headers/setupfile.org"
+#+INCLUDE: "Headers/include.org"
+#+TOC: headlines 3
+#+LaTeX: \listoffigures
+#+LaTeX: \listoftables
+#+LaTeX: \newpage
+#+LaTeX: \pagenumbering{arabic}
+* Introduction
+
+  There is a certain pattern to the flow of dealing with the
+  publications, with an eye mostly to the concept of a book or
+  pamphelet as a hard-copy guide available for your con.  There are
+  several pieces to this, from ads and sponsors, to the vending and
+  presenter data that go into that publication, but this also
+  describes things like the presenter, volunteer, vendor, and general
+  attendee packets as well.
+
+* General Flow
+** Set Sponsorship levels
+    Go to the [[../webpages/PubsSetupAds.php][PubsSetupAds.php]] page, and set the
+    appropriate sponsor levels available/prices/et al for this event.
+** Set Digital Ad possiblities
+    Go to the [[../webpages/PubsSetupAds.php][PubsSetupAds.php]] page, and set the
+    appropriate digital ads available/prices/et al for this event.
+** Set Printed Ad possibilities
+    Go to the [[../webpages/PubsSetupAds.php][PubsSetupAds.php]] page, and set the
+    appropriate print ads available/prices/et al for this event.
+
+** Task List
+
+   Create [[../webpages/TaskListUpdate.php?activityid=-1]["Task List"]] entries to track timing across the event.
+
+   Things to consider: 
+   + informational deadlines as editing is needed
+   + book/pamphelet deadlines
+   + handouts deadlines, printing (including count), and distributing
+   + packet information deadlines and contents
+   + signage deadlines and placement timing
+   + Social Media deadlines, rolling and fixed
+   + BEO deadlines
+   + Feedback Form deadlines - printing, collecting, input, and
+     reporting
+   + Sponsor Banner deadlines
+   + Sponsor Class deadlines (including negotiation times with the
+     class presenters)
+** PublicationLimits
+
+   Set up the publication limits for the data collected on the
+   presenters, session elements, vendors, and volunteers.  This is
+   described in more depth in the [[Setting_Up.html]["Setting Up"]] [[Setting_Up.pdf][(PDF)]] document.
+* Program Book/Pamphelet
+
+  Most of the programming book elements can be found in the [[../webpages/PreconPrinting.php]["Printing"]]
+  page:
+  + [[../webpages/BookBios.php][Bios]] [[../webpages/BookBios.php?pic_p=N][(without images)]] [[../webpages/BookBios.php?short=Y][(short)]]
+  + [[../webpages/BookStaffBios.php][Staff Bios]] [[../webpages/BookStaffBios.php?pic_p=N][(without images)]] [[../webpages/BookStaffBios.php?short=Y][(short)]]
+  + [[../webpages/BookSched.php?format=desc][Descriptions]] [[../webpages/BookSched.php?format=desc&short=Y][(short)]]
+  + [[../webpages/BookSched.php?format=sched][Schedule]] [[../webpages/BookSched.php?format=sched&short=Y][(short)]]
+  + [[../webpages/BookSched.php?format=tracks][Track list by Name]] [[../webpages/BookSched.php?format=tracks&short=N][(short)]]
+  + [[../webpages/BookSched.php?format=trtime][Track list by Time]] [[../webpages/BookSched.php?format=trtime&short=Y][(short)]]
+  + [[../webpages/BookSched.php?format=rooms][Rooms]] [[../webpages/BookSched.php?format=rooms&short=Y][(short)]]
+  + If written the letter from the con chair(s), the board chair(s),
+    the rules, the FAQ, maps, etc are all in the Local/conid/
+    directory for inclusion e.g. Local/2/FAQ
+  + Ads are still done elsewhere
+
+  Not always is all the information in Zambia by the time it is being
+  collected to print, so ... if there are tags like: ***EDIT PLEASE***
+  that usually means that some information is missing.  Please see the
+  [[Bio_Editing.html]["Bios Editing"]] [[Bio_Editing.pdf][(PDF)]] document for further instructions.  Also if a
+  picture is listed as: Picture for editing at: (path)/Local/logo.gif
+  it usually means there isn't a picture available.
+* Presenter, Volunteer, Class, and Vendor Packets
+
+  Much of what goes into the packets are the same or simiar across
+  several of them.  There should be at least one "Packet Stuffing"
+  Task that has the details in it.
+
+* Photo Lounge Contact Sheet
+
+  This is available on the [[../webpages/PhotoLoungeContactSheet.php][Photo Lounge Contact Sheet]] page.
+
+  This usually has two or three laminated copies printed and then
+  punched on a ring, so people can look, but they get the impression
+  that they are not there for the taking.  At one event, a pad of
+  sticky notes and a pen were also attached to the ring, so that if
+  someone wanted to note down a particular photo, or artist for
+  getting prints from, or to do work with, that was available.
+* Room Logistics
+
+  The [[../webpages/LogisticsPrint.php]["Room States"]] and the [[../webpages/genreport.php?reportid=188]["Beo Form"]] are a good place to start
+  working on printing out the BEOs so they can be checked, turned in
+  to the hotel and then signed off on, with the hotel.  It is often
+  useful to check the information first on a few reports like the
+  [[../webpages/genreport.php?reportid=137]["Combined Roomsets for Programming"]], or the [[../webpages/genreport.php?reportid=100]["Combined Roomset"]].
+* Social Media Spreadsheet
+
+  This spreadsheet [[../webpages/SocialMediaSpreadsheet.php]["SocialMediaSpreadsheet.php"]] has sections for each
+  of the types of information that might want to be disseminated.
+  There are a bunch of sections, from presenters to community tables,
+  etc.
+* Grids
+
+  The grids are automatically produced from the database in several
+  different ways.  There is the one for [[../webpages/KonOpas.php#info]["KonOpas"]], the printable/live
+  ones that are [[../webpages/Postgrid-wide.php]["Times x Rooms"]] [[../webpages/Postgrid-wide.php?print_p=y][(PDF)]] or [[../webpages/Postgrid.php]["Rooms x Times"]] [[../webpages/Postgrid.php?print_p=y][(PDF)]] and a
+  [[../webpages/manualGRIDS.php][bunch of others]].
+* Feedback
+
+  Set up the feedback forms, for online and publication purposes.
+  This allows the feedback on the classes to be collected, entered,
+  and tracked, both for the presenter's benefit (to help them improve
+  their classes) and for the program committee's benefit (to help them
+  both select who from the past, what classes landed and what didn't
+  and what size rooms and timing is better for what).  This is
+  described in more depth in the [[Setting_Up.html]["Setting Up"]] [[Setting_Up.pdf][(PDF)]] document.
+* Feedback Forms
+
+  These should be available on the [[../webpages/StaffFeedback.php]["Feedback forms"]] page once the
+  above procedure is followed appropriately.
+

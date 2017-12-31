@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Presenter Flow in Zambia</title>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Percy" />
+<meta  name="description" content="Zambia is a piece of Conference Management Software.  This document is a &quot;How To&quot; guide assisting in a path of pulling the publications out of the Zambia FFF-branch instance for your conference.  This is still a work in progress."
+ />
+<meta  name="keywords" content="Zambia, Documentation, FFF branch" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Presenter Flow in Zambia</h1>
+<p>
+Zambia is a piece of Conference Management Software.  This document is a "How To" guide assisting in a path of pulling the publications out of the Zambia FFF-branch instance for your conference.  This is still a work in progress.
+</p>
+<p>
+Presenter Flow in Zambia
+</p>
+<p>
+Percy &lt;NELA.Percy@gmail.com&gt;
+</p>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Introduction</a></li>
+<li><a href="#sec-2">2. General Flow</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Set Sponsorship levels</a></li>
+<li><a href="#sec-2-2">2.2. Set Digital Ad possiblities</a></li>
+<li><a href="#sec-2-3">2.3. Set Printed Ad possibilities</a></li>
+<li><a href="#sec-2-4">2.4. Task List</a></li>
+<li><a href="#sec-2-5">2.5. PublicationLimits</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Program Book/Pamphelet</a></li>
+<li><a href="#sec-4">4. Presenter, Volunteer, Class, and Vendor Packets</a></li>
+<li><a href="#sec-5">5. Photo Lounge Contact Sheet</a></li>
+<li><a href="#sec-6">6. Room Logistics</a></li>
+<li><a href="#sec-7">7. Social Media Spreadsheet</a></li>
+<li><a href="#sec-8">8. Grids</a></li>
+<li><a href="#sec-9">9. Feedback</a></li>
+<li><a href="#sec-10">10. Feedback Forms</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+There is a certain pattern to the flow of dealing with the
+publications, with an eye mostly to the concept of a book or
+pamphelet as a hard-copy guide available for your con.  There are
+several pieces to this, from ads and sponsors, to the vending and
+presenter data that go into that publication, but this also
+describes things like the presenter, volunteer, vendor, and general
+attendee packets as well.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> General Flow</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Set Sponsorship levels</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Go to the <a href="../webpages/PubsSetupAds.php">PubsSetupAds.php</a> page, and set the
+appropriate sponsor levels available/prices/et al for this event.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Set Digital Ad possiblities</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Go to the <a href="../webpages/PubsSetupAds.php">PubsSetupAds.php</a> page, and set the
+appropriate digital ads available/prices/et al for this event.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Set Printed Ad possibilities</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Go to the <a href="../webpages/PubsSetupAds.php">PubsSetupAds.php</a> page, and set the
+appropriate print ads available/prices/et al for this event.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Task List</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+Create <a href="../webpages/TaskListUpdate.php?activityid=-1">"Task List"</a> entries to track timing across the event.
+</p>
+
+<p>
+Things to consider: 
+</p>
+<ul class="org-ul">
+<li>informational deadlines as editing is needed
+</li>
+<li>book/pamphelet deadlines
+</li>
+<li>handouts deadlines, printing (including count), and distributing
+</li>
+<li>packet information deadlines and contents
+</li>
+<li>signage deadlines and placement timing
+</li>
+<li>Social Media deadlines, rolling and fixed
+</li>
+<li>BEO deadlines
+</li>
+<li>Feedback Form deadlines - printing, collecting, input, and
+reporting
+</li>
+<li>Sponsor Banner deadlines
+</li>
+<li>Sponsor Class deadlines (including negotiation times with the
+class presenters)
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> PublicationLimits</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+Set up the publication limits for the data collected on the
+presenters, session elements, vendors, and volunteers.  This is
+described in more depth in the <i>"Setting Up"</i> <i>(PDF)</i> document.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Program Book/Pamphelet</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Most of the programming book elements can be found in the <a href="../webpages/PreconPrinting.php">"Printing"</a>
+page:
+</p>
+<ul class="org-ul">
+<li><a href="../webpages/BookBios.php">Bios</a> <a href="../webpages/BookBios.php?pic_p=N">(without images)</a> <a href="../webpages/BookBios.php?short=Y">(short)</a>
+</li>
+<li><a href="../webpages/BookStaffBios.php">Staff Bios</a> <a href="../webpages/BookStaffBios.php?pic_p=N">(without images)</a> <a href="../webpages/BookStaffBios.php?short=Y">(short)</a>
+</li>
+<li><a href="../webpages/BookSched.php?format=desc">Descriptions</a> <a href="../webpages/BookSched.php?format=desc&short=Y">(short)</a>
+</li>
+<li><a href="../webpages/BookSched.php?format=sched">Schedule</a> <a href="../webpages/BookSched.php?format=sched&short=Y">(short)</a>
+</li>
+<li><a href="../webpages/BookSched.php?format=tracks">Track list by Name</a> <a href="../webpages/BookSched.php?format=tracks&short=N">(short)</a>
+</li>
+<li><a href="../webpages/BookSched.php?format=trtime">Track list by Time</a> <a href="../webpages/BookSched.php?format=trtime&short=Y">(short)</a>
+</li>
+<li><a href="../webpages/BookSched.php?format=rooms">Rooms</a> <a href="../webpages/BookSched.php?format=rooms&short=Y">(short)</a>
+</li>
+<li>If written the letter from the con chair(s), the board chair(s),
+the rules, the FAQ, maps, etc are all in the Local/conid/
+directory for inclusion e.g. Local/2/FAQ
+</li>
+<li>Ads are still done elsewhere
+</li>
+</ul>
+
+<p>
+Not always is all the information in Zambia by the time it is being
+collected to print, so &#x2026; if there are tags like: <b><b><b>EDIT PLEASE</b></b></b>
+that usually means that some information is missing.  Please see the
+<i>"Bios Editing"</i> <i>(PDF)</i> document for further instructions.  Also if a
+picture is listed as: Picture for editing at: (path)/Local/logo.gif
+it usually means there isn't a picture available.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Presenter, Volunteer, Class, and Vendor Packets</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Much of what goes into the packets are the same or simiar across
+several of them.  There should be at least one "Packet Stuffing"
+Task that has the details in it.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Photo Lounge Contact Sheet</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+This is available on the <a href="../webpages/PhotoLoungeContactSheet.php">Photo Lounge Contact Sheet</a> page.
+</p>
+
+<p>
+This usually has two or three laminated copies printed and then
+punched on a ring, so people can look, but they get the impression
+that they are not there for the taking.  At one event, a pad of
+sticky notes and a pen were also attached to the ring, so that if
+someone wanted to note down a particular photo, or artist for
+getting prints from, or to do work with, that was available.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Room Logistics</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+The <a href="../webpages/LogisticsPrint.php">"Room States"</a> and the <a href="../webpages/genreport.php?reportid=188">"Beo Form"</a> are a good place to start
+working on printing out the BEOs so they can be checked, turned in
+to the hotel and then signed off on, with the hotel.  It is often
+useful to check the information first on a few reports like the
+<a href="../webpages/genreport.php?reportid=137">"Combined Roomsets for Programming"</a>, or the <a href="../webpages/genreport.php?reportid=100">"Combined Roomset"</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Social Media Spreadsheet</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+This spreadsheet <a href="../webpages/SocialMediaSpreadsheet.php">"SocialMediaSpreadsheet.php"</a> has sections for each
+of the types of information that might want to be disseminated.
+There are a bunch of sections, from presenters to community tables,
+etc.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> Grids</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+The grids are automatically produced from the database in several
+different ways.  There is the one for <a href="../webpages/KonOpas.php#info">"KonOpas"</a>, the printable/live
+ones that are <a href="../webpages/Postgrid-wide.php">"Times x Rooms"</a> <a href="../webpages/Postgrid-wide.php?print_p=y">(PDF)</a> or <a href="../webpages/Postgrid.php">"Rooms x Times"</a> <a href="../webpages/Postgrid.php?print_p=y">(PDF)</a> and a
+<a href="../webpages/manualGRIDS.php">bunch of others</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> Feedback</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+Set up the feedback forms, for online and publication purposes.
+This allows the feedback on the classes to be collected, entered,
+and tracked, both for the presenter's benefit (to help them improve
+their classes) and for the program committee's benefit (to help them
+both select who from the past, what classes landed and what didn't
+and what size rooms and timing is better for what).  This is
+described in more depth in the <i>"Setting Up"</i> <i>(PDF)</i> document.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> Feedback Forms</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+These should be available on the <a href="../webpages/StaffFeedback.php">"Feedback forms"</a> page once the
+above procedure is followed appropriately.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: March 2012</p>
+<p class="author">Author: Percy</p>
+<p class="email">Email: <a href="mailto:NELA.Percy@gmail.com">NELA.Percy@gmail.com</a></p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

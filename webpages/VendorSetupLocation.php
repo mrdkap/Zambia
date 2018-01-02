@@ -32,12 +32,16 @@ if ((!empty($_GET['history'])) AND (is_numeric($_GET['history']))) {
   $additionalinfo.="<A HREF=VendorSetupLocation.php?history=Y>click here</A>.</P>\n";
   $additionalinfo.="<P>To see this without the clutter of any of the previous con information, ";
   $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
+  $additionalinfo.="<P><A HREF=VendorSetupLocation.php?history=$hist&replicate_p=Y>Replicate</A>";
+  $additionalinfo.=" that event's Location setup.</P>\n";
 } elseif ((!empty($_POST['history'])) AND (is_numeric($_POST['history']))) {
   $hist=$_POST['history'];
   $additionalinfo.="<P>To see this with all previous con information included, ";
   $additionalinfo.="<A HREF=VendorSetupLocation.php?history=Y>click here</A>.</P>\n";
   $additionalinfo.="<P>To see this without the clutter of any of the previous con information, ";
   $additionalinfo.="<A HREF=VendorSetupLocation.php>click here</A>.</P>\n";
+  $additionalinfo.="<P><A HREF=VendorSetupLocation.php?history=$hist&replicate_p=Y>Replicate</A>";
+  $additionalinfo.=" that event's Location setup.</P>\n";
 } elseif ((!empty($_GET['history'])) AND ($_GET['history'] == "Y")) {
   $hist="Y";
   $additionalinfo.="<P>To see this without the clutter of any of the previous con information, ";
@@ -81,6 +85,35 @@ if ($hist == "") {
   $wherestring="WHERE conid=$conid";
 } elseif (is_numeric($hist)) {
   $wherestring="WHERE conid=$conid or conid=$hist";
+}
+
+// Replicate an event as this event.
+if ((!empty($hist)) and (is_numeric($hist)) and ($_GET['replicate_p'] == "Y")) {
+
+  // Gets the values for the current conid
+  $query="SELECT * FROM Location WHERE conid=$hist";
+  list($rows,$header_array,$table_array)=queryreport($query,$link,$title,$description,0);
+
+  // Walk each row of the table
+  for ($i=1 ; $i<=$rows; $i++) {
+
+    // Empties the element array and value array for each instance
+    $element_array=array();
+    $value_array=array();
+
+    // Populate each new row, by column for the new con instance
+    foreach ($header_array as $column) {
+      if ($column != "locationid") {
+	$element_array[] = $column;
+	if ($column == "conid") {
+	  $value_array[] = $conid;
+	} else {
+	  $value_array[] = $table_array[$i][$column];
+	}
+      }
+    }
+    $message.=submit_table_element($link, $title, "Location", $element_array, $value_array);
+  }
 }
 
 // Update Element

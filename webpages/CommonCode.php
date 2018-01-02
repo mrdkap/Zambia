@@ -2241,7 +2241,7 @@ EOD;
   $bioinfo['biolang_array']=$biolang_array;
 
   // Get all current possible biotypenames
-  $query="SELECT DISTINCT(biotypename) FROM BioTypes WHERE biotypename not in ('web','book')";
+  $query="SELECT DISTINCT(biotypename) FROM BioTypes WHERE biotypename not in ('web','book') ORDER BY display_order";
   if (($result=mysql_query($query,$link))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -2253,7 +2253,7 @@ EOD;
   $bioinfo['biotype_array']=$biotype_array;
 
   // Get all current possible biostatenames
-  $query="SELECT DISTINCT(biostatename) FROM BioStates";
+  $query="SELECT DISTINCT(biostatename) FROM BioStates ORDER BY display_order";
   if (($result=mysql_query($query,$link))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -2265,7 +2265,7 @@ EOD;
   $bioinfo['biostate_array']=$biostate_array;
 
   // Get all current possible biodestnames
-  $query="SELECT DISTINCT(biodestname) FROM BioDests";
+  $query="SELECT DISTINCT(biodestname) FROM BioDests ORDER BY display_order";
   if (($result=mysql_query($query,$link))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -2597,8 +2597,8 @@ EOD;
      publimid int(11), // key
      conid int(11), // which con
      publimtype enum('min','max'), // top or bottom limit
-     publimdest enum('web','book'), // what medium - future 'mobile'
-     publimname varchar(15), // bio, description, name, title, picture, uri, title, subtitle - future?
+     publimdest // linked to the BiosDest table
+     publimname varchar(15), // title, subtitle, description, url, bio, name, pronoun, twitter, facebook, fetlife, dba - future?
      publimval int(11), // what the limit is
      publimnote text // What it replaced, probably should become more useful, or go away.
    Language is not a consideration, whatever language it is, the size limit will still matter.

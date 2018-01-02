@@ -74,7 +74,14 @@ if ($_POST['create'] == "Yes") {
   $message.=submit_table_element($link, $title, "Phase", $element_array, $value_array);
 
   // This should be for each of the auto-populated tables
-  $autopopulate = array('UserHasPermissionRole','UserHasConRole','HasReports','PublicationLimits');
+  $autopopulate = array('UserHasPermissionRole','UserHasConRole','HasReports',
+			'PublicationLimits','Location');
+
+  // The auto-increment fields to be left out
+  $autoinc['PublicationLimits']="publimid";
+  $autoinc['Location']="locationid";
+
+  // Walk each of the auto-populated tables.
   foreach ($autopopulate as $table) {
 
     // Gets the values for the current conid
@@ -90,11 +97,13 @@ if ($_POST['create'] == "Yes") {
 
       // Populate each new row, by column for the new con instance
       foreach ($header_array as $column) {
-	$element_array[] = $column;
-	if ($column == "conid") {
-	  $value_array[] = $newconid;
-	} else {
-	  $value_array[] = $table_array[$i][$column];
+	if ($column != $autoinc[$table]) {
+	  $element_array[] = $column;
+	  if ($column == "conid") {
+	    $value_array[] = $newconid;
+	  } else {
+	    $value_array[] = $table_array[$i][$column];
+	  }
 	}
       }
       $message.=submit_table_element($link, $title, $table, $element_array, $value_array);

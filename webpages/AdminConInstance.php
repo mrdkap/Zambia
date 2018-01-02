@@ -2,7 +2,7 @@
 require_once ('StaffCommonCode.php');
 global $link;
 $title="Update Current Con Instance";
-$description="<P>Update the information for this con instance.</P>\n";
+$description="<P>Update the information for this con instance or add an element to a Base table.</P>\n";
 $additionalinfo="<P>Please be careful, these values change very basic elements.</P>";
 $conid=$_SESSION['conid'];
 
@@ -19,6 +19,9 @@ if ((may_I("Maint")) or (may_I("ConChair"))) {
 $queryconinfodesc="desc ConInfo";
 list($coninfodescrows,$coninfodescheader_array,$coninfodesc_array)=queryreport($queryconinfodesc,$link,$title,$description,0);
 
+// Set up the BaseFoo tables list
+$queryBaseTables="SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME like \"%Base%\"";
+list($basetablesrows,$basetablesheader_array,$basetables_array)=queryreport($queryBaseTables,$link,$title,$description,0);
 
 // Form returned
 if ($_POST['update'] == "Yes") {
@@ -55,6 +58,17 @@ if ($_POST['update'] == "Yes") {
   }
   $message.=update_table_element($link, $title, "ConInfo", $pairedvalue_array, "conid", $_SESSION['conid']);
 
+  // Add any of the BaseFoo table entries
+  for ($j=1; $j<=$basetablesrows; $j++) {
+    $tname=$basetables_array[$j]['TABLE_NAME'];
+    $tlcname=strtolower($tname);
+    if (!empty($_POST['bname'][$tname])) {
+      $element_array=array($tlcname . "name", $tlcname . "desc");
+      $value_array=array(mysql_real_escape_string(stripslashes($_POST['bname'][$tname])),
+			 mysql_real_escape_string(stripslashes($_POST['bdesc'][$tname])));
+      $message.=submit_table_element($link, $title, $tname, $element_array, $value_array);
+    }
+  }
 }
 
 // Size array for the various boxes, because it looks better that way 5 minimum
@@ -109,6 +123,21 @@ for ($i=1; $i<=$coninfodescrows; $i++) {
   $formstring.="</DD><br />\n\n";
 }
 
+$basestring="<P><strong>Add a missing element to any of the Base tables below.</strong></P>\n";
+
+// Add information to the "BaseFoo" tables.
+for ($i=1; $i<=$basetablesrows; $i++) {
+  $tname=$basetables_array[$i]['TABLE_NAME'];
+  $basestring.="            <DT>Add an element to the $tname table:</DT>\n";
+  $basestring.="            <DD>";
+  $basestring.="<LABEL for=\"bname[$tname]\">Name:</LABEL>\n";
+  $basestring.="            <INPUT type=\"text\" size=20 name=\"bname[$tname]\"";
+  $basestring.=" id=\"bname[$tname]\" value=\"\"></DD>\n            <DD>\n";
+  $basestring.="<LABEL for=\"bdesc[$tname]\">Description:</LABEL>\n";
+  $basestring.="            <INPUT type=\"text\" size=20 name=\"bdesc[$tname]\"";
+  $basestring.=" id=\"bdesc[$tname]\" value=\"\"></DD>\n            <DD><br />\n\n";
+}
+
 // Produce the form and get the appropriate information.
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>
@@ -118,9 +147,9 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
         <CENTER><BUTTON class="ib" type=submit value="save">Save</BUTTON></CENTER>
         <DIV class="denseform">
           <DL>
-<?php
-  echo $formstring;
-?>
+<?php echo $formstring; ?>
+        <CENTER><BUTTON class="ib" type=submit value="save">Save</BUTTON></CENTER>
+<?php echo $basestring; ?>
           </DL>
         </DIV>
         <CENTER><BUTTON class="ib" type=submit value="save">Save</BUTTON></CENTER>

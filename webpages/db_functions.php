@@ -1170,4 +1170,25 @@ function get_sstatus() {
     $sstatus[$statusid]=array('may_be_scheduled'=>$may_be_scheduled, 'validate'=>$validate);
   }
 }
+
+function get_enum_values($table,$field) {
+  global $link;
+  $query=<<<EOD
+SELECT
+    SUBSTRING(COLUMN_TYPE,5) AS Type
+  FROM
+      INFORMATION_SCHEMA.COLUMNS
+  WHERE
+    TABLE_NAME="$table" AND
+    COLUMN_NAME="$field"
+EOD;
+
+  $result=mysql_query($query,$link);
+  $typearray=mysql_fetch_array($result, MYSQL_ASSOC);
+  preg_match("/^\(\'(.*)\'\)$/", $typearray['Type'], $matches);
+  $enum=explode("','", $matches[1]);
+  return $enum;
+
+}
+
 ?>

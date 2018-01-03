@@ -88,6 +88,7 @@ Like all sub-sections of Zambia, to activate this you have to make
 sure you have a number of elements in your con setup in place.
 \subsection{PhaseTypes}
 \label{sec-2-1}
+
 A pair of PhaseTypes included in your con.  They would be "Photo
 Voting (17)" and "Photo Submissions (18)".
 
@@ -104,6 +105,7 @@ vote.
 
 \subsection{PermissionRoles}
 \label{sec-2-2}
+
 The three permission roles associated with the Photo Lounge are:
 \begin{itemize}
 \item PhotoSub
@@ -138,6 +140,7 @@ that also is still a work in progress.
 
 \subsection{ConRoles}
 \label{sec-2-3}
+
 There is one con role that works with this, but that is the host of
 the Photography Lounge, so not directly relevant to this document.
 See the document on Lounge Hosts.
@@ -167,6 +170,7 @@ Both are fairly straight-forward and simple, but useful.
 
 \section{Files}
 \label{sec-4}
+
 There is a possiblity you would want to tweak the values at the top
 of the PhotoLoungeSubmit.php file.  They are:
 \begin{itemize}
@@ -183,6 +187,7 @@ than) and maximum file size (must be less than).
 
 \section{Flow}
 \label{sec-5}
+
 \begin{itemize}
 \item The flow starts when the call for Photo Submissions begins.
 \item The SuperPhotoRev either asks for the phase to be set, or sets the
@@ -206,12 +211,8 @@ SELECT
     permroleid=41;
 \end{verbatim}
 \begin{itemize}
-\item The PhotoSubs then submit photos:
-\end{itemize}
-\begin{verbatim}
-YourWebPath/webpages/PhotoLoungeSubmit.php
-\end{verbatim}
-\begin{itemize}
+\item The PhotoSubs then submit photos at the \href{../webpages/PhotoLoungeSubmit.php}{PhotoLoungeSubmit.php}
+page.
 \item Once the photos are all submitted or the SuperPhotoRev is done
 soliciting them, that phase should be closed, and the Photo Voting
 phase should be initiated.
@@ -220,51 +221,27 @@ run.  That will make sure that all the thumbnails are in place,
 before the next step.
 \item Folks that either have self-selected, if self-service has been
 enabled, or have been selected by the SuperPhotoRev may now go and
-vote on all the pictures:
-\end{itemize}
-\begin{verbatim}
-YourWebPath/webpages/PhotoLoungePictures.php
-\end{verbatim}
-or by going directly to the individual artist selections:
-\begin{verbatim}
-YourWebPath/webpages/PhotoLoungeVote.php
-\end{verbatim}
-\begin{itemize}
+vote on all the pictures at the \href{../webpages/PhotoLoungePictures.php}{PhotoLoungePictures.php} page
+or by going directly to the individual artist selections at the
+\href{../webpages/PhotoLoungeVote.php}{PhotoLoungeVote.php} page.
 \item Once sufficient pictures have been voted on, the voting phase can
 close.
 \item The selection process, of the pictures that are voted on have
 several steps, some of which can go in various orders, to be
 determined by the SuperPhotoRev.
 \item View and select which of the voted-upon sets of pictures should be
-included into the lounge:
-\end{itemize}
-\begin{verbatim}
-YourWebPath/webpages/PhotoLoungeCollectVotes.php
-\end{verbatim}
-\begin{itemize}
+included into the lounge at the \href{../webpages/PhotoLoungeCollectVotes.php}{PhotoLoungeCollectVotes.php} page.
 \item Using the contact sheet, get in touch with all the appropriate
-PhotoSub folks to let them know what was selected.
-\end{itemize}
-\begin{verbatim}
-YourWebPath/webpages/PhotoLoungeContactSheet.php
-\end{verbatim}
+PhotoSub folks to let them know what was selected from the
+\href{../webpages/PhotoLoungeContactSheet.php}{PhotoLoungeContactSheet.php} page.
+\item If there are any changes, they can be managed from:
 \begin{itemize}
-\item If there are any changes, they can be managed from the contact
-sheet:
+\item the same contact sheet - \href{../webpages/PhotoLoungeContactSheet.php}{PhotoLoungeContactSheet.php}
+\item the view of the voted on pictures - \href{../webpages/PhotoLoungeCollectVotes.php}{PhotoLoungeCollectVotes.php}
+\item the report that also has the same information, without the
+possible confusion of changing what was selected -
+\href{../webpages/genreport.php?reportname=picturesubmiswvote}{genreport.php?reportname=picturesubmiswvote}
 \end{itemize}
-\begin{verbatim}
-YourWebPath/webpages/PhotoLoungeContactSheet.php
-\end{verbatim}
-the view of the voted on pictures:
-\begin{verbatim}
-YourWebPath/webpages/PhotoLoungeCollectVotes.php
-\end{verbatim}
-or the report that also has the same information, without the
-possible confusion of changing what was selected:
-\begin{verbatim}
-YourWebPath/webpages/genreport.php?reportname=picturesubmiswvote
-\end{verbatim}
-\begin{itemize}
 \item Once the photos are all selected, this is a good time to run the
 create\_imagination\_files.sh script so that there is a directory to
 pull the appropriate files from, and create the slideshow from.
@@ -272,6 +249,7 @@ pull the appropriate files from, and create the slideshow from.
 
 \section{Using the imagination software}
 \label{sec-6}
+
 \begin{itemize}
 \item Create a new slideshow: VOB/576 HD, no rescale, background=black
 \item Import the images from the directory created by the
@@ -287,6 +265,7 @@ modified.
 \end{itemize}
 \subsection{File exerpt:}
 \label{sec-6-1}
+
 \begin{verbatim}
 [slideshow settings]
 video format=576
@@ -310,9 +289,9 @@ font color=0;0;0;1;
 font bgcolor=1;1;1;1;
 \end{verbatim}
 
-
 \section{Convert VOB to mpeg/avi}
 \label{sec-7}
+
 \begin{itemize}
 \item ffmpeg -i FFF??\_Photo\_Lounge.vob -f avi -c:v mpeg4 -b:v 800k -g 300 -bf 2 -c:a libmp3lame -b:a 128k FFF??\_Photo\_Lounge.avi
 \item cp FFF??\_Photo\_Lounge.vob FFF??\_Photo\_Lounge.mpeg
@@ -320,6 +299,7 @@ font bgcolor=1;1;1;1;
 
 \section{Load onto Devices}
 \label{sec-8}
+
 \begin{itemize}
 \item Thumb Drives:  Pictures into Pictures, only the mpeg in Movies
 \item Pi Devices: Everthing into local Pictures, mpeg into sub Movie diretory in Pictures.

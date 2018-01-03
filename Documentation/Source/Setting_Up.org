@@ -55,7 +55,7 @@
     will be putting your files into)?  Often something like
     /var/www/Zambia-Con or /home/username/public_html/Zambia-Con or
     the like.
-*** db_name.php file
+*** [[../Local/db_name.php][db_name.php]] file
     This information will go in the db_name.php file when you install it.
     + date_default_timezone_set your timezone.  Mine is set to:
       ('US/Eastern')
@@ -188,7 +188,7 @@
   When done your list of files should be:
   These files you will have to create or modify.
 ** db_name.php
-   Copy the example webpages/db_name_sample.php to Local/db_name.php
+   Copy the example [[../webpages/db_name_sample.php][db_name_sample.php]] to [[../Local/db_name.php][Local/db_name.php]]
    as a start, and then put in the values you decided upon before
    starting the install process.
 ** Data_Backup
@@ -621,11 +621,11 @@ is an advantage to all.
    list is probably the first thing you wish to do.
 
 #+begin_src html :exports both :results silent
-     YourWebPath/webpages/genreport.php?reportname=tasklistdisplay
+     [[../webpages/genreport.php?reportname=tasklistdisplay][tasklistdisplay]]
 #+end_src
 
-   Replacing, of course /YourWebPath/ with the proper URL to get to
-   your Zambia-FFF branch install.
+   Don't forget, if this isn't hot-linked properly, you might need to
+   adjust this for your Zambia-FFF branch install.
 ** Brainstorming
    The Brainstorming links should work immediately.  From the top
    directory (index) page of your site, you should be able to click on
@@ -652,6 +652,7 @@ is an advantage to all.
   + Permissions/Con Role: [[../webpages/StaffEditCreateParticipant.php?action=migrate][Migrate Participant]], [[../webpages/StaffEditCreateParticipant.php?action=edit][Edit Participant]]
   + Has Reports: [[../webpages/AdminHasReports.php][AdminHasReports.php]]
   + Manage Participants and Schedule: [[../webpages/StaffManageParticipants.php][Manage Participants & Schedule]]
+  + Publication Limits: [[../webpages/AdminPublicationLimits.php][AdminPublicationLimits.php]]
   + Services and Features: [[../webpages/AdminSetupServices.php][AdminSetupServices.php]]
   + Create Sessions: [[../webpages/CreateSession.php][Create a New Session]]
   + Manage Sessions: [[../webpages/StaffManageSessions.php][Manage Sessions]]
@@ -669,11 +670,25 @@ is an advantage to all.
   information can be altered later, if you so desire on the
   [[../webpages/AdminConInstance.php]["AdminConInstance.php"]] page.
 
-  If you want to do it by hand, here are the updates you have to do.
-  You might want to update the FALLBACK_KEY in the Local/db_name.php
-  file, but you shouldn't have to, all the rest should remain the
-  same.  The rest of the information below should be set in your
-  database tables.
+  This (the [[../webpages/AdminConInstance.php]["AdminConInstance.php"]] page) is also where you would go if
+  there is a missing value from one of the Base tables, which are:
+  + BaseDigitalAd - Ads and Promotions
+  + BaseFeatures - Schedule Elements
+  + BaseLocBuilding - Locations
+  + BaseLocFloor - Locations
+  + BaseLocRoom - Rooms
+  + BaseLocSubRoom - Rooms
+  + BasePrintAd - Ads and Promotions
+  + BaseServices - Schedule Elements
+  + BaseSponsorLevel - Ads and Promotions
+  + BaseVendorFeature - Vendors
+  + BaseVendorSpace - Vendors
+
+  If you want to modify the ConInfo table by hand, here are the
+  updates you have to do.  You might also want to update the
+  FALLBACK_KEY in the [[../Local/db_name.php][db_name.php]] file, but you shouldn't have
+  to, all the rest should remain the same.  The rest of the
+  information below should be set in your database tables.
 ** ConInfo
    The first place to start is setting your ConInfo information.  This
    allows for the con to show up in the index file, and opens all the
@@ -804,7 +819,7 @@ is an advantage to all.
    to give each the right permissions. If a person's permissions need
    to be changed, they can be updated either on the migration page
    listed above, or on the [[../webpages/StaffEditCreateParticipant.php?action=edit]["Edit Participant"]] page. The use of that
-   page is well documented in the [[Presenter_Flow.html]["Presenter Flow"]] [[Presenter_Flow.pdf][(PDF)]] document in
+   page is well documented in the [[./Presenter_Flow.html]["Presenter Flow"]] [[./Presenter_Flow.pdf][(PDF)]] document in
    this directory.
 
    You probably also want to make sure the 100-user (the Brainstorm
@@ -948,17 +963,20 @@ is an advantage to all.
   depending on what is available, as well as the rooms
 ** PublicationLimits
 
-   This still needs an in-Zambia tool to modify/set these.
-
    This tracks the various limits on the publication fields, so that
    you can have restrictions on minimum and/or maximum length of these
    fields.  All the limit checks should be set up such that if you
    don't have a limit set in this table, the minimum is presumed 0 and
    the maximum is presumed to be whatever your database maximum is for
-   that particular field.  If you wish to see what limits were set for
-   a previous instance of your con (to make sure you have the right
-   limits), you might want to use a query (replacing the $conid with
-   the previous con you want to model on) like:
+   that particular field.  
+
+   To add/update the limits for this event, feel free to use the
+   [[../webpages/AdminPublicationLimits.php]["AdminPublicationLimits.php"]] page.
+
+   If you wish to see what limits were set for a previous instance of
+   your con (to make sure you have the right limits), you might want
+   to use a query (replacing the $conid with the previous con you want
+   to model on) like:
 #+begin_src html :exports both :results silent
     SELECT
         *
@@ -1014,6 +1032,11 @@ is an advantage to all.
    available for this con-instance, use the [[../webpages/AdminSetupServices.php]["AdminSetupServices.php"]]
    page.
 
+   To add a service or feature that you expect to be listed is not
+   listed from that page, use the [[../webpages/AdminConInstance.php]["AdminConInstance.php"]] page (if you
+   don't have sufficient permissions to do so, ask the Zambia
+   Librarian or Con Chair for assistance) to add it.
+
 ** Rooms
 
    This needs to be fleshed out more.
@@ -1024,7 +1047,7 @@ is an advantage to all.
 * Adding a year instance - Vendors
 
   This is covered extensively, and in a more updated fashion in the
-  [[Vending_Design_Document.html]["Vending Design Document"]] [[Vending_Design_Document.pdf][(PDF)]].  The below is still here fore
+  [[./Vending_Design_Document.html]["Vending Design Document"]] [[./Vending_Design_Document.pdf][(PDF)]].  The below is still here fore
   legacy purposes until cleaned up.
 ** VendorSpaces and VendorFeatures
    These two tables are built in the same pattern. VendorSpaces are
@@ -1177,12 +1200,12 @@ is an advantage to all.
   static data, whenever you do a (major) update.  This is done from
   the [[../webpages/KonOpasData.php]["Publish to KonOpas/WebApp"]] link off of the [[../webpages/StaffManageSessions.php][Manage Sessions]] page.
 * Other Useful Documentation
-  + [[Bio_Editing.html][Bio Editing]] [[Bio_Editing.pdf][(PDF)]]
-  + [[Email_Functions.html][Email Functions]] [[Email_Functions.pdf][(PDF)]]
-  + [[Panelists_Guide.html][Panelists Guild]] [[Panelists_Guide.pdf][(PDF)]]
-  + [[Photo_Lounge.html][Photo Lounge Guide]] [[Photo_Lounge.pdf][(PDF)]]
-  + [[Presenter_Flow.html][Presenter Flow]] [[Presenter_Flow.pdf][(PDF)]]
-  + [[Publication_Flow.html][Publication Flow]] [[Publication_Flow.pdf][(PDF)]]
-  + [[Tasks-Gantt_Chart.html][Tasks and Gantt Chart]] [[Tasks-Gantt_Chart.pdf][(PDF)]]
-  + [[Time_Card.html][Time Cards]] [[Time_Card.pdf][(PDF)]]
-  + [[Vending_Design_Document.html][Vending Guide]] [[Vending_Design_Document.pdf][(PDF)]]
+  + [[./Bio_Editing.html][Bio Editing]] [[./Bio_Editing.pdf][(PDF)]]
+  + [[./Email_Functions.html][Email Functions]] [[./Email_Functions.pdf][(PDF)]]
+  + [[./Panelists_Guide.html][Panelists Guild]] [[./Panelists_Guide.pdf][(PDF)]]
+  + [[./Photo_Lounge.html][Photo Lounge Guide]] [[./Photo_Lounge.pdf][(PDF)]]
+  + [[./Presenter_Flow.html][Presenter Flow]] [[./Presenter_Flow.pdf][(PDF)]]
+  + [[./Publication_Flow.html][Publication Flow]] [[./Publication_Flow.pdf][(PDF)]]
+  + [[./Tasks-Gantt_Chart.html][Tasks and Gantt Chart]] [[./Tasks-Gantt_Chart.pdf][(PDF)]]
+  + [[./Time_Card.html][Time Cards]] [[./Time_Card.pdf][(PDF)]]
+  + [[./Vending_Design_Document.html][Vending Guide]] [[./Vending_Design_Document.pdf][(PDF)]]

@@ -775,9 +775,9 @@
     vendors/community tables when the call will open and close.
     Might use [[../webpages/StaffSendEmailCompose.php][StaffSendEmailCompose.php]]
 *** Phase Change
-    At the appropriate time, the Con Chair or Zambia bitch will open
+    At the appropriate time, the Con Chair or Zambia Librarian opens
     the call for vendors, in line with the appropriate task-list
-    activities from the AdminPhases.php page.
+    activities from the [[../webpages/AdminPhases.php][AdminPhases.php]] page.
 *** Email
     Vendor Div Head generates and sends email letting the
     vendors/community tables know that the call is open.
@@ -800,9 +800,9 @@
      + Other tools TBD.
     Otherwise ...
 *** Phase Change
-    At the appropriate time, the Con Chair or Zambia bitch close the
-    call for vendors. (This is not necessarily in the right place in
-    the sequence.)  From the AdminPhases.php page.
+    At the appropriate time, the Con Chair or Zambia Librarian closes
+    the call for vendors. (This is not necessarily in the right place
+    in the sequence.)  From the [[../webpages/AdminPhases.php][AdminPhases.php]] page.
 *** Jury
     The (rest of (if rolling acceptance is happening)) vendors and
     community tables get acceptance, which probably is an individual

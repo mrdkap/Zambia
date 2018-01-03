@@ -127,7 +127,7 @@ will be putting your files into)?  Often something like
 /var/www/Zambia-Con or /home/username/public\_html/Zambia-Con or
 the like.
 
-\subsubsection{db\_name.php file}
+\subsubsection{\href{../Local/db_name.php}{db\_name.php} file}
 \label{sec-1-2-3}
 This information will go in the db\_name.php file when you install it.
 \begin{itemize}
@@ -284,7 +284,7 @@ When done your list of files should be:
 These files you will have to create or modify.
 \subsection{db\_name.php}
 \label{sec-3-1}
-Copy the example webpages/db\_name\_sample.php to Local/db\_name.php
+Copy the example \href{../webpages/db_name_sample.php}{db\_name\_sample.php} to \href{../Local/db_name.php}{Local/db\_name.php}
 as a start, and then put in the values you decided upon before
 starting the install process.
 
@@ -773,11 +773,11 @@ Establishing the schedule of activities in the form of a "todo"
 list is probably the first thing you wish to do.
 
 \begin{verbatim}
-YourWebPath/webpages/genreport.php?reportname=tasklistdisplay
+[[../webpages/genreport.php?reportname=tasklistdisplay][tasklistdisplay]]
 \end{verbatim}
 
-Replacing, of course \emph{YourWebPath} with the proper URL to get to
-your Zambia-FFF branch install.
+Don't forget, if this isn't hot-linked properly, you might need to
+adjust this for your Zambia-FFF branch install.
 
 \subsection{Brainstorming}
 \label{sec-8-2}
@@ -811,6 +811,7 @@ backup_mysql /your/path/to/Zambia-FFF/instance
 \item Permissions/Con Role: \href{../webpages/StaffEditCreateParticipant.php?action=migrate}{Migrate Participant}, \href{../webpages/StaffEditCreateParticipant.php?action=edit}{Edit Participant}
 \item Has Reports: \href{../webpages/AdminHasReports.php}{AdminHasReports.php}
 \item Manage Participants and Schedule: \href{../webpages/StaffManageParticipants.php}{Manage Participants \& Schedule}
+\item Publication Limits: \href{../webpages/AdminPublicationLimits.php}{AdminPublicationLimits.php}
 \item Services and Features: \href{../webpages/AdminSetupServices.php}{AdminSetupServices.php}
 \item Create Sessions: \href{../webpages/CreateSession.php}{Create a New Session}
 \item Manage Sessions: \href{../webpages/StaffManageSessions.php}{Manage Sessions}
@@ -831,11 +832,27 @@ Publication Limits from the selected con instance.  The con
 information can be altered later, if you so desire on the
 \href{../webpages/AdminConInstance.php}{"AdminConInstance.php"} page.
 
-If you want to do it by hand, here are the updates you have to do.
-You might want to update the FALLBACK\_KEY in the Local/db\_name.php
-file, but you shouldn't have to, all the rest should remain the
-same.  The rest of the information below should be set in your
-database tables.
+This (the \href{../webpages/AdminConInstance.php}{"AdminConInstance.php"} page) is also where you would go if
+there is a missing value from one of the Base tables, which are:
+\begin{itemize}
+\item BaseDigitalAd - Ads and Promotions
+\item BaseFeatures - Schedule Elements
+\item BaseLocBuilding - Locations
+\item BaseLocFloor - Locations
+\item BaseLocRoom - Rooms
+\item BaseLocSubRoom - Rooms
+\item BasePrintAd - Ads and Promotions
+\item BaseServices - Schedule Elements
+\item BaseSponsorLevel - Ads and Promotions
+\item BaseVendorFeature - Vendors
+\item BaseVendorSpace - Vendors
+\end{itemize}
+
+If you want to modify the ConInfo table by hand, here are the
+updates you have to do.  You might also want to update the
+FALLBACK\_KEY in the \href{../Local/db_name.php}{db\_name.php} file, but you shouldn't have
+to, all the rest should remain the same.  The rest of the
+information below should be set in your database tables.
 \subsection{ConInfo}
 \label{sec-11-1}
 The first place to start is setting your ConInfo information.  This
@@ -976,7 +993,7 @@ easiest way to do so is to use the
 to give each the right permissions. If a person's permissions need
 to be changed, they can be updated either on the migration page
 listed above, or on the \href{../webpages/StaffEditCreateParticipant.php?action=edit}{"Edit Participant"} page. The use of that
-page is well documented in the \texttt{"Presenter Flow"} \texttt{(PDF)} document in
+page is well documented in the \href{./Presenter_Flow.html}{"Presenter Flow"} \href{./Presenter_Flow.pdf}{(PDF)} document in
 this directory.
 
 You probably also want to make sure the 100-user (the Brainstorm
@@ -1135,7 +1152,7 @@ depending on what is available, as well as the rooms
 \subsection{PublicationLimits}
 \label{sec-13-1}
 
-This still needs an in-Zambia tool to modify/set these.
+To add/update the limitsThis still needs an in-Zambia tool to modify/set these.
 
 This tracks the various limits on the publication fields, so that
 you can have restrictions on minimum and/or maximum length of these
@@ -1204,6 +1221,11 @@ easily.
 To select (or update the selection) of services and features
 available for this con-instance, use the \href{../webpages/AdminSetupServices.php}{"AdminSetupServices.php"}
 page.
+
+To add a service or feature that you expect to be listed is not
+listed from that page, use the \href{../webpages/AdminConInstance.php}{"AdminConInstance.php"} page (if you
+don't have sufficient permissions to do so, ask the Zambia
+Librarian or Con Chair for assistance) to add it.
 \subsection{Rooms}
 \label{sec-13-3}
 
@@ -1219,7 +1241,7 @@ Most of the continued interaction can be mostly handled under the
 \label{sec-14}
 
 This is covered extensively, and in a more updated fashion in the
-\texttt{"Vending Design Document"} \texttt{(PDF)}.  The below is still here fore
+\href{./Vending_Design_Document.html}{"Vending Design Document"} \href{./Vending_Design_Document.pdf}{(PDF)}.  The below is still here fore
 legacy purposes until cleaned up.
 \subsection{VendorSpaces and VendorFeatures}
 \label{sec-14-1}
@@ -1397,14 +1419,14 @@ the \href{../webpages/KonOpasData.php}{"Publish to KonOpas/WebApp"} link off of 
 \section{Other Useful Documentation}
 \label{sec-17}
 \begin{itemize}
-\item \texttt{Bio Editing} \texttt{(PDF)}
-\item \texttt{Email Functions} \texttt{(PDF)}
-\item \texttt{Panelists Guild} \texttt{(PDF)}
-\item \texttt{Photo Lounge Guide} \texttt{(PDF)}
-\item \texttt{Presenter Flow} \texttt{(PDF)}
-\item \texttt{Publication Flow} \texttt{(PDF)}
-\item \texttt{Tasks and Gantt Chart} \texttt{(PDF)}
-\item \texttt{Time Cards} \texttt{(PDF)}
-\item \texttt{Vending Guide} \texttt{(PDF)}
+\item \href{./Bio_Editing.html}{Bio Editing} \href{./Bio_Editing.pdf}{(PDF)}
+\item \href{./Email_Functions.html}{Email Functions} \href{./Email_Functions.pdf}{(PDF)}
+\item \href{./Panelists_Guide.html}{Panelists Guild} \href{./Panelists_Guide.pdf}{(PDF)}
+\item \href{./Photo_Lounge.html}{Photo Lounge Guide} \href{./Photo_Lounge.pdf}{(PDF)}
+\item \href{./Presenter_Flow.html}{Presenter Flow} \href{./Presenter_Flow.pdf}{(PDF)}
+\item \href{./Publication_Flow.html}{Publication Flow} \href{./Publication_Flow.pdf}{(PDF)}
+\item \href{./Tasks-Gantt_Chart.html}{Tasks and Gantt Chart} \href{./Tasks-Gantt_Chart.pdf}{(PDF)}
+\item \href{./Time_Card.html}{Time Cards} \href{./Time_Card.pdf}{(PDF)}
+\item \href{./Vending_Design_Document.html}{Vending Guide} \href{./Vending_Design_Document.pdf}{(PDF)}
 \end{itemize}
 \end{document}

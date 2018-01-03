@@ -62,6 +62,8 @@ if ($_POST['update'] == "Yes") {
   for ($j=1; $j<=$basetablesrows; $j++) {
     $tname=$basetables_array[$j]['TABLE_NAME'];
     $tlcname=strtolower($tname);
+    if ($tlcname=="baseservices") {($tlcname="baseservice");}
+    if ($tlcname=="basefeatures") {($tlcname="basefeature");}
     if (!empty($_POST['bname'][$tname])) {
       $element_array=array($tlcname . "name", $tlcname . "desc");
       $value_array=array(mysql_real_escape_string(stripslashes($_POST['bname'][$tname])),

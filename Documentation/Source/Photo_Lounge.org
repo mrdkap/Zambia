@@ -28,6 +28,7 @@
   Like all sub-sections of Zambia, to activate this you have to make
   sure you have a number of elements in your con setup in place.
 ** PhaseTypes
+
    A pair of PhaseTypes included in your con.  They would be "Photo
    Voting (17)" and "Photo Submissions (18)".
 
@@ -42,6 +43,7 @@
    access to voting for those who are of the right permissions to
    vote.
 ** PermissionRoles
+
    The three permission roles associated with the Photo Lounge are:
    + PhotoSub
    + PhotoRev
@@ -72,6 +74,7 @@
    Also the Super should be able to toggle on and off the Phases, but
    that also is still a work in progress.
 ** ConRoles
+
    There is one con role that works with this, but that is the host of
    the Photography Lounge, so not directly relevant to this document.
    See the document on Lounge Hosts.
@@ -95,6 +98,7 @@
 
   Both are fairly straight-forward and simple, but useful.
 * Files
+
   There is a possiblity you would want to tweak the values at the top
   of the PhotoLoungeSubmit.php file.  They are:
   + $minwidth=1200;
@@ -107,6 +111,7 @@
   be more than), maxumum width, maximum height (both must be less
   than) and maximum file size (must be less than).
 * Flow
+
   + The flow starts when the call for Photo Submissions begins.
   + The SuperPhotoRev either asks for the phase to be set, or sets the
     phase to open, so that people might either submit, or apply to
@@ -127,10 +132,8 @@
       WHERE
         permroleid=41;
 #+end_src
-  + The PhotoSubs then submit photos:
-#+begin_src html :exports both :results silent
-     YourWebPath/webpages/PhotoLoungeSubmit.php
-#+end_src
+  + The PhotoSubs then submit photos at the [[../webpages/PhotoLoungeSubmit.php][PhotoLoungeSubmit.php]]
+    page.
   + Once the photos are all submitted or the SuperPhotoRev is done
     soliciting them, that phase should be closed, and the Photo Voting
     phase should be initiated.
@@ -139,47 +142,30 @@
     before the next step.
   + Folks that either have self-selected, if self-service has been
     enabled, or have been selected by the SuperPhotoRev may now go and
-    vote on all the pictures:
-#+begin_src html :exports both :results silent
-     YourWebPath/webpages/PhotoLoungePictures.php
-#+end_src
-    or by going directly to the individual artist selections:
-#+begin_src html :exports both :results silent
-     YourWebPath/webpages/PhotoLoungeVote.php
-#+end_src
+    vote on all the pictures at the [[../webpages/PhotoLoungePictures.php][PhotoLoungePictures.php]] page
+    or by going directly to the individual artist selections at the
+    [[../webpages/PhotoLoungeVote.php][PhotoLoungeVote.php]] page.
   + Once sufficient pictures have been voted on, the voting phase can
     close.
   + The selection process, of the pictures that are voted on have
     several steps, some of which can go in various orders, to be
     determined by the SuperPhotoRev.
   + View and select which of the voted-upon sets of pictures should be
-    included into the lounge:
-#+begin_src html :exports both :results silent
-     YourWebPath/webpages/PhotoLoungeCollectVotes.php
-#+end_src
+    included into the lounge at the [[../webpages/PhotoLoungeCollectVotes.php][PhotoLoungeCollectVotes.php]] page.
   + Using the contact sheet, get in touch with all the appropriate
-    PhotoSub folks to let them know what was selected.
-#+begin_src html :exports both :results silent
-     YourWebPath/webpages/PhotoLoungeContactSheet.php
-#+end_src
-  + If there are any changes, they can be managed from the contact
-    sheet:
-#+begin_src html :exports both :results silent
-     YourWebPath/webpages/PhotoLoungeContactSheet.php
-#+end_src
-    the view of the voted on pictures:
-#+begin_src html :exports both :results silent
-     YourWebPath/webpages/PhotoLoungeCollectVotes.php
-#+end_src
-    or the report that also has the same information, without the
-    possible confusion of changing what was selected:
-#+begin_src html :exports both :results silent
-     YourWebPath/webpages/genreport.php?reportname=picturesubmiswvote
-#+end_src
+    PhotoSub folks to let them know what was selected from the
+    [[../webpages/PhotoLoungeContactSheet.php][PhotoLoungeContactSheet.php]] page.
+  + If there are any changes, they can be managed from:
+    - the same contact sheet - [[../webpages/PhotoLoungeContactSheet.php][PhotoLoungeContactSheet.php]]
+    - the view of the voted on pictures - [[../webpages/PhotoLoungeCollectVotes.php][PhotoLoungeCollectVotes.php]]
+    - the report that also has the same information, without the
+      possible confusion of changing what was selected -
+      [[../webpages/genreport.php?reportname=picturesubmiswvote][genreport.php?reportname=picturesubmiswvote]]
   + Once the photos are all selected, this is a good time to run the
     create_imagination_files.sh script so that there is a directory to
     pull the appropriate files from, and create the slideshow from.
 * Using the imagination software
+
   + Create a new slideshow: VOB/576 HD, no rescale, background=black
   + Import the images from the directory created by the
     create_imagination_files.sh script (probably
@@ -192,6 +178,7 @@
   + Add the appropriate music
   + Export to a VOB file
 ** File exerpt:
+
 #+begin_src html :exports both :results silent
 [slideshow settings]
 video format=576
@@ -214,12 +201,11 @@ font=Sans 12
 font color=0;0;0;1;
 font bgcolor=1;1;1;1;
 #+end_src
-
-
-
 * Convert VOB to mpeg/avi
+
   + ffmpeg -i FFF??_Photo_Lounge.vob -f avi -c:v mpeg4 -b:v 800k -g 300 -bf 2 -c:a libmp3lame -b:a 128k FFF??_Photo_Lounge.avi
   + cp FFF??_Photo_Lounge.vob FFF??_Photo_Lounge.mpeg
 * Load onto Devices
+
   + Thumb Drives:  Pictures into Pictures, only the mpeg in Movies
   + Pi Devices: Everthing into local Pictures, mpeg into sub Movie diretory in Pictures.

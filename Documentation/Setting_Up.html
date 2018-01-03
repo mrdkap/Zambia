@@ -351,7 +351,7 @@ the like.
 </div>
 
 <div id="outline-container-sec-1-2-3" class="outline-4">
-<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> db_name.php file</h4>
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> <a href="../Local/db_name.php">db_name.php</a> file</h4>
 <div class="outline-text-4" id="text-1-2-3">
 <p>
 This information will go in the db_name.php file when you install it.
@@ -599,7 +599,7 @@ These files you will have to create or modify.
 <h3 id="sec-3-1"><span class="section-number-3">3.1</span> db_name.php</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
-Copy the example webpages/db_name_sample.php to Local/db_name.php
+Copy the example <a href="../webpages/db_name_sample.php">db_name_sample.php</a> to <a href="../Local/db_name.php">Local/db_name.php</a>
 as a start, and then put in the values you decided upon before
 starting the install process.
 </p>
@@ -1287,13 +1287,13 @@ list is probably the first thing you wish to do.
 
 <div class="org-src-container">
 
-<pre class="src src-html">YourWebPath/webpages/genreport.php?reportname=tasklistdisplay
+<pre class="src src-html">[[../webpages/genreport.php?reportname=tasklistdisplay][tasklistdisplay]]
 </pre>
 </div>
 
 <p>
-Replacing, of course <i>YourWebPath</i> with the proper URL to get to
-your Zambia-FFF branch install.
+Don't forget, if this isn't hot-linked properly, you might need to
+adjust this for your Zambia-FFF branch install.
 </p>
 </div>
 </div>
@@ -1381,11 +1381,40 @@ information can be altered later, if you so desire on the
 </p>
 
 <p>
-If you want to do it by hand, here are the updates you have to do.
-You might want to update the FALLBACK_KEY in the Local/db_name.php
-file, but you shouldn't have to, all the rest should remain the
-same.  The rest of the information below should be set in your
-database tables.
+This (the <a href="../webpages/AdminConInstance.php">"AdminConInstance.php"</a> page) is also where you would go if
+there is a missing value from one of the Base tables, which are:
+</p>
+<ul class="org-ul">
+<li>BaseDigitalAd - Ads and Promotions
+</li>
+<li>BaseFeatures - Schedule Elements
+</li>
+<li>BaseLocBuilding - Locations
+</li>
+<li>BaseLocFloor - Locations
+</li>
+<li>BaseLocRoom - Rooms
+</li>
+<li>BaseLocSubRoom - Rooms
+</li>
+<li>BasePrintAd - Ads and Promotions
+</li>
+<li>BaseServices - Schedule Elements
+</li>
+<li>BaseSponsorLevel - Ads and Promotions
+</li>
+<li>BaseVendorFeature - Vendors
+</li>
+<li>BaseVendorSpace - Vendors
+</li>
+</ul>
+
+<p>
+If you want to modify the ConInfo table by hand, here are the
+updates you have to do.  You might also want to update the
+FALLBACK_KEY in the <a href="../Local/db_name.php">db_name.php</a> file, but you shouldn't have
+to, all the rest should remain the same.  The rest of the
+information below should be set in your database tables.
 </p>
 </div>
 <div id="outline-container-sec-11-1" class="outline-3">
@@ -1579,7 +1608,7 @@ easiest way to do so is to use the
 to give each the right permissions. If a person's permissions need
 to be changed, they can be updated either on the migration page
 listed above, or on the <a href="../webpages/StaffEditCreateParticipant.php?action=edit">"Edit Participant"</a> page. The use of that
-page is well documented in the <i>"Presenter Flow"</i> <i>(PDF)</i> document in
+page is well documented in the <a href="./Presenter_Flow.html">"Presenter Flow"</a> <a href="./Presenter_Flow.pdf">(PDF)</a> document in
 this directory.
 </p>
 
@@ -1898,6 +1927,13 @@ To select (or update the selection) of services and features
 available for this con-instance, use the <a href="../webpages/AdminSetupServices.php">"AdminSetupServices.php"</a>
 page.
 </p>
+
+<p>
+To add a service or feature that you expect to be listed is not
+listed from that page, use the <a href="../webpages/AdminConInstance.php">"AdminConInstance.php"</a> page (if you
+don't have sufficient permissions to do so, ask the Zambia
+Librarian or Con Chair for assistance) to add it.
+</p>
 </div>
 </div>
 <div id="outline-container-sec-13-3" class="outline-3">
@@ -1925,7 +1961,7 @@ Most of the continued interaction can be mostly handled under the
 <div class="outline-text-2" id="text-14">
 <p>
 This is covered extensively, and in a more updated fashion in the
-<i>"Vending Design Document"</i> <i>(PDF)</i>.  The below is still here fore
+<a href="./Vending_Design_Document.html">"Vending Design Document"</a> <a href="./Vending_Design_Document.pdf">(PDF)</a>.  The below is still here fore
 legacy purposes until cleaned up.
 </p>
 </div>
@@ -2188,23 +2224,23 @@ the <a href="../webpages/KonOpasData.php">"Publish to KonOpas/WebApp"</a> link o
 <h2 id="sec-17"><span class="section-number-2">17</span> Other Useful Documentation</h2>
 <div class="outline-text-2" id="text-17">
 <ul class="org-ul">
-<li><i>Bio Editing</i> <i>(PDF)</i>
+<li><a href="./Bio_Editing.html">Bio Editing</a> <a href="./Bio_Editing.pdf">(PDF)</a>
 </li>
-<li><i>Email Functions</i> <i>(PDF)</i>
+<li><a href="./Email_Functions.html">Email Functions</a> <a href="./Email_Functions.pdf">(PDF)</a>
 </li>
-<li><i>Panelists Guild</i> <i>(PDF)</i>
+<li><a href="./Panelists_Guide.html">Panelists Guild</a> <a href="./Panelists_Guide.pdf">(PDF)</a>
 </li>
-<li><i>Photo Lounge Guide</i> <i>(PDF)</i>
+<li><a href="./Photo_Lounge.html">Photo Lounge Guide</a> <a href="./Photo_Lounge.pdf">(PDF)</a>
 </li>
-<li><i>Presenter Flow</i> <i>(PDF)</i>
+<li><a href="./Presenter_Flow.html">Presenter Flow</a> <a href="./Presenter_Flow.pdf">(PDF)</a>
 </li>
-<li><i>Publication Flow</i> <i>(PDF)</i>
+<li><a href="./Publication_Flow.html">Publication Flow</a> <a href="./Publication_Flow.pdf">(PDF)</a>
 </li>
-<li><i>Tasks and Gantt Chart</i> <i>(PDF)</i>
+<li><a href="./Tasks-Gantt_Chart.html">Tasks and Gantt Chart</a> <a href="./Tasks-Gantt_Chart.pdf">(PDF)</a>
 </li>
-<li><i>Time Cards</i> <i>(PDF)</i>
+<li><a href="./Time_Card.html">Time Cards</a> <a href="./Time_Card.pdf">(PDF)</a>
 </li>
-<li><i>Vending Guide</i> <i>(PDF)</i>
+<li><a href="./Vending_Design_Document.html">Vending Guide</a> <a href="./Vending_Design_Document.pdf">(PDF)</a>
 </li>
 </ul>
 </div>

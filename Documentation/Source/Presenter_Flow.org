@@ -29,8 +29,7 @@
   Please do not let that deter you from enjoying this document.
 
 * Entering Presenters
-#+HTML: <A NAME="StaffManageParticipants.php" ID="StaffManageParticipants.php"></A>   
-#+HTML: <A HREF="../webpages/StaffManageParticipants.php">StaffManageParticipants.php</A>
+  [[../webpages/StaffManageParticipants.php][StaffManageParticipants.php]]
 
   There are two basic paths for entering Presenters into Zambia,
   either they are entered via outside suggestion (by someone, possibly
@@ -42,9 +41,9 @@
   system.  If the Presenter is in the system a member of the Liaison
   Team can indicate their interest without rentering their data.
 
-  Most of the work on a Presenter level is done from the [[Entering Presenters]["Manage
-  Participants & Schedule"]] tab which references the
-  StaffManageParticipants.php page.  Most of the below sections are
+  Most of the work on a Presenter level is done from the 
+  [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab which references the
+  [[../webpages/StaffManageParticipants.php]["StaffManageParticipants.php"]] page.  Most of the below sections are
   choices off of this page.
 
 #+CAPTION: Manage Participants
@@ -60,12 +59,12 @@
    from another con-instance to be available for this year.
 
 *** Administer Participants Check
-#+HTML: <A HREF="../webpages/AdminParticipants.php">AdminParticipants.php</A>
+    [[../webpages/AdminParticipants.php][AdminParticipants.php]]
 
     If they are already in Zambia for this year, you would be able to
-    find them under the [[Entering Presenters]["Manage Participants & Schedule"]] tab, the
-    second link down is the [[Updating Presenter Information]["Administer Participants"]] link which
-    references the AdminParticipants.php page.  This will bring up a
+    find them under the [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab, the
+    second link down is the [[../webpages/AdminParticipants.php]["Administer Participants"]] link which
+    references the [[../webpages/AdminParticipants.php]["AdminParticipants.php"]] page.  This will bring up a
     set of ways to select the participant from information you know.
    
 #+CAPTION: Administer Participants Header
@@ -74,20 +73,20 @@
 [[./Images/Administer_Participants_Header.png]]
 
     If the Preseter exists under one of the pulldowns, you can
-    continue from the the [[Updating Presenter Information]["Administer Participants"]] section below.
+    continue from the section [[Updating Presenter Information][Updating Presenter Information]] below.
 
 *** Migrate Participant from another con-instance
-#+HTML: <A NAME="StaffMigrateParticipant.php" ID="StaffMigrageParticipant.php"></A>   
-#+HTML: <A HREF="../webpages/StaffMigrageParticipant.php">StaffMigrageParticipant.php</A>
+    [[../webpages/StaffEditCreateParticipant.php?action=migrate][StaffEditCreateParticipant.php?action=migrate]]
 
     A Presenter might exist in Zambia but not be set for this
     con-instance, and we want only one instance of a person in Zambia,
     so the next step is to see if the Presenter can be migrated from
     another con-instance to the current con-instance.
 
-    Under the [[Entering Presenters]["Manage Participants & Schedule"]] tab, the third link
-    down is the [[Migrate Participant from another con-instance]["Migrate Partitipant from another con-instance"]] link
-    which references the StaffMigrageParticipant.php page.  This will
+    Under the [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab, the third link
+    down is the [[../webpages/StaffEditCreateParticipant.php?action=migrate]["Migrate Partitipant from another con-instance"]] link
+    which references the
+    [[../webpages/StaffEditCreateParticipant.php?action=migrate]["StaffEditCreateParticipant.php?action=migrate"]] page.  This will
     bring up a set of ways to select the participant from the
     information that you know, including their email address.
 
@@ -97,22 +96,21 @@
 [[./Images/Migrate_Participant_Header.png]]
 
     Once the Presenter is selected, a form very similar to the
-    [[Presenters by a Liaison]["Enter Participant"]] form is brought up, with several fields
+    [[../webpages/StaffEditCreateParticipant.php?action=create]["Enter Participant"]] form is brought up, with several fields
     already filled in.  Follow the instructions below from that point
     to make sure they are migrated to this con-instance.  From that
     point forward, you should be able to find them under the
-    [[Updating Presenter Information]["Administer Participants"]] link.
+    [[../webpages/AdminParticipants.php]["Administer Participants"]] link.
 
 ** Presenters by Ouside Suggestions
-#+HTML: <A NAME="BrainstormSuggestPresenter.php" ID="BrainstormSuggestPresenter.php"></A>
-#+HTML: <A HREF="../webpages/BrainstormSuggestPresenter.php">BrainstormSuggestPresenter.php</A>
+   [[../webpages/BrainstormSuggestPresenter.php][BrainstormSuggestPresenter.php]]
    
    Depending on your convention, many of the folks who are going to
    present either applied to do so (once you put the call for
    presenters) or are recommended by other folk.  Either way they
-   will probably have been entered in the Brainstorm Suggest a
-   Presenter form, which is accessable under the Brainstorm [[Presenters by Ouside Suggestions]["Suggest a
-   Presenter"]] tab.
+   will probably have been entered in the
+   [[../webpages/BrainstormSuggestPresenter.php]["BrainstormSuggestPresenter.php"]] form, which is accessable under
+   the Brainstorm [[../webpages/BrainstormSuggestPresenter.php]["Suggest a Presenter"]] tab.
 
 #+CAPTION: Brainstorm Suggest Presenter
 #+LABEL: fig:Zambia_Presenter_Flow_Brainstorm_Suggest_Presenter
@@ -123,7 +121,7 @@
    might not even have enough information to track them down and
    invite them but most people are good at putting in the
    information.  Once presenter information is entered, most of it
-   will be in the "NotesOnPresenter" element, looking much like:
+   will be in the [[../webpages/NoteOnParticipant.php]["NotesOnPresenter"]] element, looking much like:
 
 #+CAPTION: Notes On Presenter
 #+LABEL: fig:Zambia_Presenter_Flow_Notes_On_Presenter
@@ -131,7 +129,9 @@
 [[./Images/Notes_On_Participant.png]]
 
    The element appears at the bottom of a presenter administration
-   screen.
+   screen once a presenter is selected.  That would be either the
+   [[../webpages/AdminParticipants.php]["AdminParticipants.php"]] page or the
+   [[../webpages/StaffEditCreateParticipant.php?action=edit]["StaffEditCreateParticipant.php?action=edit"]] page.
 
    Hopefully their name and email address will be in their profile
    should you desire to contact them.  Hopefully it will also include
@@ -140,19 +140,18 @@
    be helpful in facilitating the contact.
 
 ** Presenters by a Liaison
-#+HTML: <A NAME="StaffEditCreateParticipant.php" ID="StaffEditCreateParticipant.php"></A>   
-#+HTML: <A HREF="../webpages/StaffEditCreateParticipant.php?action=create">StaffEditCreateParticipant.php</A>
+   [[../webpages/StaffEditCreateParticipant.php?action=create][StaffEditCreateParticipant.php?action=create]]
    
    Often a Liaison person is tapped to enter in a participant because
    of negotiations done using other chanels.  If they aren't already
-   in Zambia, having checked both the [[Updating Presenter Information]["Administer Participants"]] link
-   and the [[Migrate Participant from another con-instance]["Migrate Partitipant from another con-instance"]] link, the
+   in Zambia, having checked both the [[../webpages/AdminParticipants.php]["Administer Participants"]] link
+   and the [[../webpages/StaffEditCreateParticipant.php?action=migrate]["Migrate Partitipant from another con-instance"]] link, the
    participant has to be entered manually.  Entering in the Presenter's
    information is slightly more comprehensive than doing so in the
-   Brainstorm [[Presenters by Ouside Suggestions]["Suggest a Presenter"]] tab.  Under the [[Entering Presenters]["Manage
-   Participants & Schedule"]] tab, the fourth link down is the [[Presenters by a Liaison]["Enter
-   Participant"]] link which references the
-   StaffEditCreateParticipant.php page.
+   Brainstorm [[../webpages/BrainstormSuggestPresenter.php]["Suggest a Presenter"]] tab.  Under the
+   [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab, the fourth link down is the
+   [[../webpages/StaffEditCreateParticipant.php?action=create]["Enter Participant"]] link which references the
+   [[../webpages/StaffEditCreateParticipant.php?action=create]["StaffEditCreateParticipant.php?action=create"]] page.
 
 #+CAPTION: Add Participant
 #+LABEL: fig:Zambia_Presenter_Flow_Add_Participant
@@ -222,13 +221,12 @@
    + Don't forget to hit the "Save" button, please.
 
 * Updating Presenter Information
-#+HTML: <A NAME="AdminParticipants.php" ID="AdminParticipants.php"></A>
-#+HTML: <A HREF="../webpages/AdminParticipants.php">AdminParticipants.php</A>
+  [[../webpages/AdminParticipants.php][AdminParticipants.php]]
 
   Once in the system, the most common request by presenters is to have
   their password reset so that they can update the rest of their
-  profile.  To do this, go to the Administer Participants link under
-  the [[Entering Presenters]["Manage Participants & Schedule"]] tab.  Select the presenter from
+  profile.  To do this, go to the [[../webpages/AdminParticipants.php]["Administer Participants"]] link under
+  the [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab.  Select the presenter from
   the drop-down menu and, once selected you may change their password,
   their interested and available setting, and their published name.
 
@@ -249,28 +247,27 @@
 
   At the bottom of the Admin Participants page, there are several
   different links.  The next-most useful page is the first one: "Edit
-  PUBNAME further". When using the direct link as opposed to just
+  PUBNAME further". When using the direct link
+  [[../webpages/StaffEditCreateParticipant.php?action=edit]["StaffEditCreateParticipant.php?action=edit"]] as opposed to just
   clicking through, you will need to reselect the participant from the
   top of the page.
 
-#+HTML: <A HREF="../webpages/StaffEditCreateParticipant.php?action=edit">StaffEditCreateParticipant.php</A>
-
-  The StaffEditCreateParticipant.php link will take you back to the
-  page you should be familiar with, when you were creating the
-  participant.  You can add to or change any of the extant information
-  at this time.  If you want to see the importance of the fields,
-  please see section on [[Presenters by a Liaison][Presenters by a Liaison]] for diagram and
+  The [[../webpages/StaffEditCreateParticipant.php?action=edit]["StaffEditCreateParticipant.php?action=edit"]] link will take you
+  back to the page you should be familiar with, when you were creating
+  the participant.  You can add to or change any of the extant
+  information at this time.  If you want to see the importance of the
+  fields, please see section [[Presenters by a Liaison][Presenters by a Liaison]] for diagram and
   instructions.
 
 * Entering Compensation
-#+HTML: <A NAME="StaffEditCompensation.php" ID="StaffEditCompensation.php"></A>   
-#+HTML: <A HREF="../webpages/StaffEditCompensation.php">StaffEditCompensation.php</A>
+  [[../webpages/StaffEditCompensation.php][StaffEditCompensation.php]]
 
   There are three ways to reach the place to enter Compensation for a
-  Presenter.  One way is to go to the bottom of the Admin Participants
-  page mentioned in the last section, then select the second link:
-  "Set Compensation for PUBNAME", the second is to use the direct link
-  above.  When using the direct link, you will need to reselect the
+  Presenter.  One way is to go to the bottom of the
+  [[../webpages/AdminParticipants.php]["Administer Participants"]] page mentioned in the last section, then
+  select the second link: "Set Compensation for PUBNAME", the second
+  is to use the direct link above.  When using the direct link
+  [[../webpages/StaffEditCompensation.php]["StaffEditCompensation.php"]] you will need to reselect the
   participant from the top of the page.
 
 #+CAPTION: Compensation Update
@@ -284,10 +281,10 @@
   very conference dependant, please make sure any compensation entered
   is in lines with your conference's policies.
 
-  The third path is to select the presenter name from the Presenter
-  Compensation table.
+  The third path is to select the presenter name from the
+  [[../webpages/PresenterCompensation.php]["Presenter Compensation"]] table on the [[../webpages/PresenterCompensation.php]["PresenterCompensation.php"]]
+  page.
 
-#+HTML: <A HREF="../webpages/PresenterCompensation.php">PresenterCompensation.php</A>
 
 #+CAPTION: Compensation Information
 #+LABEL: fig:Zambia_Presenter_Flow_Compensation_Information
@@ -304,7 +301,12 @@
   A Schedule Element is anything that might end up on the schedule.
   This could be an Author Reading, a performance, a hosted meal, a
   class, a panel, a keynote speech, or anything else that is schedule
-  worthy. 
+  worthy. As a note, various folk already existing and migrated in
+  Zambia to your particular con instance have different abilities to
+  suggest different things.  For example a socials host can only
+  suggest they run social programs directly.  If they want to suggest
+  to see something else, they have to use the path from the section
+  [[S.E. by Outside Suggestions][S.E. by Outside Suggestions]] below.
 
   The information entered is visible to anyone who chooses to look at
   the website.  So people interested in what the decision process
@@ -313,13 +315,22 @@
   gives the community some sense of what is going on, so being
   descriptive about the information entered is a good thing.
 
+  There is also a timing element around entering Schedule Elements.
+  Various types of schedule elements are controlled differently by the
+  [[../webpages/genreport.php?reportname=currentphasestate]["Current Phase State"]] Phase of the event.  So if you are done
+  soliciting classes or panels, and yet are still interested in
+  soliciting Socials or Lounges, each can be individually opened or
+  closed.
+
+  Sometimes, in Zambia as Schedule Element is referred to as a Precis
+  [fn:Precis:Precis - a summary or abstract of a text, speech, or class.].
+
   Once a Schedule Element is entered, if it is to be associated with a
   particular individual or set of individuals, that is done in several
   ways.
 
 ** S.E. by Outside Suggestions
-#+HTML: <A NAME="BrainstormCreateSession.php" ID="BrainstormCreateSession.php"></A>   
-#+HTML: <A HREF="../webpages/BrainstormCreateSession.php">BrainstormCreateSession.php</A>
+   [[../webpages/BrainstormCreateSession.php][BrainstormCreateSession.php]]
    
    The Schedule Elements entered in from the outside, or by a
    presenter themselves, will have certain fields filled in, but not
@@ -328,8 +339,8 @@
    worthwhile, appropriate, or fits within this particular event.
    They might have also suggested a specific person for the Schedule
    Element.  The information asked for should be fairly
-   straight forward. This is found on the Brainstorm screen under the
-   Suggest a Session tab.
+   straight forward. This is found on the [[../webpages/BrainstormWelcome.php]["Brainstorm View"]] under the
+   [[../webpages/BrainstormCreateSession.php]["Suggest a Session"]] tab.
 
 #+CAPTION: Brainstorm New Session
 #+LABEL: fig:Zambia_Presenter_Flow_Brainstorm New Session
@@ -337,8 +348,7 @@
 [[./Images/Brainstorm_New_Session.png]]
    
 ** S.E. by a Presenter
-#+HTML: <A NAME="MyProposals.php" ID="MyProposals.php"></A>   
-#+HTML: <A HREF="../webpages/MyProposals.php">MyProposals.php</A>
+   [[../webpages/MyProposals.php][MyProposals.php]]
 
    This is the most preferred way to add Schedule Elements that are
    classes being put on by a specific Presenter or set of Presenters.
@@ -349,10 +359,10 @@
    
    When a presenter logs in, the first page seen is the welcome page.
    This, unlike most of what is done in Zambia has blue (rather than
-   green) tabs, so should be visually different.  There is a "Submit a
-   Proposal" tab at the top.  There might also be a "Submit a
-   Proposal" link in the body.  If the tab is blue (not grayed out)
-   then that tab can be used to propose Schedule Elements.
+   green) tabs, so should be visually different.  There is a
+   [[../webpages/BrainstormCreateSession.php]["Submit a Proposal"]] tab at the top.  There might also be a 
+   [[../webpages/BrainstormCreateSession.php]["Submit a Proposal"]] link in the body.  If the tab is blue (not
+   grayed out) then that tab can be used to propose Schedule Elements.
 
 #+CAPTION: Propose Session
 #+LABEL: fig:Zambia_Presenter_Flow_Propose_Session
@@ -396,8 +406,7 @@
    + Please, do not forget to save your work, or you will be unhappy.
 
 ** S.E. by a Liaison
-#+HTML: <A NAME="CreateSession.php" ID="CreateSession.php"></A>   
-#+HTML: <A HREF="../webpages/CreateSession.php">CreateSession.php</A>
+   [[../webpages/CreateSession.php][CreateSession.php]]
 
    Note: The preference, if possible, is for the liaison to log into
    Zambia as the Presenter in question, and enter in their classes
@@ -405,9 +414,9 @@
 
    If you are filling out this form, you will find that it isn't
    overly complex, but there are some very important pieces here.
-   This can be found from the first link, the "Create a New Session"
-   link under the "Manage Sessions" tab, or directly from the
-   CreateSession.php link.
+   This can be found from the first link, the [[../webpages/CreateSession.php]["Create a New Session"]]
+   link under the [[../webpages/StaffManageSessions.php]["Manage Sessions"]] tab, or directly from the
+    [[../webpages/CreateSession.php]["CreateSession.php"]] link.
 
 #+CAPTION: Add New Session
 #+LABEL: fig:Zambia_Presenter_Flow_Add_New_Session
@@ -536,48 +545,53 @@
    present for your convention.  The next step is to find the Schedule
    Element in question.
 
-   One way is to look under the "Manage Sessions" tab at the View All
-   Sessions link.  Find the Schedule Element, then select the link
-   provided by the number (not the title).
+   One way is to look under the [[../webpages/StaffManageSessions.php]["Manage Sessions"]] tab for the 
+   [[../webpages/genreport.php?reportname=ViewAllSessions]["View All Sessions"]] link  This will take you to the
+   [[../webpages/genreport.php?reportname=ViewAllSessions]["genreport.php?reportname=ViewAllSessions"]] report.  Find the
+   Schedule Element, then select the link provided by the number (not
+   the title).
 
-   A second way is also under the "Manage Sessions" tab, using the
-   link "(Precis View With Links)".  Find the Schedule Element, then
-   select the link provided by the number (not the title).
+   A second way is also under the [[../webpages/StaffManageSessions.php]["Manage Sessions"]] tab, using the
+   [[../webpages/ViewPrecis.php]["Precis View"]] link.  This will take you to the [[../webpages/ViewPrecis.php]["ViewPrecis.php"]]
+   page. Find the Schedule Element, then select the link provided by
+   the number (not the title).
 
    A third path to the Schedule Element in question is still under the
-   "Manage Sessions" tab. Enter the noted session id number in the
+   [[../webpages/StaffManageSessions.php]["Manage Sessions"]] tab. Enter the noted session id number in the
    "Session ID:" box at the bottom of that screen and hit the "Search"
    button.  This should bring up just one record (the record that you
    are expecting, hopefully), again simply select the link provided by
-   the number (not the title).
+   the number (not the title).  This search ability is also at the top
+   of the [[../webpages/ViewPrecis.php]["Precis View"]] page.
 
    The fourth and fifth path presume that you have already marked the
    class as "Vetted", otherwise it will not show up for either of
    these.
 
-   A fourth path is still under the "Manage Sessions" tab, using the
-   "Edit an Existing Session" link.  Not only will this allow you to
-   select your Schedule Element from the pull-down list of possible
-   Schedule Elements and edit the information that might have changed
-   since it was submitted, but also if you select the link provided by
-   the "Session #" number, you will be in the right place.
+   A fourth path is still under the [[../webpages/StaffManageSessions.php]["Manage Sessions"]] tab, using the
+   [[../webpages/EditSession.php]["Edit an Existing Session"]] link taking you to the [[../webpages/EditSession.php]["EditSession.php"]]
+   page.  Not only will this allow you to select your Schedule Element
+   from the pull-down list of possible Schedule Elements and edit the
+   information that might have changed since it was submitted, but
+   also if you select the link provided by the "Session #" number, you
+   will be in the right place.
 
-   A fifth path is under the [[Entering Presenters]["Manage Participants & Schedule"]] tab,
-   using the "Assign participants to a session" link and choosing the
-   Schedule Element from the pull-down menu at the top of the page.
-#+HTML: <A HREF="../webpages/StaffAssignParticipants.php">StaffAssignParticipants.php</A>
+   A fifth path is under the [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab,
+   using the [[../webpages/StaffAssignParticipants.php]["Assign participants to a session"]] link and choosing the
+   Schedule Element from the pull-down menu at the top of the
+   [[../webpages/StaffAssignParticipants.php]["StaffAssignParticipants.php"]]
 
-   Once you are on the "Assign Participants" page with the correct
-   Schedule Element, go to the bottom of the page where the "Assign
-   participant not indicated as interested or invited." pull-down menu
-   is located and select the presenter applicable then hit the "Add"
-   button.  The presenter will now show up with their "Assigned" box
-   checked.  If this particular Schedule Element has had other
-   presenters invited, or had other presenters expressed interest in
-   being part of this particular Schedule Element, that individual
-   will also show up here.  They might have their Assigned box checked
-   or not, if that Schedule Element has been associated with that
-   individual.
+   Once you are on the [[../webpages/StaffAssignParticipants.php]["Assign participants to a session"]] page with
+   the correct Schedule Element, go to the bottom of the page where
+   the "Assign participant not indicated as interested or invited."
+   pull-down menu is located and select the presenter applicable then
+   hit the "Add" button.  The presenter will now show up with their
+   "Assigned" box checked.  If this particular Schedule Element has
+   had other presenters invited, or had other presenters expressed
+   interest in being part of this particular Schedule Element, that
+   individual will also show up here.  They might have their Assigned
+   box checked or not, if that Schedule Element has been associated
+   with that individual.
 
 * Choosing Schedule Elements
 
@@ -598,22 +612,22 @@
 #+LABEL: tbl:usefulpages
 #+ATTR_LaTeX: :environment longtable :align |l|l|l| :width 0.98\textwidth
 #+ATTR_HTML: :border 1 :rules all :frame border
-|------------------------+----------------------------------------------+------------------------------------------------------------------|
-| Page Name              | Link                                         | Description                                                      |
-|------------------------+----------------------------------------------+------------------------------------------------------------------|
-| Manage Participants    | StaffManageParticipants.php                  | Staring point for most Participant management activity.          |
-| Suggest A Presenter    | BrainstormSuggestPresenter.php               | Used by non-con folks to suggest Participants.                   |
-| Migrate A Participant  | StaffMigrageParticipant.php                  | Used to Migrate a Participant from another con-instance.         |
-| Create Participant     | StaffEditCreateParticipant.php?action=create | Used to create a Participant from scratch.                       |
-| Administer Participant | AdminParticipants.php                        | Used to set the password, attendence state, and pubsname only.   |
-| Edit Participant       | StaffEditCreateParticipant.php?action=edit   | Used to update a Participant's information.                      |
-| Edit Compensation      | StaffEditCompensation.php                    | Used to edit a Presenter's compensation package.                 |
-| Presenter Compensation | PresenterCompensation.php                    | Used to display the compensation for all presenters compensated. |
-| Suggest a Session      | BrainstormCreateSession.php                  | Used by non-con folks to suggest Schedule Elements               |
-| Propose a Session      | MyProposals.php                              | Used by a Presenter to propose a Schedule Element.               |
-| Create a New Session   | CreateSession.php                            | Used to create a Schedule Element from scratch.                  |
-| Assign Participants    | StaffAssignParticipants.php                  | Used to connect a Participant to a Schedule Element.             |
-|------------------------+----------------------------------------------+------------------------------------------------------------------|
+|------------------------+-----------------------------------------------+------------------------------------------------------------------|
+| Page Name              | Link                                          | Description                                                      |
+|------------------------+-----------------------------------------------+------------------------------------------------------------------|
+| Manage Participants    | [[../webpages/StaffManageParticipants.php][StaffManageParticipants.php]]                   | Staring point for most Participant management activity.          |
+| Suggest A Presenter    | [[../webpages/BrainstormSuggestPresenter.php][BrainstormSuggestPresenter.php]]                | Used by non-con folks to suggest Participants.                   |
+| Migrate A Participant  | [[../webpages/StaffEditCreateParticipant.php?action=migrate][StaffEditCreateParticipant.php?action=migrate]] | Used to Migrate a Participant from another con-instance.         |
+| Create Participant     | [[../webpages/StaffEditCreateParticipant.php?action=create][StaffEditCreateParticipant.php?action=create]]  | Used to create a Participant from scratch.                       |
+| Administer Participant | [[../webpages/AdminParticipants.php][AdminParticipants.php]]                         | Used to set the password, attendence state, and pubsname only.   |
+| Edit Participant       | [[../webpages/StaffEditCreateParticipant.php?action=edit][StaffEditCreateParticipant.php?action=edit]]    | Used to update a Participant's information.                      |
+| Edit Compensation      | [[../webpages/StaffEditCompensation.php][StaffEditCompensation.php]]                     | Used to edit a Presenter's compensation package.                 |
+| Presenter Compensation | [[../webpages/PresenterCompensation.php][PresenterCompensation.php]]                     | Used to display the compensation for all presenters compensated. |
+| Suggest a Session      | [[../webpages/BrainstormCreateSession.php][BrainstormCreateSession.php]]                   | Used by non-con folks to suggest Schedule Elements               |
+| Propose a Session      | [[../webpages/MyProposals.php][MyProposals.php]]                               | Used by a Presenter to propose a Schedule Element.               |
+| Create a New Session   | [[../webpages/CreateSession.php][CreateSession.php]]                             | Used to create a Schedule Element from scratch.                  |
+| Assign Participants    | [[../webpages/StaffAssignParticipants.php][StaffAssignParticipants.php]]                   | Used to connect a Participant to a Schedule Element.             |
+|------------------------+-----------------------------------------------+------------------------------------------------------------------|
 #+LaTeX: \end{small}
 
 #+LaTeX: \begin{tiny}
@@ -624,16 +638,16 @@
 |-------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------|
 | Report Name       | Link                                            | Description                                                                                                              |
 |-------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------|
-| View All Sessions | genreport.php?reportname=ViewAllSessions        | Shows all sessions, regardless of their status.                                                                          |
-| Session Notes     | genreport.php?reportname=sessionnotes           | Interesting info on a Session for sessions whose status is one of EditMe, Brainstorm, Vetted, Assigned, or Scheduled.    |
-| Picky People      | genreport.php?reportname=conflictpickypeople    | Show who the picky people do not want to be on a panel with and who they are on panels with.                             |
-| Too Few People    | genreport.php?reportname=conflictunder3assigned | Scheduled sessions in division Program: If these are panels, you need at least 3 people. Other types require at least 1. |
-| Assed V. Sched    | genreport.php?reportname=conflictschedassn      | These are sessions that are either in the grid and have no one assigned or vice versa.                                   |
-| Double Booked     | gdenreport.php?reportname=conflictpartdup       | Find all instances where a participant is scheduled to be in two or more places at once.                                 |
-| # of sessions     | genreport.php?reportname=conflictpartnums       | Compare number of sessions participants requested with the number of which they were assigned.                           |
+| View All Sessions | [[../webpages/genreport.php?reportname=ViewAllSessions][genreport.php?reportname=ViewAllSessions]]        | Shows all sessions, regardless of their status.                                                                          |
+| Session Notes     | [[../webpages/genreport.php?reportname=sessionnotes][genreport.php?reportname=sessionnotes]]           | Interesting info on a Session for sessions whose status is one of EditMe, Brainstorm, Vetted, Assigned, or Scheduled.    |
+| Picky People      | [[../webpages/genreport.php?reportname=conflictpickypeople][genreport.php?reportname=conflictpickypeople]]    | Show who the picky people do not want to be on a panel with and who they are on panels with.                             |
+| Too Few People    | [[../webpages/genreport.php?reportname=conflictunder3assigned][genreport.php?reportname=conflictunder3assigned]] | Scheduled sessions in division Program: If these are panels, you need at least 3 people. Other types require at least 1. |
+| Assed V. Sched    | [[../webpages/genreport.php?reportname=conflictschedassn][genreport.php?reportname=conflictschedassn]]      | These are sessions that are either in the grid and have no one assigned or vice versa.                                   |
+| Double Booked     | [[../webpages/genreport.php?reportname=conflictpartdup][genreport.php?reportname=conflictpartdup]]        | Find all instances where a participant is scheduled to be in two or more places at once.                                 |
+| # of sessions     | [[../webpages/genreport.php?reportname=conflictpartnums][genreport.php?reportname=conflictpartnums]]       | Compare number of sessions participants requested with the number of which they were assigned.                           |
 |-------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------|
 #+LaTeX: \end{tiny}
 
   In point of fact, there turned out to be too many useful reports,
-  for this sampling to be useful.  Please check the Conflict Reports
-  and the Prog Reports Indicies on the Available Reports page.
+  for this sampling to be useful.  Please check the [[../webpages/genindex.php?gflowname=Conflict]["Conflict Report"]]
+  and the [[../webpages/genindex.php?gflowname=Prog]["Prog Reports"]] Indicies on the [[../webpages/genindex.php]["Available Reports"]] page.

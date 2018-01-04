@@ -1152,17 +1152,20 @@ depending on what is available, as well as the rooms
 \subsection{PublicationLimits}
 \label{sec-13-1}
 
-To add/update the limitsThis still needs an in-Zambia tool to modify/set these.
-
 This tracks the various limits on the publication fields, so that
 you can have restrictions on minimum and/or maximum length of these
 fields.  All the limit checks should be set up such that if you
 don't have a limit set in this table, the minimum is presumed 0 and
 the maximum is presumed to be whatever your database maximum is for
-that particular field.  If you wish to see what limits were set for
-a previous instance of your con (to make sure you have the right
-limits), you might want to use a query (replacing the \$conid with
-the previous con you want to model on) like:
+that particular field.  
+
+To add/update the limits for this event, feel free to use the
+\href{../webpages/AdminPublicationLimits.php}{"AdminPublicationLimits.php"} page.
+
+If you wish to see what limits were set for a previous instance of
+your con (to make sure you have the right limits), you might want
+to use a query (replacing the \$conid with the previous con you want
+to model on) like:
 \begin{verbatim}
 SELECT
     *

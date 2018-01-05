@@ -23,7 +23,7 @@ SELECT
     concat('<A HREF=StaffAssignParticipants.php?selsess=',sessionid,'>',sessionid,'</A>') AS Sessionid,
     concat('<a href=EditSession.php?id=',sessionid,'>',title,'</a>') Title,
     roomsetname as 'Room Set',
-    if((servicelist!=''),servicelist,'') as 'Services',
+  if((servicelist!=''),concat("<UL><LI>",servicelist,"</LI></UL>"),'') as 'Services',
     if((featurelist!=''),featurelist,'') as 'Features',
     if((servicenotes!=''),servicenotes,'') as 'Hotel and Tech Notes'
   FROM
@@ -34,7 +34,7 @@ SELECT
     JOIN ConInfo USING (conid)
     LEFT JOIN  (SELECT
            sessionid,
-           GROUP_CONCAT(DISTINCT servicename SEPARATOR ', ') as 'servicelist'
+           GROUP_CONCAT(DISTINCT servicename SEPARATOR '</LI><LI>') as 'servicelist'
         FROM
             Sessions
 	  JOIN SessionHasService USING (sessionid,conid)
@@ -42,7 +42,9 @@ SELECT
         WHERE
 	  conid=$conid
         GROUP BY
-           sessionid) X USING (sessionid)
+          sessionid
+        ORDER BY
+          servicename) X USING (sessionid)
     LEFT JOIN (SELECT
            sessionid,
            GROUP_CONCAT(DISTINCT featurename SEPARATOR ', ') as 'featurelist'
@@ -63,7 +65,7 @@ SELECT
         WHERE
 	  conid=$conid) Z USING (sessionid)
   WHERE
-    divisionname in ('Programming') AND
+    divisionname in ('Programming', 'Events') AND
     conid=$conid
  ORDER BY
 

@@ -32,6 +32,7 @@
   there) you must also have:
   + git
   + text editing program
+
 ** Definitions
 #+CAPTION: Acronyms and Definitions
 #+LABEL: tbl:acronymsdefinitions
@@ -46,16 +47,20 @@
 |-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ** Decisions
+
    You will need to decide the following before you install initially:
 *** Standalone/Combination
+
     Is this system going to be a standalone system, or are you going
     to interface it with Congo, or another piece of registration software?
 *** Web server
+
     Where is your web installation location (whatever directory you
     will be putting your files into)?  Often something like
     /var/www/Zambia-Con or /home/username/public_html/Zambia-Con or
     the like.
 *** [[../Local/db_name.php][db_name.php]] file
+
     This information will go in the db_name.php file when you install it.
     + date_default_timezone_set your timezone.  Mine is set to:
       ('US/Eastern')
@@ -83,6 +88,7 @@
     + The language list (*LANGUAGE_LIST*) which is the list of
       languages you are using for your con.
 *** ConInfo table
+
     This information is for the ConInfo table, the table that defines
     what your particular ConInstance is like.  There will be an
     "Initial" instance set up by default, if you use the defaults, and
@@ -118,6 +124,7 @@
       to render in the "when I am available" form, 8 is a good
       default.)
 *** Description minimums and maximums
+
     All of this information goes in the limits database table.  Only
     set a value if you need it, unset values are simply presume there
     is no limit to the information in that direction.
@@ -155,6 +162,7 @@
     + Maximum name character length (if there is a need to make sure
       all names are no more than a specific length.)
 *** Very useful information
+
     This information should end up in various tables, as things go.
     You don't need the information for setup, but it is good to have.
      + Zambia administrator email.
@@ -163,11 +171,13 @@
      + Guests of Honor badge list - if you have specific featured Guests
        of Honor, they get indicated as a con role.
 *** Language Settings
+
      The linguistic settings can be used if your con is in more than
      one language.
      + What the second language is, and it's indicator (fr-ca, en-uk)
      + What will and won't be translated.
 * Downloading
+
   If you are checking the code out directly on the hosting machine,
   replace the final "Zambia" with what you decided the web install
   location will be.  If not, you can rename it to whatever you wish to
@@ -176,8 +186,8 @@
   Please, check out the code using git from:
 
   https://github.com/mrdkap/Zambia
-
 * Local file setup
+
   There are certain local-isms you want to set up, next to the GIT 
   tree. This is so (should you need to) if an upgrade to the code-base
   is desired, it can be done, without writing over your
@@ -188,31 +198,38 @@
   When done your list of files should be:
   These files you will have to create or modify.
 ** db_name.php
+
    Copy the example [[../webpages/db_name_sample.php][db_name_sample.php]] to [[../Local/db_name.php][Local/db_name.php]]
    as a start, and then put in the values you decided upon before
    starting the install process.
 ** Data_Backup
+
    Directory that one of the scrips will, with the appropriate entry
    in your crontab, store a running backup will be kept.
 ** conid
+
    This (or these) will be the con-specific information
    sub-directories.
    There should be a 0 entry, that holds some defaults
 ** FooterTemplate.html
+
    This is where you will put your standard footer, that will be
    below all the public pages, to customize the look and feel to
    match your event's presentation.
 ** HeaderTemplate.html
+
    This is where you will put your standard header, that will be
    above all the public pages, to customize the look and feel to
    match your event's presentation.
 ** Participant_Images_foo
+
    If you choose to have images of your participants with their
    bios, make this directory, and any pictures that match the
    badgename of the participant will be put next to the bios.
    the foo could be: badge, book, web, staffbadge, staffbook,
    staffweb, etc.
 ** Verbiage
+
    These files can also live under each of the conid directories, so
    can be distinguished by con instance.
 
@@ -453,6 +470,7 @@ is an advantage to all.
 <P>The Programming Team
 #+end_src
 * Database setup
+
   You should already have mysql set up.  If mysql is not already set
   up, a good guide to setting up a mysql server is:
 
@@ -475,6 +493,7 @@ is an advantage to all.
     same machine that MySQL is running on, /localhost/ should be what
     you are using for *MYHOST*)
 ** Hosted server
+
   If you are going to have your database served from a machine that
   is running cpanel or some other menu-based software, the method of
   setting up your database should be documented there.
@@ -485,6 +504,7 @@ is an advantage to all.
   + add MySQL user to the database or databases
   + grant the MySQL user all privs.
 ** Your own MySQL Setup
+
    If you are setting up your own MySQL server, and need to set up the
    database by hand the following steps should work for you.  Don't
    forget to replace the instances of *DBHOSTNAME*, *DBUSERNAME*,
@@ -508,11 +528,13 @@ is an advantage to all.
    flush privileges;
 #+end_src
 * Database populate
+
   Change directories until you are in the Install directory, then:
 #+begin_src html :exports both :results silent
     mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./EmptyDbase.dump
 #+end_src
 * Database tweaks
+
   Some of the tables in the database don't yet have appropriate
   front-ends, so, to customize them for your particular event, you
   will need to modify them directly from the MySQL client.  As
@@ -572,6 +594,7 @@ is an advantage to all.
 
 * Account creation
 ** Standalone
+
    If you are going to be using Zambia and not some other registration
    package, you are going to need access to the program, to begin
    adding the people who are going to be working with the system.
@@ -587,16 +610,19 @@ is an advantage to all.
    Once you have done that, you can log in to Zambia using the badgeid
    of *101* and the password of *changeme*.
 
-   You then can modify the appropriate information.  Under the /Manage
-   Participants & Schedule/ tab, there is an /Administer Participants/
-   choice.  Selecting that will allow you to update your password
+   You then can modify the appropriate information.  Under the 
+   [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab, there is an
+   [[../webpages/AdminParticipants.php]["Administer participants"]] link to the [[../webpages/AdminParticipants.php]["AdminParticipants.php"]] page.
+   Selecting that will allow you to update your password 
    (_important step_) and the "Edit Further" link at the bottom of
    the page will allow you to update the information so it actually
    matches you.
 
    Feel free to then go and add the rest of your staff, off of the
-   /Enter Participants/ link.
+   [[../webpages/StaffEditCreateParticipant.php?action=create]["Enter Participants"]] link to the
+   [[../webpages/StaffEditCreateParticipant.php?action=create]["StaffEditCreateParticipant.php?action=create"]] page.
 ** Congo
+
    You might want to complete the activities above, just to make sure
    you have access, but once you do, you can migrate the congo data
    into the system, so all the other folks have their information
@@ -610,6 +636,7 @@ is an advantage to all.
    This generates sql that can be, in turn, loaded into Zambia.
 
 ** Not Congo
+
    Tying this into another registration system is slightly more
    complicated.  The easiest way is to use the "regtype" field to
    track the registration number that the various other registration
@@ -617,20 +644,20 @@ is an advantage to all.
    into the "CongoDump" format.
 * First steps
 ** Schedule
-   Establishing the schedule of activities in the form of a "todo"
-   list is probably the first thing you wish to do.
 
-#+begin_src html :exports both :results silent
-     [[../webpages/genreport.php?reportname=tasklistdisplay][tasklistdisplay]]
-#+end_src
+   Establishing the schedule of activities in the form of a "todo"
+   list is probably the first thing you wish to do using the 
+   [[../webpages/genreport.php?reportname=tasklistdisplay][genreport.php?reportname=tasklistdisplay]] report.
 
    Don't forget, if this isn't hot-linked properly, you might need to
    adjust this for your Zambia-FFF branch install.
 ** Brainstorming
+
    The Brainstorming links should work immediately.  From the top
    directory (index) page of your site, you should be able to click on
    the "Suggest a Session/Presenter" button and get right into it.
 * Backing up
+
   Under the /scripts/ directory there is a nice little shell-script
   that you can call with cron to back your information up.  If you are
   to use it, make sure you create the /Data_Backup/ directory under
@@ -646,6 +673,7 @@ is an advantage to all.
   backup_mysql /your/path/to/Zambia-FFF/instance
 #+end_src
 * Adding a year instance - Tools
+
   + Con Creation: [[../webpages/AdminNewConInstance.php][AdminNewConInstance.php]]
   + Con Info: [[../webpages/AdminConInstance.php][AdminConInstance.php]]
   + Phase state: [[../webpages/AdminPhases.php][AdminPhases.php]]
@@ -686,10 +714,11 @@ is an advantage to all.
 
   If you want to modify the ConInfo table by hand, here are the
   updates you have to do.  You might also want to update the
-  FALLBACK_KEY in the [[../Local/db_name.php][db_name.php]] file, but you shouldn't have
+  FALLBACK_KEY in the [[../Local/db_name.php]["db_name.php"]] file, but you shouldn't have
   to, all the rest should remain the same.  The rest of the
   information below should be set in your database tables.
 ** ConInfo
+
    The first place to start is setting your ConInfo information.  This
    allows for the con to show up in the index file, and opens all the
    information up for access, addition, and whatever else you want for
@@ -750,6 +779,7 @@ is an advantage to all.
      shorter the session, the more rows you want to allow them to
      have.
 ** Phase
+
    This also has to be set up so the appropriate Phase shifting can
    happen.  The phase of the convention will shift, over time, as
    deadlines approach and pass.  Not all of the phasetypeids from the
@@ -815,7 +845,8 @@ is an advantage to all.
    Of course, tweaking from year to year might need to happen.  The
    easiest way to do so is to use the 
    [[../webpages/StaffEditCreateParticipant.php?action=migrate]["Migrate Participant from another con-instance"]] link under the
-   [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab  
+   [[../webpages/StaffManageParticipants.php]["Manage Participants & Schedule"]] tab which brings you to the
+   [[../webpages/StaffEditCreateParticipant.php?action=migrate]["StaffEditCreateParticipant.php?action=migrate"]] page.
    to give each the right permissions. If a person's permissions need
    to be changed, they can be updated either on the migration page
    listed above, or on the [[../webpages/StaffEditCreateParticipant.php?action=edit]["Edit Participant"]] page. The use of that
@@ -968,10 +999,14 @@ is an advantage to all.
    fields.  All the limit checks should be set up such that if you
    don't have a limit set in this table, the minimum is presumed 0 and
    the maximum is presumed to be whatever your database maximum is for
-   that particular field.  
+   that particular field.  To see all the current limits set, use the
+   [[../webpages/genreport.php?reportname=publicationlimits]["genreport.php?reportname=publicationlimits"]] report.
 
    To add/update the limits for this event, feel free to use the
-   [[../webpages/AdminPublicationLimits.php]["AdminPublicationLimits.php"]] page.
+   [[../webpages/AdminPublicationLimits.php]["AdminPublicationLimits.php"]] page.  Each limit is findable under
+   the type of entry, with the destination broken down within each
+   type.  You can add, remove, or update values.  To add or update,
+   just enter the new number.  To remove, just empty the field.
 
    If you wish to see what limits were set for a previous instance of
    your con (to make sure you have the right limits), you might want

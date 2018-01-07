@@ -9,7 +9,8 @@ $title="Photo Lounge Picture Database";
 $description="<P>All the information from the photo-lounge DB dumped for your viewing pleasure.</P>\n";
 $additionalinfo="<P>Please click on the Artists name (not their email) to be able to\n";
 $additionalinfo.="vote for the pictures.</P>\n";
-$additionalinfo="<P>If there are no/missing images, please have your Zambia folks run\n";
+$additionalinfo.="<P><A HREF=\"../Documentation/Photo_Lounge.html#sec-5\">Documentation</A> exists.</P>\n";
+$additionalinfo.="<P>If there are no/missing images, please have your Zambia folks run\n";
 $additionalinfo.="the create_thumbnails.sh script for you.</P>\n";
 
 // Check to see if the voted bits can be selected

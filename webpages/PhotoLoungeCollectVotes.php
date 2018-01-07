@@ -1,5 +1,5 @@
 <?php
-require_once('StaffCommonCode.php');
+require_once('PartCommonCode.php');
 global $link;
 $title="Photo Lounge Selected Pictures";
 $description="<P>Please select/view which pictures are to be included this year.</P>\n";

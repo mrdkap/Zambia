@@ -95,6 +95,7 @@ there) you must also have:
 \item git
 \item text editing program
 \end{itemize}
+
 \subsection{Definitions}
 \label{sec-1-1}
 \begin{longtable}{|p{3.5cm}|p{13.4cm}|}
@@ -114,14 +115,17 @@ WAMP & Windows + Apache + MySQL + PHP/Perl/Python\\
 \end{longtable}
 \subsection{Decisions}
 \label{sec-1-2}
+
 You will need to decide the following before you install initially:
 \subsubsection{Standalone/Combination}
 \label{sec-1-2-1}
+
 Is this system going to be a standalone system, or are you going
 to interface it with Congo, or another piece of registration software?
 
 \subsubsection{Web server}
 \label{sec-1-2-2}
+
 Where is your web installation location (whatever directory you
 will be putting your files into)?  Often something like
 /var/www/Zambia-Con or /home/username/public\_html/Zambia-Con or
@@ -129,6 +133,7 @@ the like.
 
 \subsubsection{\href{../Local/db_name.php}{db\_name.php} file}
 \label{sec-1-2-3}
+
 This information will go in the db\_name.php file when you install it.
 \begin{itemize}
 \item date\_default\_timezone\_set your timezone.  Mine is set to:
@@ -162,6 +167,7 @@ languages you are using for your con.
 
 \subsubsection{ConInfo table}
 \label{sec-1-2-4}
+
 This information is for the ConInfo table, the table that defines
 what your particular ConInstance is like.  There will be an
 "Initial" instance set up by default, if you use the defaults, and
@@ -201,6 +207,7 @@ default.)
 
 \subsubsection{Description minimums and maximums}
 \label{sec-1-2-5}
+
 All of this information goes in the limits database table.  Only
 set a value if you need it, unset values are simply presume there
 is no limit to the information in that direction.
@@ -242,6 +249,7 @@ all names are no more than a specific length.)
 
 \subsubsection{Very useful information}
 \label{sec-1-2-6}
+
 This information should end up in various tables, as things go.
 You don't need the information for setup, but it is good to have.
 \begin{itemize}
@@ -254,6 +262,7 @@ of Honor, they get indicated as a con role.
 
 \subsubsection{Language Settings}
 \label{sec-1-2-7}
+
 The linguistic settings can be used if your con is in more than
 one language.
 \begin{itemize}
@@ -263,6 +272,7 @@ one language.
 
 \section{Downloading}
 \label{sec-2}
+
 If you are checking the code out directly on the hosting machine,
 replace the final "Zambia" with what you decided the web install
 location will be.  If not, you can rename it to whatever you wish to
@@ -271,8 +281,10 @@ call your staging area.
 Please, check out the code using git from:
 
 \url{https://github.com/mrdkap/Zambia}
+
 \section{Local file setup}
 \label{sec-3}
+
 There are certain local-isms you want to set up, next to the GIT 
 tree. This is so (should you need to) if an upgrade to the code-base
 is desired, it can be done, without writing over your
@@ -284,35 +296,41 @@ When done your list of files should be:
 These files you will have to create or modify.
 \subsection{db\_name.php}
 \label{sec-3-1}
+
 Copy the example \href{../webpages/db_name_sample.php}{db\_name\_sample.php} to \href{../Local/db_name.php}{Local/db\_name.php}
 as a start, and then put in the values you decided upon before
 starting the install process.
 
 \subsection{Data\_Backup}
 \label{sec-3-2}
+
 Directory that one of the scrips will, with the appropriate entry
 in your crontab, store a running backup will be kept.
 
 \subsection{conid}
 \label{sec-3-3}
+
 This (or these) will be the con-specific information
 sub-directories.
 There should be a 0 entry, that holds some defaults
 
 \subsection{FooterTemplate.html}
 \label{sec-3-4}
+
 This is where you will put your standard footer, that will be
 below all the public pages, to customize the look and feel to
 match your event's presentation.
 
 \subsection{HeaderTemplate.html}
 \label{sec-3-5}
+
 This is where you will put your standard header, that will be
 above all the public pages, to customize the look and feel to
 match your event's presentation.
 
 \subsection{Participant\_Images\_foo}
 \label{sec-3-6}
+
 If you choose to have images of your participants with their
 bios, make this directory, and any pictures that match the
 badgename of the participant will be put next to the bios.
@@ -321,6 +339,7 @@ staffweb, etc.
 
 \subsection{Verbiage}
 \label{sec-3-7}
+
 These files can also live under each of the conid directories, so
 can be distinguished by con instance.
 
@@ -578,6 +597,7 @@ is an advantage to all.
 
 \section{Database setup}
 \label{sec-4}
+
 You should already have mysql set up.  If mysql is not already set
 up, a good guide to setting up a mysql server is:
 
@@ -603,6 +623,7 @@ you are using for \textbf{MYHOST})
 \end{itemize}
 \subsection{Hosted server}
 \label{sec-4-1}
+
 If you are going to have your database served from a machine that
 is running cpanel or some other menu-based software, the method of
 setting up your database should be documented there.
@@ -617,6 +638,7 @@ The chances are your setup will have you:
 
 \subsection{Your own MySQL Setup}
 \label{sec-4-2}
+
 If you are setting up your own MySQL server, and need to set up the
 database by hand the following steps should work for you.  Don't
 forget to replace the instances of \textbf{DBHOSTNAME}, \textbf{DBUSERNAME},
@@ -650,6 +672,7 @@ flush privileges;
 
 \section{Database populate}
 \label{sec-5}
+
 Change directories until you are in the Install directory, then:
 \begin{verbatim}
 mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./EmptyDbase.dump
@@ -657,6 +680,7 @@ mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./EmptyDbase.dump
 
 \section{Database tweaks}
 \label{sec-6}
+
 Some of the tables in the database don't yet have appropriate
 front-ends, so, to customize them for your particular event, you
 will need to modify them directly from the MySQL client.  As
@@ -719,6 +743,7 @@ mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME > ./NewReports.sql
 \label{sec-7}
 \subsection{Standalone}
 \label{sec-7-1}
+
 If you are going to be using Zambia and not some other registration
 package, you are going to need access to the program, to begin
 adding the people who are going to be working with the system.
@@ -734,18 +759,21 @@ mysql -hDBHOSTNAME -p -uDBUSERNAME DBNAME < ./Inital_Users.sql
 Once you have done that, you can log in to Zambia using the badgeid
 of \textbf{101} and the password of \textbf{changeme}.
 
-You then can modify the appropriate information.  Under the \emph{Manage
-Participants \& Schedule} tab, there is an \emph{Administer Participants}
-choice.  Selecting that will allow you to update your password
+You then can modify the appropriate information.  Under the 
+\href{../webpages/StaffManageParticipants.php}{"Manage Participants \& Schedule"} tab, there is an
+\href{../webpages/AdminParticipants.php}{"Administer participants"} link to the \href{../webpages/AdminParticipants.php}{"AdminParticipants.php"} page.
+Selecting that will allow you to update your password 
 (\_important step\_) and the "Edit Further" link at the bottom of
 the page will allow you to update the information so it actually
 matches you.
 
 Feel free to then go and add the rest of your staff, off of the
-\emph{Enter Participants} link.
+\href{../webpages/StaffEditCreateParticipant.php?action=create}{"Enter Participants"} link to the
+\href{../webpages/StaffEditCreateParticipant.php?action=create}{"StaffEditCreateParticipant.php?action=create"} page.
 
 \subsection{Congo}
 \label{sec-7-2}
+
 You might want to complete the activities above, just to make sure
 you have access, but once you do, you can migrate the congo data
 into the system, so all the other folks have their information
@@ -759,6 +787,7 @@ export_program_participants_congo.sql
 This generates sql that can be, in turn, loaded into Zambia.
 \subsection{Not Congo}
 \label{sec-7-3}
+
 Tying this into another registration system is slightly more
 complicated.  The easiest way is to use the "regtype" field to
 track the registration number that the various other registration
@@ -769,24 +798,30 @@ into the "CongoDump" format.
 \label{sec-8}
 \subsection{Schedule}
 \label{sec-8-1}
-Establishing the schedule of activities in the form of a "todo"
-list is probably the first thing you wish to do.
 
-\begin{verbatim}
-[[../webpages/genreport.php?reportname=tasklistdisplay][tasklistdisplay]]
-\end{verbatim}
+Establishing the schedule of activities in the form of a "todo"
+list is probably the first thing you wish to do using the 
+\href{../webpages/genreport.php?reportname=tasklistdisplay}{genreport.php?reportname=tasklistdisplay} report.
 
 Don't forget, if this isn't hot-linked properly, you might need to
 adjust this for your Zambia-FFF branch install.
 
+Also, as a note, there needs to be, attached to some con instance,
+an element in the Sessions table with a sessionid of "-1" to work.
+It doesn't have to be any particular con instance, nor especially
+the most current one.  Just one has to exist for the constraints to
+work for general feedback.
+
 \subsection{Brainstorming}
 \label{sec-8-2}
+
 The Brainstorming links should work immediately.  From the top
 directory (index) page of your site, you should be able to click on
 the "Suggest a Session/Presenter" button and get right into it.
 
 \section{Backing up}
 \label{sec-9}
+
 Under the \emph{scripts} directory there is a nice little shell-script
 that you can call with cron to back your information up.  If you are
 to use it, make sure you create the \emph{Data\_Backup} directory under
@@ -804,6 +839,7 @@ backup_mysql /your/path/to/Zambia-FFF/instance
 
 \section{Adding a year instance - Tools}
 \label{sec-10}
+
 \begin{itemize}
 \item Con Creation: \href{../webpages/AdminNewConInstance.php}{AdminNewConInstance.php}
 \item Con Info: \href{../webpages/AdminConInstance.php}{AdminConInstance.php}
@@ -815,6 +851,7 @@ backup_mysql /your/path/to/Zambia-FFF/instance
 \item Services and Features: \href{../webpages/AdminSetupServices.php}{AdminSetupServices.php}
 \item Create Sessions: \href{../webpages/CreateSession.php}{Create a New Session}
 \item Manage Sessions: \href{../webpages/StaffManageSessions.php}{Manage Sessions}
+\item Manage Feedback: \href{../webpages/AdminSetupFeedback.php}{AdminSetupFeedback.php}
 \item WebApp information update: \href{../webpages/KonOpasData.php}{Publish to KonOpas/WebApp}
 \end{itemize}
 
@@ -850,11 +887,12 @@ there is a missing value from one of the Base tables, which are:
 
 If you want to modify the ConInfo table by hand, here are the
 updates you have to do.  You might also want to update the
-FALLBACK\_KEY in the \href{../Local/db_name.php}{db\_name.php} file, but you shouldn't have
+FALLBACK\_KEY in the \href{../Local/db_name.php}{"db\_name.php"} file, but you shouldn't have
 to, all the rest should remain the same.  The rest of the
 information below should be set in your database tables.
 \subsection{ConInfo}
 \label{sec-11-1}
+
 The first place to start is setting your ConInfo information.  This
 allows for the con to show up in the index file, and opens all the
 information up for access, addition, and whatever else you want for
@@ -919,6 +957,7 @@ have.
 
 \subsection{Phase}
 \label{sec-11-2}
+
 This also has to be set up so the appropriate Phase shifting can
 happen.  The phase of the convention will shift, over time, as
 deadlines approach and pass.  Not all of the phasetypeids from the
@@ -974,6 +1013,16 @@ point in time.
 
 \section{Adding a year instance - People}
 \label{sec-12}
+
+Most multi-instance events will have somewhat of a consistent set of
+people supporting it in their various roles, so, in most cases you
+just have to migrate or add the approrpiate starting folks, and
+they, in turn will migrate or add their particular folks etc.  In
+most cases the Con Chair will set up the Division/Department Heads,
+the Heads will set up their staff, and their staff will set up those
+under them, on down to the leaf-nodes of vendors, presenters,
+volunteers, etc.  An example document on how this will flow is the
+\href{./Presenter_Flow.html}{"Presenter Flow"} \href{./Presenter_Flow.pdf}{(PDF)} document in this directory.
 \subsection{UserHasPermissionRole}
 \label{sec-12-1}
 
@@ -989,7 +1038,8 @@ because of the use of the \href{../webpages/AdminNewConInstance.php}{"AdminNewCo
 Of course, tweaking from year to year might need to happen.  The
 easiest way to do so is to use the 
 \href{../webpages/StaffEditCreateParticipant.php?action=migrate}{"Migrate Participant from another con-instance"} link under the
-\href{../webpages/StaffManageParticipants.php}{"Manage Participants \& Schedule"} tab  
+\href{../webpages/StaffManageParticipants.php}{"Manage Participants \& Schedule"} tab which brings you to the
+\href{../webpages/StaffEditCreateParticipant.php?action=migrate}{"StaffEditCreateParticipant.php?action=migrate"} page.
 to give each the right permissions. If a person's permissions need
 to be changed, they can be updated either on the migration page
 listed above, or on the \href{../webpages/StaffEditCreateParticipant.php?action=edit}{"Edit Participant"} page. The use of that
@@ -1157,10 +1207,14 @@ you can have restrictions on minimum and/or maximum length of these
 fields.  All the limit checks should be set up such that if you
 don't have a limit set in this table, the minimum is presumed 0 and
 the maximum is presumed to be whatever your database maximum is for
-that particular field.  
+that particular field.  To see all the current limits set, use the
+\href{../webpages/genreport.php?reportname=publicationlimits}{"genreport.php?reportname=publicationlimits"} report.
 
 To add/update the limits for this event, feel free to use the
-\href{../webpages/AdminPublicationLimits.php}{"AdminPublicationLimits.php"} page.
+\href{../webpages/AdminPublicationLimits.php}{"AdminPublicationLimits.php"} page.  Each limit is findable under
+the type of entry, with the destination broken down within each
+type.  You can add, remove, or update values.  To add or update,
+just enter the new number.  To remove, just empty the field.
 
 If you wish to see what limits were set for a previous instance of
 your con (to make sure you have the right limits), you might want
@@ -1244,72 +1298,7 @@ Most of the continued interaction can be mostly handled under the
 \label{sec-14}
 
 This is covered extensively, and in a more updated fashion in the
-\href{./Vending_Design_Document.html}{"Vending Design Document"} \href{./Vending_Design_Document.pdf}{(PDF)}.  The below is still here fore
-legacy purposes until cleaned up.
-\subsection{VendorSpaces and VendorFeatures}
-\label{sec-14-1}
-These two tables are built in the same pattern. VendorSpaces are
-the size/type of space, and the cost of said space for the con.
-VendorFeatures are all the little up-charges or non-standard things
-that a vendor might opt for.  To see what was set on a previous
-instance of your con, you can use a query (replacing the \$conid
-with the previous con you want to model on) like:
-\begin{verbatim}
-SELECT
-    *
-  FROM
-      VendorSpaces
-  WHERE
-    conid=$conid;
-\end{verbatim}
-And:
-\begin{verbatim}
-SELECT
-    *
-  FROM
-      VendorFeatures
-  WHERE
-    conid=$conid;
-\end{verbatim}
-The values are:
-\begin{itemize}
-\item vendorspaceid/vendorfeatureid: Unique id for the entry (key).
-\item vendorspacename/vendorfeaturename: A description, plus the price
-in an easily understandable format, so the vendors know what to
-select for their comfort and profit.
-\item vendorspaceprice/vendorfeatureprice: Numeric representation of
-the cost of said item, so the invoice can be generated
-correctly.
-\item conid: The con that these things are available for .  This should
-be set to whatever conid you are creating.
-\item display\_order: For the select boxes, if you want to reorder
-possibilities, this forces the ordering to what you want it to
-be.
-\end{itemize}
-
-On the other hand, if you just want to mirror them, quickly, from
-another instance of your con you could always (replacing \$origconid
-with the previous con you want to model on, and \$conid with the
-current one) run:
-\begin{verbatim}
-SELECT
-    concat("('",vendorspacename,"',",vendorspaceprice,",$conid,",display_order,"),") AS Prev
-  FROM
-      VendorSpaces
-  WHERE
-    conid=$origconid;
-\end{verbatim}
-And:
-\begin{verbatim}
-SELECT
-    concat("('",vendorfeaturename,"',",vendorfeatureprice,",$conid,",display_order,"),") AS Prev
-  FROM
-      VendorFeatures
-  WHERE
-    conid=$origconid;
-\end{verbatim}
-Then just massage the data slightly, and you have the insert you
-can do to mirror the previous con.
+\href{./Vending_Design_Document.html}{"Vending Design Document"} \href{./Vending_Design_Document.pdf}{(PDF)}.
 
 \section{Adding a year instance - Feedback}
 \label{sec-15}
@@ -1318,45 +1307,29 @@ Setting up feedback for your con is somewhat complex.  I'm not sure
 what motivated me, originally to be so baroque, but I think it was
 flexibility at the time.
 
+Most everything can be done from the \href{../webpages/AdminSetupFeedback.php}{"AdminSetupFeedback.php"} page.
+
 One thing to note, there needs to be, attached to some con instance,
 an element in the Sessions table with a sessionid of "-1" to work.
 It doesn't have to be any particular con instance, nor especially
 the most current one.  Just one has to exist for the constraints to
 work for general feedback.
-\subsection{Adding Questions}
-\label{sec-15-1}
-
-If your questions are not appropriate for this particular event,
-you might want to add a question type to cover it, in the
-QuestionTypes table, and then add the questions to the
-QuestionsForSurvey table.
-
-The values for QuestionTypes are:
-\begin{itemize}
-\item questiontypeid: Unique key for this table (it should auto-increment).
-\item questiontypename: A one or two word name for the type of question.
-\item questiontypenotes: A more in depth description of the question type.
-\end{itemize}
-
-The values for the QuestionsForSurvey are:
-\begin{itemize}
-\item questionid: Unique key for this table (it should auto-increment).
-\item questiontext: The text of the question to be asked.
-\item display\_order: The order of the question to be asked.
-\item questiontypeid: What type of question it is, referencing the
-QuestionTypes table above.
-\end{itemize}
-
 \subsection{Setting up the page description (how it is presented)}
-\label{sec-15-2}
+\label{sec-15-1}
 
 For your event, there might be several different feedback forms you
 want available, so that an individual isn't overwhelmed by the
 number of possible choices.  One of the ways to do this is to break
 it down by time period, another is to break it down by class type.
 Once you have broken them down, this table sets up the various
-possible views.  At least one view should be set to "single class",
-so that the reference from the descriptions etc will work.
+possible views.
+
+At least one view should be set to "single class", with a start and
+end at the start and end of your con so that the reference from the
+descriptions etc will work.
+
+If you want to have a "General" feedback page, it also should start
+and end at the start and end of your con as well.
 
 The values for FeedbackPages are:
 \begin{itemize}
@@ -1372,16 +1345,23 @@ covers.
 page, from the QuestionTypes table.
 \end{itemize}
 
+\subsection{Setting the Types available on a Feedback Page}
+\label{sec-15-2}
+
 The type of schedule elements included in each possible Feedback
 page is set in the FeedbackPageHasType.  This can have multiple
-mappings.  For example, if you have both classes and panels, they
-have different values for their typeid in the Sessions table.  To
-have them both show up in the "single class" page, that page id
-needs two entries in the FeedbackPageHasType table, each one
-mapping the typeid to that fpageid.  "single class" should have a
-mapping for every element you reference, but the feedback page for
-just the classes would only have the typeid of classes mapped to
-it.
+mappings or no mappings at all.
+
+For example, if you have both classes and panels, they have
+different values for their typeid in the Sessions table.  To have
+them both show up in the "single class" page, that page id needs
+two entries in the FeedbackPageHasType table, each one mapping the
+typeid to that fpageid.  "single class" should have a mapping for
+every element you reference, but the feedback page for just the
+classes would only have the typeid of classes mapped to it.
+
+Also the "General" page should have no types mapped to it, since it
+should not be called anywhere but from the General reference.
 
 The values for FeedbackPageHasType are:
 \begin{itemize}
@@ -1407,6 +1387,41 @@ The values for TypeHasQuestionType are:
 \item typeid: From the Types table.
 \item questiontypeid: From the QuestionTypes table.
 \item conid: For which event is being run.
+\end{itemize}
+
+\subsection{Adding Questions Types}
+\label{sec-15-4}
+
+If your existing questions are not appropriate for this particular
+event, you might want to add a question type specific to this
+event, or a new general category for the new thing this event will
+be covering.  Adding this question type into the QuestionTypes
+table is the first step, then subsequently add the questions to the
+QuestionsForSurvey table.
+
+The values for QuestionTypes are:
+\begin{itemize}
+\item questiontypeid: Unique key for this table (it should auto-increment).
+\item questiontypename: A one or two word name for the type of question.
+\item questiontypenotes: A more in depth description of the question type.
+\end{itemize}
+
+\subsection{Adding specific Questions in a Question Type}
+\label{sec-15-5}
+
+Since each set of questions has already circulated and has answers
+inside Zambia already, changing the questions invalidates all the
+data collected. To avoid such a state adding questions (no matter
+how similar they seem) is a better choice than invalidating
+previous data.
+
+The values for the QuestionsForSurvey are:
+\begin{itemize}
+\item questionid: Unique key for this table (it should auto-increment).
+\item questiontext: The text of the question to be asked.
+\item display\_order: The order of the question to be asked.
+\item questiontypeid: What type of question it is, referencing the
+QuestionTypes table above.
 \end{itemize}
 
 \section{Adding a year instance - App/KonOpas}

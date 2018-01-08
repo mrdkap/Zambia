@@ -235,16 +235,14 @@ Percy, Bendyogagirl &lt;NELA.Percy@gmail.com&gt;
 <li><a href="#sec-13-4">13.4. Continued Interaction</a></li>
 </ul>
 </li>
-<li><a href="#sec-14">14. Adding a year instance - Vendors</a>
-<ul>
-<li><a href="#sec-14-1">14.1. VendorSpaces and VendorFeatures</a></li>
-</ul>
-</li>
+<li><a href="#sec-14">14. Adding a year instance - Vendors</a></li>
 <li><a href="#sec-15">15. Adding a year instance - Feedback</a>
 <ul>
-<li><a href="#sec-15-1">15.1. Adding Questions</a></li>
-<li><a href="#sec-15-2">15.2. Setting up the page description (how it is presented)</a></li>
+<li><a href="#sec-15-1">15.1. Setting up the page description (how it is presented)</a></li>
+<li><a href="#sec-15-2">15.2. Setting the Types available on a Feedback Page</a></li>
 <li><a href="#sec-15-3">15.3. Setting the TypeHasQuestionType</a></li>
+<li><a href="#sec-15-4">15.4. Adding Questions Types</a></li>
+<li><a href="#sec-15-5">15.5. Adding specific Questions in a Question Type</a></li>
 </ul>
 </li>
 <li><a href="#sec-16">16. Adding a year instance - App/KonOpas</a></li>
@@ -285,6 +283,7 @@ there) you must also have:
 </li>
 </ul>
 </div>
+
 <div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Definitions</h3>
 <div class="outline-text-3" id="text-1-1">
@@ -578,6 +577,7 @@ Please, check out the code using git from:
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> Local file setup</h2>
 <div class="outline-text-2" id="text-3">
@@ -1221,9 +1221,10 @@ of <b>101</b> and the password of <b>changeme</b>.
 </p>
 
 <p>
-You then can modify the appropriate information.  Under the <i>Manage
-Participants &amp; Schedule</i> tab, there is an <i>Administer Participants</i>
-choice.  Selecting that will allow you to update your password
+You then can modify the appropriate information.  Under the 
+<a href="../webpages/StaffManageParticipants.php">"Manage Participants &amp; Schedule"</a> tab, there is an
+<a href="../webpages/AdminParticipants.php">"Administer participants"</a> link to the <a href="../webpages/AdminParticipants.php">"AdminParticipants.php"</a> page.
+Selecting that will allow you to update your password 
 (_important step_) and the "Edit Further" link at the bottom of
 the page will allow you to update the information so it actually
 matches you.
@@ -1231,7 +1232,8 @@ matches you.
 
 <p>
 Feel free to then go and add the rest of your staff, off of the
-<i>Enter Participants</i> link.
+<a href="../webpages/StaffEditCreateParticipant.php?action=create">"Enter Participants"</a> link to the
+<a href="../webpages/StaffEditCreateParticipant.php?action=create">"StaffEditCreateParticipant.php?action=create"</a> page.
 </p>
 </div>
 </div>
@@ -1282,18 +1284,21 @@ into the "CongoDump" format.
 <div class="outline-text-3" id="text-8-1">
 <p>
 Establishing the schedule of activities in the form of a "todo"
-list is probably the first thing you wish to do.
+list is probably the first thing you wish to do using the 
+<a href="../webpages/genreport.php?reportname=tasklistdisplay">genreport.php?reportname=tasklistdisplay</a> report.
 </p>
-
-<div class="org-src-container">
-
-<pre class="src src-html">[[../webpages/genreport.php?reportname=tasklistdisplay][tasklistdisplay]]
-</pre>
-</div>
 
 <p>
 Don't forget, if this isn't hot-linked properly, you might need to
 adjust this for your Zambia-FFF branch install.
+</p>
+
+<p>
+Also, as a note, there needs to be, attached to some con instance,
+an element in the Sessions table with a sessionid of "-1" to work.
+It doesn't have to be any particular con instance, nor especially
+the most current one.  Just one has to exist for the constraints to
+work for general feedback.
 </p>
 </div>
 </div>
@@ -1360,6 +1365,8 @@ The script is invoked as:
 </li>
 <li>Manage Sessions: <a href="../webpages/StaffManageSessions.php">Manage Sessions</a>
 </li>
+<li>Manage Feedback: <a href="../webpages/AdminSetupFeedback.php">AdminSetupFeedback.php</a>
+</li>
 <li>WebApp information update: <a href="../webpages/KonOpasData.php">Publish to KonOpas/WebApp</a>
 </li>
 </ul>
@@ -1414,7 +1421,7 @@ there is a missing value from one of the Base tables, which are:
 <p>
 If you want to modify the ConInfo table by hand, here are the
 updates you have to do.  You might also want to update the
-FALLBACK_KEY in the <a href="../Local/db_name.php">db_name.php</a> file, but you shouldn't have
+FALLBACK_KEY in the <a href="../Local/db_name.php">"db_name.php"</a> file, but you shouldn't have
 to, all the rest should remain the same.  The rest of the
 information below should be set in your database tables.
 </p>
@@ -1588,7 +1595,19 @@ point in time.
 <div id="outline-container-sec-12" class="outline-2">
 <h2 id="sec-12"><span class="section-number-2">12</span> Adding a year instance - People</h2>
 <div class="outline-text-2" id="text-12">
-</div><div id="outline-container-sec-12-1" class="outline-3">
+<p>
+Most multi-instance events will have somewhat of a consistent set of
+people supporting it in their various roles, so, in most cases you
+just have to migrate or add the approrpiate starting folks, and
+they, in turn will migrate or add their particular folks etc.  In
+most cases the Con Chair will set up the Division/Department Heads,
+the Heads will set up their staff, and their staff will set up those
+under them, on down to the leaf-nodes of vendors, presenters,
+volunteers, etc.  An example document on how this will flow is the
+<a href="./Presenter_Flow.html">"Presenter Flow"</a> <a href="./Presenter_Flow.pdf">(PDF)</a> document in this directory.
+</p>
+</div>
+<div id="outline-container-sec-12-1" class="outline-3">
 <h3 id="sec-12-1"><span class="section-number-3">12.1</span> UserHasPermissionRole</h3>
 <div class="outline-text-3" id="text-12-1">
 <p>
@@ -1606,7 +1625,8 @@ because of the use of the <a href="../webpages/AdminNewConInstance.php">"AdminNe
 Of course, tweaking from year to year might need to happen.  The
 easiest way to do so is to use the 
 <a href="../webpages/StaffEditCreateParticipant.php?action=migrate">"Migrate Participant from another con-instance"</a> link under the
-<a href="../webpages/StaffManageParticipants.php">"Manage Participants &amp; Schedule"</a> tab  
+<a href="../webpages/StaffManageParticipants.php">"Manage Participants &amp; Schedule"</a> tab which brings you to the
+<a href="../webpages/StaffEditCreateParticipant.php?action=migrate">"StaffEditCreateParticipant.php?action=migrate"</a> page.
 to give each the right permissions. If a person's permissions need
 to be changed, they can be updated either on the migration page
 listed above, or on the <a href="../webpages/StaffEditCreateParticipant.php?action=edit">"Edit Participant"</a> page. The use of that
@@ -1839,12 +1859,16 @@ you can have restrictions on minimum and/or maximum length of these
 fields.  All the limit checks should be set up such that if you
 don't have a limit set in this table, the minimum is presumed 0 and
 the maximum is presumed to be whatever your database maximum is for
-that particular field.  
+that particular field.  To see all the current limits set, use the
+<a href="../webpages/genreport.php?reportname=publicationlimits">"genreport.php?reportname=publicationlimits"</a> report.
 </p>
 
 <p>
 To add/update the limits for this event, feel free to use the
-<a href="../webpages/AdminPublicationLimits.php">"AdminPublicationLimits.php"</a> page.
+<a href="../webpages/AdminPublicationLimits.php">"AdminPublicationLimits.php"</a> page.  Each limit is findable under
+the type of entry, with the destination broken down within each
+type.  You can add, remove, or update values.  To add or update,
+just enter the new number.  To remove, just empty the field.
 </p>
 
 <p>
@@ -1968,101 +1992,8 @@ Most of the continued interaction can be mostly handled under the
 <div class="outline-text-2" id="text-14">
 <p>
 This is covered extensively, and in a more updated fashion in the
-<a href="./Vending_Design_Document.html">"Vending Design Document"</a> <a href="./Vending_Design_Document.pdf">(PDF)</a>.  The below is still here fore
-legacy purposes until cleaned up.
+<a href="./Vending_Design_Document.html">"Vending Design Document"</a> <a href="./Vending_Design_Document.pdf">(PDF)</a>.
 </p>
-</div>
-<div id="outline-container-sec-14-1" class="outline-3">
-<h3 id="sec-14-1"><span class="section-number-3">14.1</span> VendorSpaces and VendorFeatures</h3>
-<div class="outline-text-3" id="text-14-1">
-<p>
-These two tables are built in the same pattern. VendorSpaces are
-the size/type of space, and the cost of said space for the con.
-VendorFeatures are all the little up-charges or non-standard things
-that a vendor might opt for.  To see what was set on a previous
-instance of your con, you can use a query (replacing the $conid
-with the previous con you want to model on) like:
-</p>
-<div class="org-src-container">
-
-<pre class="src src-html">SELECT
-    *
-  FROM
-      VendorSpaces
-  WHERE
-    conid=$conid;
-</pre>
-</div>
-<p>
-And:
-</p>
-<div class="org-src-container">
-
-<pre class="src src-html">SELECT
-    *
-  FROM
-      VendorFeatures
-  WHERE
-    conid=$conid;
-</pre>
-</div>
-<p>
-The values are:
-</p>
-<ul class="org-ul">
-<li>vendorspaceid/vendorfeatureid: Unique id for the entry (key).
-</li>
-<li>vendorspacename/vendorfeaturename: A description, plus the price
-in an easily understandable format, so the vendors know what to
-select for their comfort and profit.
-</li>
-<li>vendorspaceprice/vendorfeatureprice: Numeric representation of
-the cost of said item, so the invoice can be generated
-correctly.
-</li>
-<li>conid: The con that these things are available for .  This should
-be set to whatever conid you are creating.
-</li>
-<li>display_order: For the select boxes, if you want to reorder
-possibilities, this forces the ordering to what you want it to
-be.
-</li>
-</ul>
-
-<p>
-On the other hand, if you just want to mirror them, quickly, from
-another instance of your con you could always (replacing $origconid
-with the previous con you want to model on, and $conid with the
-current one) run:
-</p>
-<div class="org-src-container">
-
-<pre class="src src-html">SELECT
-    concat("('",vendorspacename,"',",vendorspaceprice,",$conid,",display_order,"),") AS Prev
-  FROM
-      VendorSpaces
-  WHERE
-    conid=$origconid;
-</pre>
-</div>
-<p>
-And:
-</p>
-<div class="org-src-container">
-
-<pre class="src src-html">SELECT
-    concat("('",vendorfeaturename,"',",vendorfeatureprice,",$conid,",display_order,"),") AS Prev
-  FROM
-      VendorFeatures
-  WHERE
-    conid=$origconid;
-</pre>
-</div>
-<p>
-Then just massage the data slightly, and you have the insert you
-can do to mirror the previous con.
-</p>
-</div>
 </div>
 </div>
 
@@ -2076,6 +2007,10 @@ flexibility at the time.
 </p>
 
 <p>
+Most everything can be done from the <a href="../webpages/AdminSetupFeedback.php">"AdminSetupFeedback.php"</a> page.
+</p>
+
+<p>
 One thing to note, there needs to be, attached to some con instance,
 an element in the Sessions table with a sessionid of "-1" to work.
 It doesn't have to be any particular con instance, nor especially
@@ -2084,55 +2019,26 @@ work for general feedback.
 </p>
 </div>
 <div id="outline-container-sec-15-1" class="outline-3">
-<h3 id="sec-15-1"><span class="section-number-3">15.1</span> Adding Questions</h3>
+<h3 id="sec-15-1"><span class="section-number-3">15.1</span> Setting up the page description (how it is presented)</h3>
 <div class="outline-text-3" id="text-15-1">
-<p>
-If your questions are not appropriate for this particular event,
-you might want to add a question type to cover it, in the
-QuestionTypes table, and then add the questions to the
-QuestionsForSurvey table.
-</p>
-
-<p>
-The values for QuestionTypes are:
-</p>
-<ul class="org-ul">
-<li>questiontypeid: Unique key for this table (it should auto-increment).
-</li>
-<li>questiontypename: A one or two word name for the type of question.
-</li>
-<li>questiontypenotes: A more in depth description of the question type.
-</li>
-</ul>
-
-<p>
-The values for the QuestionsForSurvey are:
-</p>
-<ul class="org-ul">
-<li>questionid: Unique key for this table (it should auto-increment).
-</li>
-<li>questiontext: The text of the question to be asked.
-</li>
-<li>display_order: The order of the question to be asked.
-</li>
-<li>questiontypeid: What type of question it is, referencing the
-QuestionTypes table above.
-</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-sec-15-2" class="outline-3">
-<h3 id="sec-15-2"><span class="section-number-3">15.2</span> Setting up the page description (how it is presented)</h3>
-<div class="outline-text-3" id="text-15-2">
 <p>
 For your event, there might be several different feedback forms you
 want available, so that an individual isn't overwhelmed by the
 number of possible choices.  One of the ways to do this is to break
 it down by time period, another is to break it down by class type.
 Once you have broken them down, this table sets up the various
-possible views.  At least one view should be set to "single class",
-so that the reference from the descriptions etc will work.
+possible views.
+</p>
+
+<p>
+At least one view should be set to "single class", with a start and
+end at the start and end of your con so that the reference from the
+descriptions etc will work.
+</p>
+
+<p>
+If you want to have a "General" feedback page, it also should start
+and end at the start and end of your con as well.
 </p>
 
 <p>
@@ -2157,18 +2063,31 @@ covers.
 page, from the QuestionTypes table.
 </li>
 </ul>
+</div>
+</div>
 
+<div id="outline-container-sec-15-2" class="outline-3">
+<h3 id="sec-15-2"><span class="section-number-3">15.2</span> Setting the Types available on a Feedback Page</h3>
+<div class="outline-text-3" id="text-15-2">
 <p>
 The type of schedule elements included in each possible Feedback
 page is set in the FeedbackPageHasType.  This can have multiple
-mappings.  For example, if you have both classes and panels, they
-have different values for their typeid in the Sessions table.  To
-have them both show up in the "single class" page, that page id
-needs two entries in the FeedbackPageHasType table, each one
-mapping the typeid to that fpageid.  "single class" should have a
-mapping for every element you reference, but the feedback page for
-just the classes would only have the typeid of classes mapped to
-it.
+mappings or no mappings at all.
+</p>
+
+<p>
+For example, if you have both classes and panels, they have
+different values for their typeid in the Sessions table.  To have
+them both show up in the "single class" page, that page id needs
+two entries in the FeedbackPageHasType table, each one mapping the
+typeid to that fpageid.  "single class" should have a mapping for
+every element you reference, but the feedback page for just the
+classes would only have the typeid of classes mapped to it.
+</p>
+
+<p>
+Also the "General" page should have no types mapped to it, since it
+should not be called anywhere but from the General reference.
 </p>
 
 <p>
@@ -2207,6 +2126,60 @@ The values for TypeHasQuestionType are:
 <li>questiontypeid: From the QuestionTypes table.
 </li>
 <li>conid: For which event is being run.
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-15-4" class="outline-3">
+<h3 id="sec-15-4"><span class="section-number-3">15.4</span> Adding Questions Types</h3>
+<div class="outline-text-3" id="text-15-4">
+<p>
+If your existing questions are not appropriate for this particular
+event, you might want to add a question type specific to this
+event, or a new general category for the new thing this event will
+be covering.  Adding this question type into the QuestionTypes
+table is the first step, then subsequently add the questions to the
+QuestionsForSurvey table.
+</p>
+
+<p>
+The values for QuestionTypes are:
+</p>
+<ul class="org-ul">
+<li>questiontypeid: Unique key for this table (it should auto-increment).
+</li>
+<li>questiontypename: A one or two word name for the type of question.
+</li>
+<li>questiontypenotes: A more in depth description of the question type.
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-15-5" class="outline-3">
+<h3 id="sec-15-5"><span class="section-number-3">15.5</span> Adding specific Questions in a Question Type</h3>
+<div class="outline-text-3" id="text-15-5">
+<p>
+Since each set of questions has already circulated and has answers
+inside Zambia already, changing the questions invalidates all the
+data collected. To avoid such a state adding questions (no matter
+how similar they seem) is a better choice than invalidating
+previous data.
+</p>
+
+<p>
+The values for the QuestionsForSurvey are:
+</p>
+<ul class="org-ul">
+<li>questionid: Unique key for this table (it should auto-increment).
+</li>
+<li>questiontext: The text of the question to be asked.
+</li>
+<li>display_order: The order of the question to be asked.
+</li>
+<li>questiontypeid: What type of question it is, referencing the
+QuestionTypes table above.
 </li>
 </ul>
 </div>

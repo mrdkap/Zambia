@@ -651,6 +651,12 @@ is an advantage to all.
 
    Don't forget, if this isn't hot-linked properly, you might need to
    adjust this for your Zambia-FFF branch install.
+
+   Also, as a note, there needs to be, attached to some con instance,
+   an element in the Sessions table with a sessionid of "-1" to work.
+   It doesn't have to be any particular con instance, nor especially
+   the most current one.  Just one has to exist for the constraints to
+   work for general feedback.
 ** Brainstorming
 
    The Brainstorming links should work immediately.  From the top
@@ -684,6 +690,7 @@ is an advantage to all.
   + Services and Features: [[../webpages/AdminSetupServices.php][AdminSetupServices.php]]
   + Create Sessions: [[../webpages/CreateSession.php][Create a New Session]]
   + Manage Sessions: [[../webpages/StaffManageSessions.php][Manage Sessions]]
+  + Manage Feedback: [[../webpages/AdminSetupFeedback.php][AdminSetupFeedback.php]]
   + WebApp information update: [[../webpages/KonOpasData.php][Publish to KonOpas/WebApp]]
 * Adding a year instance - Con Structure
 
@@ -831,6 +838,16 @@ is an advantage to all.
    phase shift.  Many phases (or few) might be active at any given
    point in time.
 * Adding a year instance - People
+
+  Most multi-instance events will have somewhat of a consistent set of
+  people supporting it in their various roles, so, in most cases you
+  just have to migrate or add the approrpiate starting folks, and
+  they, in turn will migrate or add their particular folks etc.  In
+  most cases the Con Chair will set up the Division/Department Heads,
+  the Heads will set up their staff, and their staff will set up those
+  under them, on down to the leaf-nodes of vendors, presenters,
+  volunteers, etc.  An example document on how this will flow is the
+  [[./Presenter_Flow.html]["Presenter Flow"]] [[./Presenter_Flow.pdf][(PDF)]] document in this directory.
 ** UserHasPermissionRole
 
    This need to be set so people can actually log into your con.  This
@@ -1082,98 +1099,20 @@ is an advantage to all.
 * Adding a year instance - Vendors
 
   This is covered extensively, and in a more updated fashion in the
-  [[./Vending_Design_Document.html]["Vending Design Document"]] [[./Vending_Design_Document.pdf][(PDF)]].  The below is still here fore
-  legacy purposes until cleaned up.
-** VendorSpaces and VendorFeatures
-   These two tables are built in the same pattern. VendorSpaces are
-   the size/type of space, and the cost of said space for the con.
-   VendorFeatures are all the little up-charges or non-standard things
-   that a vendor might opt for.  To see what was set on a previous
-   instance of your con, you can use a query (replacing the $conid
-   with the previous con you want to model on) like:
-#+begin_src html :exports both :results silent
-    SELECT
-        *
-      FROM
-          VendorSpaces
-      WHERE
-        conid=$conid;
-#+end_src
-   And:
-#+begin_src html :exports both :results silent
-    SELECT
-        *
-      FROM
-          VendorFeatures
-      WHERE
-        conid=$conid;
-#+end_src
-   The values are:
-   + vendorspaceid/vendorfeatureid: Unique id for the entry (key).
-   + vendorspacename/vendorfeaturename: A description, plus the price
-     in an easily understandable format, so the vendors know what to
-     select for their comfort and profit.
-   + vendorspaceprice/vendorfeatureprice: Numeric representation of
-     the cost of said item, so the invoice can be generated
-     correctly.
-   + conid: The con that these things are available for .  This should
-     be set to whatever conid you are creating.
-   + display_order: For the select boxes, if you want to reorder
-     possibilities, this forces the ordering to what you want it to
-     be.
-
-   On the other hand, if you just want to mirror them, quickly, from
-   another instance of your con you could always (replacing $origconid
-   with the previous con you want to model on, and $conid with the
-   current one) run:
-#+begin_src html :exports both :results silent
-    SELECT
-        concat("('",vendorspacename,"',",vendorspaceprice,",$conid,",display_order,"),") AS Prev
-      FROM
-          VendorSpaces
-      WHERE
-        conid=$origconid;
-#+end_src
-   And:
-#+begin_src html :exports both :results silent
-    SELECT
-        concat("('",vendorfeaturename,"',",vendorfeatureprice,",$conid,",display_order,"),") AS Prev
-      FROM
-          VendorFeatures
-      WHERE
-        conid=$origconid;
-#+end_src
-   Then just massage the data slightly, and you have the insert you
-   can do to mirror the previous con.
+  [[./Vending_Design_Document.html]["Vending Design Document"]] [[./Vending_Design_Document.pdf][(PDF)]].
 * Adding a year instance - Feedback
 
   Setting up feedback for your con is somewhat complex.  I'm not sure
   what motivated me, originally to be so baroque, but I think it was
   flexibility at the time.
 
+  Most everything can be done from the [[../webpages/AdminSetupFeedback.php]["AdminSetupFeedback.php"]] page.
+
   One thing to note, there needs to be, attached to some con instance,
   an element in the Sessions table with a sessionid of "-1" to work.
   It doesn't have to be any particular con instance, nor especially
   the most current one.  Just one has to exist for the constraints to
   work for general feedback.
-** Adding Questions
-
-   If your questions are not appropriate for this particular event,
-   you might want to add a question type to cover it, in the
-   QuestionTypes table, and then add the questions to the
-   QuestionsForSurvey table.
-
-   The values for QuestionTypes are:
-   + questiontypeid: Unique key for this table (it should auto-increment).
-   + questiontypename: A one or two word name for the type of question.
-   + questiontypenotes: A more in depth description of the question type.
-
-   The values for the QuestionsForSurvey are:
-   + questionid: Unique key for this table (it should auto-increment).
-   + questiontext: The text of the question to be asked.
-   + display_order: The order of the question to be asked.
-   + questiontypeid: What type of question it is, referencing the
-     QuestionTypes table above.
 ** Setting up the page description (how it is presented)
 
    For your event, there might be several different feedback forms you
@@ -1181,8 +1120,14 @@ is an advantage to all.
    number of possible choices.  One of the ways to do this is to break
    it down by time period, another is to break it down by class type.
    Once you have broken them down, this table sets up the various
-   possible views.  At least one view should be set to "single class",
-   so that the reference from the descriptions etc will work.
+   possible views.
+
+   At least one view should be set to "single class", with a start and
+   end at the start and end of your con so that the reference from the
+   descriptions etc will work.
+
+   If you want to have a "General" feedback page, it also should start
+   and end at the start and end of your con as well.
 
    The values for FeedbackPages are:
    + fpageid: Unique key for this table (it should auto-increment).
@@ -1195,17 +1140,22 @@ is an advantage to all.
    + fpagecols: The number of columns at the top of the printed page.
    + questiontypeid: Which type of questions will show up on this
      page, from the QuestionTypes table.
+** Setting the Types available on a Feedback Page
 
    The type of schedule elements included in each possible Feedback
    page is set in the FeedbackPageHasType.  This can have multiple
-   mappings.  For example, if you have both classes and panels, they
-   have different values for their typeid in the Sessions table.  To
-   have them both show up in the "single class" page, that page id
-   needs two entries in the FeedbackPageHasType table, each one
-   mapping the typeid to that fpageid.  "single class" should have a
-   mapping for every element you reference, but the feedback page for
-   just the classes would only have the typeid of classes mapped to
-   it.
+   mappings or no mappings at all.
+
+   For example, if you have both classes and panels, they have
+   different values for their typeid in the Sessions table.  To have
+   them both show up in the "single class" page, that page id needs
+   two entries in the FeedbackPageHasType table, each one mapping the
+   typeid to that fpageid.  "single class" should have a mapping for
+   every element you reference, but the feedback page for just the
+   classes would only have the typeid of classes mapped to it.
+
+   Also the "General" page should have no types mapped to it, since it
+   should not be called anywhere but from the General reference.
 
    The values for FeedbackPageHasType are:
    + fpageid: From the FeedbackPages table.
@@ -1226,6 +1176,33 @@ is an advantage to all.
    + typeid: From the Types table.
    + questiontypeid: From the QuestionTypes table.
    + conid: For which event is being run.
+** Adding Questions Types
+
+   If your existing questions are not appropriate for this particular
+   event, you might want to add a question type specific to this
+   event, or a new general category for the new thing this event will
+   be covering.  Adding this question type into the QuestionTypes
+   table is the first step, then subsequently add the questions to the
+   QuestionsForSurvey table.
+
+   The values for QuestionTypes are:
+   + questiontypeid: Unique key for this table (it should auto-increment).
+   + questiontypename: A one or two word name for the type of question.
+   + questiontypenotes: A more in depth description of the question type.
+** Adding specific Questions in a Question Type
+
+   Since each set of questions has already circulated and has answers
+   inside Zambia already, changing the questions invalidates all the
+   data collected. To avoid such a state adding questions (no matter
+   how similar they seem) is a better choice than invalidating
+   previous data.
+
+   The values for the QuestionsForSurvey are:
+   + questionid: Unique key for this table (it should auto-increment).
+   + questiontext: The text of the question to be asked.
+   + display_order: The order of the question to be asked.
+   + questiontypeid: What type of question it is, referencing the
+     QuestionTypes table above.
 * Adding a year instance - App/KonOpas
 
   You should have already set up the KonOpas instance with your

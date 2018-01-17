@@ -132,6 +132,8 @@ if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
     select_participant($vendorid, 'VENDORCURRENT', "VendorAdminState.php");
   }
 
+  echo "<P><A HREF=\"" . $_SESSION['return_to_page'] . "\">Return to report</A></P>\n";
+
   // If there is no vendor selected, exit here.  This might want to have the vendor pulldowns instead.
   if (empty($vendorid)) {
     correct_footer();
@@ -146,7 +148,6 @@ if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
   // $label, $element_list, $key, $value, $button_array
   echo populate_radio_block_from_array("vendorstatustypeid",$vstattype,"Vendor Status","ID",$vstat_array);
   echo "  </SPAN>\n  <BR>\n";
-  echo "  <A HREF=\"" . $_SESSION['return_to_page'] . "\">Return to report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</A>\n";
   echo "  <BUTTON class=\"ib\" type=submit value=\"Update\">Update</BUTTON>\n";
 
   // Close the form

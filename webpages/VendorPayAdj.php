@@ -101,6 +101,8 @@ if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
     select_participant($vendorid, 'VENDORCURRENT', "VendorPayAdj.php");
   }
 
+  echo "<P><A HREF=\"".$_SESSION['return_to_page']."\">Return to report</A></P>\n";
+
   // If there is no vendor selected, exit here.  This might want to have the vendor pulldowns instead.
   if (empty($vendorid)) {
     correct_footer();

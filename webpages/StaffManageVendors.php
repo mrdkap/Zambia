@@ -10,7 +10,7 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 <hr>
 <DL>
-  <DT><A HREF="Documentation/Vending_Design_Document.html">Vending
+  <DT><A HREF="../Documentation/Vending_Design_Document.html">Vending
   Design Documentation</A></DT>
   <DD>General documentation on all the ins and outs of the vending
   system.  The "Flow" is probably the most useful place to start.</DD>

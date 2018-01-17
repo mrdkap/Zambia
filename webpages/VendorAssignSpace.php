@@ -52,8 +52,8 @@ $conid=$_SESSION['conid'];
    or mapped.
 */
 
-// Update only if the right permissions.
-if (may_I("Maint") or may_I("ConChair") or may_I("SuperVendor")) {
+// Update only if the right permissions, and there is a specific vendor selected.
+if (($vendorid !="") and (may_I("Maint") or may_I("ConChair") or may_I("SuperVendor"))) {
 
   // Has Space (before update)
   $querySpaceHasInfo=<<<EOD
@@ -150,8 +150,10 @@ EOD;
   }
 }
 
-// Has Space (after update)
-$querySpaceHasInfo=<<<EOD
+// If there is a specific vendorid
+if ($vendorid != "") {
+  // Has Space (after update)
+  $querySpaceHasInfo=<<<EOD
 SELECT
     vendorspacecount,
     vendorspaceid
@@ -163,11 +165,11 @@ SELECT
     badgeid=$vendorid
 EOD;
 
-// Get the information
-list($spaceirows,$spaceiheader_array,$spacei_array)=queryreport($querySpaceHasInfo,$link,$title,$description,0);
+  // Get the information
+  list($spaceirows,$spaceiheader_array,$spacei_array)=queryreport($querySpaceHasInfo,$link,$title,$description,0);
 
-// Has Location (after update)
-$queryLocHas=<<<EOD
+  // Has Location (after update)
+  $queryLocHas=<<<EOD
 SELECT
     locationid,
     booth
@@ -179,8 +181,9 @@ SELECT
     badgeid=$vendorid
 EOD;
 
-// Get the information
-list($lochasrows,$lochasheader_array,$lochas_array)=queryreport($queryLocHas,$link,$title,$description,0);
+  // Get the information
+  list($lochasrows,$lochasheader_array,$lochas_array)=queryreport($queryLocHas,$link,$title,$description,0);
+}
 
 // Begin the page
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
@@ -194,13 +197,13 @@ if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
     select_participant($vendorid, 'VENDORCURRENT', "VendorAssignSpace.php");
   }
 
+  echo "<P><A HREF=\"".$_SESSION['return_to_page']."\">Return to report</A></P>\n";
+
   // If there is no vendor selected, exit here.  This might want to have the vendor pulldowns instead.
   if (empty($vendorid)) {
     correct_footer();
     exit();
   }
-
-  echo "<P><A HREF=\"".$_SESSION['return_to_page']."\">Return to report</A></P>";
 
   // Wanted Space
   $querySpaceType=<<<EOD

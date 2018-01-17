@@ -437,7 +437,7 @@ function vendor_header ($title) {
     }
     if (may_I('SuperVendor')) {
       echo "    <td class=\"tabblocks border0020\">\n      ";
-      maketab("Manange Vendors",may_I('SuperVendor'),"StaffManageVendors.php");
+      maketab("Manage Vendors",may_I('SuperVendor'),"StaffManageVendors.php");
       echo "</td>\n";
     }
     if (may_I('Staff')) {

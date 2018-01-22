@@ -13,7 +13,7 @@ function RenderEditCreateSession ($action, $session, $message, $message_error) {
   require_once("CommonCode.php");
   require_once("javascript_functions.php");
 
-  $emailquery="SELECT email from CongoDump where badgeid=$badgeid";
+  $emailquery="SELECT email from Participants where badgeid=$badgeid";
   list($email_rows,$email_header_array,$email_array)=queryreport($emailquery,$link,$title,$emailquery,0);
   $email=$email_array[1]["email"];
 

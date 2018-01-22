@@ -60,10 +60,10 @@ SELECT
     JOIN (SELECT
           sessionid,
           conid,
-          GROUP_CONCAT(badgename SEPARATOR ", ") AS presenter
+          GROUP_CONCAT(pubsname SEPARATOR ", ") AS presenter
         FROM
             ParticipantOnSession
-          JOIN CongoDump USING (badgeid)
+          JOIN Participants USING (badgeid)
         WHERE
           introducer not in ('1','Yes') AND
           volunteer not in ('1','Yes') AND
@@ -83,17 +83,17 @@ list($sessionsrows,$sessionsheader_array,$sessions_array)=queryreport($query,$li
 
 $query=<<<EOD
 SELECT
-    badgename,
+    pubsname,
     badgeid
   FROM
-      CongoDump
+      Participants
     JOIN UserHasPermissionRole USING (badgeid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
     permrolename in ('Programming','SuperProgramming') AND
     conid=$conid
   ORDER BY
-    badgename
+    pubsname
 EOD;
 
 // Retrieve query
@@ -102,11 +102,11 @@ list($volrows,$volheader_array,$vol_array)=queryreport($query,$link,$title,$desc
 $query=<<<EOD
 SELECT
     sessionid,
-    badgename,
+    pubsname,
     concat(if(introducer in ('1','Yes'),"<B>I</B>",""),if(volunteer in ('1','Yes'),'<B>V</B>','')) AS asgn
   FROM
       ParticipantOnSession
-    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
     JOIN UserHasPermissionRole USING (badgeid,conid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
@@ -117,19 +117,19 @@ EOD;
 // Retrieve query
 list($asgnrows,$asgnheader_array,$asgn_array)=queryreport($query,$link,$title,$description,0);
 
-// Build the $check_array['sessionid']['badgename'] array
+// Build the $check_array['sessionid']['pubsname'] array
 for ($m=1; $m<=$asgnrows; $m++) {
-  $assigned_array[$asgn_array[$m]['sessionid']][$asgn_array[$m]['badgename']]=$asgn_array[$m]['asgn'];
+  $assigned_array[$asgn_array[$m]['sessionid']][$asgn_array[$m]['pubsname']]=$asgn_array[$m]['asgn'];
 }
 
 $query=<<<EOD
 SELECT
     sessionid,
-    badgename,
+    pubsname,
     concat(if(rank!='NULL',rank,"r"),if((comments!='NULL' AND comments!=''),' *','')) AS rcom
   FROM
       ParticipantSessionInterest
-    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
     JOIN UserHasPermissionRole USING (badgeid,conid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
@@ -140,21 +140,21 @@ EOD;
 // Retrieve query
 list($rcomrows,$rcomheader_array,$rcom_array)=queryreport($query,$link,$title,$description,0);
 
-// Build the $check_array['sessionid']['badgename'] array
+// Build the $check_array['sessionid']['pubsname'] array
 for ($k=1; $k<=$rcomrows; $k++) {
-  $check_array[$rcom_array[$k]['sessionid']][$rcom_array[$k]['badgename']]=$rcom_array[$k]['rcom'];
+  $check_array[$rcom_array[$k]['sessionid']][$rcom_array[$k]['pubsname']]=$rcom_array[$k]['rcom'];
 }
 
 $query=<<<EOD
 SELECT
     sessionid,
-    badgename,
+    pubsname,
   if((SCH.starttime > PAT.starttime AND ADDTIME(SCH.starttime,duration) < PAT.endtime),"a","") AS avail
   FROM
       Schedule SCH
     JOIN Sessions USING (sessionid,conid)
     JOIN ParticipantAvailabilityTimes PAT USING (conid)
-    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
     JOIN UserHasPermissionRole USING (badgeid,conid)
     JOIN PermissionRoles USING (permroleid)
   WHERE 
@@ -165,30 +165,30 @@ EOD;
 // Retrieve query
 list($availrows,$availheader_array,$avail_array)=queryreport($query,$link,$title,$description,0);
 
-// Build the $available_array['sessionid']['badgename'] array
+// Build the $available_array['sessionid']['pubsname'] array
 for ($l=1; $l<=$availrows; $l++) {
-  $available_array[$avail_array[$l]['sessionid']][$avail_array[$l]['badgename']]=$avail_array[$l]['avail'];
+  $available_array[$avail_array[$l]['sessionid']][$avail_array[$l]['pubsname']]=$avail_array[$l]['avail'];
 }
 
 
 // Establish the extra rows in sessions
 for ($i=1; $i<=$sessionsrows; $i++) {
   for ($j=1; $j<=$volrows; $j++) {
-    if (!empty($assigned_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['badgename']])) {
-      $sessions_array[$i][$vol_array[$j]['badgename']]=$assigned_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['badgename']];
-    } elseif (!empty($check_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['badgename']])) {
-      $sessions_array[$i][$vol_array[$j]['badgename']]=$check_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['badgename']];
-    } elseif (!empty($available_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['badgename']])) {
-      $sessions_array[$i][$vol_array[$j]['badgename']]=$available_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['badgename']];
+    if (!empty($assigned_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['pubsname']])) {
+      $sessions_array[$i][$vol_array[$j]['pubsname']]=$assigned_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['pubsname']];
+    } elseif (!empty($check_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['pubsname']])) {
+      $sessions_array[$i][$vol_array[$j]['pubsname']]=$check_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['pubsname']];
+    } elseif (!empty($available_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['pubsname']])) {
+      $sessions_array[$i][$vol_array[$j]['pubsname']]=$available_array[$sessions_array[$i]['sessionid']][$vol_array[$j]['pubsname']];
     } else {
-      $sessions_array[$i][$vol_array[$j]['badgename']]="";
+      $sessions_array[$i][$vol_array[$j]['pubsname']]="";
     }
   }
 }
 
 // Establish the extra headers in sessions
 for ($j=1; $j<=$volrows; $j++) {
-  $sessionsheader_array[]=$vol_array[$j]['badgename'];
+  $sessionsheader_array[]=$vol_array[$j]['pubsname'];
 }
 
 // Page Rendering

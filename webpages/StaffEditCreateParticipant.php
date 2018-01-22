@@ -133,13 +133,13 @@ SELECT
     lastname,
     badgename,
     phone,
-    email,
+    P.email,
     postaddress1,
     postaddress2,
     postcity,
     poststate,
     postzip,
-    regtype,
+    P.regtype,
     bestway,
     pubsname,
     altcontact,
@@ -148,7 +148,7 @@ SELECT
     conroleid_list
   FROM
       CongoDump
-    JOIN Participants USING (badgeid)
+    JOIN Participants P USING (badgeid)
     LEFT JOIN (
       SELECT
           badgeid,

@@ -58,11 +58,10 @@ $query=<<<EOD
 SELECT
     DISTINCT concat("<FORM name=\"propose\" method=POST action=\"PhotoLoungeReturning.php\">\n",
       "<INPUT type=\"hidden\" name=\"who\" value=\"",badgeid,"\">\n",
-      "<INPUT type=\"submit\" value=\"",badgename,"\">\n",
+      "<INPUT type=\"submit\" value=\"",pubsname,"\">\n",
       "</FORM>\n") as "Previous Photo Submitters"
   FROM
-      CongoDump
-    JOIN Participants USING (badgeid)
+      Participants
     JOIN UserHasPermissionRole USING (badgeid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
@@ -87,7 +86,7 @@ SELECT
           conid=$conid AND
           permrolename in ('PhotoSub'))
   ORDER BY
-    badgename
+    pubsname
 EOD;
 
 // Retrieve query
@@ -99,11 +98,10 @@ SELECT
     DISTINCT concat("<A HREF=\"login.php?login=",
       badgeid,
       "&newconid=$conid\">",
-      badgename,
+      pubsname,
       "</A>\n") as "Current Photo Submitters"
   FROM
-      CongoDump
-    JOIN Participants USING (badgeid)
+      Participants
     JOIN UserHasPermissionRole USING (badgeid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
@@ -117,7 +115,7 @@ SELECT
           conid=$conid AND
           permrolename in ('PhotoSub'))
   ORDER BY
-    badgename
+    pubsname
 EOD;
 
 // Retrieve query

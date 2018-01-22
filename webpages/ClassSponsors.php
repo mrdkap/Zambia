@@ -85,10 +85,10 @@ SELECT
     LEFT JOIN (SELECT
         sessionid,
         conid,
-	       GROUP_CONCAT("<A HREF=mailto:",email,">",badgename,"</A>",if(moderator in ('1','Yes'),'(m)','') ORDER BY moderator DESC SEPARATOR ', ') AS Participants
+	GROUP_CONCAT("<A HREF=mailto:",email,">",pubsname,"</A>",if(moderator in ('1','Yes'),'(m)','') ORDER BY moderator DESC SEPARATOR ', ') AS Participants
       FROM
           ParticipantOnSession
-        JOIN CongoDump USING (badgeid)
+	JOIN Participants USING (badgeid)
       WHERE
         introducer not in ('1','Yes') AND
         volunteer not in ('1','Yes') AND
@@ -170,12 +170,24 @@ EOD;
 $sponsorquery=<<<EOD
 SELECT
     DISTINCT badgeid,
-    concat(pubsname," -- ",badgename) as sponsor
+    concat(pubsname,if(dba_good_web IS NULL,"",if(dba_good_web=="","",concat(" -- ",dba_good_web)))) as sponsor
   FROM
       UserHasConRole
     JOIN ConRoles USING (conroleid)
-    JOIN CongoDump USING (badgeid)
     JOIN Participants USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+        biotext as dba_good_web
+      FROM
+          Bios
+        JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+        biolang in ('en-us') AND
+        biotypename in ('dba') AND
+        biostatename in ('good') AND
+        biodestname in ('web')) DGW USING (badgeid)
   WHERE
     conid=$conid AND
     conrolename in ("Sponsor")

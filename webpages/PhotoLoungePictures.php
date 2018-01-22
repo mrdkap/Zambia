@@ -181,7 +181,7 @@ SELECT
 	   "</TABLE>\n") AS "Photo"
   FROM
       PhotoLoungePix
-    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
   WHERE
     conid=$conid
 EOD;

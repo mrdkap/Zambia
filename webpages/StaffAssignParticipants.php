@@ -302,11 +302,9 @@ $permrolecheck_string=implode(",",$permrolecheck_array);
 $participant_query = <<<EOD
 SELECT
     DISTINCT(badgeid),
-    concat(pubsname, ' - ', badgeid) AS Pubsname,
-    lastname
+    concat(pubsname, ' - ', badgeid) AS Pubsname
   FROM
       Participants
-    JOIN CongoDump USING(badgeid)
     JOIN UserHasPermissionRole USING (badgeid)
     JOIN PermissionRoles USING (permroleid)
     JOIN Interested USING (badgeid,conid)

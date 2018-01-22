@@ -59,11 +59,11 @@ function render_send_email($email,$substitutions,$message_error) {
   $ccquery = <<<EOD
 SELECT
     badgeid,
-    badgename
+    pubsname
   FROM
       UserHasConRole
     JOIN ConRoles USING (conroleid)
-    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
   WHERE
     conid=$conid AND
     conrolename not like '%GOH%'

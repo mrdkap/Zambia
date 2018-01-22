@@ -69,11 +69,10 @@ $query=<<<EOD
 SELECT
     DISTINCT concat("<FORM name=\"propose\" method=POST action=\"BrainstormReturningPresenter.php\">\n",
       "<INPUT type=\"hidden\" name=\"who\" value=\"",badgeid,"\">\n",
-      "<INPUT type=\"submit\" value=\"",badgename,"\">\n",
+      "<INPUT type=\"submit\" value=\"",pubsname,"\">\n",
       "</FORM>\n") as "Previous Presenters"
   FROM
-      CongoDump
-    JOIN Participants USING (badgeid)
+      Participants
     JOIN UserHasPermissionRole USING (badgeid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
@@ -98,7 +97,7 @@ SELECT
           conid=$conid AND
           permrolename in ('Participant'))
   ORDER BY
-    badgename
+    pubsname
 EOD;
 
 // Retrieve query

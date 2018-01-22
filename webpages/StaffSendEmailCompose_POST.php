@@ -245,7 +245,7 @@ for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
   }
 }
 
-$query="SELECT email FROM CongoDump WHERE badgeid=".$email['sendfrom'];
+$query="SELECT email FROM Participants WHERE badgeid=".$email['sendfrom'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);

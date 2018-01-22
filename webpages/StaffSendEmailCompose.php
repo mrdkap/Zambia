@@ -254,7 +254,7 @@ Book Description: ".$schedule_array[$j]['desc_good_book']."
   }
 }
 
-$query="SELECT email FROM CongoDump WHERE badgeid=".$email['sendfrom'];
+$query="SELECT email FROM Participants WHERE badgeid=".$email['sendfrom'];
 if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
@@ -262,7 +262,7 @@ if (!$result=mysql_query($query,$link)) {
 $emailfrom=mysql_result($result,0);
 
 if ($email['sendcc'] != 0) {
-  $query="SELECT email FROM CongoDump WHERE badgeid=".$email['sendcc'];
+  $query="SELECT email FROM Participants WHERE badgeid=".$email['sendcc'];
   if (!$result=mysql_query($query,$link)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);

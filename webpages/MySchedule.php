@@ -39,7 +39,7 @@ $query = <<<EOD
 SELECT
     message
   FROM
-      CongoDump
+      Participants
     LEFT JOIN RegTypes USING (regtype)
   WHERE
     badgeid="$badgeid"

@@ -59,11 +59,10 @@ $bioinfo=getBioData($badgeid);
 $query = <<<EOD
 SELECT
     LB.pubsname as lockedby,
-    if(P.pubsname!="",P.pubsname,concat(firstname," ",lastname)) name
+    if(P.pubsname!="",P.pubsname,P.badgeid) name
   FROM
       Participants P
     JOIN Bios B USING (badgeid)
-    JOIN CongoDump USING (badgeid)
     LEFT JOIN Participants LB on B.biolockedby = LB.badgeid
   WHERE
     P.badgeid='$badgeid'

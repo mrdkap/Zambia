@@ -34,7 +34,7 @@ if (($_POST['Update']='Y') AND (!empty($_POST['badgeid'])) AND (is_numeric($_POS
   $newpass=str_shuffle($randomCode);
 
   // Get the email address of the person
-  $result=mysql_query("SELECT email FROM CongoDump WHERE badgeid=$badgeid",$link);
+  $result=mysql_query("SELECT email FROM Participants WHERE badgeid=$badgeid",$link);
   if ($result and (mysql_num_rows($result)==1)) {
       $dbobject=mysql_fetch_object($result);
       $to=$dbobject->email;

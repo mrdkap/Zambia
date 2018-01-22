@@ -5,7 +5,7 @@ require_once('db_functions.php');
 require_once('validation_functions.php');
 require_once('php_functions.php');
 require_once('error_functions.php');
-global $link;
+global $link, $message, $message_error;
 
 // make it a variable so it can be substituted
 if ((empty($conid)) and (is_numeric($_SESSION['conid']))) {
@@ -20,7 +20,7 @@ session_save_path("/tmp/tmp_Zambia");
 ini_set('session.gc_probability', 1);
 session_start();
 if (prepare_db()===false) {
-  $message_error="Unable to connect to database.<BR>No further execution possible.";
+  $message_error.="Unable to connect to database.<BR>No further execution possible.";
   RenderError($title,$message_error);
   exit();
  };
@@ -62,7 +62,7 @@ SELECT
         FROM
             ConRoles
           JOIN UserHasConRole USING (conroleid)
-          JOIN CongoDump USING (badgeid)
+          JOIN Participants USING (badgeid)
         WHERE
           conrolename like '%Vending%' AND
           conid=$conid) AS X USING (conid)
@@ -73,7 +73,7 @@ SELECT
         FROM
             ConRoles
           JOIN UserHasConRole USING (conroleid)
-          JOIN CongoDump USING (badgeid)
+          JOIN Participants USING (badgeid)
         WHERE
           conrolename like '%BrainstormCoord%' AND
           conid=$conid) AS Y USING (conid)
@@ -83,8 +83,8 @@ EOF;
 
 // Retrieve query fail if database can't be found, and if there isn't just one result
 if (($result=mysql_query($query,$link))===false) {
-  require_once("logout.php");
-  $message_error="Error retrieving data from database<BR>\n";
+  //require_once("logout.php");
+  $message_error.="This Error retrieving data from database<BR>\n";
   $message_error.=$query;
   RenderError($title,$message_error);
   exit();
@@ -247,7 +247,7 @@ function staff_header ($title) {
 
 function participant_header ($title) {
   require_once ("javascript_functions.php");
-  global $badgeid;
+  global $link, $message, $message_error, $badgeid;
   $ConName=$_SESSION['conname']; // make it a variable so it can be substituted
   $ConUrl=$_SESSION['conurl']; // make it a variable so it can be substituted
 
@@ -1010,7 +1010,7 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
 function queryreport ($query,$link,$title,$description,$reportid) {
   mysql_query("SET group_concat_max_len = 9216;",$link);
   if (($result=mysql_query($query,$link))===false) {
-    $message="<P>Error retrieving data from database.</P>\n<P>";
+    $message.="<P>Error retrieving data from database.</P>\n<P>";
     if ($reportid !=0) {
       $message.="Edit Report <A HREF=EditReport.php?selreport=$reportid>$reportid</A></P>\n<P>";
     }
@@ -1023,7 +1023,7 @@ function queryreport ($query,$link,$title,$description,$reportid) {
     $element_array[$header_array[0]]='';
     $rows=0;
     return array ($rows,$header_array,$element_array);
-    /* $message="$description\n<P>This report retrieved no results matching the criteria.</P>\n";
+    /* $message.="$description\n<P>This report retrieved no results matching the criteria.</P>\n";
     RenderError($title,$message);
     exit(); */
   }
@@ -1039,7 +1039,7 @@ function queryreport ($query,$link,$title,$description,$reportid) {
  searching. */
 function select_participant ($selpartid, $limit, $returnto) {
   $conid=$_SESSION['conid'];
-  global $link;
+  global $link, $message, $message_error;
 
 /* Get all the Permission Roles */
   $query = <<<EOD
@@ -1076,13 +1076,13 @@ EOD;
   if ($limit=="ALL") {
     $limittables='';
     $limitwhere='';
-    $emailaddr=" ',email,'";
+    $emailaddr=" ',P.email,'";
   } elseif ($limit=="VENDOR") {
     $limittables ="    JOIN UserHasPermissionRole USING (badgeid)\n";
     $limittables.="    JOIN PermissionRoles USING (permroleid)\n";
     $limitwhere ="  WHERE\n";
     $limitwhere.="    permrolename in ('Vendor')\n";
-    $emailaddr=" ',email,'";
+    $emailaddr=" ',P.email,'";
   } elseif ($limit=="VENDORCURRENT") {
     $limittables ="    JOIN UserHasPermissionRole USING (badgeid)\n";
     $limittables.="    JOIN PermissionRoles USING (permroleid)\n";
@@ -1090,7 +1090,7 @@ EOD;
     $limitwhere ="  WHERE\n";
     $limitwhere.="    permrolename in ('Vendor') AND\n";
     $limitwhere.="    conid=$conid\n";
-    $emailaddr=" ',email,'";
+    $emailaddr=" ',P.email,'";
   } elseif ($limit!='') {
     $query=<<<EOD
 SELECT
@@ -1127,72 +1127,69 @@ EOD;
     $emailaddr="";
   }
 
-  // lastname, firstname (badgename/pubsname) - partid
+  // partid - pubsname: email
   $query0=<<<EOD
 SELECT
     DISTINCT badgeid,
-    concat(lastname,', ',firstname,' (',badgename,'/',pubsname,')$emailaddr - ',badgeid) AS pname
+    concat(badgeid, ' - ', pubsname, ': ', email) AS pname
   FROM
       Participants
-    JOIN CongoDump USING (badgeid)
     $limittables
     $limitwhere
   ORDER BY
-    lastname
+    badgeid+0
 EOD;
 
-  // firstname lastname (badgename/pubsname) - partid
+  // email - pubsname (partid)
   $query1=<<<EOD
 SELECT
     DISTINCT badgeid,
-    concat(firstname,' ',lastname,' (',badgename,'/',pubsname,')$emailaddr - ',badgeid) AS pname
+    concat(email, ' - ', pubsname, ' (', badgeid, ')') AS pname
   FROM
       Participants
-    JOIN CongoDump USING (badgeid)
-    $limittables
-    $limitwhere
-  ORDER BY
-    firstname
-EOD;
-
-  // pubsname/badgename (lastname, firstname) - partid
-  $query2=<<<EOD
-SELECT
-    DISTINCT badgeid,
-    concat(pubsname,'/',badgename,' (',lastname,', ',firstname,')$emailaddr - ',badgeid) AS pname
-  FROM
-      Participants
-    JOIN CongoDump USING (badgeid)
-    $limittables
-    $limitwhere
-  ORDER BY
-    pubsname
-EOD;
-
-  // pubsname/badgename (lastname, firstname) - partid
-  $query3=<<<EOD
-SELECT
-    DISTINCT badgeid,
-    concat(email,": ",pubsname,'/',badgename,' (',lastname,', ',firstname,') - ',badgeid) AS pname
-  FROM
-      Participants
-    JOIN CongoDump USING (badgeid)
     $limittables
     $limitwhere
   ORDER BY
     email
 EOD;
 
+  // pubsname: email (partid)
+  $query2=<<<EOD
+SELECT
+    DISTINCT badgeid,
+    concat(pubsname, ': ', email, ' (',badgeid, ')') AS pname
+  FROM
+      Participants
+    $limittables
+    $limitwhere
+  ORDER BY
+    pubsname
+EOD;
+
+  // badgename/pubsname: email (partid)
+  $query3=<<<EOD
+SELECT
+    DISTINCT badgeid,
+    concat(badgename, '/' ,pubsname, ": ", P.email, ' (', badgeid, ')') AS pname
+  FROM
+      Participants P
+    JOIN CongoDump USING (badgeid)
+    $limittables
+    $limitwhere
+  ORDER BY
+    P.email
+EOD;
+
   // Now give the choices
   echo "<FORM name=\"selpartform\" method=POST action=\"".$returnto."\">\n";
   if (($limit!="VENDOR") and ($limit!="VENDORCURRENT")) {
-    echo "<DIV><LABEL for=\"partidl\">Select Participant (Lastname)</LABEL>\n";
+    echo "<DIV><LABEL for=\"partidl\">Select Participant (ID)</LABEL>\n";
     echo "<SELECT name=\"partidl\">\n";
-    populate_select_from_query($query0, $selpartid, "Select Participant (Lastname)", true);
+    populate_select_from_query($query0, $selpartid, "Select Participant (ID)", true);
     echo "</SELECT></DIV>\n";
-    echo "<DIV><LABEL for=\"partidf\">Select Participant (Firstname)</LABEL>\n";
+    echo "<DIV><LABEL for=\"partidf\">Select Participant (Email Address)</LABEL>\n";
     echo "<SELECT name=\"partidf\">\n";
-    populate_select_from_query($query1, $selpartid, "Select Participant (Firstname)", true);
+    populate_select_from_query($query1, $selpartid, "Select Participant (Email Address)", true);
     echo "</SELECT></DIV>\n";
   }
   echo "<DIV><LABEL for=\"partidp\">Select Participant (Pubsname) </LABEL>\n";
@@ -1200,9 +1197,9 @@ EOD;
   populate_select_from_query($query2, $selpartid, "Select Participant (Pubsname)", true);
   echo "</SELECT></DIV>\n";
   if (($limit=='ALL') or ($limit=="VENDOR") or ($limit=="VENDORCURRENT")) {
-    echo "<DIV><LABEL for=\"partide\">Select Participant (Email Address) </LABEL>\n";
+    echo "<DIV><LABEL for=\"partide\">Select Participant (Alternative Name) </LABEL>\n";
     echo "<SELECT name=\"partide\">\n";
-    populate_select_from_query($query3, $selpartid, "Select Participant (Email Address)", true);
+    populate_select_from_query($query3, $selpartid, "Select Participant (Alternative Name)", true);
     echo "</SELECT></DIV>\n";
   }
   echo "<P>&nbsp;\n";
@@ -1460,14 +1457,14 @@ function submit_table_element ($link, $title, $table, $element_array, $value_arr
   $query= "INSERT INTO $table ($element_string) VALUES ($value_string)";
   if (!mysql_query($query,$link)) {
     if (mysql_errno($link)==1062) {
-      $message_error=$query."<BR>Error updating $table.  Record already exists.";
+      $message_error.=$query."<BR>Error updating $table.  Record already exists.";
     } else {
-      $message_error=$query."<BR>Error updating $table.  Database not updated.";
+      $message_error.=$query."<BR>Error updating $table.  Database not updated.";
     }
     RenderError($title,$message_error);
     exit;
   }
-  $message="Table $table updated successfully.<BR>";
+  $message.="Table $table updated successfully.<BR>";
   return($message);
 }
 
@@ -1478,15 +1475,15 @@ function update_table_element ($link, $title, $table, $pairedvalue_array, $match
   $pairedvalue_string=substr($pairedvalue_string,0,-1);
   $query="UPDATE $table set $pairedvalue_string WHERE $match_field = '$match_value'";
   if (!mysql_query($query,$link)) {
-    $message_error=$query."<BR>Error updating $table.  Database not updated.";
+    $message_error.=$query."<BR>Error updating $table.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
   ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
   if ($r_matched[1]==0) {
-    $message=$query."<BR>Error updating $table.  No entries where $match_string to be updated.";
+    $message.=$query."<BR>Error updating $table.  No entries where $match_string to be updated.";
   } else {
-    $message="Table $table updated successfully.<BR>";
+    $message.="Table $table updated successfully.<BR>";
   }
   return($message);
 }
@@ -1498,15 +1495,15 @@ function update_table_element_extended_match ($link, $title, $table, $pairedvalu
   $pairedvalue_string=substr($pairedvalue_string,0,-1);
   $query="UPDATE $table set $pairedvalue_string WHERE $match_string";
   if (!mysql_query($query,$link)) {
-    $message_error=$query."<BR>Error updating $table.  Database not updated.";
+    $message_error.=$query."<BR>Error updating $table.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
   ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
   if ($r_matched[1]==0) {
-    $message=$query."<BR>Error updating $table.  No entries where $match_string to be updated.";
+    $message.=$query."<BR>Error updating $table.  No entries where $match_string to be updated.";
   } else {
-    $message="Table $table updated successfully.<BR>";
+    $message.="Table $table updated successfully.<BR>";
   }
   return($message);
 }
@@ -1516,11 +1513,11 @@ function update_table_element_extended_match ($link, $title, $table, $pairedvalu
 function delete_table_element ($link, $title, $table, $match_string) {
   $query="DELETE FROM $table where $match_string";
   if (!mysql_query($query,$link)) {
-    $message_error=$query."<BR>Error updating $table.  Database not updated.";
+    $message_error.=$query."<BR>Error updating $table.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
-  $message="Table $table updated successfully.<BR>";
+  $message.="Table $table updated successfully.<BR>";
   return($message);
 }
 
@@ -1539,7 +1536,7 @@ function refrom ($transstring) {
 
 /* Used to add a note on a participant as part of flow, and allowing for participant change. */
 function submit_participant_note ($note, $partid) {
-  global $link;
+  global $link, $message, $message_error;
 
   $query = "INSERT INTO NotesOnParticipants (badgeid,rbadgeid,note,conid) VALUES ('";
   $query.=$partid."','";
@@ -1547,11 +1544,11 @@ function submit_participant_note ($note, $partid) {
   $query.=mysql_real_escape_string($note)."','";
   $query.=$_SESSION['conid']."')";
   if (!mysql_query($query,$link)) {
-    $message=$query."<BR>Error updating database with note.  Database not updated.";
+    $message.=$query."<BR>Error updating database with note.  Database not updated.";
     echo "<P class=\"errmsg\">".$message."\n";
     return;
   }
-  $message="Database updated successfully with note.<BR>";
+  $message.="Database updated successfully with note.<BR>";
   echo "<P class=\"regmsg\">".$message."\n";
 }
 
@@ -1559,7 +1556,7 @@ function submit_participant_note ($note, $partid) {
 // I'm no longer sure why the below is here ...
 //"SELECT PR.pubsname, PB.pubsname, N.timestamp, N.note FROM NotesOnParticipants N, Participants PR, Participants PB WHERE N.rbadgeid=PR.badgeid AND N.badgeid=PB.badgeid;
 function show_participant_notes ($partid) {
-  global $link;
+  global $link, $message, $message_error;
 
   $query = <<<EOD
 SELECT
@@ -1582,7 +1579,7 @@ EOD;
 
 /* create_participant and edit_participant functions.  Need more doc. */
 function create_participant ($participant_arr) {
-  global $link,$message,$message_error;
+  global $link, $message, $message_error;
 
   // Get the various length limits
   $limit_array=getLimitArray();
@@ -1601,7 +1598,7 @@ function create_participant ($participant_arr) {
     if ((strlen($participant_arr['firstname'])+strlen($participant_arr['lastname']) < $namemin) OR
 	(strlen($participant_arr['badgename']) < $namemin) OR
 	(strlen($participant_arr['pubsname']) < $namemin)) {
-      $message_error="All name fields are required and minimum length is $namemin characters.  <BR>\n";
+      $message_error.="All name fields are required and minimum length is $namemin characters.  <BR>\n";
       return array ($message,$message_error);
     }
   }
@@ -1610,27 +1607,27 @@ function create_participant ($participant_arr) {
     if ((strlen($participant_arr['firstname'])+strlen($participant_arr['lastname']) > $namemax) OR
 	(strlen($participant_arr['badgename']) > $namemax) OR
 	(strlen($participant_arr['pubsname']) > $namemax)) {
-      $message_error="All name fields are required and maximum length is $namemax characters.  <BR>\n";
+      $message_error.="All name fields are required and maximum length is $namemax characters.  <BR>\n";
       return array ($message,$message_error);
     }
   }
 
   // Invalid email address.
   if (!is_email($participant_arr['email'])) {
-    $message_error="Email address: ".$participant_arr['email']." is not valid.  <BR>\n";
+    $message_error.="Email address: ".$participant_arr['email']." is not valid.  <BR>\n";
     return array ($message,$message_error);
   }
 
   // Already existing email address.
-  $query = "SELECT email FROM CongoDump where email like \"%".$participant_arr['email']."%\"";
+  $query = "SELECT email FROM Participants where email like \"%".$participant_arr['email']."%\"";
   $result=mysql_query($query,$link);
   if (!$result) {
-    $message_error="Unable to reach database.<BR>\n$query<BR>\n";
+    $message_error.="Unable to reach database.<BR>\n$query<BR>\n";
     RenderError($title,$message_error);
     exit();
   }
   if (mysql_num_rows($result) > 0) {
-    $message_error="There is already an entry with this email address in the system.\n";
+    $message_error.="There is already an entry with this email address in the system.\n";
     $message_error.="Please <A HREF\"StaffEditCreateParticipant.php?action=migrate\">Migrate</A>\n";
     $message_error.="them instead of trying to re-create them.";
     RenderError($title,$message_error);
@@ -1642,13 +1639,13 @@ function create_participant ($participant_arr) {
   $query = "SELECT badgeid FROM Participants ORDER BY ABS(badgeid) DESC LIMIT 1";
   $result=mysql_query($query,$link);
   if (!$result) {
-    $message_error="Unrecoverable error updating database.  Database not updated.<BR>\n";
+    $message_error.="Unrecoverable error updating database.  Database not updated.<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
   }
   if (mysql_num_rows($result)!=1) {
-    $message_error="Database query returned unexpected number of rows(1 expected).  Database not updated.<BR>\n";
+    $message_error.="Database query returned unexpected number of rows(1 expected).  Database not updated.<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
@@ -1659,10 +1656,12 @@ function create_participant ($participant_arr) {
   $newbadgeid=sprintf("%d",$x+1); // convert to num; add 1; convert back to string
 
   // Create Participants entry.
-  $element_array = array('badgeid', 'password', 'bestway', 'altcontact', 'prognotes', 'pubsname');
+  $element_array = array('badgeid', 'email', 'password', 'bestway', 'regtype', 'altcontact', 'prognotes', 'pubsname');
   $value_array=array($newbadgeid,
+		     htmlspecialchars_decode($participant_arr['email']),
                      $participant_arr['password'],
                      $participant_arr['bestway'],
+		     htmlspecialchars_decode($participant_arr['regtype']),
                      htmlspecialchars_decode($participant_arr['altcontact']),
                      htmlspecialchars_decode($participant_arr['prognotes']),
 		     htmlspecialchars_decode($participant_arr['pubsname']));
@@ -1719,19 +1718,17 @@ function create_participant ($participant_arr) {
   }
 
   // Create CongoDump entry.
-  $element_array = array('badgeid', 'firstname', 'lastname', 'badgename', 'phone', 'email', 'postaddress1', 'postaddress2', 'postcity', 'poststate', 'postzip', 'regtype');
+  $element_array = array('badgeid', 'firstname', 'lastname', 'badgename', 'phone', 'postaddress1', 'postaddress2', 'postcity', 'poststate', 'postzip');
   $value_array=array($newbadgeid,
 		     htmlspecialchars_decode($participant_arr['firstname']),
 		     htmlspecialchars_decode($participant_arr['lastname']),
 		     htmlspecialchars_decode($participant_arr['badgename']),
 		     htmlspecialchars_decode($participant_arr['phone']),
-		     htmlspecialchars_decode($participant_arr['email']),
 		     htmlspecialchars_decode($participant_arr['postaddress1']),
 		     htmlspecialchars_decode($participant_arr['postaddress2']),
 		     htmlspecialchars_decode($participant_arr['postcity']),
 		     htmlspecialchars_decode($participant_arr['poststate']),
-		     htmlspecialchars_decode($participant_arr['postzip']),
-		     htmlspecialchars_decode($participant_arr['regtype']));
+		     htmlspecialchars_decode($participant_arr['postzip']));
   $message.=submit_table_element($link, $title, "CongoDump", $element_array, $value_array);
 
   // Assign permissions.
@@ -1745,7 +1742,7 @@ function create_participant ($participant_arr) {
 
     $query=rtrim($query,',');
     if (!mysql_query($query,$link)) {
-      $message_error=$query."<BR>Error updating UserHasPermissionRole database.  Database not updated.";
+      $message_error.=$query."<BR>Error updating UserHasPermissionRole database.  Database not updated.";
       RenderError($title,$message_error);
       exit();
     }
@@ -1762,7 +1759,7 @@ function create_participant ($participant_arr) {
 
     $query=rtrim($query,',');
     if (!mysql_query($query,$link)) {
-      $message_error=$query."<BR>Error updating UserHasConRole database.  Database not updated.";
+      $message_error.=$query."<BR>Error updating UserHasConRole database.  Database not updated.";
       RenderError($title,$message_error);
       exit();
     }
@@ -1777,12 +1774,12 @@ function create_participant ($participant_arr) {
   $message.=submit_table_element($link, $title, "NotesOnParticipants", $element_array, $value_array);
 
   // Make $message additive (.=) to get all the information
-  $message="Database updated successfully with ".$participant_arr["badgename"].".<BR>";
+  $message.="Database updated successfully with ".$participant_arr["badgename"].".<BR>";
   return array ($message,$message_error);
 }
 
 function edit_participant ($participant_arr) {
-  global $link,$message,$message_error;
+  global $link, $message, $message_error;
 
   // Get the various length limits
   $limit_array=getLimitArray();
@@ -1798,7 +1795,7 @@ function edit_participant ($participant_arr) {
     if ((strlen($participant_arr['firstname'])+strlen($participant_arr['lastname']) < $namemin) OR
 	(strlen($participant_arr['badgename']) < $namemin) OR
 	(strlen($participant_arr['pubsname']) < $namemin)) {
-      $message_error="All name fields are required and minimum length is $namemin characters.  <BR>\n";
+      $message_error.="All name fields are required and minimum length is $namemin characters.  <BR>\n";
     }
   }
   if (isset($limit_array['max']['web']['name'])) {
@@ -1806,17 +1803,19 @@ function edit_participant ($participant_arr) {
     if ((strlen($participant_arr['firstname'])+strlen($participant_arr['lastname']) > $namemax) OR
 	(strlen($participant_arr['badgename']) > $namemax) OR
 	(strlen($participant_arr['pubsname']) > $namemax)) {
-      $message_error="All name fields are required and maximum length is $namemax characters.  <BR>\n";
+      $message_error.="All name fields are required and maximum length is $namemax characters.  <BR>\n";
     }
   }
 
   // Invalid email.
   if (!is_email($participant_arr['email'])) {
-    $message_error="Email address: ".$participant_arr['email']." is not valid.  <BR>\n";
+    $message_error.="Email address: ".$participant_arr['email']." is not valid.  <BR>\n";
   }
 
   // Update Participants entry.
   $pairedvalue_array=array("bestway='".mysql_real_escape_string($participant_arr['bestway'])."'",
+			   "email='".mysql_real_escape_string($participant_arr['email'])."'",
+			   "regtype='".mysql_real_escape_string(stripslashes($participant_arr['regtype']))."'",
 			   "altcontact='".mysql_real_escape_string($participant_arr['altcontact'])."'",
 			   "prognotes='".mysql_real_escape_string(stripslashes($participant_arr['prognotes']))."'",
 			   "pubsname='".mysql_real_escape_string(stripslashes($participant_arr['pubsname']))."'");
@@ -1827,13 +1826,11 @@ function edit_participant ($participant_arr) {
 			   "lastname='".mysql_real_escape_string(stripslashes($participant_arr['lastname']))."'",
 			   "badgename='".mysql_real_escape_string(stripslashes($participant_arr['badgename']))."'",
 			   "phone='".mysql_real_escape_string($participant_arr['phone'])."'",
-			   "email='".mysql_real_escape_string($participant_arr['email'])."'",
 			   "postaddress1='".mysql_real_escape_string(stripslashes($participant_arr['postaddress1']))."'",
 			   "postaddress2='".mysql_real_escape_string(stripslashes($participant_arr['postaddress2']))."'",
 			   "postcity='".mysql_real_escape_string(stripslashes($participant_arr['postcity']))."'",
 			   "poststate='".mysql_real_escape_string($participant_arr['poststate'])."'",
-			   "postzip='".mysql_real_escape_string($participant_arr['postzip'])."'",
-			   "regtype='".mysql_real_escape_string(stripslashes($participant_arr['regtype']))."'");
+			   "postzip='".mysql_real_escape_string($participant_arr['postzip'])."'");
   $message.=update_table_element($link, $title, "CongoDump", $pairedvalue_array, "badgeid", $participant_arr['partid']);
 
   // Update Interested entry.
@@ -1931,7 +1928,7 @@ function edit_participant ($participant_arr) {
   }
 
   // Make $message additive (.=) to get all the information
-  $message="Database updated successfully.<BR>";
+  $message.="Database updated successfully.<BR>";
 }
 
 function get_emailto_from_permrole($permrolename,$link,$title,$description) {
@@ -1959,7 +1956,7 @@ function send_fixed_email_info($emailto,$subject,$body,$link,$title,$description
      link (and title, and description in case of failure), resolve the
      emailto, if it is a permrolename, use the default from, and no
      cc, and add an entry to the email queue. */
-  global $link;
+  global $link, $message, $message_error;
   $conid=$_SESSION['conid'];
 
   $query = <<<EOD
@@ -1968,7 +1965,7 @@ SELECT
   FROM
       ConRoles
     JOIN UserHasConRole USING (conroleid)
-    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
   WHERE
     conrolename like '%ZambiaCoord%' AND
     conid=$conid
@@ -1999,7 +1996,7 @@ EOD;
 /* Three flow report functions.  They are remove, add, and delta rank.
  Need more header doc */
 function remove_flow_report ($flowid,$table,$title,$description) {
-  global $link;
+  global $link, $message, $message_error;
 
   // Establish the table name
   $tablename=$table."Flow";
@@ -2010,7 +2007,7 @@ function remove_flow_report ($flowid,$table,$title,$description) {
   } elseif ($table=="Personal") {
     $tableelement="pflowid";
   } else {
-    $message="<P>Error finding table $tablename.  Database not updated.</P>\n<P>";
+    $message.="<P>Error finding table $tablename.  Database not updated.</P>\n<P>";
     RenderError($title,$message);
     exit ();
   }
@@ -2020,7 +2017,7 @@ function remove_flow_report ($flowid,$table,$title,$description) {
 
   // Execute the query and test the results
   if (($result=mysql_query($query,$link))===false) {
-    $message="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
+    $message.="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
     $message.=$query;
     RenderError($title,$message);
     exit ();
@@ -2028,7 +2025,7 @@ function remove_flow_report ($flowid,$table,$title,$description) {
 }
 
 function add_flow_report ($addreport,$addphase,$table,$group,$title,$description) {
-  global $link;
+  global $link, $message, $message_error;
 
   $mybadgeid=$_SESSION['badgeid'];
 
@@ -2065,7 +2062,7 @@ function add_flow_report ($addreport,$addphase,$table,$group,$title,$description
     $cname=$mybadgeid;
     $tid="pflowid";
   } else {
-    $message="<P>Error finding table $tablename.  Database not updated.</P>\n<P>";
+    $message.="<P>Error finding table $tablename.  Database not updated.</P>\n<P>";
     RenderError($title,$message);
     exit ();
   }
@@ -2075,7 +2072,7 @@ function add_flow_report ($addreport,$addphase,$table,$group,$title,$description
 
   // Execute the query, test the results and assign the array values
   if (($result=mysql_query($query,$link))===false) {
-    $message="<P>Error retrieving data from database.</P>\n<P>";
+    $message.="<P>Error retrieving data from database.</P>\n<P>";
     $message.=$query;
     RenderError($title,$message);
     exit ();
@@ -2094,14 +2091,14 @@ function add_flow_report ($addreport,$addphase,$table,$group,$title,$description
 
   // Execute query
   if (!mysql_query($query,$link)) {
-    $message=$query."<BR>Error updating $tablename database.  Database not updated.";
+    $message.=$query."<BR>Error updating $tablename database.  Database not updated.";
     RenderError($title,$message);
     exit ();
   }
 }
 
 function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
-  global $link;
+  global $link, $message, $message_error;
 
   // Establish the table name;
   $tablename=$table."Flow";
@@ -2116,7 +2113,7 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
     $tname="badgeid";
     $tid="pflowid";
   } else {
-    $message="<P>Error finding table $tablename.  Database not updated.</P>\n<P>";
+    $message.="<P>Error finding table $tablename.  Database not updated.</P>\n<P>";
     RenderError($title,$message);
     exit ();
   }
@@ -2133,14 +2130,14 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
   if ($direction=="Up") {
     $norder=$corder-1;
     if ($norder<1) {
-      $message="<P>You cannot have an order number less than 1.</P>\n";
+      $message.="<P>You cannot have an order number less than 1.</P>\n";
       RenderError($title,$message);
       exit ();
     }
   } elseif ($direction="Down") {
     $norder=$corder+1;
   } else {
-    $message="<P>You have chosen an inappropriate direction: $direction.</P>\n";
+    $message.="<P>You have chosen an inappropriate direction: $direction.</P>\n";
     RenderError($title,$message);
     exit ();
   }
@@ -2156,7 +2153,7 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
   // Get element to be swapped with from table, based on current element floworder and $norder
   $query="SELECT $tid FROM $tablename WHERE $torder=$norder AND $tname='$cname' AND $phasecheck LIMIT 0,1";
   if (($result=mysql_query($query,$link))===false) {
-    $message="<P>Error retrieving data from database.</P>\n<P>";
+    $message.="<P>Error retrieving data from database.</P>\n<P>";
     $message.=$query;
     RenderError($title,$message);
     exit ();
@@ -2167,7 +2164,7 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
 
   // Execute the query and test the results
   if (($result1=mysql_query($query1,$link))===false) {
-    $message="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
+    $message.="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
     $message.=$query;
     RenderError($title,$message);
     exit ();
@@ -2181,7 +2178,7 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
 
     // Execute the query and test the results;
     if (($result=mysql_query($query,$link))===false) {
-      $message="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
+      $message.="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
       $message.=$query;
       RenderError($title,$message);
       exit ();
@@ -2197,7 +2194,7 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
  $bioinfo['uri_en-us_raw_web_bio']='This bio is short and meaningless.'
  Returns bioinfo; */
 function getBioData($badgeid) {
-  global $message_error,$message2,$link;
+  global $link, $message, $message_error;
   $LanguageList=LANGUAGE_LIST; // make it a variable so it can be substituted
 
   // Tests for the substituted variables
@@ -2283,7 +2280,7 @@ EOD;
    badgeid, biotypename, biolang, biostatename, and biodestname, and returns
    the success message */
 function update_bio_element ($link, $title, $newbio, $badgeid, $biotypename, $biolang, $biostatename, $biodestname) {
-  global $link,$message,$message_error;
+  global $link, $message, $message_error;
 
   // make sure it's clean
   $biotext0=mysql_real_escape_string(iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $newbio),$link);
@@ -2342,7 +2339,7 @@ EOD;
 
 function generateSvgString($sessionid,$conid) {
   /* Global Variables */
-  global $message_error,$message,$link;
+  global $link, $message, $message_error;
 
   /* Local Variables */
   // Number of values offered
@@ -2527,7 +2524,7 @@ EOD;
  session_array['graph']['sessionid'] and the key in session_array['key']
  Returns session_array*/
 function getFeedbackData($badgeid) {
-  global $message_error,$message2,$link;
+  global $link, $message, $message_error;
 
   $query = <<<EOD
 SELECT
@@ -2605,7 +2602,7 @@ EOD;
    State is not a consideration, be it raw, edited, or good, the size limit will still matter.
  */
 function getLimitArray() {
-  global $message_error,$message2,$link;
+  global $link, $message, $message_error;
   $conid=$_SESSION['conid'];
 
   // Get the limit
@@ -2651,7 +2648,7 @@ EOD;
    message: the updated accumulation of the message value
    */
 function propose_individual ($title, $description, $conid, $permission_type, $proposed, $message, $message_error) {
-  global $link;
+  global $link, $message, $message_error;
 
   // Get the interested value that means "Suggested" from the InterestedTypes table.
   $suggested_number_query= <<<EOD
@@ -2664,7 +2661,7 @@ SELECT
 EOD;
 
   if (!$result=mysql_query($suggested_number_query,$link)) {
-    $message_error=$suggested_number_query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
+    $message_error.=$suggested_number_query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message_error);
     exit();
   }
@@ -2682,7 +2679,7 @@ SELECT
 EOD;
 
   if (!$result=mysql_query($permission_role_query,$link)) {
-    $message_error=$permission_role_query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
+    $message_error.=$permission_role_query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message_error);
     exit();
   }

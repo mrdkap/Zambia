@@ -4,7 +4,7 @@ include ('../Local/db_name.php');
 /* Function prepare_db()
    Opens database channel. */
 function prepare_db() {
-  global $link;
+  global $link, $message, $message_error;
   $link = mysql_connect(DBHOSTNAME,DBUSERID,DBPASSWORD);
   if ($link===false) return (false);
   return (mysql_select_db(DBDB,$link));
@@ -13,7 +13,7 @@ function prepare_db() {
 /* Function vendor_prepare_db()
    Opens database channel. */
 function vendor_prepare_db() {
-  global $vlink;
+  global $vlink, $message, $message_error;
   $vlink = mysql_connect(VENDORHOSTNAME,VENDORUSERID,VENDORPASSWORD);
   if ($vlink===false) return (false);
   return (mysql_select_db(VENDORDB,$vlink));
@@ -23,7 +23,7 @@ function vendor_prepare_db() {
    The table SessionEditHistory has a timestamp column which is automatically set to the
    current timestamp by MySQL. */
 function record_session_history($sessionid, $badgeid, $name, $email, $editcode, $statusid) {
-  global $link, $message_error;
+  global $link, $message, $message_error;
   $conid=$_SESSION['conid'];
   $name=mysql_real_escape_string($name,$link);
   $email=mysql_real_escape_string($email,$link);
@@ -43,7 +43,7 @@ INSERT
 EOD;
   $result = mysql_query($query,$link);
   if (!$result) {
-    $message_error=$query."<BR>\n".mysql_error($link);
+    $message_error.=$query."<BR>\n".mysql_error($link);
     return $result;
   }
   return(true);
@@ -53,7 +53,7 @@ EOD;
    Gets name and email from db if they are available and not already set
    returns FALSE if error condition encountered.  Error message in global $message_error */
 function get_name_and_email(&$name, &$email) {
-  global $link, $message_error, $badgeid;
+  global $link, $message, $message_error, $badgeid;
   if (isset($name) && $name!='') {
     //$name="foo"; //for debugging only
     return(TRUE);
@@ -69,7 +69,7 @@ function get_name_and_email(&$name, &$email) {
     //error_log($query); //for debugging only
     $result=mysql_query($query,$link);
     if (!$result) {
-      $message_error=$query."<BR> ";
+      $message_error.=$query."<BR> ";
       $message_error.=mysql_error($link)."<BR> ";
       $message_error.="Error reading from database. No further execution possible.<BR> ";
       error_log($message_error);
@@ -79,10 +79,10 @@ function get_name_and_email(&$name, &$email) {
     if ($name=='') {
       $name=' '; //if name is null or '' in db, set to ' ' so it won't appear unpopulated in query above
     }
-    $query="SELECT badgename,email from CongoDump where badgeid='$badgeid'";
+    $query="SELECT pubsname,email from Participants where badgeid='$badgeid'";
     $result=mysql_query($query,$link);
     if (!$result) {
-      $message_error=$query."<BR> ";
+      $message_error.=$query."<BR> ";
       $message_error.=mysql_error($link)."<BR> ";
       $message_error.="Error reading from database. No further execution possible.<BR> ";
       error_log($message_error);
@@ -106,7 +106,7 @@ function get_name_and_email(&$name, &$email) {
    if $default_flag is true, the option 0 will always appear.
    if $default_flag is false, the option 0 will only appear when $default_value is 0. */
 function populate_select_from_table($table_name, $default_value, $option_0_text, $default_flag) {
-  global $link;
+  global $link, $message, $message_error;
   if ($default_value==0) {
     echo "<OPTION value=0 selected>".$option_0_text."</OPTION>\n";
   } elseif ($default_flag) {
@@ -133,7 +133,7 @@ function populate_select_from_table($table_name, $default_value, $option_0_text,
    if $default_flag is true, the option 0 will always appear.
    if $default_flag is false, the option 0 will only appear when $default_value is 0. */
 function populate_select_from_query($query, $default_value, $option_0_text, $default_flag) {
-  global $link;
+  global $link, $message, $message_error;
   if ($default_value==0) {
     echo "<OPTION value=0 selected>".$option_0_text."</OPTION>\n";
   } elseif ($default_flag) {
@@ -159,7 +159,7 @@ function populate_select_from_query($query, $default_value, $option_0_text, $def
    if $default_flag is true, the option 0 will always appear.
    if $default_flag is false, the option 0 will only appear when $default_value is 0. */
 function populate_select_from_query_inline($query, $default_value, $option_0_text, $default_flag) {
-  global $link;
+  global $link, $message, $message_error;
   $returnstring="";
   if ($default_value==0) {
     $returnstring.="<OPTION value=0 selected>".$option_0_text."</OPTION>\n";
@@ -186,6 +186,7 @@ function populate_select_from_query_inline($query, $default_value, $option_0_tex
    value: The part of the array to get the value out of.
    array: The array of possible items. */
 function populate_checkbox_block_from_array($label, $element_list, $key, $value, $box_array) {
+  global $link, $message, $message_error;
   $returnstring="";
   $list_array=explode(",",$element_list);
   for ($i=1; $i<=count($box_array); $i++) {
@@ -210,6 +211,7 @@ function populate_checkbox_block_from_array($label, $element_list, $key, $value,
    value: The part of the array to get the value out of.
    button_array: The array of possible items. */
 function populate_radio_block_from_array($label, $element_list, $key, $value, $button_array) {
+  global $link, $message, $message_error;
   $returnstring="";
   $list_array=explode(",",$element_list);
   for ($i=1; $i<=count($button_array); $i++) {
@@ -231,7 +233,7 @@ function populate_radio_block_from_array($label, $element_list, $key, $value, $b
    skipset is array of integers of values of id from table to preselect
    assumes mulit-year element in all useage */
 function populate_multiselect_from_table($table_name, $skipset) {
-  global $link;
+  global $link, $message, $message_error;
   // error_log("Zambia->populate_multiselect_from_table->\$skipset: ".print_r($skipset,TRUE)."\n"); // only for debugging
   if ($skipset=="") $skipset=array(-1);
   $result=mysql_query("SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order",$link);
@@ -252,7 +254,7 @@ function populate_multiselect_from_table($table_name, $skipset) {
    skipset is array of integers of values of id from table not to include
    assumes mulit-year element in all useage */
 function populate_multisource_from_table($table_name, $skipset) {
-  global $link;
+  global $link, $message, $message_error;
   if ($skipset=="") $skipset=array(-1);
   $result=mysql_query("SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order",$link);
   while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
@@ -271,7 +273,7 @@ function populate_multisource_from_table($table_name, $skipset) {
    in "dest" because they were skipped from "source"
    assumes mulit-year element in all useage */
 function populate_multidest_from_table($table_name, $skipset) {
-  global $link;
+  global $link, $message, $message_error;
   if ($skipset=="") $skipset=array(-1);
   $result=mysql_query("SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order",$link);
   while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
@@ -288,7 +290,7 @@ function populate_multidest_from_table($table_name, $skipset) {
    pocketprogtext=description_good_book so zeroed out
    progguiddesc=description_good_web so zeroed out */
 function update_session() {
-  global $link, $session, $message2;
+  global $link, $session, $message, $message_error;
 
   if ($_SESSION['condurationminutes']=="TRUE") {
     $duration="duration='".conv_min2hrsmin($session["duration"],$link)."'";
@@ -425,7 +427,6 @@ function update_session() {
   /* Set up the Vendor Adjustment Value, in case it every gets used.*/
   $query="DELETE from SessionHasVendorAdjust where sessionid=".$session["sessionid"];
   $query.=" AND conid=".$_SESSION['conid'];
-  $message2=$query;
   if (($session["vendoradjustvalue"]!="") or ($session["vendoradjustnote"]!="")) {
     $query="INSERT into SessionHasVendorAdjust set sessionid=".$id." ";
     if ($session["vendoradjustvalue"]!="") {
@@ -451,7 +452,7 @@ function update_session() {
    Reads Session table from db to determine next unused value
    of sessionid. */
 function get_next_session_id() {
-  global $link;
+  global $link, $message, $message_error;
 
   $result=mysql_query("SELECT MAX(sessionid) FROM Sessions where conid=".$_SESSION['conid'],$link);
   if (!$result) {return "";}
@@ -468,7 +469,7 @@ function get_next_session_id() {
    pocketprogtext and pregguiddesc zeroed out
    */
 function insert_session() {
-  global $session, $link, $query, $message_error;
+  global $session, $link, $query, $message, $message_error;
 
   // Fix secondtitle to subtitle
   $session["subtitle"]=$session["secondtitle"];
@@ -626,8 +627,7 @@ function insert_session() {
    SessionHasVendorFeature, and SessionHasVeondorSpace tables
    from db to populate global array $session. */
 function retrieve_session_from_db($sessionid,$conid) {
-  global $session;
-  global $link,$message2;
+  global $session, $link, $message, $message_error;
   // $conid is now passed in.
   //$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
@@ -710,12 +710,12 @@ EOD;
 
   $result=mysql_query($query,$link);
   if (!$result) {
-    $message2=$query."<BR>\n".mysql_error($link);
+    $message_error.=$query."<BR>\n".mysql_error($link);
     return (-3);
   }
   $rows=mysql_num_rows($result);
   if ($rows!=1) {
-    $message2=$rows;
+    $message_error.=$rows;
     return (-2);
   }
   $sessionarray=mysql_fetch_array($result, MYSQL_ASSOC);
@@ -777,7 +777,7 @@ EOD;
   foreach (array_keys($tn_array) as $j) {
     $result=mysql_query("SELECT ".$te_array[$j]." FROM ".$tn_array[$j]." where sessionid=".$sessionid,$link);
     if (!$result) {
-      $message2=mysql_error($link);
+      $message_error.=mysql_error($link);
       return (-3);
     }
     unset($session[$j]);
@@ -798,7 +798,7 @@ EOD;
    log user in.
    check login script, included in db_connect.php. */
 function isLoggedIn() {
-  global $link,$message2;
+  global $link, $message, $message_error;
 
   if (!isset($_SESSION['badgeid']) || !isset($_SESSION['password'])) {
     return false;
@@ -812,7 +812,7 @@ function isLoggedIn() {
   // addslashes to session username before using in a query.
   $result=mysql_query("SELECT password FROM Participants where badgeid='".$_SESSION['badgeid']."'",$link);
   if (!$result) {
-    $message2=mysql_error($link);
+    $message_error.=mysql_error($link);
     unset($_SESSION['badgeid']);
     unset($_SESSION['password']);
 
@@ -825,7 +825,7 @@ function isLoggedIn() {
     unset($_SESSION['password']);
 
     // kill incorrect session variables.
-    $message2="Incorrect number of rows returned when fetching password from db.";
+    $message_error.="Incorrect number of rows returned when fetching password from db.";
     return (-1);
   }
 
@@ -845,7 +845,7 @@ function isLoggedIn() {
     // kill incorrect session variables.
     unset($_SESSION['badgeid']);
     unset($_SESSION['password']);
-    $message2="Incorrect userid or password.";
+    $message_error.="Incorrect userid or password.";
     return (false);
   } else {
     // valid password for username
@@ -864,17 +864,16 @@ function isLoggedIn() {
    Reads Particpants tables
    from db to populate global array $participant. */
 function retrieve_participant_from_db($badgeid) {
-  global $participant;
-  global $link,$message2;
+  global $participant, $link, $message, $message_error;
 
   $result=mysql_query("SELECT pubsname, password FROM Participants where badgeid='$badgeid'",$link);
   if (!$result) {
-    $message2=mysql_error($link);
+    $message_error.=mysql_error($link);
     return (-3);
   }
   $rows=mysql_num_rows($result);
   if ($rows!=1) {
-    $message2="Participant rows retrieved: $rows ";
+    $message_error.="Participant rows retrieved: $rows ";
     return (-2);
   }
   $participant=mysql_fetch_array($result, MYSQL_ASSOC);
@@ -884,7 +883,7 @@ function retrieve_participant_from_db($badgeid) {
 /* Function getCongoData()
    Reads CongoDump table from db to return congoinfo array. */
 function getCongoData($badgeid) {
-  global $message,$message_error,$message2,$link;
+  global $message, $message_error, $link;
 
     $query= <<<EOD
 SELECT
@@ -893,15 +892,21 @@ SELECT
 	lastname,
 	badgename,
 	phone,
-	email,
 	postaddress1,
 	postaddress2,
 	postcity,
 	poststate,
 	postzip,
-	postcountry
+        postcountry,
+        pubsname,
+        bestway,
+        altcontact,
+        prognotes,
+        P.email,
+        P.regtype
     FROM
         CongoDump
+      JOIN Participants P USING (badgeid)
     WHERE
         badgeid="$badgeid"
 EOD;
@@ -916,7 +921,7 @@ EOD;
         return(-1);
         };
     if (retrieve_participant_from_db($badgeid)!=0) {
-        $message_error.=$message2."<BR>In Congo but not in Participants, no further execution possible.";
+        $message_error.="<BR>In Congo but not in Participants, no further execution possible.";
         return(-1);
         };
     $participant["password"]="";
@@ -930,8 +935,7 @@ EOD;
    Returns 0: success; -1: badgeid not found; -2: badgeid matches >1 row;
           -3: other error ($message_error populated) */
 function retrieve_participantAvailability_from_db($badgeid) {
-  global $partAvail;
-  global $link,$message2,$message_error;
+  global $partAvail, $link, $message, $message_error;
   $conid=$_SESSION['conid'];
 
   // Participant Availbiity table.
@@ -950,7 +954,7 @@ SELECT
 EOD;
   $result=mysql_query($query,$link);
   if (!$result) {
-    $message_error=$query."<BR>\n".mysql_error($link);
+    $message_error.=$query."<BR>\n".mysql_error($link);
     return (-3);
   }
   $rows=mysql_num_rows($result);
@@ -958,7 +962,7 @@ EOD;
     return (-1);
   }
   if ($rows!=1) {
-    $message_error=$query."<BR>\n returned $rows rows.";
+    $message_error.=$query."<BR>\n returned $rows rows.";
     return (-2);
   }
   $partAvailarray=mysql_fetch_array($result, MYSQL_NUM);
@@ -973,7 +977,7 @@ EOD;
     $query="SELECT badgeid, day, maxprog FROM ParticipantAvailabilityDays WHERE conid=\"$conid\" AND badgeid=\"$badgeid\"";
     $result=mysql_query($query,$link);
     if (!$result) {
-      $message_error=$query."<BR>\n".mysql_error($link);
+      $message_error.=$query."<BR>\n".mysql_error($link);
       return (-3);
     }
     for ($i=1; $i<=$_SESSION['connumdays']; $i++) {
@@ -992,7 +996,7 @@ EOD;
   $query.="where conid=$conid AND badgeid=\"$badgeid\" order by starttime";
   $result=mysql_query($query,$link);
   if (!$result) {
-    $message_error=$query."<BR>\n".mysql_error($link);
+    $message_error.=$query."<BR>\n".mysql_error($link);
     return (-3);
   }
   for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
@@ -1012,7 +1016,7 @@ EOD;
    Performs complicated join to get the set of permission atoms available to the user
    Stores them in global variable $permission_set */
 function set_permission_set($badgeid) {
-  global $link;
+  global $link, $message, $message_error;
 
   // First do simple permissions
   $_SESSION['permission_set']="";
@@ -1029,19 +1033,28 @@ SELECT
     ((UHPR.badgeid='$badgeid' AND UHPR.conid=$conid) OR P.badgeid='$badgeid' ) AND
     (P.phasetypeid is null OR (P.phasetypeid = PH.phasetypeid AND PH.phasestate = TRUE and PH.conid=$conid))
 EOD;
+
+  // Assign result
   $result=mysql_query($query,$link);
+
   // error_log("set_permission_set query:  ".$query);
+
+  // If result fails error out
   if (!$result) {
-    $message_error=$query." \n ".mysql_error($link)." \n <BR>Database Error.<BR>No further execution possible.";
+    $message_error.=$query." \n ".mysql_error($link)." \n <BR>Database Error.<BR>No further execution possible.";
     error_log("Zambia: ".$message_error);
     return(-1);
   };
+
+  // If no rows, person has no permissions.
   $rows=mysql_num_rows($result);
   if ($rows==0) {
-    $message_error=$query." \n <BR> No rows returned from query.";
+    $message_error.=$query." \n <BR> No rows returned from query.";
     error_log("Zambia: ".$message_error);
     return(0);
   };
+
+  // Set the permissions
   for ($i=0; $i<$rows; $i++) {
     $onerow=mysql_fetch_array($result, MYSQL_BOTH);
     $_SESSION['permission_set'][]=$onerow[0];
@@ -1066,39 +1079,47 @@ SELECT
     P.permatomid = PA.permatomid and
     PA.elementid is not null
 EOD;
+
+  // Assign result
   $result=mysql_query($query,$link);
+
+  // If result fails error out
   if (!$result) {
-    $message_error=$query." \n ".mysql_error($link)." \n <BR>Database Error.<BR>No further execution possible.";
+    $message_error.=$query." \n ".mysql_error($link)." \n <BR>Database Error.<BR>No further execution possible.";
     error_log("Zambia: ".$message_error);
     return(-1);
   };
+
+  // If there are zero rows, possibly note it in the error log, but don't error out, often the case.
   $rows=mysql_num_rows($result);
   if ($rows==0) {
-    $message_error=$query." \n <BR> No rows returned from query.";
-    error_log("Zambia: ".$message_error);
+    //error_log("Zambia: ".$query." \n <BR> No rows returned from query.");
     return(0);
   };
+
+  // If there are actually rows, set them
   for ($i=0; $i<$rows; $i++) {
     $_SESSION['permission_set_specific'][]=mysql_fetch_array($result, MYSQL_ASSOC);
   };
 
+  // Successful return
   return(0);
 }
 
 /* Function db_error($title,$query,$staff)
    Populates a bunch of messages to help diagnose a db error. */
 function db_error($title,$query,$staff) {
-  global $link;
-  $message="Database error.<BR>\n";
-  $message.=mysql_error($link)."<BR>\n";
-  $message.=$query."<BR>\n";
-  RenderError($title,$message);
+  global $link, $message, $message_error;
+  $message_error.="Database error.<BR>\n";
+  $message_error.=mysql_error($link)."<BR>\n";
+  $message_error.=$query."<BR>\n";
+  RenderError($title,$message_error);
 }
 
 /* Function get_idlist_from_db($table_name,$id_col_name,$desc_col_name,$desc_col_match);
    Returns a string with a list of id's from a configuration table */
 function get_idlist_from_db($table_name,$id_col_name,$desc_col_name,$desc_col_match) {
-  global $link;
+  global $link, $message, $message_error;
   // error_log("zambia - get_idlist_from_db: desc_col_match: $desc_col_match");
   $query = "SELECT GROUP_CONCAT($id_col_name) from $table_name where ";
   $query.= "$desc_col_name in ($desc_col_match)";
@@ -1112,7 +1133,7 @@ function get_idlist_from_db($table_name,$id_col_name,$desc_col_name,$desc_col_ma
    and all locks held by the user known from the session
    call with $badgeid='' to unlock based on user only. */
 function unlock_participant($badgeid) {
-  global $query,$link;
+  global $query, $link, $message, $message_error;
 
   if (!empty($_SESSION['badgeid'])) {
     $query="UPDATE Bios SET biolockedby=NULL WHERE ";
@@ -1141,7 +1162,7 @@ function unlock_participant($badgeid) {
 /* Function lock_participant($badgeid);
    Locks Bios for participant in parameter, if not alreadly locked. */
 function lock_participant($badgeid) {
-  global $query, $link;
+  global $query, $link, $message, $message_error;
   //error_log("Zambia: lock_participant: ".$query);
   $userbadgeid=$_SESSION['badgeid'];
   $query="UPDATE Bios SET biolockedby='$userbadgeid' WHERE biolockedby IS NULL and badgeid='$badgeid'";
@@ -1160,7 +1181,7 @@ function lock_participant($badgeid) {
 /* Function get_sstatus()
    Populates the global sstatus array from the database. */
 function get_sstatus() {
-  global $link, $sstatus;
+  global $link, $sstatus, $message, $message_error;
   $query = "SELECT statusid, may_be_scheduled, validate from SessionStatuses";
   $result=mysql_query($query,$link);
   while ($arow = mysql_fetch_array($result, MYSQL_ASSOC)) {
@@ -1172,7 +1193,7 @@ function get_sstatus() {
 }
 
 function get_enum_values($table,$field) {
-  global $link;
+  global $link, $message, $message_error;
   $query=<<<EOD
 SELECT
     SUBSTRING(COLUMN_TYPE,5) AS Type

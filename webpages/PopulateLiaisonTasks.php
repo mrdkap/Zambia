@@ -49,13 +49,13 @@ list($taskscount,$tasks_headers,$tasks_array)=queryreport($query,$link,$title,$d
 $query = <<<EOD
 SELECT
     compamount as Liaison,
-    GROUP_CONCAT("<LI>",badgename,"</LI>\n" SEPARATOR "") as Presenters,
+    GROUP_CONCAT("<LI>",pubsname,"</LI>\n" SEPARATOR "") as Presenters,
     GROUP_CONCAT(badgeid SEPARATOR ", ") as "Presenters Badgeid",
     compdescription as "Liaison Badgeid"
   FROM
       Compensation
     JOIN CompensationTypes USING (comptypeid)
-    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
   WHERE
     conid=$conid and
     comptypename in ("Liaison")

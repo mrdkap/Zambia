@@ -446,7 +446,7 @@ function edit_vendor_update ($work_arr) {
   if ($badgeid == "100") {
 
     // Already existing email address.
-    $query = "SELECT email FROM CongoDump where email like \"%".$work_arr['email']."%\"";
+    $query = "SELECT email FROM Participants where email like \"%".$work_arr['email']."%\"";
     $result=mysql_query($query,$link);
     if (!$result) {
       $message_error="Unable to reach database.<BR>\n$query<BR>\n";
@@ -483,28 +483,28 @@ function edit_vendor_update ($work_arr) {
     $badgeid=sprintf("%d",$x+1); // convert to num; add 1; convert back to string
 
     // Create Participants entry.
-    $element_array = array('badgeid', 'password', 'bestway', 'pubsname');
+    $element_array = array('badgeid', 'email', 'password', 'bestway', 'regtype', 'pubsname');
     $value_array=array($badgeid,
+		       htmlspecialchars_decode($work_arr['email']),
                        "1111101",
                        "Email",
+		       htmlspecialchars_decode($work_arr['regtype']),
 		       htmlspecialchars_decode($work_arr['badgename']));
     $message.=submit_table_element($link, $title, "Participants", $element_array, $value_array);
 
     // Create CongoDump entry.
-    $element_array = array('badgeid', 'firstname', 'lastname', 'badgename', 'phone', 'email', 'postaddress1', 'postaddress2', 'postcity', 'poststate', 'postzip', 'postcountry', 'regtype');
+    $element_array = array('badgeid', 'firstname', 'lastname', 'badgename', 'phone', 'postaddress1', 'postaddress2', 'postcity', 'poststate', 'postzip', 'postcountry');
     $value_array=array($badgeid,
 		       htmlspecialchars_decode($work_arr['firstname']),
 		       htmlspecialchars_decode($work_arr['lastname']),
 		       htmlspecialchars_decode($work_arr['badgename']),
 		       htmlspecialchars_decode($work_arr['phone']),
-		       htmlspecialchars_decode($work_arr['email']),
 		       htmlspecialchars_decode($work_arr['postaddress1']),
 		       htmlspecialchars_decode($work_arr['postaddress2']),
 		       htmlspecialchars_decode($work_arr['postcity']),
 		       htmlspecialchars_decode($work_arr['poststate']),
 		       htmlspecialchars_decode($work_arr['postzip']),
-		       htmlspecialchars_decode($work_arr['postcountry']),
-		       htmlspecialchars_decode($work_arr['regtype']));
+		       htmlspecialchars_decode($work_arr['postcountry']));
     $message.=submit_table_element($link, $title, "CongoDump", $element_array, $value_array);
 
     // Assign permissions by getting the right Permission Role
@@ -533,6 +533,10 @@ function edit_vendor_update ($work_arr) {
       $pairedvalue_array[]=("pubsname='".stripslashes(mysql_real_escape_string(stripslashes($work_arr['badgename']."'"))));
     }
 
+    if ($work_arr['wasemail'] != $work_arr['email']) {
+      $pairedvalue_array[]=("email='".stripslashes(mysql_real_escape_string(stripslashes($work_arr['email']."'"))));
+    }
+
     // Password update
     // Check the current and the suggested current for matching then check the two entries for matching.
     if (!empty($work_arr['opassword'])) {
@@ -554,7 +558,7 @@ function edit_vendor_update ($work_arr) {
     $pairedvalue_array=array();
 
     // The list of the elements
-    $element_array=array('firstname','lastname','badgename','phone','email','postaddress1','postaddress2','postcity','poststate','postzip','postcountry');
+    $element_array=array('firstname','lastname','badgename','phone','postaddress1','postaddress2','postcity','poststate','postzip','postcountry');
 
     // Walk the element_array
     for ($i=0; $i<=count($element_array); $i++) {
@@ -678,7 +682,7 @@ function create_vendor ($participant_arr) {
   }
 
   // Already existing email address.
-  $queryPreExist = "SELECT badgeid FROM CongoDump where email like \"%".$participant_arr['email']."%\"";
+  $queryPreExist = "SELECT badgeid FROM Participants where email like \"%".$participant_arr['email']."%\"";
   list($preexistrows,$preexistheader_array,$preexist_array)=queryreport($queryPreExist,$link,$title,$description,0);
   if ($preexistrows > 0) {
     $_POST['badgeid']=$preexist_array[1]['badgeid'];
@@ -720,10 +724,12 @@ function create_vendor ($participant_arr) {
   $newbadgeid=sprintf("%d",$x+1); // convert to num; add 1; convert back to string
 
   // Create Participants entry.
-  $element_array = array('badgeid', 'password', 'bestway', 'pubsname');
+  $element_array = array('badgeid', 'email', 'password', 'bestway', 'regtype', 'pubsname');
   $value_array=array($newbadgeid,
+		     htmlspecialchars_decode($participant_arr['email']),
                      "1111101",
                      "Email",
+		     htmlspecialchars_decode($participant_arr['regtype']),
 		     htmlspecialchars_decode($participant_arr['badgename']));
   $message.=submit_table_element($link, $title, "Participants", $element_array, $value_array);
 
@@ -770,20 +776,18 @@ function create_vendor ($participant_arr) {
   }
 
   // Create CongoDump entry.
-  $element_array = array('badgeid', 'firstname', 'lastname', 'badgename', 'phone', 'email', 'postaddress1', 'postaddress2', 'postcity', 'poststate', 'postzip', 'postcountry', 'regtype');
+  $element_array = array('badgeid', 'firstname', 'lastname', 'badgename', 'phone', 'postaddress1', 'postaddress2', 'postcity', 'poststate', 'postzip', 'postcountry');
   $value_array=array($newbadgeid,
 		     htmlspecialchars_decode($participant_arr['firstname']),
 		     htmlspecialchars_decode($participant_arr['lastname']),
 		     htmlspecialchars_decode($participant_arr['badgename']),
 		     htmlspecialchars_decode($participant_arr['phone']),
-		     htmlspecialchars_decode($participant_arr['email']),
 		     htmlspecialchars_decode($participant_arr['postaddress1']),
 		     htmlspecialchars_decode($participant_arr['postaddress2']),
 		     htmlspecialchars_decode($participant_arr['postcity']),
 		     htmlspecialchars_decode($participant_arr['poststate']),
 		     htmlspecialchars_decode($participant_arr['postzip']),
-		     htmlspecialchars_decode($participant_arr['postcountry']),
-		     htmlspecialchars_decode($participant_arr['regtype']));
+		     htmlspecialchars_decode($participant_arr['postcountry']));
   $message.=submit_table_element($link, $title, "CongoDump", $element_array, $value_array);
 
   // Assign permissions by getting the right Permission Role

@@ -31,7 +31,7 @@ if (prepare_db()===false) {
 
 // Email Address test
 if ((!isset($badgeid)) and (isset($emailaddr))) {
-  $result=mysql_query("SELECT badgeid FROM CongoDump WHERE email='".$emailaddr."'",$link);
+  $result=mysql_query("SELECT badgeid FROM Participants WHERE email='".$emailaddr."'",$link);
   if (!$result) {
     $message_error.="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
     require ('login.php');

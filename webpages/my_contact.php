@@ -18,7 +18,7 @@ SELECT
   FROM
       ConRoles
     JOIN UserHasConRole USING (conroleid)
-    JOIN CongoDump USING (badgeid)
+    JOIN Participants USING (badgeid)
   WHERE
     conrolename like '%BrainstormCoord%' AND
     conid=$conid

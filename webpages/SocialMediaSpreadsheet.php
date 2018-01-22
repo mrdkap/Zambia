@@ -108,73 +108,72 @@ SELECT
     altcontact,
     concat("") AS "Notes"
   FROM
-      CongoDump
-    JOIN Participants USING (badgeid)
+      Participants
     LEFT JOIN (SELECT 
-                              badgeid,
-                              biotext AS uri_good_web
-                             FROM
-                                 Bios
-                               JOIN BioTypes USING (biotypeid)
-                               JOIN BioStates USING (biostateid)
-                               JOIN BioDests USING (biodestid)
-                             WHERE
-                                biolang in ('en-us') AND
-                                biotypename in ('uri') AND 
-                                biostatename in ('good') AND
-                                biodestname in ('web')) UGW USING (badgeid)
+        badgeid,
+        biotext AS uri_good_web
+      FROM
+          Bios
+        JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+        biolang in ('en-us') AND
+        biotypename in ('uri') AND 
+        biostatename in ('good') AND
+        biodestname in ('web')) UGW USING (badgeid)
     LEFT JOIN (SELECT 
-                              badgeid,
-                              biotext AS uri_good_book
-                             FROM
-                                 Bios
-                               JOIN BioTypes USING (biotypeid)
-                               JOIN BioStates USING (biostateid)
-                               JOIN BioDests USING (biodestid)
-                             WHERE
-                                biolang in ('en-us') AND
-                                biotypename in ('uri') AND 
-                                biostatename in ('good') AND
-                                biodestname in ('book')) UGB USING (badgeid)
+        badgeid,
+        biotext AS uri_good_book
+      FROM
+          Bios
+        JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+        biolang in ('en-us') AND
+        biotypename in ('uri') AND 
+        biostatename in ('good') AND
+        biodestname in ('book')) UGB USING (badgeid)
     LEFT JOIN (SELECT 
-                              badgeid,
-                              biotext AS fetlife_good_web
-                             FROM
-                                 Bios
-                               JOIN BioTypes USING (biotypeid)
-                               JOIN BioStates USING (biostateid)
-                               JOIN BioDests USING (biodestid)
-                             WHERE
-                                biolang in ('en-us') AND
-                                biotypename in ('fetlife') AND 
-                                biostatename in ('good') AND
-                                biodestname in ('web')) FEGW USING (badgeid)
+        badgeid,
+        biotext AS fetlife_good_web
+      FROM
+          Bios
+        JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+        biolang in ('en-us') AND
+        biotypename in ('fetlife') AND 
+        biostatename in ('good') AND
+        biodestname in ('web')) FEGW USING (badgeid)
     LEFT JOIN (SELECT 
-                              badgeid,
-                              biotext AS facebook_good_web
-                             FROM
-                                 Bios
-                               JOIN BioTypes USING (biotypeid)
-                               JOIN BioStates USING (biostateid)
-                               JOIN BioDests USING (biodestid)
-                             WHERE
-                                biolang in ('en-us') AND
-                                biotypename in ('facebook') AND 
-                                biostatename in ('good') AND
-                                biodestname in ('web')) FAGW USING (badgeid)
+        badgeid,
+        biotext AS facebook_good_web
+      FROM
+          Bios
+        JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+        biolang in ('en-us') AND
+        biotypename in ('facebook') AND 
+        biostatename in ('good') AND
+        biodestname in ('web')) FAGW USING (badgeid)
     LEFT JOIN (SELECT 
-                              badgeid,
-                              biotext AS twitter_good_web
-                             FROM
-                                 Bios
-                               JOIN BioTypes USING (biotypeid)
-                               JOIN BioStates USING (biostateid)
-                               JOIN BioDests USING (biodestid)
-                             WHERE
-                                biolang in ('en-us') AND
-                                biotypename in ('twitter') AND 
-                                biostatename in ('good') AND
-                                biodestname in ('web')) TWGW USING (badgeid)
+        badgeid,
+        biotext AS twitter_good_web
+      FROM
+          Bios
+        JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+        biolang in ('en-us') AND
+        biotypename in ('twitter') AND 
+        biostatename in ('good') AND
+        biodestname in ('web')) TWGW USING (badgeid)
   WHERE
     badgeid in ($wherestring)
   ORDER BY

@@ -1,10 +1,9 @@
 <?php
 require_once('StaffCommonCode.php');
-global $participant,$message_error,$message2,$congoinfo;
+global $link, $participant, $message, $message_error, $congoinfo;
 
 $title="Staff - Manage Sessions";
 $description="<P>On this page you will find the online tools for managing Panels, Events, Films, Anime, and Videos.  (Which is why we refer to them with the target neutral term sessions.)</P>\n";
-$message_error.=$message2;
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 ?>

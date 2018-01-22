@@ -1,7 +1,7 @@
 <?php
 require_once('VendorCommonCode.php');
 require_once('Vendor_FNC.php');
-global $participant,$message,$message_error,$message2;
+global $link, $participant, $message, $message_error;
 
 // LOCALIZATIONS
 $title="Vendor View";
@@ -9,7 +9,6 @@ $description="";
 $additionalinfo="<P>Vendor FAQ: ";
 $additionalinfo.="<A HREF=\"http://fetishflea.com/index.php?page=vending-community-tables\">";
 $additionalinfo.="http://fetishflea.com/index.php?page=vending-community-tables</A></P>\n";
-$message_error.=$message2;
 $conid=$_SESSION['conid'];
 $badgeid=$_SESSION['badgeid'];
 

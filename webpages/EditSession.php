@@ -1,14 +1,13 @@
 <?php
 require_once('StaffCommonCode.php');
 require ('RenderEditCreateSession.php');
-global $name, $email, $message2;
+global $link, $name, $email, $message, $message_error;
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 get_name_and_email($name,$email);
 $error=false;
 $title="Edit Session";
 $description="<P>Please, select the session you wish to edit.</P>";
-$message_error.=$message2;
 
 if (isset($_GET["id"])) { // Sets the "id" from the GET string
   $id=$_GET["id"];
@@ -19,7 +18,7 @@ if (isset($_GET["id"])) { // Sets the "id" from the GET string
 if ((is_numeric($id)) and ($id>0)) { // If the "id" is numeric and greater than one, test it
   $status=retrieve_session_from_db($id,$conid);
   if ($status==-3) {
-    $message_error.="Error retrieving record from database. ".$message2;
+    $message_error.="Error retrieving record from database.";
     $error=true;
     $id="";
    }
@@ -88,7 +87,6 @@ EOD;
  }
 
 // Set up for Rendering
-$message_error.=$message2;
 $action="edit";
 
 // Actually do the rendering work

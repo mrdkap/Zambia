@@ -1,7 +1,7 @@
 <?php
 require_once('PartCommonCode.php');
 require_once('RenderEditCreateSession.php');
-global $name,$email,$badgeid,$message_error,$message2;
+global $link, $name, $email, $badgeid, $message, $message_error;
 $_SESSION['return_to_page']="MyMigrations.php";
 if (!get_name_and_email($name, $email)) {
   error_log("get_name_and_email failed in CreateSession.  ");
@@ -27,7 +27,7 @@ if (!empty($_POST['conid'])) {
 if ((is_numeric($id)) and ($id>0) and (is_numeric($conid)) and ($conid>0)) {
   $status=retrieve_session_from_db($id,$conid);
   if ($status==-3) {
-    $message_error.="Error retrieving record from database. ".$message2;
+    $message_error.="Error retrieving record from database.";
     RenderError($title,$message_error);
     exit;
    }
@@ -39,28 +39,26 @@ if ((is_numeric($id)) and ($id>0) and (is_numeric($conid)) and ($conid>0)) {
  }
 
 
-$message_warn="";
 // check for suggestor
 if ($conid==$_SESSION['conid']) {
   $message_error.="This has already been migrated/proposed for this year.  You have reached this page in error.  Please pick another class to migrate.";
   RenderError($title,$message_error);
   exit;
 } elseif ($session["suggestor"]==$_SESSION['badgeid']) {
-  $message_warn="Migration Begun, please edit the below as necessary and hit the save button.";
+  $message.="Migration Begun, please edit the below as necessary and hit the save button.";
 } elseif (may_I("ConChair")) {
-  $message_warn="Status: ".$status." Division: ".$session["divisionid"]." Track: ".$session["trackid"]." Type: ".$session["typeid"]." Status: ".$session["statusid"]." Suggestor: ".$session["suggestor"];
+  $message.="Status: ".$status." Division: ".$session["divisionid"]." Track: ".$session["trackid"]." Type: ".$session["typeid"]." Status: ".$session["statusid"]." Suggestor: ".$session["suggestor"];
 } else {
   $message_error.="This ($id from $conid) was not a class suggested by you (".$_SESSION['badgeid']."), and therefore should not be migrated by you.";
   RenderError($title,$message_error);
   exit;
 }
 
-$message_error="";
 $newid=get_next_session_id();
 if (!$newid) { exit(); }
 $session["sessionid"]=$id;
 $session["newsessionid"]=$newid;
 $action="propose";
-RenderEditCreateSession($action,$session,$message_warn,$message_error);
+RenderEditCreateSession($action,$session,$message,$message_error);
 exit();
 ?>

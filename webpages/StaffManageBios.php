@@ -1,5 +1,5 @@
 <?php
-global $participant,$message_error,$message2,$congoinfo;
+global $link, $participant, $message, $message_error, $congoinfo;
 require_once('StaffCommonCode.php');
 $conid=$_SESSION['conid'];
 $LanguageList=LANGUAGE_LIST; // make it a variable so it can be substituted
@@ -14,7 +14,6 @@ $staffadditionalinfo="<P>These are the con staff members who have reports.</P>\n
 $descadditionalinfo="<P>These are the descriptions for the schedule elements for this event.</P>\n";
 $volsadditionalinfo="<P>These are the volunteers who need badges.</P>\n";
 $vendoradditionalinfo="<P>These are the vendors who are possibly vending this year.</P>\n";
-$message_error.=$message2;
 
 if (!empty($_GET['badgeids'])) {
   $addinfo.="<P>Click on the participant name in the table below to edit their biography or";

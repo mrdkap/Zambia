@@ -1,5 +1,5 @@
 <?php
-global $link,$participant,$message_error,$message2,$congoinfo;
+global $link, $participant, $message, $message_error, $congoinfo;
 require_once('StaffCommonCode.php');
 unlock_participant(''); // unlocks any records locked by current user
 
@@ -17,7 +17,6 @@ $additionalinfo.="participant view.  Another will allow you to manage Sessions. 
 $additionalinfo.="\"Sessions\" is the generic term we are using for all Events, Films, Panels, ";
 $additionalinfo.="Anime, Video, etc. and \"Precis\" is used for the description of same.</P>\n";
 $additionalinfo.="<P>There is always the somewhat-spotty <A HREF=\"../Documentation\">documentation</A></P>\n";
-$message_error.=$message2;
 
 $query= <<<EOD
 SELECT

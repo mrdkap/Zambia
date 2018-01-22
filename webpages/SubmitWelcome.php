@@ -1,14 +1,14 @@
 <?php
-    // The current version of the Welcome Page does not include a form for doing this, but this
-    // code for SubmitWelcome supports having the user change his password directly on the
-    // Welcome page.  A previous version prompted the user to change his password if it was
-    // still the initial password.
-    require ('PartCommonCode.php');
-    global $link;
+// The current version of the Welcome Page does not include a form for doing this, but this
+// code for SubmitWelcome supports having the user change his password directly on the
+// Welcome page.  A previous version prompted the user to change his password if it was
+// still the initial password.
+require ('PartCommonCode.php');
+global $link, $message, $message_error;
 
-    $title="Welcome";
-    $password = $_POST['password'];
-    $cpassword = $_POST['cpassword'];
+$title="Welcome";
+$password = $_POST['password'];
+$cpassword = $_POST['cpassword'];
 
 // If interested is changed.
 if ($_POST['interested']!=$participant['interested']) {
@@ -16,8 +16,8 @@ if ($_POST['interested']!=$participant['interested']) {
   $query.="interestedtypeid=".$_POST['interested']." ";
   $query.="WHERE badgeid=\"".$badgeid."\" AND conid=".$_SESSION['conid'];
   if (!mysql_query($query,$link)) {
-    $message.=$query."<BR>Error updating Interested table.  Database not updated.";
-    echo "<P class=\"errmsg\">".$message."</P>\n";
+    $message_error.=$query."<BR>Error updating Interested table.  Database not updated.";
+    echo "<P class=\"errmsg\">".$message_error."</P>\n";
     return;
   }
   ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
@@ -26,7 +26,7 @@ if ($_POST['interested']!=$participant['interested']) {
     $value_array=array($_SESSION['conid'], $badgeid, mysql_real_escape_string(stripslashes($_POST['interested'])));
     $message.=submit_table_element($link,$title,"Interested", $element_array, $value_array);
   } elseif ($r_matched[1]>1) {
-    $message.="There might be something wrong with the table, there are multiple interested elements for this year.";
+    $message_error.="There might be something wrong with the table, there are multiple interested elements for this year.";
   }
   $participant['interested']=$_POST['interested'];
 }
@@ -45,8 +45,8 @@ if ($_POST['interested']!=$participant['interested']) {
                     exit();
                     }
                 else {
-                    $message=$message2."<BR>Failure to re-retrieve data for Participant.";
-                    RenderError($title,$message);
+                    $message_error.="<BR>Failure to re-retrieve data for Participant.";
+                    RenderError($title,$message_error);
                     exit();
                     }
             }
@@ -56,11 +56,11 @@ if ($_POST['interested']!=$participant['interested']) {
 		}
 	$query.=" WHERE badgeid=\"".$badgeid."\"";                               //"
     if (!mysql_query($query,$link)) {
-		$message=$query."<BR>Error updating database.  Database not updated.";
-		RenderError($title,$message);
+		$message_error.=$query."<BR>Error updating database.  Database not updated.";
+		RenderError($title,$message_error);
 		exit();
 		}
-    $message="Database updated successfully.";
+    $message.="Database updated successfully.";
     if ($update_password==true) {
 	$_SESSION['password']=md5($password);
 	}
@@ -69,13 +69,13 @@ if ($_POST['interested']!=$participant['interested']) {
             exit();
             }
         else {
-            $message=$message2."<BR>Failure to re-retrieve data for Participant.";
-            RenderError($title,$message);
+            $message_error.="<BR>Failure to re-retrieve data for Participant.";
+            RenderError($title,$message_error);
             exit();
             }
     $result=mysql_query("Select password from Participants where badgeid='".$badgeid."'",$link);
     if (!$result) {
-    	$message="Incorrect badgeid or password.";
+    	$message_error.="Incorrect badgeid or password.";
         require ('login.php');
 	exit();
 	}
@@ -84,7 +84,7 @@ if ($_POST['interested']!=$participant['interested']) {
     //echo $badgeid."<BR>".$dbpassword."<BR>".$password."<BR>".md5($password);
     //exit(0);
     if (md5($password)!=$dbpassword) {
-    	$message="Incorrect badgeid or password.";
+    	$message_error.="Incorrect badgeid or password.";
         require ('login.php');
 	exit(0);
 	}

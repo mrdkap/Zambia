@@ -1,5 +1,6 @@
 <?php
 require_once('VendorCommonCode.php');
+global $link, $message, $message_error;
 $_SESSION['return_to_page']='VendorApply.php';
 $badgeid=$_SESSION['badgeid'];
 
@@ -42,7 +43,6 @@ if ($_POST['update']=="New") {
 } elseif ($_POST['update']=="Update") {
   $status=update_session();
   if (!$status) {
-    $message_error.=$message2; // warning message
     $message_error.="<BR>Unknown error updating record.  Database not updated successfully.";
   } else {
     // 3 is code for unknown edit

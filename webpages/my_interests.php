@@ -1,6 +1,6 @@
 <?php
 require_once('PartCommonCode.php');
-global $message,$message_error,$message2;
+global $link, $message, $message_error;
 $badgeid=$_SESSION['badgeid'];
 $conid=$_SESSION['conid'];
 
@@ -8,7 +8,6 @@ $conid=$_SESSION['conid'];
 $title="My General Interests";
 $description="";
 $additionalinfo="";
-$message_error.=$message2;
 
 // ParticipantInterests
 $query = <<<EOD
@@ -27,13 +26,13 @@ EOD;
 
 $result=mysql_query($query,$link);
 if (!$result) {
-  $message=$query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
+  $message.=$query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message);
   exit();
 }
 $rows=mysql_num_rows($result);
 if ($rows>1) {
-  $message=$query."<br>Multiple rows returned from database where one expected. Unable to continue.";
+  $message.=$query."<br>Multiple rows returned from database where one expected. Unable to continue.";
   RenderError($title,$message);
   exit();
 }

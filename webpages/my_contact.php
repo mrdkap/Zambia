@@ -1,14 +1,13 @@
 <?php
 // initialize db, check login, set $badgeid from session
 require_once('PartCommonCode.php');
-global $participant,$message,$message_error,$message2,$congoinfo;
+global $link, $participant, $message, $message_error, $congoinfo;
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 // LOCALIZATIONS
 $title="My Profile";
 $description="<P>This is the informaton we have for you</P>\n";
 $additionalinfo="<P>Please, read, and if necessary update the below.</P>\n";
-$message_error.=$message2;
 
 //Get the reg email (switched to brainstorm coordinator)
 //     conrolename like '%Registration%' AND

@@ -1,12 +1,11 @@
 <?php
-global $participant,$message,$message_error,$message2,$congoinfo;
+global $link, $participant, $message, $message_error, $congoinfo;
 require_once('PartCommonCode.php');
 
 // Localizations
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 $badgeid=$_SESSION['badgeid']; // make it a variable so it can be substituted
 $title="Show Search Session Results";
-$message_error.=$message2;
 
 $trackid=0;
 $typeid=0;
@@ -156,7 +155,7 @@ if ($sessionid!="") {
 }
 $query.=")\n  ORDER BY\n    trackid,starttime\n";
 if (!$result=mysql_query($query,$link)) {
-  $message=$query."<BR>Error querying database.<BR>";
+  $message.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message);
   exit();
 }

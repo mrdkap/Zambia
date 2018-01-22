@@ -6,7 +6,7 @@
    message: a string to display before the form
    message_error: an urgent string to display before the form */
 function RenderEditCreateSession ($action, $session, $message, $message_error) {
-  global $link, $name, $email, $debug;
+  global $link, $name, $email, $debug, $message, $message_error;
   $conid=$_SESSION['conid'];
   $badgeid=$_SESSION['badgeid'];
   $name=$_SESSION['badgename'];

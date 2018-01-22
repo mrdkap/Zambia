@@ -1,13 +1,12 @@
 <?php
 require_once('BrainstormCommonCode.php');
-global $participant,$message,$message_error,$message2,$congoinfo;
+global $participant, $message, $message_error, $congoinfo;
 $conid=$_SESSION['conid'];
 
 // LOCALIZATIONS
 $title="Class/Presenter Submission";
 $description="";
 $additionalinfo="";
-$message.=$message2;
 
 /* This should be refined with further may_I's in Permissions, but
    for now, we are working off of the raw Phase state.

@@ -1,6 +1,6 @@
 <?php
 require_once('VendorCommonCode.php');
-global $message,$message_error,$message2;
+global $link, $message, $message_error;
 $conid=$_SESSION['conid'];
 
 // LOCALIZATIONS
@@ -10,7 +10,6 @@ $description="<P>Note: items in red must be completed before you can save.</P>\n
 $additionalinfo="<P>Please make sure all your information is valid, there are no double checks.\n";
 $additionalinfo.="If they are not valid they are not going to resolve properly the chance that we might\n";
 $additionalinfo.="see you at this or future events decreases exponentially.</P>\n";
-$message_error.=$message2;
 
 // Get the permroleid and name for assigning as Vendor
 $query= <<<EOD
@@ -21,13 +20,13 @@ SELECT
       PermissionRoles
 EOD;
 if (($result=mysql_query($query,$link))===false) {
-  $message_error="Error retrieving data from database<BR>\n";
+  $message_error.="Error retrieving data from database<BR>\n";
   $message_error.=$query;
   RenderError($title,$message_error);
   exit();
 }
 if (0==($rows=mysql_num_rows($result))) {
-  $message_error="Database query did not return any rows.<BR>\n";
+  $message_error.="Database query did not return any rows.<BR>\n";
   $message_error.=$query;
   RenderError($title,$message_error);
   exit();

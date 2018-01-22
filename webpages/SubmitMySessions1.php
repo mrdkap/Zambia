@@ -1,5 +1,5 @@
 <?php
-global $participant,$message_error,$message2,$congoinfo,$session_interests,$session_interest_index, $title;
+global $link, $participant, $message, $message_error, $congoinfo, $session_interests, $session_interest_index;
 $title="Select Interested Sessions";
 require ('PartCommonCode.php'); //define database functions
 require ('PartPanelInterests_FNC.php');
@@ -45,6 +45,5 @@ $message="";
 // Get title, etc. of such data -- use global $session_interests
     get_si_session_info_from_db($session_interest_count); // Will render its own errors
     $message=$messageSave . $message;
-    $message_error="";
     render_session_interests($badgid,$session_interest_count,$message,$message_error); // includes footer
 ?>        

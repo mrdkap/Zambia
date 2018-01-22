@@ -4,7 +4,7 @@
 //   2) After verify -- 'back' can change parameters -- 'send' fire off email sending code
 require_once('email_functions.php');
 require_once('StaffCommonCode.php'); //reset connection to db and check if logged in
-global $title, $message, $link;
+global $link, $title, $message, $message_error;
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 if (isset($_POST['sendto'])) { // page has been visited before so restore previous values to form
@@ -16,9 +16,8 @@ if (isset($_POST['sendto'])) { // page has been visited before so restore previo
 // List of replacements
 $subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","\$PUBNAME\$","\$BADGENAME\$","\$SCHEDULE\$","\$FULLSCHEDULE\$","\$BIOS\$","\$LIAISON\$","\$HOTELROOM\$","\$ENTRANCES\$","\$CONFIRMNUM\$");
 
-$message_warning="";
 if ($_POST['navigate']!='send') {
-  render_send_email($email,$subst_list,$message_warning);
+  render_send_email($email,$subst_list,$message_error);
   exit(0);
 }
 

@@ -2,7 +2,7 @@
 // Not sure if there is any need to support post/been here before
 require_once('email_functions.php');
 require_once('StaffCommonCode.php'); //reset connection to db and check if logged in
-global $message,$link;
+global $link, $message, $message_error;
 $conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
 // List of replacements
@@ -11,7 +11,7 @@ $subst_list=array("\$BADGEID\$","\$FIRSTNAME\$","\$LASTNAME\$","\$EMAILADDR\$","
 $title="Send Email (Step 2 - verify)";
 
 if (!isset($_POST['sendto'])) { // page has not been visited before
-    $message_error="Expected POST data was missing.  This page is intended to be reached via a form.";
+    $message_error.="Expected POST data was missing.  This page is intended to be reached via a form.";
     $message_error.=" It will not work if you link to it directly.\n";
     RenderError ($title, $message_error);
     exit(0);
@@ -265,5 +265,5 @@ $repl_list=array($recipientinfo[0]['badgeid'],
 		 $recipientinfo[$i]['entrances'],
 		 $recipientinfo[$i]['confirmnum']);
 $emailverify['body']=str_replace($subst_list,$repl_list,$email['body']);
-render_verify_email($email,$emailverify,$message_warning="");
+render_verify_email($email,$emailverify,$message_error);
 ?>

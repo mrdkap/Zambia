@@ -43,10 +43,10 @@ function set_email_defaults() {
   return($email);
 }
 
-// function render_send_email($email,$message_warning)
+// function render_send_email($email,$message_error)
 // $email is an array with all values for the send email form:
 //   sendto, sendfrom, sendcc, subject, body
-// $message_warning will be displayed at the top, only if set
+// $message_error will be displayed at the top, only if set
 // This function will render the entire page.
 // This page will next go to the StaffSendEmailCompose_POST page
 function render_send_email($email,$substitutions,$message_error) {

@@ -1,10 +1,9 @@
 <?php
-global $participant,$message,$message_error,$message2;
+global $link, $participant, $message, $message_error;
 require_once('PartCommonCode.php');
 
 $title="Participant View";
 $conid=$_SESSION['conid'];
-$message_error.=$message2;
 
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 //$congoinfo=getCongoData($badgeid);
@@ -29,7 +28,7 @@ SELECT
 EOD;
 
 if (!$result=mysql_query($query,$link)) {
-    $message=$query."<BR>Error querying database. Unable to continue.<BR>";
+    $message.=$query."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message);
     exit();
     }

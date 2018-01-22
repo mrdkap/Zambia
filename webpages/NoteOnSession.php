@@ -1,7 +1,7 @@
 <?php
 $title="Notes On Session";
 require_once('StaffCommonCode.php');
-global $link;
+global $link, $message, $message_error;
 
 $conid=$_GET['conid'];
 
@@ -19,7 +19,7 @@ if (isset($_GET["id"])) { // Sets the "id" from the GET string
 if ((is_numeric($id)) and ($id>0)) { // If the "id" is numerica and greater than one, test it
   $status=retrieve_session_from_db($id,$conid);
   if ($status==-3) {
-    $message_error.="Error retrieving record from database. ".$message2;
+    $message_error.="Error retrieving record from database.";
     $error=true;
     $id="";
    }

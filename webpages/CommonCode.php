@@ -1177,7 +1177,7 @@ SELECT
     $limittables
     $limitwhere
   ORDER BY
-    P.email
+    badgename
 EOD;
 
   // Now give the choices

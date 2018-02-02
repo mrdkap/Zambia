@@ -49,6 +49,8 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
     <A HREF="BookStaffBios.php?pic_p=N">(without images)</A>
     <A HREF="BookStaffBios.php?short=Y">(short)</A></DT>
   <DD id="programbookstaffbio">An alphabetical list of the Biographical Information of the Staff members for the Program Book.</DD>
+  <DT id="programbookvendors"><A HREF="BookVendors.php">Vendor/Community Table Descriptions</A></DT>
+  <DD id="programbookvendors">An alphabetical list of the Vendor/Community Table Descriptions for the Program Book.</DD>
   <DT id="programbookdesc"><A HREF="BookSched.php?format=desc">Descriptions</A>
     <A HREF="BookSched.php?format=desc&short=Y">(short)</A></DT>
   <DD id="programbookdesc">An alphabetical list of the descriptions for the Program Book.</DD>

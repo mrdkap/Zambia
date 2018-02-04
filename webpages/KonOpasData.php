@@ -944,7 +944,6 @@ SELECT
         conid=$conid
       GROUP BY
 	badgeid) AVL USING (badgeid,conid)
-    LEFT JOIN VendorPrefSpace USING (badgeid)
     JOIN (SELECT
         badgeid,
 	biotext as name_good_web
@@ -1041,7 +1040,7 @@ SELECT
 	conid,
 	basevendorspacename
       FROM
-          VendorPrefSpace
+          VendorHasSpace
         JOIN VendorSpace USING (vendorspaceid)
         JOIN BaseVendorSpace USING (basevendorspaceid)) BVS USING (badgeid,conid)
   WHERE

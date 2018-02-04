@@ -26,11 +26,11 @@ SELECT
       Permissions
     JOIN PermissionAtoms USING (permatomid)
     JOIN UserHasPermissionRole UHPR USING (permroleid)
-    JOIN Phase USING (phasetypeid, conid)
     JOIN Types ON (permatomtag=concat("write_",typename))
+    LEFT JOIN Phase USING (phasetypeid, conid)
   WHERE
     permatomtag in (SELECT concat ("write_", typename) FROM Types) AND
-    phasestate = '0' AND
+    (phasestate = '0' OR phasestate IS NULL) AND
     conid=$conid AND
     UHPR.badgeid=$badgeid
 EOD;

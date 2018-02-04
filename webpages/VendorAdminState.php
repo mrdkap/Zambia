@@ -158,6 +158,13 @@ $keystring="<br>\n<HR>\n<P>Key:</P>\n";
 $keystring.=renderhtmlreport(1,$vstatrows,$vstatheader_array,$vstat_array);
 echo $keystring;
 
+$verbiage=get_verbiage("VendorPDF");
+if ($verbiage != "") {
+  echo eval('?>' . $verbiage);
+} else {
+  echo "<P>The Vendor PDF files are not yet set up for this year, please stay tuned.</P>\n";
+}
+
 // Close the page
 correct_footer();
 ?>

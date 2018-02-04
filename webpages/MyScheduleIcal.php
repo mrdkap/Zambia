@@ -46,7 +46,6 @@ list($schdrows,$schdheader,$schdarray)=queryreport($query,$link,$title,$descript
 $query= <<<EOD
 SELECT
     sessionid,
-    badgename,
     pubsname,
     moderator,
     volunteer,
@@ -54,7 +53,6 @@ SELECT
     aidedecamp
   FROM
       ParticipantOnSession
-    JOIN CongoDump CD USING(badgeid)
     JOIN Participants P USING(badgeid)
   WHERE
     sessionid in (SELECT
@@ -134,19 +132,16 @@ for ($i=1; $i<=$schdrows; $i++) {
       continue;
     }
     echo $partarray[$j]["pubsname"];
-    if ($partarray[$j]["pubsname"]!=$partarray[$j]["badgename"]) {
-      echo " (".$partarray[$j]["badgename"].")";
-    }
-    if (in_array($partarray[$j]["moderator"],array("0","1","YES"))) {
+    if (in_array($partarray[$j]["moderator"],array("1","Yes"))) {
       echo " - moderator";
     }
-    if (in_array($partarray[$j]["volunteer"],array("0","1","YES"))) {
+    if (in_array($partarray[$j]["volunteer"],array("1","Yes"))) {
       echo " - volunteer";
     }
-    if (in_array($partarray[$j]["introducer"],array("0","1","YES"))) {
+    if (in_array($partarray[$j]["introducer"],array("1","Yes"))) {
       echo " - introducer";
     }
-    if (in_array($partarray[$j]["aidedecamp"],array("0","1","YES"))) {
+    if (in_array($partarray[$j]["aidedecamp"],array("1","Yes"))) {
       echo " - assistant";
     }
     echo "\\n\\n ";

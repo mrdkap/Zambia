@@ -56,7 +56,6 @@ list($schdrows,$schdheader_array,$schdarray)=queryreport($query,$link,"PostSched
 $query= <<<EOD
 SELECT
     sessionid,
-    badgename,
     pubsname,
     moderator,
     volunteer,
@@ -64,7 +63,6 @@ SELECT
     aidedecamp
   FROM
       ParticipantOnSession
-    JOIN CongoDump USING (badgeid)
     JOIN Participants USING (badgeid)
   WHERE
     sessionid IN (
@@ -128,19 +126,16 @@ for ($i=1; $i<=$schdrows; $i++) {
       continue;
     }
     echo $partarray[$j]["pubsname"];
-    if ($partarray[$j]["pubsname"]!=$partarray[$j]["badgename"]) {
-      echo " (".$partarray[$j]["badgename"].")";
-    }
-    if ($partarray[$j]["moderator"]) {
+    if (in_array($partarray[$j]["moderator"],array("1","Yes"))) {
       echo " - moderator";
     }
-    if ($partarray[$j]["volunteer"]) {
+    if (in_array($partarray[$j]["volunteer"],array("1","Yes"))) {
       echo " - volunteer";
     }
-    if ($partarray[$j]["introducer"]) {
+    if (in_array($partarray[$j]["introducer"],array("1","Yes"))) {
       echo " - introducer";
     }
-    if ($partarray[$j]["aidedecamp"]) {
+    if (in_array($partarray[$j]["aidedecamp"],array("1","Yes"))) {
       echo " - assistant";
     }
     echo "\\n\\n ";

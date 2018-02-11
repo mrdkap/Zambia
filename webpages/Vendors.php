@@ -350,10 +350,10 @@ EOD;
 	    $biostring.=sprintf("%s</TD>\n    <TD>",$picture);
 	  }
 
-	  $biostring.=sprintf("<P><B>%s",$name);
-
 	  if ($dba != "") {
-	    $biostring.=" (DBA: $dba)";
+	    $biostring.=sprintf("<P><B>%s",$dba);
+	  } else {
+	    $biostring.=sprintf("<P><B>%s",$name);
 	  }
 
 	  // If there is a location

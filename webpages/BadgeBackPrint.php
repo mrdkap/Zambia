@@ -205,7 +205,7 @@ SELECT
 	  biodestname in ('badge') AND
 	  biolang='en-us') NGB USING (badgeid)
   WHERE
-    permrolename IN ('Participant','General','Programming','Events','Lounge','Watch') AND
+    permrolename in ('Participant','Panelist','Demo','Teacher','Presenter','Author','Organizer','Performer','Aide','General','Programming','Events','Lounge','Watch') AND
     $whichparticipants
     conid=$conid
   ORDER BY

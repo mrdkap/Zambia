@@ -668,10 +668,11 @@ EOD;
 } else { // Is in Zambia
 // Vendors Information
 
-$vendorquery = <<<EOD
+  $vendorquery = <<<EOD
 SELECT
     concat('"id": "',badgeid,'"') AS id,
-    concat('"name": [ "',name_good_web,
+    concat('"name": [ "',
+           if(dba_good_web IS NULL,name_good_web,dba_good_web),
 	   if(actualvendorloc!="",concat (" - ", actualvendorloc),""),
 	   '" ]') AS name,
     concat('"tags": []') AS tags,
@@ -812,6 +813,19 @@ SELECT
 	biostatename in ('good') AND
 	biodestname in ('web') AND
         biolang='en-us') PGW USING (badgeid)
+    LEFT JOIN (SELECT
+        badgeid,
+	biotext as dba_good_web
+      FROM
+          Bios
+	JOIN BioTypes USING (biotypeid)
+        JOIN BioStates USING (biostateid)
+        JOIN BioDests USING (biodestid)
+      WHERE
+	biotypename in ('dba') AND
+	biostatename in ('good') AND
+	biodestname in ('web') AND
+        biolang='en-us') DGW USING (badgeid)
     LEFT JOIN (SELECT
 	badgeid,
 	conid,

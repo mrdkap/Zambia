@@ -213,7 +213,7 @@ $query=<<<EOD
 SELECT
   DISTINCT badgeid,
   pubsname,
-  if ((permrolename='Participant'),concat("Presenter"),concat("Volunteer")) AS Role
+  if ((permrolename in ('Participant','Panelist','Demo','Teacher','Presenter','Author','Organizer','Performer','Aide')),concat("Presenter"),concat("Volunteer")) AS Role
   FROM
       Sessions
     JOIN Schedule USING (sessionid,conid)
@@ -222,7 +222,7 @@ SELECT
     JOIN UserHasPermissionRole USING (badgeid,conid)
     JOIN PermissionRoles USING (permroleid)
   WHERE
-    permrolename IN ('Participant','General','Programming','Events','Lounge',"Watch") AND
+    permrolename in ('Participant','Panelist','Demo','Teacher','Presenter','Author','Organizer','Performer','Aide','General','Programming','Events','Lounge','Watch') AND
     $whichparticipants
     conid=$conid
   ORDER BY
@@ -249,7 +249,10 @@ for ($i=1; $i<=$rows; $i++) {
     $participant_array[$i]['name'].=$bioinfo['name_en-us_raw_web_bio'];
   } elseif (!empty($bioinfo['name_en-us_raw_book_bio'])) {
     $participant_array[$i]['name'].=$bioinfo['name_en-us_raw_book_bio'];
+  } else {
+    $participant_array[$i]['name'].=$participant_array[$i]['pubsname'];
   }
+
   $bioinfo=getBioData($participant_array[$i]['badgeid']);
   if (!empty($bioinfo['pronoun_en-us_good_badge_bio'])) {
     $participant_array[$i]['pronoun'].=$bioinfo['pronoun_en-us_good_badge_bio'];

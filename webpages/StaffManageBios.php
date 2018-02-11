@@ -265,7 +265,7 @@ SELECT
     conid=$conid AND
     biotypename in ('name','pronoun') AND
     biodestname in ('badge') AND
-    permrolename in ('General', 'Programming','Events','Lounge','Watch')
+    permrolename in ('General', 'Programming','Events','Lounge','Watch','Aide')
 EOD;
 
 // Specific set of badgeids.

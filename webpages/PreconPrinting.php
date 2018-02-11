@@ -9,7 +9,7 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 <HR>
 <DL>
-  <DT id="schedules"><A HREF="SchedulePrint.php?group=Participant">Presenters</A> <A HREF="SchedulePrint.php?group=Programming">Programming Volunteers</A> <A HREF="SchedulePrint.php?group=General">General Volunteers</A> <A HREF="SchedulePrint.php?group=Events">Events Volunteers</A> <A HREF="SchedulePrint.php?group=Watch">Watch Volunteers</A></DT>
+  <DT id="schedules"><A HREF="SchedulePrint.php?group=Participant">Presenters</A> <A HREF="SchedulePrint.php?group=Programming">Programming Volunteers</A> <A HREF="SchedulePrint.php?group=General">General Volunteers</A> <A HREF="SchedulePrint.php?group=Events">Events Volunteers</A> <A HREF="SchedulePrint.php?group=Watch">Watch Volunteers</A> <A HREF="SchedulePrint.php?group=Aide">Aides</A></DT>
   <DD id="schedules">Preview and then print a schedule for each group.</DD>
   <DT id="classintro"><A HREF="ClassIntroPrint.php">Introduction pages</A> <A HREF="ClassIntroPrint.php?onlyclass=Y">(Just classes)</A></DT>
   <DD id="classintro">Preview and then print the Introduction pages, including the roles info for everyone applicable.</DD>

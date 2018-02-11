@@ -16,7 +16,7 @@ $title="Welcome Letters Printing";
 $print_p=$_GET['print_p'];
 $individual=$_GET['individual'];
 $type_array=array("'Panel'","'Class'","'Author Reading'","'SIG/BOF/MnG'","'Lounge'","'EVENT'","'Social'");
-$role_array=array("'Participant'","'Programming'","'SuperProgramming'","'Events'","'SuperEvents'","'Lounge'","'SuperLounge'","'Watch'","'SuperWatch'");
+$role_array=array("'Participant'","'Panelist'","'Demo'","'Teacher'","'Presenter'","'Author'","'Organizer'","'Performer'","'Aide'","'Programming'","'SuperProgramming'","'Events'","'SuperEvents'","'Lounge'","'SuperLounge'","'Watch'","'SuperWatch'");
 $type_string=implode(",",$type_array);
 $role_string=implode(",",$role_array);
 

@@ -18,13 +18,12 @@ $vendoradditionalinfo="<P>These are the vendors who are possibly vending this ye
 if (!empty($_GET['badgeids'])) {
   $addinfo.="<P>Click on the participant name in the table below to edit their biography or";
   $addinfo.=" <A HREF=StaffManageBios.php>return</A> to the editing matrix.</P>\n";
-  $descadditionalinfo.="<P>Click on the schedule element number in the table below to edit it or";
+  $descadditionalinfo.="<P>Click on the title in the table below to edit it or";
   $descadditionalinfo.=" <A HREF=StaffManageBios.php>return</A> to the editing matrix.</P>\n";
   $badgeid_list=$_GET['badgeids'];
  } else {
   $addinfo.="<P>Select with which category you would like to work with and click on the number.</P>\n";
   $descadditionalinfo.="<P>Select with which category you would like to work with and click on the number.</P>\n";
-  $descadditionalinfo.="<P>(We currently only use the \"good\" category for descriptions.)</P>\n";
   $badgeid_list="";
  }
 
@@ -32,11 +31,7 @@ $additionalinfo.=$addinfo;
 $staffadditionalinfo.=$addinfo;
 $volsadditionalinfo.=$addinfo;
 $vendoradditionalinfo.=$addinfo;
-$descadditionalinfo.="<P>Still to come. Easier to edit elswhere still: \n";
-$descadditionalinfo.="<A HREF=genreport.php?reportname=conflictsessdesc>Missing Web or ";
-$descadditionalinfo.="Program Book Description</A>::<A HREF=StaffSched.php?format=desc>";
-$descadditionalinfo.="Session Descriptions</A>::<A HREF=StaffBios.php>Bios With ";
-$descadditionalinfo.="Descriptions</A></P>\n";
+$descadditionalinfo.="<P>Still to be updated. Probably needs to be broken down into cateogries.</P>\n";
 
 if (isset($_GET['unlock'])) {
   $unlockresult=unlock_participant($_GET['unlock']);

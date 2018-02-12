@@ -2189,9 +2189,10 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
 /* These functions deal with the outside bios tables */
 
 /* Function getBioData($badgeid)
- Reads Bios tables from db to populate returned array $bioinfo with the
- key of biotypename_biolang_biostatename_bio and the value of biotext eg:
- $bioinfo['uri_en-us_raw_web_bio']='This bio is short and meaningless.'
+ Reads Bios tables from db to populate returned array $bioinfo with
+ the key of biotypename_biolang_biostatename_biodest_bio and the value
+ of biotext eg: $bioinfo['uri_en-us_raw_web_bio']='This bio is short
+ and meaningless.'
  Returns bioinfo; */
 function getBioData($badgeid) {
   global $link, $message, $message_error;
@@ -2276,6 +2277,101 @@ EOD;
   return($bioinfo);
 }
 
+/* Function getDescData($sessionid,$conid)
+ Reads Descriptions tables from db to populate returned array
+ $descinfo with the key of:
+ descriptiontypename_descriptionlang_biostatename_biodestname_bio and
+ the value of descriotiontext eg:
+ $descinfo['title_en-us_raw_web_bio']='This title is short and
+ meaningless.'
+ Returns descinfo; */
+function getDescData($sessionid,$conid) {
+  global $link, $message, $message_error;
+  $LanguageList=LANGUAGE_LIST; // make it a variable so it can be substituted
+
+  // Tests for the substituted variables
+  if ($LanguageList=="LANGUAGE_LIST") {unset($LanguageList);}
+
+  $query= <<<EOD
+SELECT
+    concat(descriptiontypename,"_",descriptionlang,"_",biostatename,"_",biodestname,"_bio") AS desckey,
+    descriptiontext
+  FROM
+      Descriptions
+    JOIN DescriptionTypes DT USING (descriptiontypeid)
+    JOIN BioStates BS USING (biostateid)
+    JOIN BioDests BD USING (biodestid)
+  WHERE
+    sessionid=$sessionid AND
+    conid=$conid
+  ORDER BY
+    DT.display_order,
+    BS.display_order,
+    BD.display_order
+EOD;
+
+  $result=mysql_query($query,$link);
+  if (!$result) {
+    $message_error.=mysql_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
+    RenderError($title,$message_error);
+    exit;
+  };
+  while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+    $descinfo[$row['desckey']]=$row['descriptiontext'];
+  }
+
+  // Get all current possible biolang
+  $query="SELECT DISTINCT(descriptionlang) FROM Descriptions";
+  if (isset($LanguageList)) {$query.=" WHERE descriptionlang in $LanguageList";}
+  if (($result=mysql_query($query,$link))===false) {
+    $message_error.=$query."<BR>\nError retrieving biolang data from database.\n";
+    RenderError($title,$message_error);
+    exit();
+  }
+  while ($row=mysql_fetch_assoc($result)) {
+    $desclang_array[]=$row['descriptionlang'];
+  }
+  $descinfo['desclang_array']=$desclang_array;
+
+  // Get all current possible biotypenames
+  $query="SELECT DISTINCT(descriptiontypename) FROM DescriptionTypes ORDER BY display_order";
+  if (($result=mysql_query($query,$link))===false) {
+    $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
+    RenderError($title,$message_error);
+    exit();
+  }
+  while ($row=mysql_fetch_assoc($result)) {
+    $desctype_array[]=$row['descriptiontypename'];
+  }
+  $descinfo['desctype_array']=$desctype_array;
+
+  // Get all current possible biostatenames
+  $query="SELECT DISTINCT(biostatename) FROM BioStates ORDER BY display_order";
+  if (($result=mysql_query($query,$link))===false) {
+    $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
+    RenderError($title,$message_error);
+    exit();
+  }
+  while ($row=mysql_fetch_assoc($result)) {
+    $biostate_array[]=$row['biostatename'];
+  }
+  $descinfo['biostate_array']=$biostate_array;
+
+  // Get all current possible biodestnames
+  $query="SELECT DISTINCT(biodestname) FROM BioDests ORDER BY display_order";
+  if (($result=mysql_query($query,$link))===false) {
+    $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
+    RenderError($title,$message_error);
+    exit();
+  }
+  while ($row=mysql_fetch_assoc($result)) {
+    $biodest_array[]=$row['biodestname'];
+  }
+  $descinfo['biodest_array']=$biodest_array;
+
+  return($descinfo);
+}
+
 /* Specific bio update takes eight variables: link, title, biotext,
    badgeid, biotypename, biolang, biostatename, and biodestname, and returns
    the success message */
@@ -2335,6 +2431,69 @@ EOD;
   }
 
   $message.="Database updated successfully with $biostatename $biotypename $biodestname.<BR>";
+}
+
+/* Specific bio update takes eight variables: link, title, descriptiontext,
+   sessionid, conid, descriptiontypename, descriptionlang, biostatename, and
+   biodestname, and returns the success message */
+function update_desc_element ($link, $title, $newdesc, $sessionid, $conid, $desctype, $desclang, $biostate, $biodest) {
+  global $link, $message, $message_error;
+
+  // make sure it's clean
+  $desctext0=mysql_real_escape_string(iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $newdesc),$link);
+  $desctext1=mysql_real_escape_string(mb_convert_encoding($newdesc, 'ISO-8859-1', 'UTF-8'),$link);
+  $desctext2=mysql_real_escape_string($newdesc,$link);
+  $desctext=$desctext0;
+  if (empty($desctext)) {$desctext=$desctext1;}
+  if (empty($desctext)) {$desctext=$desctext2;}
+
+  // Update query
+  $query=<<<EOD
+UPDATE
+      Descriptions
+    INNER JOIN DescriptionTypes USING (descriptiontypeid)
+    INNER JOIN BioStates USING (biostateid)
+    INNER JOIN BioDests USING (biodestid)
+  SET
+    descriptiontext='$desctext'
+  WHERE
+    sessionid='$sessionid' AND
+    conid='$conid' AND
+    descriptiontypename in ('$desctype') AND
+    descriptionlang in ('$desclang') AND
+    biostatename in ('$biostate') AND
+    biodestname in ('$biodest')
+EOD;
+
+  if (!mysql_query($query,$link)) {
+    $message_error.=$query."<BR>Error updating the $desctype $desclang $biostate $biodest description for $sessionid in $conid.  Database not updated.";
+    RenderError($title,$message_error);
+    exit;
+  }
+
+  if ((mysql_affected_rows($link) == 0) and ($desctext!="")) {
+    // Insert query
+    $query=<<<EOD
+INSERT INTO
+    Descriptions (sessionid, conid, descriptiontypeid, biostateid, biodestid, descriptionlang, descriptiontext)
+  VALUES
+    ('$sessionid',
+     '$conid',
+     (SELECT descriptiontypeid FROM DescriptionTypes WHERE descriptiontypename IN ('$desctype')),
+     (SELECT biostateid FROM BioStates WHERE biostatename IN ('$biostate')),
+     (SELECT biodestid FROM BioDests WHERE biodestname IN ('$biodest')),
+     '$desclang',
+     '$desctext');
+EOD;
+
+    if (!mysql_query($query,$link)) {
+      $message_error.=$query."<BR>Error inserting the $desctype $desclang $biostate $biodest description for $sessionid in $conid.  Database not updated.";
+      RenderError($title,$message_error);
+      exit;
+    }
+  }
+
+  $message.="Database updated successfully with $biostate $desctype $biodest.<BR>";
 }
 
 function generateSvgString($sessionid,$conid) {

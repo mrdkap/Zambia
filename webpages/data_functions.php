@@ -65,6 +65,10 @@ function get_session_from_post() {
             $session["title"]="";
             }
     $session["secondtitle"]=stripslashes($_POST["secondtitle"]);
+    $session["description_raw_web"]=stripslashes($_POST["description_raw_web"]);
+    $session["description_raw_book"]=stripslashes($_POST["description_raw_book"]);
+    $session["description_edited_web"]=stripslashes($_POST["description_edited_web"]);
+    $session["description_edited_book"]=stripslashes($_POST["description_edited_book"]);
     $session["description_good_web"]=stripslashes($_POST["description_good_web"]);
     $session["description_good_book"]=stripslashes($_POST["description_good_book"]);
     $session["pocketprogtext"]=stripslashes($_POST["pocketprogtext"]);
@@ -106,6 +110,10 @@ function set_session_defaults() {
     $session["languagestatusid"]=1; // default to "English"
     $session["title"]="";
     $session["secondtitle"]="";
+    $session["description_raw_web"]="";
+    $session["description_raw_book"]="";
+    $session["description_edited_web"]="";
+    $session["description_edited_book"]="";
     $session["description_good_web"]="";
     $session["description_good_book"]="";
     $session["pocketprogtext"]="";

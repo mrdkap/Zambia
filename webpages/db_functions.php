@@ -302,7 +302,7 @@ function update_session() {
   $session["subtitle"]=$session["secondtitle"];
 
   // Fix submitable characters
-  $checklist=array("title","subtitle","secondtitle","description_good_web","description_good_book");
+  $checklist=array("title","subtitle","secondtitle","description_raw_web","description_raw_book");
   foreach ($checklist as $i) {
     $workstring=$session[$i];
     $desctext0=iconv('UTF-8', 'ISO-8859-1//TRANSLIT',$workstring);
@@ -344,9 +344,8 @@ function update_session() {
      should probably be harvested from the descrioptiontype so if more
      are added, at any point in time, they can be used.
 
-     + biostateid (j) is currently locked to 3, since we aren't
-     actually editing these yet, and here should be locked to 1,
-     otherwise, since this is the raw creation.
+     + biostateid (j) is currently locked to 1 (raw), since this is
+     the raw creation.
 
      + biodestid (k) is web and book destinations, and should be
      actually harvested from BioDests, so if more are added, at any
@@ -357,40 +356,43 @@ function update_session() {
 
   // Create the Descriptions array entries.
 
-  $desc_array[1][3][1]['en-us']=$session["title"];
-  $desc_array[1][3][2]['en-us']=$session["title"];
-  $desc_array[2][3][1]['en-us']=$session["subtitle"];
-  $desc_array[2][3][2]['en-us']=$session["subtitle"];
-  $desc_array[3][3][1]['en-us']=$session["description_good_web"];
-  $desc_array[3][3][2]['en-us']=$session["description_good_book"];
+  $desc_array[1][1][1]['en-us']=$session["title"];
+  $desc_array[1][1][2]['en-us']=$session["title"];
+  $desc_array[2][1][1]['en-us']=$session["subtitle"];
+  $desc_array[2][1][2]['en-us']=$session["subtitle"];
+  $desc_array[3][1][1]['en-us']=$session["description_raw_web"];
+  $desc_array[3][1][2]['en-us']=$session["description_raw_book"];
 
   // Run the loops.
-  $j=3;
+  $j=1;
   $l="en-us";
   for ($i=1; $i<=3; $i++) {
     for ($k=1; $k<=2; $k++) {
 
       // Check to see if it exists.
       if (isset($desc_array[$i][$j][$k][$l]) and ($desc_array[$i][$j][$k][$l] != "")) {
-	$wherestring="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid'];
-	$wherestring.=" AND descriptiontypeid=$i AND biostateid=$j AND biodestid=$k AND descriptionlang=\"$l\"";
-	$query="SELECT descriptionid FROM Descriptions WHERE $wherestring";
+        $wherestring="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid'];
+        $wherestring.=" AND descriptiontypeid=$i AND biostateid=$j AND biodestid=$k AND";
+        $wherestring.=" descriptionlang=\"$l\"";
+        $query="SELECT descriptionid FROM Descriptions WHERE $wherestring";
 
-	// Retrieve query
-	list($desctestrows,$header_array,$desctest_array)=queryreport($query,$link,$title,$description,0);
+        // Retrieve query
+        list($desctestrows,$header_array,$desctest_array)=queryreport($query,$link,$title,$description,0);
 
-	// If it doesn't exist, create it, if it does, update it.
-	if ($desctestrows==0) {
-	  $element_array=array('sessionid','conid','descriptiontypeid','biostateid',
-			       'biodestid','descriptionlang','descriptiontext');
-	  $value_array=array($session['sessionid'],$_SESSION['conid'],$i,$j,$k,$l,
-			     htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
-	  $message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
-	} else {
-	  $pairedvalue_array=array("descriptiontext='".mysql_real_escape_string($desc_array[$i][$j][$k][$l])."'");
-	  $match_string=$wherestring;
-	  $message.=update_table_element_extended_match ($link,$title,"Descriptions",$pairedvalue_array, $match_string);
-	}
+        // Limit check should go here.
+
+        // If it doesn't exist, create it, if it does, update it.
+        if ($desctestrows==0) {
+          $element_array=array('sessionid','conid','descriptiontypeid','biostateid',
+                               'biodestid','descriptionlang','descriptiontext');
+          $value_array=array($session['sessionid'],$_SESSION['conid'],$i,$j,$k,$l,
+		             	     htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
+          $message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
+        } else {
+          $pairedvalue_array=array("descriptiontext='".mysql_real_escape_string($desc_array[$i][$j][$k][$l])."'");
+          $match_string=$wherestring;
+          $message.=update_table_element_extended_match ($link,$title,"Descriptions",$pairedvalue_array, $match_string);
+        }
       }
     }
   }
@@ -402,10 +404,6 @@ function update_session() {
   $te_array["servdest"]="serviceid";
   $tn_array["pubchardest"]="SessionHasPubChar";
   $te_array["pubchardest"]="pubcharid";
-  $tn_array["vendfeatdest"]="SessionHasVendorFeature";
-  $te_array["vendfeatdest"]="vendorfeatureid";
-  $tn_array["spacedest"]="SessionHasVendorSpace";
-  $te_array["spacedest"]="vendorspaceid";
 
   // Loop across the keys of the array created above.
   foreach (array_keys($tn_array) as $j) {
@@ -421,28 +419,6 @@ function update_session() {
 	$value_array=array($session["sessionid"],$_SESSION['conid'],$session[$j][$i]);
 	$message.=submit_table_element($link,$title,$tn_array[$j],$element_array,$value_array);
       }
-    }
-  }
-
-  /* Set up the Vendor Adjustment Value, in case it every gets used.*/
-  $query="DELETE from SessionHasVendorAdjust where sessionid=".$session["sessionid"];
-  $query.=" AND conid=".$_SESSION['conid'];
-  if (($session["vendoradjustvalue"]!="") or ($session["vendoradjustnote"]!="")) {
-    $query="INSERT into SessionHasVendorAdjust set sessionid=".$id." ";
-    if ($session["vendoradjustvalue"]!="") {
-      $query.=", vendoradjustvalue=";
-      $query.=$session["vendoradjustvalue"]." ";
-    }
-    if ($session["vendoradjustnote"]!="") {
-      $query.=", vendoradjustnote='";
-      $query.=$session["vendoradjustnote"]."' ";
-    }
-    $query.=", conid=".$_SESSION['conid'];
-    $result = mysql_query($query,$link);
-    if (!$result) {
-      $message_error.=mysql_error($link);
-      $message_error.=" query=$query";
-      return $message_error;
     }
   }
   return true;
@@ -475,7 +451,7 @@ function insert_session() {
   $session["subtitle"]=$session["secondtitle"];
 
   // Fix submitable characters
-  $checklist=array("title","subtitle","secondtitle","description_good_web","description_good_book");
+  $checklist=array("title","subtitle","secondtitle","description_raw_web","description_raw_book");
   foreach ($checklist as $i) {
     $workstring=$session[$i];
     $desctext0=iconv('UTF-8', 'ISO-8859-1//TRANSLIT',$workstring);
@@ -531,12 +507,11 @@ function insert_session() {
      meantime, while we are in transition...
 
      + descriptiontype (i) is title, subtitle and description, and
-     should probably be harvested from the descrioptiontype so if more
+     should probably be harvested from the descriptiontype so if more
      are added, at any point in time, they can be used.
 
-     + biostateid (j) is currently locked to 3, since we aren't
-     actually editing these yet, and here should be locked to 1,
-     otherwise, since this is the raw creation.
+     + biostateid (j) is currently locked to 1 (raw), since this is
+     the raw creation.
 
      + biodestid (k) is web and book destinations, and should be
      actually harvested from BioDests, so if more are added, at any
@@ -547,30 +522,30 @@ function insert_session() {
 
   // Create the Descriptions array entries.
 
-  $desc_array[1][3][1]['en-us']=$session["title"];
-  $desc_array[1][3][2]['en-us']=$session["title"];
-  $desc_array[2][3][1]['en-us']=$session["subtitle"];
-  $desc_array[2][3][2]['en-us']=$session["subtitle"];
-  $desc_array[3][3][1]['en-us']=$session["description_good_web"];
-  $desc_array[3][3][2]['en-us']=$session["description_good_book"];
+  $desc_array[1][1][1]['en-us']=$session["title"];
+  $desc_array[1][1][2]['en-us']=$session["title"];
+  $desc_array[2][1][1]['en-us']=$session["subtitle"];
+  $desc_array[2][1][2]['en-us']=$session["subtitle"];
+  $desc_array[3][1][1]['en-us']=$session["description_raw_web"];
+  $desc_array[3][1][2]['en-us']=$session["description_raw_book"];
 
   // Run the loops.
-  $j=3;
+  $j=1;
   $l="en-us";
   for ($i=1; $i<=3; $i++) {
     for ($k=1; $k<=2; $k++) {
 
       // Check to see if it exists.
-      if (isset($desc_array[$i][$j][$k][$l]) and ($desc_array[$i][$j][$k][$l] != "")) {
+      if (!empty($desc_array[$i][$j][$k][$l])) {
 
-	// Limit check should go here.
+        // Limit check should go here.
 
-	// Create and submit the arrays.
-	$element_array=array('sessionid','conid','descriptiontypeid','biostateid',
-			     'biodestid','descriptionlang','descriptiontext');
-	$value_array=array($id,$_SESSION['conid'],$i,$j,$k,$l,
-			   htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
-	$message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
+        // Create and submit the arrays.
+        $element_array=array('sessionid','conid','descriptiontypeid','biostateid',
+                             'biodestid','descriptionlang','descriptiontext');
+        $value_array=array($id,$_SESSION['conid'],$i,$j,$k,$l,
+                           htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
+        $message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
       }
     }
   }
@@ -582,10 +557,6 @@ function insert_session() {
   $te_array["servdest"]="serviceid";
   $tn_array["pubchardest"]="SessionHasPubChar";
   $te_array["pubchardest"]="pubcharid";
-  $tn_array["vendfeatdest"]="SessionHasVendorFeature";
-  $te_array["vendfeatdest"]="vendorfeatureid";
-  $tn_array["spacedest"]="SessionHasVendorSpace";
-  $te_array["spacedest"]="vendorspaceid";
 
   // Loop across the keys of the array created above.
   foreach (array_keys($tn_array) as $j) {
@@ -597,26 +568,6 @@ function insert_session() {
 	$value_array=array($id,$_SESSION['conid'],$session[$j][$i]);
 	$message.=submit_table_element($link,$title,$tn_array[$j],$element_array,$value_array);
       }
-    }
-  }
-
-  /* Set up the Vendor Adjustment Value, in case it every gets used.*/
-  if (($session["vendoradjustvalue"]!="") or ($session["vendoradjustnote"]!="")) {
-    $query="INSERT into SessionHasVendorAdjust set sessionid=".$id." ";
-    if ($session["vendoradjustvalue"]!="") {
-      $query.=", vendoradjustvalue=";
-      $query.=$session["vendoradjustvalue"]." ";
-    }
-    if ($session["vendoradjustnote"]!="") {
-      $query.=", vendoradjustnote='";
-      $query.=$session["vendoradjustnote"]."' ";
-    }
-    $query.=", conid=".$_SESSION['conid'];
-    $result = mysql_query($query,$link);
-    if (!$result) {
-      $message_error.=mysql_error($link);
-      $message_error.=" query=$query";
-      return $message_error;
     }
   }
   return $id;
@@ -631,78 +582,21 @@ function retrieve_session_from_db($sessionid,$conid) {
   // $conid is now passed in.
   //$conid=$_SESSION['conid']; // make it a variable so it can be substituted
 
-/* For the title and descriptions (these should become not hard-coded):
-   descriptiontypeid: 1=title 2=subtitle 3=description
-   biostateid: 1=raw 2=edited 3=good
-   biodestid: 1=web 2=book
+/* For the title and descriptions:
+   Using raw, since the updates should be in StaffManageBios
    descriptionlang: Only using "en-us" for now. */
 
-  $query= <<<EOD
+  $descdata=getDescData($sessionid,$conid);
+
+  $query=<<<EOD
 SELECT
     sessionid, conid, trackid, typeid, divisionid, pubstatusid,
     languagestatusid, title, secondtitle, pocketprogtext, progguiddesc,
-    description_good_web, description_good_book, title_good_web,
     persppartinfo, duration,estatten, kidscatid, signupreq, roomsetid,
     notesforpart, servicenotes, statusid, notesforprog, suggestor,
-    warnings, invitedguest, ts, subtitle_good_web
+    warnings, invitedguest, ts
   FROM
       Sessions
-    LEFT JOIN (SELECT
-        sessionid,
-	descriptiontext as title_good_web
-      FROM
-          Descriptions
-	JOIN DescriptionTypes USING (descriptiontypeid)
-        JOIN BioStates USING (biostateid)
-        JOIN BioDests USING (biodestid)
-      WHERE
-        conid=$conid AND
-	descriptiontypename='title' AND
-	biostatename='good' AND
-	biodestname='web' AND
-	descriptionlang='en-us') TGW USING (sessionid)
-    LEFT JOIN (SELECT
-        sessionid,
-	descriptiontext as subtitle_good_web
-      FROM
-          Descriptions
-	JOIN DescriptionTypes USING (descriptiontypeid)
-        JOIN BioStates USING (biostateid)
-        JOIN BioDests USING (biodestid)
-      WHERE
-        conid=$conid AND
-	descriptiontypename='subtitle' AND
-	biostatename='good' AND
-	biodestname='web' AND
-	descriptionlang='en-us') SGW USING (sessionid)
-    LEFT JOIN (SELECT
-        sessionid,
-	descriptiontext as description_good_web
-      FROM
-          Descriptions
-	JOIN DescriptionTypes USING (descriptiontypeid)
-        JOIN BioStates USING (biostateid)
-        JOIN BioDests USING (biodestid)
-      WHERE
-        conid=$conid AND
-	descriptiontypename='description' AND
-	biostatename='good' AND
-	biodestname='web' AND
-	descriptionlang='en-us') DGW USING (sessionid)
-    LEFT JOIN (SELECT
-        sessionid,
-	descriptiontext as description_good_book
-      FROM
-          Descriptions
-	JOIN DescriptionTypes USING (descriptiontypeid)
-        JOIN BioStates USING (biostateid)
-        JOIN BioDests USING (biodestid)
-      WHERE
-        conid=$conid AND
-	descriptiontypename='description' AND
-	biostatename='good' AND
-	biodestname='book' AND
-	descriptionlang='en-us') DGB USING (sessionid)
   WHERE
     conid=$conid AND
     sessionid=$sessionid
@@ -727,22 +621,39 @@ EOD;
   $session["pubstatusid"]=$sessionarray["pubstatusid"];
   $session["languagestatusid"]=$sessionarray["languagestatusid"];
   $session["title"]=$sessionarray["title"];
-  $session["title_good_web"]=$sessionarray["title_good_web"];
+  $session["title_raw_web"]=$descdata["title_en-us_raw_web_bio"];
+  $session["title_edited_web"]=$descdata["title_en-us_edited_web_bio"];
+  $session["title_good_web"]=$descdata["title_en-us_good_web_bio"];
+  $session["title_raw_book"]=$descdata["title_en-us_raw_book_bio"];
+  $session["title_edited_book"]=$descdata["title_en-us_edited_book_bio"];
+  $session["title_good_book"]=$descdata["title_en-us_good_book_bio"];
   $session["secondtitle"]=$sessionarray["secondtitle"];
-  $session["subtitle_good_web"]=$sessionarray["subtitle_good_web"];
+  $session["subtitle_raw_web"]=$descdata["subtitle_en-us_raw_web_bio"];
+  $session["subtitle_edited_web"]=$descdata["subtitle_en-us_edited_web_bio"];
+  $session["subtitle_good_web"]=$descdata["subtitle_en-us_good_web_bio"];
+  $session["subtitle_raw_book"]=$descdata["subtitle_en-us_raw_book_bio"];
+  $session["subtitle_edited_book"]=$descdata["subtitle_en-us_edited_book_bio"];
+  $session["subtitle_good_book"]=$descdata["subtitle_en-us_good_book_bio"];
   $session["pocketprogtext"]=$sessionarray["pocketprogtext"];
   $session["progguiddesc"]=$sessionarray["progguiddesc"];
-  if (($sessionarray["description_good_web"]=="") and ($sessionarray["progguiddesc"]!="")) {
-    $session["description_good_web"]=$sessionarray["progguiddesc"];
+  if (($descdata["description_en-us_raw_web_bio"]=="") and ($sessionarray["progguiddesc"]!="")) {
+    $session["description_raw_web"]=$sessionarray["progguiddesc"];
+  } elseif (($descdata["description_en-us_raw_web_bio"]=="") and ($descdata["description_en-us_good_web_bio"]!="")) {
+      $session["description_raw_web"]=$descdata["description_en-us_good_web_bio"];
   } else {
-    $session["description_good_web"]=$sessionarray["description_good_web"];
+    $session["description_raw_web"]=$descdata["description_en-us_raw_web_bio"];
   }
-  if (($sessionarray["description_good_book"]=="") and ($sessionarray["pocketprogtext"]!="")) {
-    $session["description_good_book"]=$sessionarray["pocketprogtext"];
+  if (($descdata["description_en-us_raw_book_bio"]=="") and ($sessionarray["pocketprogtext"]!="")) {
+    $session["description_raw_book"]=$sessionarray["pocketprogtext"];
+  } elseif (($descdata["description_en-us_raw_book_bio"]=="") and ($descdata["description_en-us_good_book_bio"]!="")) {
+      $session["description_raw_book"]=$descdata["description_en-us_good_book_bio"];
   } else {
-    $session["description_good_book"]=$sessionarray["description_good_book"];
+    $session["description_raw_book"]=$descdata["description_en-us_raw_book_bio"];
   }
-
+  $session["description_edited_web"]=$descdata["description_en-us_edited_web_bio"];
+  $session["description_good_web"]=$descdata["description_en-us_good_web_bio"];
+  $session["description_edited_book"]=$descdata["description_en-us_edited_book_bio"];
+  $session["description_good_book"]=$descdata["description_en-us_good_book_bio"];
   $session["persppartinfo"]=$sessionarray["persppartinfo"];
   $timearray=parse_mysql_time_hours($sessionarray["duration"]);
   if ($_SESSION['condurationminutes']=="TRUE") {

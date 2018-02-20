@@ -687,7 +687,7 @@ function renderprecisreport ($startrows,$endrows,$header_array,$element_array) {
     $printstring.="</TD>\n  <TD class=\"border0000\"><b>";
     if (!empty($element_array[$i]['title'])) {
       if ((may_I('Staff')) and (!empty($element_array[$i]['sessionid']))){
-	$printstring.="<A HREF=\"EditSession.php?id=".$element_array[$i]['sessionid']."\">".htmlspecialchars($element_array[$i]['title'],ENT_NOQUOTES)."</A>";
+	$printstring.="<A HREF=\"StaffEditDescs.php?qno=3&badgeid=".$element_array[$i]['sessionid']."\">".htmlspecialchars($element_array[$i]['title'],ENT_NOQUOTES)."</A>";
       } else {
 	$printstring.=htmlspecialchars($element_array[$i]['title'],ENT_NOQUOTES);
       }

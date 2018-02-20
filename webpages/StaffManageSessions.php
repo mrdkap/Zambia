@@ -24,6 +24,8 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
    <DD>A tabular report on all sessions organized by track.  Key information on each session is visible from the top level and a link takes you down into the details for any session.</DD>
    <DT><A HREF="CommentOnSessions.php">Session Comments</A></DT>
    <DD>Add comments and feedback specifically for Sessions.</DD>
+   <DT><A HREF="genreport.php?reportname=scheduledmissingcount">Missing Attendance Counts</A></DT>
+   <DD>Add the missing attendance counts to sessions missing them</DD>
    <DT><A HREF="VoteOnSession.php">Vote on Sessions</A></DT>
    <DD>Add or update your vote on a set of presenter Sessions.</DD>
    <DT><A HREF="ViewPrecis.php">Precis View</A></DT>

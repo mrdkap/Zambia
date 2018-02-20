@@ -32,22 +32,26 @@ if ((!empty($_POST['conid'])) and (is_numeric($_POST['conid']))) {
 }
 
 $title="Edit Class Descriptions";
-$additionalinfo ="<P><A HREF=\"StaffManageBios.php";
-if ((isset($qno)) or (isset($sessionids)) or (isset($_POST['unlock']))) {
-  $additionalinfo.="?";
-  if (isset($qno)) {
-    $additionalinfo.="qno=$qno";
-    if ((isset($sessionids)) or (isset($_POST['unlock']))) {
-      $additionalinfo.="&";
+if (empty($sessionids)) {
+  $additionalinfo = "<P><A HREF=\"" . $_SESSION['return_to_page'];
+} else {
+  $additionalinfo ="<P><A HREF=\"StaffManageBios.php";
+  if ((!empty($qno)) or (!empty($sessionids)) or (!empty($_POST['unlock']))) {
+    $additionalinfo.="?";
+    if (isset($qno)) {
+      $additionalinfo.="qno=$qno";
+      if ((isset($sessionids)) or (isset($_POST['unlock']))) {
+        $additionalinfo.="&";
+      }
     }
-  }
-  if (isset($sessionids)) {
-    $additionalinfo.="badgeids=$sessionids";
-    if (isset($_POST['unlock'])) {
-      $additionalinfo.="&";
+    if (isset($sessionids)) {
+      $additionalinfo.="badgeids=$sessionids";
+      if (isset($_POST['unlock'])) {
+        $additionalinfo.="&";
+      }
     }
+    if (isset($_POST['unlock'])) {$additionalinfo.="unlock=".$_POST['unlock'];}
   }
-  if (isset($_POST['unlock'])) {$additionalinfo.="unlock=".$_POST['unlock'];}
 }
 $additionalinfo.="\">Return</A> to the selected list.</P>\n";
 $additionalinfo.="<P>Please edit the descriptions below.  We don't currently edit the";

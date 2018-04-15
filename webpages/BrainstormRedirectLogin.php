@@ -53,8 +53,25 @@ if ($_SERVER['SERVER_PORT'] == 80) {
 }
 $target.="://$targethost".$targetpath."doLogin.php";
 
+/* Test to see if CURL is enabled.
+if(is_callable('curl_init')){
+   echo "Enabled";
+}
+else
+{
+   echo "Not enabled";
+}
+*/
+
 // Command Line test
-//echo `curl -d "$post_string" $target`
+$curlstring ="curl -d \"$post_string\" $target";
+echo "$curlstring -- backtick";
+echo `$curlstring`;
+echo "$curlstring -- shell_exec";
+echo shell_exec($curlstring);
+echo "$curlstring -- exec";
+echo exec($curlstring);
+echo "$curlstring -- in program";
 
 // In PHP curl execution
 
@@ -70,7 +87,19 @@ curl_setopt($curl, CURLOPT_POST, 1);
 curl_setopt($curl, CURLOPT_POSTFIELDS, $post_string);
 
 // Cookie Param
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+//curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+// Headers?
+curl_setopt($curl, CURLOPT_HEADER, true);
+
+curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+
+// Redirects?
+curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+
+
+// on error be verbose
+//curl_setopt($curl, CURLOPT_FAILONERROR, true);
 
 // Retrieving session ID 
 $strCookie = 'PHPSESSID=' . $_COOKIE['PHPSESSID'] . '; path=/';    
@@ -79,8 +108,11 @@ $strCookie = 'PHPSESSID=' . $_COOKIE['PHPSESSID'] . '; path=/';
 curl_setopt($curl, CURLOPT_COOKIE, $strCookie ); 
 
 // We receive the answer as if we were the browser
-$curl_response = curl_exec($curl);
+//$curl_response = curl_exec($curl);
+curl_exec($curl);
+curl_close($curl);
 
 echo $curl_response;
 
+echo $target
 ?>

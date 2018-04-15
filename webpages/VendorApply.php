@@ -67,6 +67,155 @@ if ($vstatusrows==1) {
   $vstatusname=$vstatus_array[1]['vendorstatustypename'];
 }
 
+// Price total
+$total=0;
+
+// Vendor Space Name
+$queryVendorSpace=<<<EOD
+SELECT
+    basevendorspacename,
+    vendorspacecount,
+    vendorspacecount*vendorspaceprice AS vendorspacecost
+  FROM
+      VendorHasSpace
+    JOIN VendorSpace USING (vendorspaceid)
+    JOIN BaseVendorSpace USING (basevendorspaceid)
+  WHERE
+    conid=$conid AND
+    badgeid=$badgeid
+EOD;
+
+list($vspacerows,$vspaceheader_array,$vspace_array)=queryreport($queryVendorSpace, $link, $title, $description, 0);
+
+$vspace="";
+for ($i=1; $i<=$vspacerows; $i++) {
+  $vspace.=$vspace_array[$i]['vendorspacecount'] . " " . $vspace_array[$i]['basevendorspacename'] . ", ";
+  $total+=$vspace_array[$i]['vendorspacecost'];
+}
+
+// remove the trailing comma and space
+$vspace=rtrim($vspace, ', ');
+
+$queryVendorLoc=<<<EOD
+SELECT
+    if(booth!="",
+       concat(baselocroomname, " ", locationkey, booth),
+       if(baselocsubroomname!="",
+          concat(baselocroomname, " ", locationkey, baselocsubroomname),
+          concat(locationkey, baselocroomname))) AS actualvendorloc
+  FROM
+      VendorHasLoc
+    JOIN Location USING (locationid)
+    JOIN BaseLocSubRoom USING (baselocsubroomid)
+    JOIN BaseLocRoom USING (baselocroomid)
+  WHERE
+    conid=$conid AND
+    badgeid=$badgeid
+EOD;
+
+list($vlocrows,$vlocheader_array,$vloc_array)=queryreport($queryVendorLoc, $link, $title, $description, 0);
+
+$vloc="";
+for ($i=1; $i<=$vlocrows; $i++) {
+  $vloc.=$vloc_array[$i]['actualvendorloc'] . ", ";
+}
+
+// remove the trailing comma and space
+$vloc=rtrim($vloc, ', ');
+
+// Get Features
+$queryFeature=<<<EOD
+SELECT
+    vendorfeaturecount*vendorfeatureprice AS vendorfeaturecost
+  FROM
+      VendorHasFeature
+    JOIN VendorFeature USING (vendorfeatureid)
+    JOIN BaseVendorFeature USING (basevendorfeatureid)
+  WHERE
+    badgeid=$badgeid AND
+    conid=$conid
+EOD;
+
+list($featurerows,$featureheader_array,$feature_array)=queryreport($queryFeature,$link,$title,$description,0);
+
+for ($i=1; $i<=$featurerows; $i++) {
+  $total+=$feature_array[$i]['vendorfeaturecost'];
+}
+
+// Get PrintAds
+$queryPrintAd=<<<EOD
+SELECT
+    printadcount*printadprice AS printadcost
+  FROM
+      VendorHasPrintAd
+    JOIN PrintAd USING (printadid)
+    JOIN BasePrintAd USING (baseprintadid)
+  WHERE
+    badgeid=$badgeid AND
+    conid=$conid
+EOD;
+
+list($printadrows,$printadheader_array,$printad_array)=queryreport($queryPrintAd,$link,$title,$description,0);
+
+for ($i=1; $i<=$printadrows; $i++) {
+  $total+=$printad_array[$i]['printadcost'];
+}
+
+// Get Digital Ads
+$queryDigitalAd=<<<EOD
+SELECT
+    digitaladcount*digitaladprice AS digitaladcost
+  FROM
+      VendorHasDigitalAd
+    JOIN DigitalAd USING (digitaladid)
+    JOIN BaseDigitalAd USING (basedigitaladid)
+  WHERE
+    badgeid=$badgeid AND
+    conid=$conid
+EOD;
+
+list($digitaladrows,$digitaladheader_array,$digitalad_array)=queryreport($queryDigitalAd,$link,$title,$description,0);
+
+for ($i=1; $i<=$digitaladrows; $i++) {
+  $total+=$digitalad_array[$i]['digitaladcost'];
+}
+
+// Get Sponsor Levels
+$querySponsorLevel=<<<EOD
+SELECT
+    sponsorlevelcount*sponsorlevelprice AS sponsorlevelcost
+  FROM
+      VendorHasSponsorLevel
+    JOIN SponsorLevel USING (sponsorlevelid)
+    JOIN BaseSponsorLevel USING (basesponsorlevelid)
+  WHERE
+    badgeid=$badgeid AND
+    conid=$conid
+EOD;
+
+list($sponsorlevelrows,$sponsorlevelheader_array,$sponsorlevel_array)=queryreport($querySponsorLevel,$link,$title,$description,0);
+
+for ($i=1; $i<=$sponsorlevelrows; $i++) {
+  $total+=$sponsorlevel_array[$i]['sponsorlevelcost'];
+}
+
+// Get Payment Adjustment
+$queryPayAdj=<<<EOD
+SELECT
+    vendorpayadj
+  FROM
+      VendorAnnualInfo
+  WHERE
+    badgeid=$badgeid AND
+    conid=$conid
+EOD;
+
+list($payadjrows,$payadjheader_array,$payadj_array)=queryreport($queryPayAdj,$link,$title,$description,0);
+
+for ($i=1; $i<=$payadjrows; $i++) {
+  $total+=$payadj_array[$i]['vendorpayadj'];
+}
+
 topofpagereport($title,$description,$additionalinfo,$message,$message_error);
 
 // Again possible for the SuperVendor to set someone up.
@@ -92,29 +241,25 @@ if (may_I('SuperVendor')) {
 <?php
 echo $vstatusname."<br />\n";
 
-// Somehow, booth size
-if (!empty($vspaceactual)) {
-  echo "Your space will be: $vspaceactual<br />\n";
+// booth type
+if (!empty($vspace)) {
+  echo "Your space will be: $vspace<br />\n";
 } else {
   echo "Your space has not yet been decided.<br />\n";
 }
 
-// Not sure we want this, but probably can be done off of vstatusname
-if ($session['total']!=0) {
-  echo "Your current total is: $".$session['total'].".<br>\n";
-}
-
-// Somehow, location
-if (!empty($vlocation)) {
-  echo "Your location is: $vlocation<br />\n";
+// booth location
+if (!empty($vloc)) {
+  echo "Your location is: $vloc<br />\n";
 } else {
   echo "Your location has not yet been decided.<br />\n";
 }
 
 // Pretty sure we want this, can be done off of vstatusname probably
-if ($session['statusname']=="Vendor Approved") {
-  echo "Please <A HREF=\"VendorInvoice.php\">Pay Here</A>.</P>\n";
-} elseif ($session['statusname']=="Vendor Paid") {
+if ($vstatusname=="Invoiced") {
+  echo "Your current total is: $" . $total . ".<br>\n";
+  echo "Please <A HREF=\"VendorWelcome.php\">Pay Here</A>.</P>\n";
+} elseif (($vstatusname=="Paid") or ($vstatusname=="Accepted")) {
   echo "Thank you for paying.  We are looking forward to seeing you.</P>\n";
 } else {
   echo "Should you be accepted for the event, payment will be expected promptly.</P>\n";

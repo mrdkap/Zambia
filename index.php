@@ -6,8 +6,9 @@ $HeaderTemplateFile="Local/HeaderTemplate.php";
 $FooterTemplateFile="Local/FooterTemplate.php";
 
 // Database link
-$link = mysql_connect(DBHOSTNAME,DBUSERID,DBPASSWORD);
-mysql_select_db(DBDB,$link);
+$link = mysqli_connect(DBHOSTNAME,DBUSERID,DBPASSWORD,DBDB);
+//mysql_select_db(DBDB,$link);
+//mysqli_select_db(DBDB,$link);
 
 // Establish the con info
 $query=<<<EOF
@@ -24,19 +25,19 @@ SELECT
 EOF;
 
 // Retrieve query fail if database can't be found, and if there isn't just one result
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   $message.="<P>Error retrieving data from database.</P>\n<P>";
   $message.=$query;
   $message.="</P>\n";
 }
-if (0==($conrows=mysql_num_rows($result))) {
+if (0==($conrows=mysqli_num_rows($result))) {
   $message.="<P>No results found.</P>\n<P>";
   $message.=$query;
   $message.="</P>\n";
 }
 
 for ($i=1; $i<=$conrows; $i++) {
-  $tmpconinfo_array=mysql_fetch_assoc($result);
+  $tmpconinfo_array=mysqli_fetch_assoc($result);
   $ConCount_array[$i]=$tmpconinfo_array['conid'];
   $ConInfo_array[$tmpconinfo_array['conid']]['conname']=$tmpconinfo_array['conname'];
   $ConInfo_array[$tmpconinfo_array['conid']]['connamelong']=$tmpconinfo_array['connamelong'];
@@ -59,12 +60,12 @@ SELECT
 EOF;
 
 // Retrieve query, fail if database can't be found, or there aren't any results
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   $message.="<P>Error retrieving data from database.</P>\n<P>";
   $message.=$query;
   $message.="</P>\n";
 }
-if (0==($phaserows=mysql_num_rows($result))) {
+if (0==($phaserows=mysqli_num_rows($result))) {
   $message.="<P>No results found.</P>\n<P>";
   $message.=$query;
   $message.="</P>\n";
@@ -72,7 +73,7 @@ if (0==($phaserows=mysql_num_rows($result))) {
 
 // Set up the phase_array such that the typename is the key and the state is the value
 for ($i=1; $i<=$phaserows; $i++) {
-  $element_array=mysql_fetch_assoc($result);
+  $element_array=mysqli_fetch_assoc($result);
   $phase_array[$element_array['conid']][$element_array['phasetypename']]=$element_array['phasestate'];
 }
 
@@ -108,12 +109,12 @@ SELECT
 EOF;
 
 // Retrieve query, fail if database can't be found, or there aren't any results
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   $message.="<P>Error retrieving data from database.</P>\n<P>";
   $message.=$query;
   $message.="</P>\n";
 }
-if (0==($approws=mysql_num_rows($result))) {
+if (0==($approws=mysqli_num_rows($result))) {
   $message.="<P>No results found.</P>\n<P>";
   $message.=$query;
   $message.="</P>\n";
@@ -122,7 +123,7 @@ if (0==($approws=mysql_num_rows($result))) {
 $appstringstart="              <DL>\n";
 $appstringend="             </DL>\n";
 for ($i=1; $i<=$approws; $i++) {
-  $element_array=mysql_fetch_assoc($result);
+  $element_array=mysqli_fetch_assoc($result);
   $appstring[$element_array['conid']].=$element_array['Applications'];
 }
 

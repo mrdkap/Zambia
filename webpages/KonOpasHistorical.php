@@ -10,10 +10,7 @@ if ($conid=="") {$conid=$_SESSION['conid'];}
 $conname=$ConInfo_array[$conid]['conname'];
 $connamelong=$ConInfo_array[$conid]['connamelong'];
 $connumdays=$ConInfo_array[$conid]['connumdays'];
-$Grid_Spacer=$ConInfo_array[$conid]['congridspacer'];
 $ConStart=$ConInfo_array[$conid]['constartdate'];
-$conurl=$ConInfo_array[$conid]['conurl'];
-$logo=$ConInfo_array[$conid]['conlogo'];
 
 // Pretty con date
 $constartdateraw = date_create($ConStart);
@@ -29,43 +26,51 @@ if ($connumdays < 2) {
   $condate.=date_format($conenddateraw, 'j, Y');
 }
 
+// Set up Phase Array
+$phase_array['OrgChart']=0;
+$phase_array['Prog Available']=0;
+$phase_array['Grid Available']=0;
+$phase_array['Vendors Available']=0;
+$phase_array['Venue Available']=0;
+
 if (file_exists("../Local/$conid/orgchart.js")) {
-  $phase_array['OrgChart']=0;
+  $phase_array['OrgChart']++;
 }
 
 if (file_exists("../Local/$conid/people.js")) {
-  $phase_array['Prog Available']=0;
+  $phase_array['Prog Available']++;
 }
 if (file_exists("../Local/$conid/program.js")) {
-  $phase_array['Prog Available']=0;
+  $phase_array['Prog Available']++;
 }
 
 if (file_exists("../Local/$conid/timeline.js")) {
-  $phase_array['Grid Available']=0;
+  $phase_array['Grid Available']++;
 }
 
 if (file_exists("../Local/$conid/vendor.js")) {
-  $phase_array['Vendors Available']=0;
+  $phase_array['Vendors Available']++;
 }
 if (file_exists("../Local/$conid/community.js")) {
-  $phase_array['Vendors Available']=0;
+  $phase_array['Vendors Available']++;
 }
 if (file_exists("../Local/$conid/Vendor_Map.svg")) {
-  $phase_array['Vendors Available']=0;
+  $phase_array['Vendors Available']++;
 }
 if (file_exists("../Local/$conid/Vendor_Map.pdf")) {
-  $phase_array['Vendors Available']=0;
+  $phase_array['Vendors Available']++;
 }
 if (file_exists("../Local/$conid/Vendor_List")) {
-  $phase_array['Vendors Available']=0;
+  $phase_array['Vendors Available']++;
 }
   
 if (file_exists("../Local/$conid/Venue_Map.svg")) {
-  $phase_array['Venue Available']=0;
+  $phase_array['Venue Available']++;
 }
 if (file_exists("../Local/$conid/Venue_Info")) {
-  $phase_array['Venue Available']=0;
-}  
+  $phase_array['Venue Available']++;
+}
+
 ?>
 <!DOCTYPE html>
 <html><!-- manifest="konopas.appcache" -->
@@ -197,12 +202,12 @@ $genbody.="    <H2>$condate</H2>\n";
 $genbody.="    <H3>General Information</H3>\n";
 $genbody.="    <UL>\n";
 
-if ($phase_array['OrgChart'] == '0' ) {
+if ($phase_array['OrgChart'] > '0' ) {
   $genbody.="      <LI class=collapse>Org Chart</LI>\n";
   $genbody.="      <DIV id=\"org_chart_div\" style=\"width:100%\"></DIV></LI>\n";
 }
 
-if ($phase_array['Grid Available'] == '0') {
+if ($phase_array['Grid Available'] > '0') {
   require_once("../Local/$conid/timeline.php");
   for ($graphrow=0; $graphrow<$graph_count; $graphrow++) {
     $genbody.="      <LI class=collapse>Grid for " . $graph_day[$graphrow] . "</LI>\n";
@@ -222,7 +227,7 @@ if (file_exists("../Local/$conid/Program_Book.pdf")) {
 $genbody.="    </UL>\n  </DIV>\n";
 
 $venueinfo="";
-if ($phase_array['Venue Available'] == '0' ) {
+if ($phase_array['Venue Available'] > '0' ) {
   $venueinfo.="  <DIV style=\" display: block; width: 100%; float: left; \">\n";
   $venueinfo.="    <A NAME=\"Venue\">&nbsp;</A>\n";
   $venueinfo.="    <H3>Venue Information</H3>\n";
@@ -242,7 +247,7 @@ if ($phase_array['Venue Available'] == '0' ) {
 
 $vendorinfo="";
 $vendorbodyinfo="";
-if ($phase_array['Vendors Available'] == '0' ) {
+if ($phase_array['Vendors Available'] > '0' ) {
 
   // SVG Map of the vendor layout
   if (file_exists("../Local/$conid/Vendor_Map.svg")) {
@@ -355,18 +360,18 @@ echo $rules;
 
 <!-- the Org Chart and Timeline script -->
 <?php
-if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0' )) {
+if (($phase_array['OrgChart'] > '0' ) || ($phase_array['Grid Available'] > '0' )) {
 ?>
 <script type="text/javascript">
 
   // Load the appropraite tools from google
 
 <?php
-  if (($phase_array['OrgChart'] == '0' ) && ($phase_array['Grid Available'] == '0' )) {
+  if (($phase_array['OrgChart'] > '0' ) && ($phase_array['Grid Available'] > '0' )) {
 ?>
   google.charts.load('current', {packages:['orgchart', 'timeline']});
 <?php
-  } elseif ($phase_array['OrgChart'] == '0' ) {
+  } elseif ($phase_array['OrgChart'] > '0' ) {
 ?>
   google.charts.load('current', {packages:['orgchart']});
 <?php
@@ -382,7 +387,7 @@ if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0'
   function drawChart() {
 
 <?php
-  if ($phase_array['OrgChart'] == '0' ) {
+  if ($phase_array['OrgChart'] > '0' ) {
 ?>
     // Apply data from above orgchart.js file.
     var data = new google.visualization.DataTable(orgchartData);
@@ -394,7 +399,7 @@ if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0'
 
 <?php
   }
-  if ($phase_array['Grid Available'] == '0' ) {
+  if ($phase_array['Grid Available'] > '0' ) {
 ?>
     // row hight of each row = 41
     var rowHeight = 46;
@@ -435,11 +440,11 @@ if (($phase_array['OrgChart'] == '0' ) || ($phase_array['Grid Available'] == '0'
 <?php
 }
 
-if ($phase_array['Prog Available'] == '0') {
+if ($phase_array['Prog Available'] > '0') {
    echo "<script src=\"../Local/$conid/program.js\"></script>\n";
    echo "<script src=\"../Local/$conid/people.js\"></script>\n";
 }
-if ($phase_array['Vendors Available'] == '0') {
+if ($phase_array['Vendors Available'] > '0') {
    echo "<script src=\"../Local/$conid/vendor.js\"></script>\n";
    echo "<script src=\"../Local/$conid/community.js\"></script>\n";
 }

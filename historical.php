@@ -1,14 +1,10 @@
 <?php
 require_once ('Local/db_name_historical.php'); // This should be generalized so everything can be one directory
 $webstring="";
-$message="";
 $HeaderTemplateFile="None";
 $FooterTemplateFile="None";
 
 $title="Historical Events:";
-
-// Setup to put the soonest at the top
-$webfinalstring="";
 
 // Walk each of the convention instances
 for ($i=0; $i<count($ConCount_array); $i++) {
@@ -42,16 +38,12 @@ for ($i=0; $i<count($ConCount_array); $i++) {
   $conname_tmp=htmlspecialchars_decode($ConInfo_array[$conid]['connamelong']);
   $conname="<A HREF=\"webpages/KonOpasHistorical.php?conid=$conid#info\">$conname_tmp</A>";
 
-  // Name and date the con.
-  $webstring.="            <LI><B><A NAME=\"$conid\"></A>$conname</B> &mdash; $condate";
-  $webstring.=" (<A HREF=\"webpages/login.php?newconid=$conid\">Presenter Login</A>)</LI>\n";
-
-  // Add the collected event information to the final web string.
-  $webfinalstring.=$webstring;
-  $webstring="";
+  // Add the name and date the con to be presented
+  $webstring.="            <LI><B><A NAME=\"$conid\"></A>$conname</B> &mdash; $condate</LI>\n";
 }
 
-$webfinalstring=$message . $webfinalstring . "          </UL>\n        </DIV>\n";
+//Close what might be opened.
+$webstring.="          </UL>\n        </DIV>\n";
 
 // Now start the display.
 ?>
@@ -100,7 +92,7 @@ if (file_exists($HeaderTemplateFile)) {
         <DIV style="background-color: #ffdb70; display: table; width: 100%;">
 <?php echo "          <H1>$title</H1>\n" ?>
         </DIV>
-<?php echo $webfinalstring; ?>
+<?php echo $webstring; ?>
       </ARTICLE>
       </MAIN>
       <DIV style="background-color: #ffdb70; display: table; width: 100%;">

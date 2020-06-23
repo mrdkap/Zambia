@@ -49,11 +49,12 @@ if (file_exists("../Local/$conid/timeline.js")) {
 }
 
 if (file_exists("../Local/$conid/vendor.js")) {
-  $phase_array['Vendors Available']++;
+  $phase_array['Vendor Info Available']++;
 }
 if (file_exists("../Local/$conid/community.js")) {
-  $phase_array['Vendors Available']++;
+  $phase_array['Vendor Info Available']++;
 }
+
 if (file_exists("../Local/$conid/Vendor_Map.svg")) {
   $phase_array['Vendors Available']++;
 }
@@ -354,14 +355,14 @@ echo $rules;
 <!-- Google charts load script -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-<!-- The org chart and timeline variables -->
-<script src="../Local/<?php echo $conid ?>/orgchart.js"></script>
-<script src="../Local/<?php echo $conid ?>/timeline.js"></script>
-
 <!-- the Org Chart and Timeline script -->
 <?php
 if (($phase_array['OrgChart'] > '0' ) || ($phase_array['Grid Available'] > '0' )) {
 ?>
+<!-- The org chart and timeline variables -->
+<script src="../Local/<?php echo $conid ?>/orgchart.js"></script>
+<script src="../Local/<?php echo $conid ?>/timeline.js"></script>
+
 <script type="text/javascript">
 
   // Load the appropraite tools from google
@@ -444,7 +445,7 @@ if ($phase_array['Prog Available'] > '0') {
    echo "<script src=\"../Local/$conid/program.js\"></script>\n";
    echo "<script src=\"../Local/$conid/people.js\"></script>\n";
 }
-if ($phase_array['Vendors Available'] > '0') {
+if ($phase_array['Vendor Info Available'] > '0') {
    echo "<script src=\"../Local/$conid/vendor.js\"></script>\n";
    echo "<script src=\"../Local/$conid/community.js\"></script>\n";
 }

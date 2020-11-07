@@ -385,8 +385,8 @@ $staffbioquery = <<<EOD
 SELECT
     concat('"id": "',badgeid,'"') AS id,
     concat('"name": [ "',name_good_staffweb,'" ]') AS name,
-    concat('"tags": []') AS tags,
-    concat('"prog": [ ',GROUP_CONCAT(DISTINCT '"',conroleid,'"' SEPARATOR ", "),' ]') AS prog,
+    concat('"tags": [ ',GROUP_CONCAT(DISTINCT '"',conroleid,'"' SEPARATOR ", "),' ]') AS tags,
+    concat('"prog": []') AS prog,
     badgeid,
     if(facebook_good_staffweb IS NULL,"",replace(facebook_good_staffweb,'"','')) AS facebook,
     if(twitter_good_staffweb IS NULL,"",replace(twitter_good_staffweb,'"','')) AS twitter,
@@ -498,7 +498,7 @@ EOD;
 // Retrieve query
 list($staffbiorows,$staffbioheader_array,$staffbio_array)=queryreport($staffbioquery,$link,$title,$description,0);
 
-$staffbios.="var people = [\n";
+$staffbios.="var staff = [\n";
 
 for ($i=1; $i<=$staffbiorows; $i++) {
   $staffbios.="    {\n";
@@ -1142,7 +1142,7 @@ EOD;
 $orgquery=<<<EOD
 SELECT
     concat('{"c":[{"v":"',CRA.conrolenotes,'","f":"',CRA.conrolenotes,'<br/> ',
-	   group_concat(DISTINCT "<A HREF=\'KonOpasStaff.php?conid=$conid#part/",badgeid,"\'>",pubsname,"</A>" SEPARATOR '/'),
+	   group_concat(DISTINCT "<A HREF=\'#staf/",badgeid,"\'>",pubsname,"</A>" SEPARATOR '/'),
            '"},{"v":"',if((CRC.conrolenotes IS NOT NULL),CRC.conrolenotes,""),'"},{"v":"',CRA.conroledescription,'"}]}') AS reportmap
   FROM
       ConRoles CRA

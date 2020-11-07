@@ -72,11 +72,16 @@ if (file_exists("../Local/$conid/Venue_Info")) {
   $phase_array['Venue Available']++;
 }
 
+if (file_exists("../Local/$conid/staff.js")) {
+  $phase_array['Staff Available']++;
+}
+
 ?>
 <!DOCTYPE html>
 <html><!-- manifest="konopas.appcache" -->
 <head>
 <meta charset="utf-8">
+<!-- <link rel="stylesheet" href="../../konopas/src/skin/skin.css"> -->
 <link rel="stylesheet" href="../../konopas/skin/skin.css">
 <meta name="HandheldFriendly" content="true">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -127,9 +132,10 @@ if (file_exists("../Local/$conid/Venue_Info")) {
 <ul id="tabs">
 <li id="tab_star"><a href="#star" data-txt>My con</a>
 <li id="tab_prog"><a href="#" data-txt>Program</a><div id="day-sidebar" class="sub-side"></div>
-<li id="tab_part"><a href="#part" data-txt>People</a><div id="part-sidebar" class="sub-side"></div>
+<li id="tab_part"><a href="#part" data-txt>Presenters</a><div id="part-sidebar" class="sub-side"></div>
 <li id="tab_vend"><a href="#vend" data-txt>Vendors</a><div id="vend-sidebar" class="sub-side"></div>
 <li id="tab_comm"><a href="#comm" data-txt>Community Tables</a><div id="comm-sidebar" class="sub-side"></div>
+<li id="tab_staf"><a href="#staf" data-txt>Staff</a><div id="staf-sidebar" class="sub-side"></div>
 <li id="tab_info"><a href="#info" data-txt>Info</a>
 </ul>
 
@@ -174,6 +180,12 @@ if (file_exists("../Local/$conid/Venue_Info")) {
 	<div id="comm-narrow" class="sub-narrow"></div>
 	<ul id="comm_names"></ul>
 	<div id="comm_info"></div>
+</div>
+
+<div id="staf_view" class="view">
+	<div id="staf-narrow" class="sub-narrow"></div>
+	<ul id="staf_names"></ul>
+	<div id="staf_info"></div>
 </div>
 
 <div id="info_view" class="view">
@@ -449,6 +461,10 @@ if ($phase_array['Vendor Info Available'] > '0') {
    echo "<script src=\"../Local/$conid/vendor.js\"></script>\n";
    echo "<script src=\"../Local/$conid/community.js\"></script>\n";
 }
+if ($phase_array['Staff Available'] > '0') {
+   echo "<script src=\"../Local/$conid/staff.js\"></script>\n";
+}
+
 ?>
 <script src="../../konopas/konopas.min.js"></script>
 <!-- <script src="../../konopas/src/konopas.min.js"></script> -->

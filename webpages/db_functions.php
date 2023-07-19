@@ -5,9 +5,9 @@ include ('../Local/db_name.php');
    Opens database channel. */
 function prepare_db() {
   global $link, $message, $message_error;
-  $link = mysql_connect(DBHOSTNAME,DBUSERID,DBPASSWORD);
+  $link = mysqli_connect(DBHOSTNAME,DBUSERID,DBPASSWORD);
   if ($link===false) return (false);
-  return (mysql_select_db(DBDB,$link));
+  return (mysqli_select_db(DBDB,$link));
 }
 
 /* Function vendor_prepare_db()

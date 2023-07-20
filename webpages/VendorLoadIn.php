@@ -56,7 +56,7 @@ $query = <<<EOD
 SELECT 
     roomid,
     roomname,
-    function,
+    `function`,
     floor,
     notes
   FROM
@@ -65,12 +65,13 @@ SELECT
     roomid=$selroomid
 EOD;
 
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message_error);
   exit();
 }
-echo "<H2>$selroomid - ".htmlspecialchars(mysql_result($result,0,"roomname"))."</H2>";
+$roominfo=mysqli_fetch_object($result);
+echo "<H2>$selroomid - ".htmlspecialchars($roominfo->roomname)."</H2>";
 echo "<CENTER>\n";
 echo "  <H4>Characteristics</H4>\n";
 echo "  <TABLE class=\"border1111=\">\n";
@@ -79,11 +80,11 @@ echo "      <TH class=\"lrpad border1111\">Function</TH>\n";
 echo "      <TH class=\"lrpad border1111\">Floor</TH>\n";
 echo "    </TR>\n";
 echo "    <TR>\n";
-echo "      <TD class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"function"))."</TD>\n";
-echo "     <TD class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"floor"))."</TD>\n";
+echo "      <TD class=\"lrpad border1111\">".htmlspecialchars($roominfo->function)."</TD>\n";
+echo "     <TD class=\"lrpad border1111\">".htmlspecialchars($roominfo->floor)."</TD>\n";
 echo "     </TR>\n";
 echo "    <TR>\n";
-echo "      <TD colspan=5 class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"notes"))."</TD>\n";
+echo "      <TD colspan=5 class=\"lrpad border1111\">".htmlspecialchars($roominfo->notes)."</TD>\n";
 echo "    </TR>\n";
 echo "  </TABLE>\n";
 echo "</CENTER>\n";

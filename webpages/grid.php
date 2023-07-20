@@ -457,15 +457,15 @@ EOD;
     $query.=" AND (TIME_TO_SEC(SCH.starttime) + TIME_TO_SEC(S.duration)) >= ($time + congridspacer);";
   }
 
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message="Error retrieving data from database.<BR>";
     $message.=$query;
     $message.="<BR>";
-    $message.= mysql_error();
+    $message.= mysqli_error();
     RenderError($title,$message);
     exit ();
   }
-  if (0==($rows=mysql_num_rows($result))) {
+  if (0==($rows=mysqli_num_rows($result))) {
     $message="<P>This report retrieved no results matching the criteria.</P>\n";
     RenderError($title,$message);
     exit();
@@ -474,12 +474,12 @@ EOD;
   if ($beginonly=="y") {
     for ($i=1; $i<=$rows; $i++) {
       $printrows_array[$i]=$i;
-      $grid_array[$i]=mysql_fetch_array($result,MYSQL_BOTH);
+      $grid_array[$i]=mysqli_fetch_array($result,MYSQLI_BOTH);
       $k=$grid_array[$i]['blocktime'];
       $grid_array[$i]['blocktime']=sprintf("<A HREF=\"StaffSched.php?format=sched&conid=$conid#%s\"><B>%s</B></A>",$k,$k);
     }
   } else {
-    $grid_array[$time]=mysql_fetch_array($result,MYSQL_BOTH);
+    $grid_array[$time]=mysqli_fetch_array($result,MYSQLI_BOTH);
     $skiprow=0;
     $refskiprow=0;
     for ($i=1; $i<=$rooms; $i++) {

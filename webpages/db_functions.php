@@ -19,10 +19,6 @@ function vendor_prepare_db() {
   return (mysqli_select_db(VENDORDB,$vlink));
 }
 
-/* Function mysqli_fetch()
-   replaces mysql_fetch with hopefully equivalent functionality. */
-   
-
 /* Function record_session_history($sessionid, $badgeid, $name, $email, $editcode, $statusid)
    The table SessionEditHistory has a timestamp column which is automatically set to the
    current timestamp by MySQL. */

@@ -49,14 +49,14 @@ SELECT
     badgeid=$selpartid
 EOD;
 
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     $message=$query."<BR>Error querying database. Unable to continue.<BR>";
     echo "<P class\"errmsg\">".$message."\n";
     correct_footer();
     exit();
     }
 
-list($pubsname)= mysql_fetch_array($result, MYSQL_NUM);
+list($pubsname)= mysqli_fetch_array($result, MYSQLI_NUM);
 
 $query = <<<EOD
 SELECT
@@ -69,14 +69,14 @@ SELECT
     conid=$conid
 EOD;
 
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     $message=$query."<BR>Error querying database. Unable to continue.<BR>";
     echo "<P class\"errmsg\">".$message."\n";
     correct_footer();
     exit();
     }
 
-list($interested)= mysql_fetch_array($result, MYSQL_NUM);
+list($interested)= mysqli_fetch_array($result, MYSQLI_NUM);
 
 ?>
 

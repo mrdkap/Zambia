@@ -115,13 +115,13 @@ SELECT
 EOD;
 
   // Retrieve query
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message.=$query."<BR>Error querying database.<BR>";
     RenderError($title,$message);
     exit();
   }
 
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $pflow_array[]=$row['reportid'];
     $pflow_notes[]=$row['pflownote'];
   }

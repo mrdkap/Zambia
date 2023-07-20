@@ -63,7 +63,7 @@ SELECT
     reportid
 EOD;
 
-if (!$Sresult=mysql_query($query,$link)) {
+if (!$Sresult=mysqli_query($link,$query)) {
   $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message_error);
   exit();
@@ -83,7 +83,7 @@ echo "     <OPTION value=0";
 if ($selreportid==0) {echo " selected";}
 echo ">Select Report</OPTION>\n";
 echo "     <OPTION value=-1>New Report</OPTION>\n";
-while (list($reportid,$reportname,$reporttitle,$reportdescription)= mysql_fetch_array($Sresult, MYSQL_NUM)) {
+while (list($reportid,$reportname,$reporttitle,$reportdescription)= mysqli_fetch_array($Sresult, MYSQLI_NUM)) {
   if (is_numeric($selreportid)) {
     echo "";
    } else { 

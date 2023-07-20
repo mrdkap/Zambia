@@ -447,13 +447,13 @@ function edit_vendor_update ($work_arr) {
 
     // Already existing email address.
     $query = "SELECT email FROM Participants where email like \"%".$work_arr['email']."%\"";
-    $result=mysql_query($query,$link);
+    $result=mysqli_query($link,$query);
     if (!$result) {
       $message_error="Unable to reach database.<BR>\n$query<BR>\n";
       RenderError($title,$message_error);
       exit();
     }
-    if (mysql_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
       $message_error="There is already an entry with this email address in the system.</P>\n";
       $message_error.="<P>Please <A HREF\"doLogin.php?newconid=$conid&badgeid=".$work_arr['email']."\">log in</A>\n";
       $message_error.="instead of trying to re-create yourself.  If you have forgotton your password ";
@@ -465,20 +465,20 @@ function edit_vendor_update ($work_arr) {
     // Get next possible badgeid.
     // WAS: "SELECT MAX(badgeid) FROM Participants WHERE badgeid>='1'";
     $query = "SELECT badgeid FROM Participants ORDER BY ABS(badgeid) DESC LIMIT 1";
-    $result=mysql_query($query,$link);
+    $result=mysqli_query($link,$query);
     if (!$result) {
       $message_error="Unrecoverable error updating database.  Database not updated.<BR>\n";
       $message_error.=$query;
       RenderError($title,$message_error);
       exit();
     }
-    if (mysql_num_rows($result)!=1) {
+    if (mysqli_num_rows($result)!=1) {
       $message_error="Database query returned unexpected number of rows(1 expected).  Database not updated.<BR>\n";
       $message_error.=$query;
       RenderError($title,$message_error);
       exit();
     }
-    $maxbadgeid=mysql_result($result,0);
+    $maxbadgeid=mysqli_fetch_object($result)->badgeid;
     sscanf($maxbadgeid,"%d",$x);
     $badgeid=sprintf("%d",$x+1); // convert to num; add 1; convert back to string
 
@@ -705,20 +705,20 @@ function create_vendor ($participant_arr) {
   // Get next possible badgeid.
   // WAS: "SELECT MAX(badgeid) FROM Participants WHERE badgeid>='1'";
   $query = "SELECT badgeid FROM Participants ORDER BY ABS(badgeid) DESC LIMIT 1";
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
     $message_error="Unrecoverable error updating database.  Database not updated.<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
   }
-  if (mysql_num_rows($result)!=1) {
+  if (mysqli_num_rows($result)!=1) {
     $message_error="Database query returned unexpected number of rows(1 expected).  Database not updated.<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
   }
-  $maxbadgeid=mysql_result($result,0);
+  $maxbadgeid=mysqli_fetch_object($result)->badgeid;
   //error_log("Zambia: SubmitEditCreateParticipant.php: maxbadgeid: $maxbadgeid");
   sscanf($maxbadgeid,"%d",$x);
   $newbadgeid=sprintf("%d",$x+1); // convert to num; add 1; convert back to string

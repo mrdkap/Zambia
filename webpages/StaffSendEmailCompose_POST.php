@@ -22,18 +22,18 @@ if (!validate_email($email)) {
   exit(0);
 }
 $query="SELECT emailtoquery FROM EmailTo where emailtoid=".$email['sendto'];
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
     }
-$emailto=mysql_fetch_array($result,MYSQL_ASSOC);
+$emailto=mysqli_fetch_array($result,MYSQLI_ASSOC);
 $query=eval("return<<<EOD\n".$emailto['emailtoquery']."\nEOD;\n");
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
     }
 $i=0;
-while ($recipientinfo[$i]=mysql_fetch_array($result,MYSQL_ASSOC)) {
+while ($recipientinfo[$i]=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
     $i++;
     }
 $recipient_count=$i;
@@ -246,11 +246,11 @@ for ($j=0; $j<count($bioinfo['biotype_array']); $j++) {
 }
 
 $query="SELECT email FROM Participants WHERE badgeid=".$email['sendfrom'];
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
     }
-$emailverify['emailfrom']=mysql_result($result,0);
+$emailverify['emailfrom']=mysqli_fetch_object($result)->email;
 $repl_list=array($recipientinfo[0]['badgeid'],
 		 $recipientinfo[0]['firstname'],
 		 $recipientinfo[0]['lastname'],

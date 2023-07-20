@@ -91,7 +91,7 @@ if ((isset($_POST["selsess"])) && ($_POST["selsess"]!=0)) {
   $query=substr($query,0,-1);
   // Only do if there are actual feedback question elements
   if ($questiontotal > 0) {
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message_error=$query."<BR>Error updating $table.  Database not updated.";
       RenderError($title,$message_error);
       exit;

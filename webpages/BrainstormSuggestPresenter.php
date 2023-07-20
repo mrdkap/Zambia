@@ -27,20 +27,20 @@ SELECT
   FROM
       PermissionRoles
 EOD;
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   $message_error="Error retrieving data from database<BR>\n";
   $message_error.=$query;
   RenderError($title,$message_error);
   exit();
 }
-if (0==($rows=mysql_num_rows($result))) {
+if (0==($rows=mysqli_num_rows($result))) {
   $message_error="Database query did not return any rows.<BR>\n";
   $message_error.=$query;
   RenderError($title,$message_error);
   exit();
 }
 for ($i=1; $i<=$rows; $i++) {
-  $permrole_arr[$i]=mysql_fetch_array($result,MYSQL_ASSOC);
+  $permrole_arr[$i]=mysqli_fetch_array($result,MYSQLI_ASSOC);
   if ($permrole_arr[$i]['permrolename'] == "Participant") {
     $permstring="permroleid".$permrole_arr[$i]['permroleid'];
     $participant_arr[$permstring]="checked";
@@ -56,13 +56,13 @@ SELECT
   WHERE
     interestedtypename in ('Suggested')
 EOD;
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message_error);
     exit();
     }
 
-list($interested)=mysql_fetch_array($result, MYSQL_NUM);
+list($interested)=mysqli_fetch_array($result, MYSQLI_NUM);
 
 // If the information has already been added, and we are
 // on the return loop, add the Participant to the database.

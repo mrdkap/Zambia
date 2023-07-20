@@ -42,7 +42,7 @@ $query.="WHERE status=1 ORDER BY emailtimestamp limit $batchnumber";
 if ($verbose) {echo "<P>EmailQuery Query: $query</P>\n";}
 
 // If the query fails, give the error message both ways, if verbose, or just in the error_log if not.
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     $message.="Zambia: AutoSendQueuedMail: ".$query." Error querying database.\n";
     error_log($message);
     if ($verbose) {RenderError($title,$message);}
@@ -50,7 +50,7 @@ if (!$result=mysql_query($query,$link)) {
     }
 
 // Number of rows returned.
-$rows=mysql_num_rows($result);
+$rows=mysqli_num_rows($result);
 
 // If no rows, we are done!
 if ($rows==0) exit();
@@ -61,7 +61,7 @@ $numBad=0;
 
 // Build the email array
 for ($i=1; $i<=$rows; $i++) {
-  $email_array[$i]=mysql_fetch_assoc($result);
+  $email_array[$i]=mysqli_fetch_assoc($result);
  }
 
 // Build the variables, and then send, depending on what send path from above.
@@ -108,7 +108,7 @@ for ($i=1; $i<=$rows; $i++) {
     $query="UPDATE EmailQueue SET status=2 WHERE emailqueueid=$emailqueueid";
 
     // If the query fails, give the error message both ways, if verbose, or just in the error_log if not.
-    if (!$result=mysql_query($query,$link)) {
+    if (!$result=mysqli_query($link,$query)) {
       $message.="Zambia: AutoSendQueuedMail: ".$query." Error querying database.\n";
       error_log($message);
       if ($verbose) {RenderError($title,$message);}
@@ -122,7 +122,7 @@ for ($i=1; $i<=$rows; $i++) {
     $query="UPDATE EmailQueue SET status=3 WHERE emailqueueid=$emailqueueid";
 
     // If the query fails, give the error message both ways, if verbose, or just in the error_log if not.
-    if (!$result=mysql_query($query,$link)) {
+    if (!$result=mysqli_query($link,$query)) {
       $message.="Zambia: AutoSendQueuedMail: ".$query." Error querying database.\n";
       error_log($message);
       if ($verbose) {RenderError($title,$message);}

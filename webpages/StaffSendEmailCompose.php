@@ -32,18 +32,18 @@ $title="Staff Send Email";
 //$email=get_email_from_post();
 
 $query="SELECT emailtoquery FROM EmailTo where emailtoid=".$email['sendto'];
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
     }
-$emailto=mysql_fetch_array($result,MYSQL_ASSOC);
+$emailto=mysqli_fetch_array($result,MYSQLI_ASSOC);
 $query=eval("return<<<EOD\n".$emailto['emailtoquery']."\nEOD;\n");
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
     }
 $i=0;
-while ($recipientinfo[$i]=mysql_fetch_array($result,MYSQL_ASSOC)) {
+while ($recipientinfo[$i]=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
     $i++;
     }
 $recipient_count=$i;
@@ -254,19 +254,19 @@ Book Description: ".$schedule_array[$j]['desc_good_book']."
 }
 
 $query="SELECT email FROM Participants WHERE badgeid=".$email['sendfrom'];
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
     }
-$emailfrom=mysql_result($result,0);
+$emailfrom=mysqli_fetch_object($result)->email;
 
 if ($email['sendcc'] != 0) {
   $query="SELECT email FROM Participants WHERE badgeid=".$email['sendcc'];
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     db_error($title,$query,$staff=true); // outputs messages regarding db error
     exit(0);
   }
-  $emailcc=mysql_result($result,0);
+  $emailcc=mysqli_fetch_object($result)->email;
 }
 $goodCount=0;
 $badCount=0;
@@ -308,7 +308,7 @@ for ($i=0; $i<$recipient_count; $i++) {
     $query.="\"".mysql_real_escape_string(wordwrap(preg_replace("/(?<!\\r)\\n/","\r\n",$emailverify['body']),70,"\r\n"),$link)."\",";
     // status 1 is unsent (queued)
     $query.="1);";
-    if (!$result=mysql_query($query,$link)) {
+    if (!$result=mysqli_query($link,$query)) {
       db_error($title,$query,$staff=true); // outputs messages regarding db error
       exit(0);
     }

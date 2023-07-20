@@ -173,8 +173,8 @@ if (vendor_prepare_db()===false) {
 }
 
 //Check to see if the table exists - 42, 43, 44, 45, 46, 47, 48, 49
-$pTableExist = mysql_query("show tables like 'default_vendors_".$conid."'");
-if ($rTableExist = mysql_fetch_array($pTableExist)) {
+$pTableExist = mysqli_query($link,"show tables like 'default_vendors_".$conid."'");
+if ($rTableExist = mysqli_fetch_array($pTableExist)) {
 
   // Fix for inconsistencies in the database
   $vstatus="vendor_status";

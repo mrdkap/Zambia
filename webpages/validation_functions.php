@@ -55,23 +55,23 @@ function validate_add_session_interest($sessionid,$badgeid,$mode) {
     $query.="        SS.may_be_scheduled=1 and";
     $query.="        S.invitedguest=0 and";
     $query.="        S.sessionid=$sessionid";
-    if (!$result=mysql_query($query,$link)) {
+    if (!$result=mysqli_query($link,$query)) {
         $message=$query."<BR>\nError querying database.<BR>\n";
         RenderError($title,$message);
         exit();
         }
-    if (mysql_num_rows($result)==0) {
+    if (mysqli_num_rows($result)==0) {
         $message.="That Session ID is not valid or is not eligible for sign up.<BR>\n";
         return (false);
         }
     $query="SELECT sessionid FROM ParticipantSessionInterest where sessionid=";
     $query.="$sessionid and badgeid=\"$badgeid\"";
-    if (!$result=mysql_query($query,$link)) {
+    if (!$result=mysqli_query($link,$query)) {
         $message=$query."<BR>Error querying database.<BR>\n";
         RenderError($title,$message);
         exit();
         }
-    if (mysql_num_rows($result)!=0) {
+    if (mysqli_num_rows($result)!=0) {
         $message.="You specified a session already on your list.<BR>\n";
         return (false);
         }

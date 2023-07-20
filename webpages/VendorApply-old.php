@@ -24,10 +24,10 @@ if (may_I('SuperVendor')) {
   
 /* Get the pubsname from the badgeid */
 $namequery="SELECT pubsname FROM Participants WHERE badgeid=$badgeid";
-if (($result=mysql_query($namequery,$link)) === false) {
+if (($result=mysqli_query($link,$namequery)) === false) {
   $message_error.="<BR>".$namequery."Cannot find the name to go with the badgeid.";
 }
-list($tmp_pubsname)=mysql_fetch_array($result, MYSQL_NUM);
+list($tmp_pubsname)=mysqli_fetch_array($result, MYSQLI_NUM);
 $pubsname=mysql_real_escape_string(htmlspecialchars($tmp_pubsname));
 
 /* Submit goes here */
@@ -116,12 +116,12 @@ SELECT
     title='$pubsname'
 EOD;
 
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message_error.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message_error);
   exit();
  }
-$rows=mysql_num_rows($result);
+$rows=mysqli_num_rows($result);
 if ($rows==0) {
   // Set all the defaults.
   //$session['sessionid'] should be set on creation
@@ -173,7 +173,7 @@ EOD;
     $session[$element]=$defaultinfo_array[1][$element];
   }
 } elseif ($rows==1) {
-  $session=mysql_fetch_assoc($result);
+  $session=mysqli_fetch_assoc($result);
   $session['update']="Update"; // New entry.
   $session['vendfeatdest']=explode(",",$session['vendfeatureid']);
 } else {

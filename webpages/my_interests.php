@@ -24,13 +24,13 @@ SELECT
     badgeid="$badgeid"
 EOD;
 
-$result=mysql_query($query,$link);
+$result=mysqli_query($link,$query);
 if (!$result) {
-  $message.=$query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
+  $message.=$query."<BR>".mysqli_error($link)."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message);
   exit();
 }
-$rows=mysql_num_rows($result);
+$rows=mysqli_num_rows($result);
 if ($rows>1) {
   $message.=$query."<br>Multiple rows returned from database where one expected. Unable to continue.";
   RenderError($title,$message);
@@ -45,7 +45,7 @@ if ($rows==0) {
   $newrow=true;
 }
 else {
-  list($yespanels,$nopanels,$yespeople,$nopeople,$otherroles)=mysql_fetch_array($result, MYSQL_NUM);
+  list($yespanels,$nopanels,$yespeople,$nopeople,$otherroles)=mysqli_fetch_array($result, MYSQLI_NUM);
   $newrow=false;
 }
 

@@ -49,13 +49,13 @@ SELECT
     phasetypename in ('Photo Submission')
 EOD;
 
-if (!$result=mysql_query($phasequery,$link)) {
+if (!$result=mysqli_query($link,$phasequery)) {
   $message_error=$phasequery."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message_error);
   exit();
 }
 
-list($is_Photo_Submission)=mysql_fetch_array($result, MYSQL_NUM);
+list($is_Photo_Submission)=mysqli_fetch_array($result, MYSQLI_NUM);
 
 if ($is_Photo_Submission != "0") {
   $message_error="<P>We're sorry, Photo Submmisions are not open at this time.</P>\n";

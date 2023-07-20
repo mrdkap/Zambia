@@ -67,8 +67,8 @@ if ($conid <= 46) {
   $golink=$vlink;
   $tablename="default_fff_".$conid."_photo_lounge";
   $picurl="https://".VENDORHOSTNAME;
-  $pTableExist = mysql_query("show tables like '".$tablename."'");
-  if ($rTableExist = mysql_fetch_array($pTableExist)) {
+  $pTableExist = mysqli_query($link,"show tables like '".$tablename."'");
+  if ($rTableExist = mysqli_fetch_array($pTableExist)) {
 
     $badlist="'22c90b2144a8d85','230fc849168b5e3','c41500755f89b61','73fe3cb361f676a','9517fd0bf8faa65'";
 

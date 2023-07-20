@@ -23,14 +23,14 @@ SELECT
     IFNULL(rank,9999),
     sessionid
 EOD;
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message.=$query."<BR>Error querying database.<BR>";
     RenderError($title,$message);
     exit();
   }
-  $session_interest_count=mysql_num_rows($result);
+  $session_interest_count=mysqli_num_rows($result);
   for ($i=1; $i<=$session_interest_count; $i++ ) {
-    $session_interests[$i]=mysql_fetch_array($result, MYSQL_ASSOC);
+    $session_interests[$i]=mysqli_fetch_array($result, MYSQLI_ASSOC);
     $session_interest_index[$session_interests[$i]['sessionid']]=$i;
   }
   return ($session_interest_count);
@@ -115,14 +115,14 @@ SELECT
     may_be_scheduled=1
 EOD;
 
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message.=$query."<BR>Error querying database.<BR>";
     RenderError($title,$message);
     exit();
   }
-  $num_rows=mysql_num_rows($result);
+  $num_rows=mysqli_num_rows($result);
   for ($i=1; $i<=$num_rows; $i++ ) {
-    $this_row=mysql_fetch_array($result, MYSQL_ASSOC);
+    $this_row=mysqli_fetch_array($result, MYSQLI_ASSOC);
     $j=$session_interest_index[$this_row['sessionid']];
     $session_interests[$j]['trackname']=$this_row['trackname'];
     $session_interests[$j]['title']=$this_row['title'];
@@ -176,12 +176,12 @@ function update_session_interests_in_db($badgeid,$session_interest_count) {
   if ($deleteSessionIds) {
     $deleteSessionIds=substr($deleteSessionIds,0,-2); //drop trailing ", "
     $query="DELETE FROM ParticipantSessionInterest WHERE badgeid=\"$badgeid\" AND conid=".$_SESSION['conid']." AND sessionid IN ($deleteSessionIds)";
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message=$query."<BR>Error updating database.  Database not updated.";
       RenderError($title,$message);
       exit();
     }
-    $deleteCount=mysql_affected_rows($link);
+    $deleteCount=mysqli_affected_rows($link);
     $message="$deleteCount record(s) deleted.<BR>\n";
   }
   if ($noDeleteCount) {
@@ -198,12 +198,12 @@ function update_session_interests_in_db($badgeid,$session_interest_count) {
       $query.="),";
     }
     $query=substr($query,0,-1); // drop trailing ","
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message=$query."<BR>Error updating database.  Database not updated.";
       RenderError($title,$message);
       exit();
     }
-    $noDeleteCount=mysql_affected_rows($link)/2; // Replace affects twice as many rows because it deletes then inserts
+    $noDeleteCount=mysqli_affected_rows($link)/2; // Replace affects twice as many rows because it deletes then inserts
     $message.="$noDeleteCount record(s) updated or saved.<BR>\n";
   }
   return (true);

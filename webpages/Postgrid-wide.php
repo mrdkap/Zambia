@@ -207,15 +207,15 @@ EOD;
     conid=$conid
 EOD;
 
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message="Error retrieving data from database.<BR>";
     $message.=$query;
     $message.="<BR>";
-    $message.= mysql_error();
+    $message.= mysqli_error();
     RenderError($title,$message);
     exit ();
   }
-  if (0==($rows=mysql_num_rows($result))) {
+  if (0==($rows=mysqli_num_rows($result))) {
     $message="<P>This report retrieved no results matching the criteria.</P>\n";
     RenderError($title,$message);
     exit();
@@ -226,7 +226,7 @@ EOD;
    we need. */
   /* Still in the time-stepped loop, we create the elements of the array to
    be called forth, below, in terms of colour, border, and skipvalue. */
-  $grid_array[$time]=mysql_fetch_array($result,MYSQL_BOTH);
+  $grid_array[$time]=mysqli_fetch_array($result,MYSQLI_BOTH);
   $skiprow=0;
   $refskiprow=0;
   for ($i=1; $i<=$rooms; $i++) {

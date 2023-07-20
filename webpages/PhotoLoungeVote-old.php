@@ -175,8 +175,8 @@ if ($conid <= 46) { // Existed in another database.  Should be migrated over at 
 
   //Check to see if the table exists
   $tablename="default_fff_".$conid."_photo_lounge";
-  $pTableExist = mysql_query("show tables like '".$tablename."'");
-  if ($rTableExist = mysql_fetch_array($pTableExist)) {
+  $pTableExist = mysqli_query($link,"show tables like '".$tablename."'");
+  if ($rTableExist = mysqli_fetch_array($pTableExist)) {
 
     if ($conid==46) {
       $query = <<<EOD
@@ -268,9 +268,9 @@ SELECT
     photo_artist_name
 EOD;
 
-    $result=mysql_query($photogquery,$vlink);
+    $result=mysqli_query($vlink,$photogquery);
     $selectstring.="<SELECT name=\"artist\">\n";
-    while (list($select_artist_name)= mysql_fetch_array($result, MYSQL_NUM)) {
+    while (list($select_artist_name)= mysqli_fetch_array($result, MYSQLI_NUM)) {
       $selectstring.="<OPTION value=\"".$select_artist_name."\" ";
       if ($select_artist_name==$artistname) {
 	$selectstring.="selected";

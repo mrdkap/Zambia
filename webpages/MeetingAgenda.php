@@ -54,7 +54,7 @@ SELECT
     agendaname
 EOD;
 
-if (!$agendaresult=mysql_query($query,$link)) {
+if (!$agendaresult=mysqli_query($link,$query)) {
   $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message_error);
   exit();

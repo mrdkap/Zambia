@@ -18,9 +18,9 @@ SELECT
 EOF;
 
 // Get the key and URL
-$result=mysql_query($querypast,$link);
+$result=mysqli_query($link,$querypast);
 if ($result) {
-  $dbobject=mysql_fetch_object($result);
+  $dbobject=mysqli_fetch_object($result);
   $key=$dbobject->conid;
   $url=$dbobject->conurl;
 } else {

@@ -1178,7 +1178,7 @@ SELECT
     $limittables
     $limitwhere
   ORDER BY
-    badgename
+    pname
 EOD;
 
   // Now give the choices
@@ -1372,19 +1372,19 @@ function RenderSearchSession ($track,$status,$type,$sessionid) {
 
   // If staff, switch on the queries.  Else defaults to Brainstorm
   if (may_I('Staff')) {
-    $query_track="SELECT trackid, trackname FROM Tracks ORDER BY display_order";
-    $query_status="SELECT statusid, statusname FROM SessionStatuses ORDER BY display_order";
-    $query_type="SELECT typeid, typename FROM Types ORDER BY display_order";
+    $query_track="SELECT trackid, trackname, display_order FROM Tracks ORDER BY display_order";
+    $query_status="SELECT statusid, statusname, display_order FROM SessionStatuses ORDER BY display_order";
+    $query_type="SELECT typeid, typename, display_order FROM Types ORDER BY display_order";
     $colspan=9;
   } elseif (may_I('Programming')) {
-    $query_track="SELECT trackid, trackname FROM Tracks ORDER BY display_order";
+    $query_track="SELECT trackid, trackname, display_order FROM Tracks ORDER BY display_order";
     // Status should be fixed to "Scheduled"
     $statuschoice['scheduled']="Scheduled";
     // Types are limited to Panels and Classes, we don't have introducers for anything else
-    $query_type="SELECT typeid,typename FROM Types WHERE typename in ('Panel','Class')";
+    $query_type="SELECT typeid, typename FROM Types WHERE typename in ('Panel','Class')";
     $colspan=9;
   } else {
-    $query_track="SELECT trackid, trackname FROM Tracks WHERE selfselect=1 ORDER BY display_order";
+    $query_track="SELECT trackid, trackname, display_order FROM Tracks WHERE selfselect=1 ORDER BY display_order";
     // Search left out of choices to avoid tail-biting.
     $statuschoice['all']="ANY";
     $statuschoice['unseen']="New (Unseen)";
@@ -2205,7 +2205,8 @@ function getBioData($badgeid) {
   $query= <<<EOD
 SELECT
     concat(biotypename,"_",biolang,"_",biostatename,"_",biodestname,"_bio") AS biokey,
-    biotext
+    biotext,
+    BioTypes.display_order
   FROM
       Bios
     JOIN BioTypes USING (biotypeid)
@@ -2240,7 +2241,7 @@ EOD;
   $bioinfo['biolang_array']=$biolang_array;
 
   // Get all current possible biotypenames
-  $query="SELECT DISTINCT(biotypename) FROM BioTypes WHERE biotypename not in ('web','book') ORDER BY display_order";
+  $query="SELECT DISTINCT(biotypename), display_order FROM BioTypes WHERE biotypename not in ('web','book') ORDER BY display_order";
   if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -2252,7 +2253,7 @@ EOD;
   $bioinfo['biotype_array']=$biotype_array;
 
   // Get all current possible biostatenames
-  $query="SELECT DISTINCT(biostatename) FROM BioStates ORDER BY display_order";
+  $query="SELECT DISTINCT(biostatename), display_order FROM BioStates ORDER BY display_order";
   if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -2264,7 +2265,7 @@ EOD;
   $bioinfo['biostate_array']=$biostate_array;
 
   // Get all current possible biodestnames
-  $query="SELECT DISTINCT(biodestname) FROM BioDests ORDER BY display_order";
+  $query="SELECT DISTINCT(biodestname), display_order FROM BioDests ORDER BY display_order";
   if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -2297,6 +2298,9 @@ function getDescData($sessionid,$conid) {
 SELECT
     concat(descriptiontypename,"_",descriptionlang,"_",biostatename,"_",biodestname,"_bio") AS desckey,
     descriptiontext
+    DT.display_order,
+    BS.display_order,
+    BD.display_order
   FROM
       Descriptions
     JOIN DescriptionTypes DT USING (descriptiontypeid)
@@ -2335,7 +2339,7 @@ EOD;
   $descinfo['desclang_array']=$desclang_array;
 
   // Get all current possible biotypenames
-  $query="SELECT DISTINCT(descriptiontypename) FROM DescriptionTypes ORDER BY display_order";
+  $query="SELECT DISTINCT(descriptiontypename), display_order FROM DescriptionTypes ORDER BY display_order";
   if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -2347,7 +2351,7 @@ EOD;
   $descinfo['desctype_array']=$desctype_array;
 
   // Get all current possible biostatenames
-  $query="SELECT DISTINCT(biostatename) FROM BioStates ORDER BY display_order";
+  $query="SELECT DISTINCT(biostatename), display_order FROM BioStates ORDER BY display_order";
   if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
@@ -2359,7 +2363,7 @@ EOD;
   $descinfo['biostate_array']=$biostate_array;
 
   // Get all current possible biodestnames
-  $query="SELECT DISTINCT(biodestname) FROM BioDests ORDER BY display_order";
+  $query="SELECT DISTINCT(biodestname), display_order FROM BioDests ORDER BY display_order";
   if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);

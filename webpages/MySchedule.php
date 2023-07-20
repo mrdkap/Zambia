@@ -24,14 +24,14 @@ SELECT
   WHERE
     badgeid="$badgeid"
 EOD;
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message);
   exit();
  }
-$pcommentrows=mysql_num_rows($result);
+$pcommentrows=mysqli_num_rows($result);
 for ($i=1; $i<=$pcommentrows; $i++) {
-  $pcommentarray[$i]=mysql_fetch_assoc($result);
+  $pcommentarray[$i]=mysqli_fetch_assoc($result);
  }
 
 // Get the state of registration into $regmessage
@@ -44,12 +44,12 @@ SELECT
   WHERE
     badgeid="$badgeid"
 EOD;
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message);
   exit();
  }
-$row=mysql_fetch_array($result, MYSQL_NUM);
+$row=mysqli_fetch_array($result, MYSQLI_NUM);
 $regmessage=$row[0];
 
 // Get the number of pannels the participant is introducing
@@ -65,12 +65,12 @@ SELECT
     conid=$conid
 EOD;
 
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message);
   exit();
  }
-list($poscount,$intro_p)=mysql_fetch_array($result, MYSQL_NUM);
+list($poscount,$intro_p)=mysqli_fetch_array($result, MYSQLI_NUM);
 
 // Message about state of registration, (on more than 3 pannels programming will ask for a comp).
 if ((!$regmessage or is_numeric($regmessage))) {
@@ -230,7 +230,7 @@ SELECT
     starttime
 EOD;
 // error_log("Zambia: $query");
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message);
   exit();
@@ -238,9 +238,9 @@ if (!$result=mysql_query($query,$link)) {
 $otherschdcon="";
 $currentschdredirect="";
 $otherschdredirect="";
-$schd_rows=mysql_num_rows($result);
+$schd_rows=mysqli_num_rows($result);
 for ($i=1; $i<=$schd_rows; $i++) {
-  $schd_array[$i]=mysql_fetch_assoc($result);
+  $schd_array[$i]=mysqli_fetch_assoc($result);
   if ($otherschdcon!=$schd_array[$i]["conid"]) {
       $otherschdcon=$schd_array[$i]["conid"];
     if ($schd_array[$i]['conid'] == $_SESSION['conid']) {

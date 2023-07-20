@@ -161,7 +161,7 @@ if (isset($_POST['update'])) {
     $query_start.=$query;
     $query=$query_start;
     $query.=" WHERE badgeid=\"".$badgeid."\"";
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message_error.=$query."<BR>Error updating database.  Database not updated.";
       RenderError($title,$message_error);
       exit();
@@ -173,12 +173,12 @@ if (isset($_POST['update'])) {
     $query ="UPDATE Interested SET ";
     $query.="interestedtypeid=".$_POST['interested']." ";
     $query.="WHERE badgeid=\"".$badgeid."\" AND conid=".$_SESSION['conid'];
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message.=$query."<BR>Error updating Interested table.  Database not update.";
       echo "<P class=\"errmsg\">".$message."</P>\n";
       return;
     }
-    ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+    ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
       $value_array=array($_SESSION['conid'], $badgeid, mysql_real_escape_string(stripslashes($_POST['interested'])));

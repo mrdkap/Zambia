@@ -34,9 +34,9 @@ if (($_POST['Update']='Y') AND (!empty($_POST['badgeid'])) AND (is_numeric($_POS
   $newpass=str_shuffle($randomCode);
 
   // Get the email address of the person
-  $result=mysql_query("SELECT email FROM Participants WHERE badgeid=$badgeid",$link);
-  if ($result and (mysql_num_rows($result)==1)) {
-      $dbobject=mysql_fetch_object($result);
+  $result=mysqli_query($link,"SELECT email FROM Participants WHERE badgeid=$badgeid");
+  if ($result and (mysqli_num_rows($result)==1)) {
+      $dbobject=mysqli_fetch_object($result);
       $to=$dbobject->email;
       $from=$_SESSION['programemail'];
       $headers="From: $from <$from>\r\n";

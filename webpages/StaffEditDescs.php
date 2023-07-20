@@ -82,12 +82,12 @@ SELECT
     sessionid=$sessionid
 EOD;
 
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   $message_error.=$query."<BR>\nError retrieving lock and name data from database.\n";
   RenderError($title,$message_error);
   exit();
  }
-$participant_info_array=mysql_fetch_assoc($result);
+$participant_info_array=mysqli_fetch_assoc($result);
 
 /* If there is an update/save to the edited state passed, check for
  what was changed, and update (just) that in the database. */

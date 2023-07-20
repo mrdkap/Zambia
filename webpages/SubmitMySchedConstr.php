@@ -35,7 +35,7 @@
             $query .="preventconflict=\"".mysql_real_escape_string($partAvail["preventconflict"],$link)."\", ";
             $query .="otherconstraints=\"".mysql_real_escape_string($partAvail["otherconstraints"],$link)."\", ";
             $query .="numkidsfasttrack=".$partAvail["numkidsfasttrack"];
-            if (!mysql_query($query,$link)) {
+            if (!mysqli_query($link,$query)) {
                 $message=$query."<BR>Error updating database.  Database not updated.";
                 RenderError($title,$message);
                 exit();
@@ -70,7 +70,7 @@
 
 		$query = "REPLACE ParticipantAvailabilityTimes set conid=$conid,";
 		$query .="badgeid=\"$badgeid\",availabilitynum=$i,starttime=\"$starttime\",endtime=\"$endtime\"";
-		if (!mysql_query($query,$link)) {
+		if (!mysqli_query($link,$query)) {
 		  $message=$query."<BR>Error updating database.  Database not updated.";
 		  RenderError($title,$message);
 		  exit();
@@ -84,7 +84,7 @@
                     $query.="($conid,\"$badgeid\",$i,$x),";
                     }
                 $query = substr($query,0,-1); // remove extra trailing comma
-                if (!mysql_query($query,$link)) {
+                if (!mysqli_query($link,$query)) {
                     $message=$query."<BR>Error updating database.  Database not updated.";
                     RenderError($title,$message);
                     exit();
@@ -103,7 +103,7 @@
 	    // remove the trailing comma, close the list of availabiltynum, and run the query
             if ($deleteany) {
                 $query = substr($query,0,-2).")";
-                if (!mysql_query($query,$link)) {
+                if (!mysqli_query($link,$query)) {
                     $message=$query."<BR>Error updating database.  Database not updated.";
                     RenderError($title,$message);
                     exit();

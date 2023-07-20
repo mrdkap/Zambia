@@ -37,12 +37,12 @@ function SubmitAdminParticipants () {
     $query ="UPDATE Interested SET ";
     $query.="interestedtypeid=".$interested." ";
     $query.="WHERE badgeid=\"".$partid."\" AND conid=".$_SESSION['conid'];
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message.=$query."<BR>Error updating Interested table.  Database not updated.";
       echo "<P class=\"errmsg\">".$message."</P>\n";
       return;
     }
-    ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+    ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
       $value_array=array($_SESSION['conid'], $partid, mysql_real_escape_string(stripslashes($interested)));
@@ -55,12 +55,12 @@ function SubmitAdminParticipants () {
   // Remove from sessions
   if ($wasinterested==1 and $interested==2) {
     $query="DELETE FROM ParticipantOnSession where badgeid = \"$partid\"";
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message=$query."<BR>Error updating database.  Database not updated.";
       echo "<P class=\"errmsg\">".$message."\n";
       return;
     }
-    $message.="Participant removed from ".mysql_affected_rows($link)." session(s).";
+    $message.="Participant removed from ".mysqli_affected_rows($link)." session(s).";
   }
   echo "<P class=\"regmsg\">".$message."\n";
 }

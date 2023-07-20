@@ -170,29 +170,29 @@ SELECT
   WHERE
     badgeid='$selpartid'
 EOD;
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error="Error retrieving data from database<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
   }
-  if (mysql_num_rows($result)!=1) {
+  if (mysqli_num_rows($result)!=1) {
     $message_error="Database query did not return expected number of rows (1).<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
   }
-  $participant_arr=mysql_fetch_array($result,MYSQL_ASSOC);
+  $participant_arr=mysqli_fetch_array($result,MYSQLI_ASSOC);
 
   // Get interested as in participating in current con
   $query="SELECT interestedtypeid FROM Interested WHERE badgeid=$selpartid AND conid=$conid";
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error="Error retrieving data from database<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
   }
-  list($participant_arr['interested'])=mysql_fetch_array($result,MYSQL_NUM);
+  list($participant_arr['interested'])=mysqli_fetch_array($result,MYSQLI_NUM);
 
   // Get a set of bioinfo, and map it to the appropriate $participant_arr.
   $bioinfo=getBioData($selpartid);

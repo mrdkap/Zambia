@@ -19,7 +19,7 @@ function RenderMySessions1($result) {
   echo "    <TABLE>\n";
   echo "        <COL><COL><COL><COL>\n";
   $i=0;
-  while (list($sessionid,$trackname,$title,$duration,$desc_good_web,$persppartinfo,$rbadgeid)= mysql_fetch_array($result, MYSQL_NUM)) {
+  while (list($sessionid,$trackname,$title,$duration,$desc_good_web,$persppartinfo,$rbadgeid)= mysqli_fetch_array($result, MYSQLI_NUM)) {
     echo "        <INPUT type=hidden name=\"sessionid".$i."\" value=\"".$sessionid."\"></TD>\n";
     echo "        <TR>\n";
     echo "            <TD rowspan=4 class=\"border0000\" id=\"sessidtcell\"><b>".$sessionid."&nbsp;&nbsp;";

@@ -100,15 +100,15 @@ if (isset($LanguageList)) {
 // Give some semblance of order to the names
 $query1.=" ORDER BY P.pubsname";
 
-if (($result=mysql_query($query1,$link))===false) {
+if (($result=mysqli_query($link,$query1))===false) {
   $message_error.=$query1."<BR>\nError retrieving data from database.\n";
   RenderError($title,$message_error);
   exit();
  }
 
-$numrows=mysql_num_rows($result);
+$numrows=mysqli_num_rows($result);
 
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
   $check_element[$row['badgeid']][$row['col']][$row['biostatename']]=$row['biotext'];
   $count_badgeid[$row['badgeid']]++;
   $pubsname[$row['badgeid']]=$row['pubsname'];
@@ -158,15 +158,15 @@ if (isset($LanguageList)) {
 // Give some semblance of order to the names
 $query2.=" ORDER BY P.pubsname";
 
-if (($result=mysql_query($query2,$link))===false) {
+if (($result=mysqli_query($link,$query2))===false) {
   $message_error.=$query2."<BR>\nError retrieving data from database.\n";
   RenderError($title,$message_error);
   exit();
  }
 
-$numstaffrows=mysql_num_rows($result);
+$numstaffrows=mysqli_num_rows($result);
 
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
   $check_staff_element[$row['badgeid']][$row['col']][$row['biostatename']]=$row['biotext'];
   $count_staff_badgeid[$row['badgeid']]++;
   $staff_pubsname[$row['badgeid']]=$row['pubsname'];
@@ -215,15 +215,15 @@ if (isset($LanguageList)) {
 // Give some semblance of order to the names
 $query3.=" ORDER BY title";
 
-if (($result=mysql_query($query3,$link))===false) {
+if (($result=mysqli_query($link,$query3))===false) {
   $message_error.=$query3."<BR>\nError retrieving data from database.\n";
   RenderError($title,$message_error);
   exit();
  }
 
-$numdescrows=mysql_num_rows($result);
+$numdescrows=mysqli_num_rows($result);
 
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
   $check_desc_element[$row['badgeid']][$row['col']][$row['biostatename']]=$row['biotext'];
   $count_desc_badgeid[$row['badgeid']]++;
   $desc_pubsname[$row['badgeid']]=$row['pubsname'];
@@ -276,15 +276,15 @@ if (isset($LanguageList)) {
 // Give some semblance of order to the names
 $query4.=" ORDER BY P.pubsname";
 
-if (($result=mysql_query($query4,$link))===false) {
+if (($result=mysqli_query($link,$query4))===false) {
   $message_error.=$query4."<BR>\nError retrieving data from database.\n";
   RenderError($title,$message_error);
   exit();
  }
 
-$numvolsrows=mysql_num_rows($result);
+$numvolsrows=mysqli_num_rows($result);
 
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
   $check_vols_element[$row['badgeid']][$row['col']][$row['biostatename']]=$row['biotext'];
   $count_vols_badgeid[$row['badgeid']]++;
   $vols_pubsname[$row['badgeid']]=$row['pubsname'];
@@ -337,15 +337,15 @@ if (isset($LanguageList)) {
 // Give some semblance of order to the names
 $query5.=" ORDER BY P.pubsname";
 
-if (($result=mysql_query($query5,$link))===false) {
+if (($result=mysqli_query($link,$query5))===false) {
   $message_error.=$query5."<BR>\nError retrieving data from database.\n";
   RenderError($title,$message_error);
   exit();
  }
 
-$numvendorrows=mysql_num_rows($result);
+$numvendorrows=mysqli_num_rows($result);
 
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
   $check_vendor_element[$row['badgeid']][$row['col']][$row['biostatename']]=$row['biotext'];
   $count_vendor_badgeid[$row['badgeid']]++;
   $vendor_pubsname[$row['badgeid']]=$row['pubsname'];

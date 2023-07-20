@@ -128,13 +128,13 @@ SELECT
       CommentsOnParticipants
     JOIN ConInfo USING (conid)
 EOD;
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message);
   exit();
  }
 
-while ($row=mysql_fetch_assoc($result)) {
+while ($row=mysqli_fetch_assoc($result)) {
   $pcomment_array[$row['badgeid']].="    <br>\n    --\n    <br>\n    <PRE>".fix_slashes($row['Comment'])."</PRE>";
  }
 

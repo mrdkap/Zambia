@@ -154,7 +154,7 @@ if ($sessionid!="") {
   $query.="          AND sessionid=$sessionid\n";
 }
 $query.=")\n  ORDER BY\n    trackid,starttime\n";
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message.=$query."<BR>Error querying database.<BR>";
   RenderError($title,$message);
   exit();

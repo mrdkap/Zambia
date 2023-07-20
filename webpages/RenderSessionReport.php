@@ -14,7 +14,7 @@ function RenderSessionReport() {
 
 <TABLE>
 <?php
-   while (list($sessionid,$trackname,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo)= mysql_fetch_array($result, MYSQL_NUM)) {
+   while (list($sessionid,$trackname,$title,$duration,$estatten,$desc_good_web,$desc_good_book,$persppartinfo)= mysqli_fetch_array($result, MYSQLI_NUM)) {
      echo "        <TR>\n";
      echo "            <TD rowspan=3 class=\"border0000\" id=\"sessidtcell\">
 <A HREF=\"EditSession.php?id=".$sessionid."\"><b>".$sessionid."</a>&nbsp;&nbsp;</TD>\n";

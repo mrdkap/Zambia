@@ -15,12 +15,12 @@ if ($_POST['interested']!=$participant['interested']) {
   $query ="UPDATE Interested SET ";
   $query.="interestedtypeid=".$_POST['interested']." ";
   $query.="WHERE badgeid=\"".$badgeid."\" AND conid=".$_SESSION['conid'];
-  if (!mysql_query($query,$link)) {
+  if (!mysqli_query($link,$query)) {
     $message_error.=$query."<BR>Error updating Interested table.  Database not updated.";
     echo "<P class=\"errmsg\">".$message_error."</P>\n";
     return;
   }
-  ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+  ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
   if ($r_matched[1]==0) {
     $element_array=array('conid','badgeid','interestedtypeid');
     $value_array=array($_SESSION['conid'], $badgeid, mysql_real_escape_string(stripslashes($_POST['interested'])));
@@ -55,7 +55,7 @@ if ($_POST['interested']!=$participant['interested']) {
 		$query=$query."password=\"".md5($password)."\", ";
 		}
 	$query.=" WHERE badgeid=\"".$badgeid."\"";                               //"
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
 		$message_error.=$query."<BR>Error updating database.  Database not updated.";
 		RenderError($title,$message_error);
 		exit();
@@ -73,13 +73,13 @@ if ($_POST['interested']!=$participant['interested']) {
             RenderError($title,$message_error);
             exit();
             }
-    $result=mysql_query("Select password from Participants where badgeid='".$badgeid."'",$link);
+    $result=mysqli_query($link,"Select password from Participants where badgeid='".$badgeid."'");
     if (!$result) {
     	$message_error.="Incorrect badgeid or password.";
         require ('login.php');
 	exit();
 	}
-    $dbobject=mysql_fetch_object($result);
+    $dbobject=mysqli_fetch_object($result);
     $dbpassword=$dbobject->password;
     //echo $badgeid."<BR>".$dbpassword."<BR>".$password."<BR>".md5($password);
     //exit(0);
@@ -89,9 +89,9 @@ if ($_POST['interested']!=$participant['interested']) {
 	exit(0);
 	}
 /*
-    $result=mysql_query("Select badgename from Participants where badgeid='".$badgeid."'",$link);
+    $result=mysqli_query($link,"Select badgename from Participants where badgeid='".$badgeid."'");
     if ($result) {
-    		$dbobject=mysql_fetch_object($result);
+    		$dbobject=mysqli_fetch_object($result);
     		$badgename=$dbobject->badgename;
     		$_SESSION['badgename']=$badgename;
     		}

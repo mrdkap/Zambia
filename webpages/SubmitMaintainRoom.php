@@ -49,12 +49,12 @@ SELECT
     conid=$conid AND
     sessionid in ($sessionidlist)
 EOD;
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message=$query."<BR>\nError querying database.<BR>\n";
     RenderError($title,$message);
     exit();
   }
-  while (list($sessionid,$durationmin,$title)=mysql_fetch_array($result,MYSQL_NUM)) {
+  while (list($sessionid,$durationmin,$title)=mysqli_fetch_array($result,MYSQLI_NUM)) {
     $addToScheduleArray2[$sessionid]['startmin']=$addToScheduleArray[$sessionid];
     $addToScheduleArray2[$sessionid]['endmin']=$addToScheduleArray[$sessionid]+$durationmin;
     $addToScheduleArray2[$sessionid]['title']=$title;
@@ -72,12 +72,12 @@ SELECT
     sessionid in ($sessionidlist)
 EOD;
 
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message=$query."<BR>\nError querying database.<BR>\n";
     RenderError($title,$message);
     exit();
   }
-  while (list($sessionid, $badgeid)=mysql_fetch_array($result,MYSQL_NUM)) {
+  while (list($sessionid, $badgeid)=mysqli_fetch_array($result,MYSQLI_NUM)) {
     $addToScheduleArray2[$sessionid]['participants'][]=$badgeid;
     $addToScheduleParticipants[$badgeid]=1;
   }
@@ -102,12 +102,12 @@ SELECT
     badgeid in ($badgeidlist)
 EOD;
 
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message=$query."<BR>\nError querying database.<BR>\n";
     RenderError($title,$message);
     exit();
   }
-  while ($x=mysql_fetch_array($result,MYSQL_ASSOC)) {
+  while ($x=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
     $addToScheduleParticipants[$x['badgeid']]=$x['pubsname'];
   }
 
@@ -128,13 +128,13 @@ SELECT
     startmin
 EOD;
 
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message=$query."<BR>\nError querying database.<BR>\n";
     RenderError($title,$message);
     exit();
   }
   $oldbadgeid="";
-  while (list($badgeid,$startmin,$endmin)=mysql_fetch_array($result,MYSQL_NUM)) {
+  while (list($badgeid,$startmin,$endmin)=mysqli_fetch_array($result,MYSQLI_NUM)) {
     if ($oldbadgeid!=$badgeid) {
       $oldbadgeid=$badgeid;
       $i=1;
@@ -169,12 +169,12 @@ SELECT
     conid=$conid AND
     badgeid in ($badgeidlist)
 EOD;
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message=$query."<BR>\nError querying database.<BR>\n";
     RenderError($title,$message);
     exit();
   }
-  while ($x=mysql_fetch_array($result,MYSQL_ASSOC)) {
+  while ($x=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
 
     // skip the scheduleids that will be deleted anyway
     if ($deleteScheduleIds[$x['scheduleid']]==1) continue;
@@ -316,19 +316,19 @@ UPDATE
     SC.scheduleid IN ($delSchedIdList)
 EOD;
 
-      if (!mysql_query($query,$link)) {
+      if (!mysqli_query($link,$query)) {
 	$message=$query."<BR>Error updating database.<BR>";
 	RenderError($title,$message);
 	exit();
       }
     }
     $query="DELETE FROM Schedule WHERE conid=$conid AND scheduleid in ($delSchedIdList)";
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message=$query."<BR>Error updating database.<BR>";
       RenderError($title,$message);
       exit();
     }
-    $rows=mysql_affected_rows($link);
+    $rows=mysqli_affected_rows($link);
     echo "<P class=\"regmsg\">$rows session".($rows>1?"s":"")." removed from schedule.\n";
     // Was: (sessionid, badgeid, name, email_address, timestamp, sessioneditcode, statusid, editdescription)
     // And: $query.="($delsessionid,$conid,\"$badgeid\",\"$name\",\"$email\",null,5,$vs,null),";
@@ -341,7 +341,7 @@ EOD;
       $query.="($delsessionid,$conid,\"$badgeid\",\"$name\",\"$email\",5,$vs),";
     }
     $query=substr($query,0,-1); // remove trailing comma
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message=$query."<BR>Error updating database.<BR>";
       RenderError($title,$message);
       exit();
@@ -353,7 +353,7 @@ EOD;
     $min=$startmin%60;
     $time=sprintf("%03d:%02d:00",$hour,$min);
     $query="INSERT INTO Schedule SET conid=$conid, sessionid=$sessionid, roomid=$selroomid, starttime=\"$time\"";
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message=$query."<BR>Error updating database.<BR>";
       RenderError($title,$message);
       exit();
@@ -362,7 +362,7 @@ EOD;
     $vs=get_idlist_from_db("SessionStatuses",'statusid','statusname',"'scheduled'");
     if ($_POST["nostatchange"] != "True") {
       $query="UPDATE Sessions SET statusid=$vs WHERE sessionid=$sessionid AND conid=$conid";
-      if (!mysql_query($query,$link)) {
+      if (!mysqli_query($link,$query)) {
 	$message=$query."<BR>Error updating database.<BR>";
 	RenderError($title,$message);
 	exit();
@@ -378,7 +378,7 @@ INSERT INTO SessionEditHistory
         Values
 EOD;
     $query.="($sessionid,$conid,\"$badgeid\",\"$name\",\"$email\",4,$vs)";
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message=$query."<BR>Error updating database.<BR>";
       RenderError($title,$message);
       exit();

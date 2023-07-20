@@ -49,21 +49,21 @@ function straight_renumber_with_key($renumber_table,$renumber_key,$title,$descri
   $query=rtrim($query,', ');
 
   // Clear the database.
-  if (($result=mysql_query($clearquery,$link))===false) {
+  if (($result=mysqli_query($link,$clearquery))===false) {
     $message="Error clearing data from database.<BR>";
     $message.=$clearquery;
     $message.="<BR>";
-    $message.= mysql_error();
+    $message.= mysqli_error();
     RenderError($title,$message);
     exit ();
   }
 
   // Insert the digested information back into the database.
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message="Error restoring data from database.<BR>";
     $message.=$query;
     $message.="<BR>";
-    $message.= mysql_error();
+    $message.= mysqli_error();
     RenderError($title,$message);
     exit ();
   }
@@ -109,21 +109,21 @@ function renumber_with_key_plus_conid($renumber_table,$renumber_key,$conid_array
   $query=rtrim($query,', ');
 
   // Clear the database.
-  if (($result=mysql_query($clearquery,$link))===false) {
+  if (($result=mysqli_query($link,$clearquery))===false) {
     $message="Error clearing data from database.<BR>";
     $message.=$clearquery;
     $message.="<BR>";
-    $message.= mysql_error();
+    $message.= mysqli_error();
     RenderError($title,$message);
     exit ();
   }
 
   // Insert the digested information back into the database.
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message="Error restoring data from database.<BR>";
     $message.=$query;
     $message.="<BR>";
-    $message.= mysql_error();
+    $message.= mysqli_error();
     RenderError($title,$message);
     exit ();
   }

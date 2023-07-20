@@ -27,13 +27,13 @@ SELECT
     conid=$conid
 EOD;
 
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     $message.=$query."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message);
     exit();
     }
 
-list($interested)= mysql_fetch_array($result, MYSQL_NUM);
+list($interested)= mysqli_fetch_array($result, MYSQLI_NUM);
 
 // to make the words below make sense
 if ($interested=="") {

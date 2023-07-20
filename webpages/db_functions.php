@@ -7,17 +7,21 @@ function prepare_db() {
   global $link, $message, $message_error;
   $link = mysqli_connect(DBHOSTNAME,DBUSERID,DBPASSWORD);
   if ($link===false) return (false);
-  return (mysqli_select_db(DBDB,$link));
+  return (mysqli_select_db($link,DBDB));
 }
 
 /* Function vendor_prepare_db()
    Opens database channel. */
 function vendor_prepare_db() {
   global $vlink, $message, $message_error;
-  $vlink = mysql_connect(VENDORHOSTNAME,VENDORUSERID,VENDORPASSWORD);
+  $vlink = mysqli_connect(VENDORHOSTNAME,VENDORUSERID,VENDORPASSWORD);
   if ($vlink===false) return (false);
-  return (mysql_select_db(VENDORDB,$vlink));
+  return (mysqli_select_db(VENDORDB,$vlink));
 }
+
+/* Function mysqli_fetch()
+   replaces mysql_fetch with hopefully equivalent functionality. */
+   
 
 /* Function record_session_history($sessionid, $badgeid, $name, $email, $editcode, $statusid)
    The table SessionEditHistory has a timestamp column which is automatically set to the
@@ -41,9 +45,9 @@ INSERT
     sessioneditcode=$editcode,
     statusid=$statusid
 EOD;
-  $result = mysql_query($query,$link);
+  $result = mysqli_query($link,$query);
   if (!$result) {
-    $message_error.=$query."<BR>\n".mysql_error($link);
+    $message_error.=$query."<BR>\n".mysqli_error($link);
     return $result;
   }
   return(true);
@@ -67,31 +71,31 @@ function get_name_and_email(&$name, &$email) {
   if (may_I('Staff') || may_I('Participant')) { //name and email should be found in db if either set
     $query="SELECT pubsname from Participants where badgeid='$badgeid'";
     //error_log($query); //for debugging only
-    $result=mysql_query($query,$link);
+    $result=mysqli_query($link,$query);
     if (!$result) {
       $message_error.=$query."<BR> ";
-      $message_error.=mysql_error($link)."<BR> ";
+      $message_error.=mysqli_error($link)."<BR> ";
       $message_error.="Error reading from database. No further execution possible.<BR> ";
       error_log($message_error);
       return(FALSE);
     }
-    $name=mysql_result($result, 0);
+    $name=mysqli_fetch_object($result)->pubsname;
     if ($name=='') {
       $name=' '; //if name is null or '' in db, set to ' ' so it won't appear unpopulated in query above
     }
     $query="SELECT pubsname,email from Participants where badgeid='$badgeid'";
-    $result=mysql_query($query,$link);
+    $result=mysqli_query($link,$query);
     if (!$result) {
       $message_error.=$query."<BR> ";
-      $message_error.=mysql_error($link)."<BR> ";
+      $message_error.=mysqli_error($link)."<BR> ";
       $message_error.="Error reading from database. No further execution possible.<BR> ";
       error_log($message_error);
       return(FALSE);
     }
     if ($name==' ') {
-      $name=mysql_result($result, 0, 0);
+      $name=mysqli_fetch_object($result)->pubsname;
     } // name will be ' ' if pubsname is null.  In that case use badgename.
-    $email=mysql_result($result, 0, 1);
+    $email=mysqli_fetch_object($result)->email;
   }
   return(TRUE); //return TRUE even if didn't retrieve from db because there's nothing to be done
 }
@@ -112,8 +116,8 @@ function populate_select_from_table($table_name, $default_value, $option_0_text,
   } elseif ($default_flag) {
     echo "<OPTION value=0>".$option_0_text."</OPTION>\n";
   }
-  $result=mysql_query("Select * from ".$table_name." order by display_order",$link);
-  while ($arow = mysql_fetch_array($result, MYSQL_NUM)) {
+  $result=mysqli_query($link,"Select * from ".$table_name." order by display_order");
+  while ($arow = mysqli_fetch_array($result, MYSQLI_NUM)) {
     $option_value=$arow[0];
     $option_name=$arow[1];
     echo "<OPTION value=".$option_value." ";
@@ -139,8 +143,8 @@ function populate_select_from_query($query, $default_value, $option_0_text, $def
   } elseif ($default_flag) {
     echo "<OPTION value=0>".$option_0_text."</OPTION>\n";
   }
-  $result=mysql_query($query,$link);
-  while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
+  $result=mysqli_query($link,$query);
+  while (list($option_value,$option_name)= mysqli_fetch_array($result, MYSQLI_NUM)) {
     echo "<OPTION value=".$option_value." ";
     if ($option_value==$default_value) {
       echo "selected";
@@ -166,8 +170,8 @@ function populate_select_from_query_inline($query, $default_value, $option_0_tex
   } elseif ($default_flag) {
     $returnstring.="<OPTION value=0>".$option_0_text."</OPTION>\n";
   }
-  $result=mysql_query($query,$link);
-  while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
+  $result=mysqli_query($link,$query);
+  while (list($option_value,$option_name)= mysqli_fetch_array($result, MYSQLI_NUM)) {
     $returnstring.="<OPTION value=".$option_value." ";
     if ($option_value==$default_value) {
       $returnstring.="selected";
@@ -236,8 +240,8 @@ function populate_multiselect_from_table($table_name, $skipset) {
   global $link, $message, $message_error;
   // error_log("Zambia->populate_multiselect_from_table->\$skipset: ".print_r($skipset,TRUE)."\n"); // only for debugging
   if ($skipset=="") $skipset=array(-1);
-  $result=mysql_query("SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order",$link);
-  while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
+  $result=mysqli_query($link,"SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order");
+  while (list($option_value,$option_name)= mysqli_fetch_array($result, MYSQLI_NUM)) {
     echo "<OPTION value=\"".$option_value."\"";
     if (array_search($option_value,$skipset)!==FALSE) {
       echo " selected";
@@ -256,8 +260,8 @@ function populate_multiselect_from_table($table_name, $skipset) {
 function populate_multisource_from_table($table_name, $skipset) {
   global $link, $message, $message_error;
   if ($skipset=="") $skipset=array(-1);
-  $result=mysql_query("SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order",$link);
-  while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
+  $result=mysqli_query($link,"SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order");
+  while (list($option_value,$option_name)= mysqli_fetch_array($result, MYSQLI_NUM)) {
     if (array_search($option_value,$skipset)===false) {
       echo "<OPTION value=".$option_value.">".$option_name."</OPTION>\n";
     }
@@ -275,8 +279,8 @@ function populate_multisource_from_table($table_name, $skipset) {
 function populate_multidest_from_table($table_name, $skipset) {
   global $link, $message, $message_error;
   if ($skipset=="") $skipset=array(-1);
-  $result=mysql_query("SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order",$link);
-  while (list($option_value,$option_name)= mysql_fetch_array($result, MYSQL_NUM)) {
+  $result=mysqli_query($link,"SELECT * from ".$table_name." WHERE conid=".$_SESSION['conid']." ORDER BY display_order");
+  while (list($option_value,$option_name)= mysqli_fetch_array($result, MYSQLI_NUM)) {
     if (array_search($option_value,$skipset)!==false) {
       echo "<OPTION value=".$option_value.">".$option_name."</OPTION>\n";
     }
@@ -430,9 +434,9 @@ function update_session() {
 function get_next_session_id() {
   global $link, $message, $message_error;
 
-  $result=mysql_query("SELECT MAX(sessionid) FROM Sessions where conid=".$_SESSION['conid'],$link);
+  $result=mysqli_query($link,"SELECT MAX(sessionid) FROM Sessions where conid=".$_SESSION['conid']);
   if (!$result) {return "";}
-  list($maxid)=mysql_fetch_array($result, MYSQL_NUM);
+  list($maxid)=mysqli_fetch_array($result, MYSQLI_NUM);
   if (!$maxid) {return "1";}
   if ($maxid==-1) {return "1";}
   return $maxid+1;
@@ -495,13 +499,13 @@ function insert_session() {
   $query.="suggestor=\"".$_SESSION['badgeid'].'",';
   $query.="warnings=0,invitedguest="; // warnings db field not editable by form
   if ($session["invguest"]) {$query.="1";} else {$query.="0";}
-  $result = mysql_query($query,$link);
+  $result = mysqli_query($link,$query);
   if (!$result) {
-    $message_error.=mysql_error($link);
+    $message_error.=mysqli_error($link);
     $message_error.=" query=$query";
     return $message_error;
   }
-  $id = mysql_insert_id($link);
+  $id = mysqli_insert_id($link);
 
   /* There should be a more dignified way of doing this, but for the
      meantime, while we are in transition...
@@ -602,17 +606,17 @@ SELECT
     sessionid=$sessionid
 EOD;
 
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
-    $message_error.=$query."<BR>\n".mysql_error($link);
+    $message_error.=$query."<BR>\n".mysqli_error($link);
     return (-3);
   }
-  $rows=mysql_num_rows($result);
+  $rows=mysqli_num_rows($result);
   if ($rows!=1) {
     $message_error.=$rows;
     return (-2);
   }
-  $sessionarray=mysql_fetch_array($result, MYSQL_ASSOC);
+  $sessionarray=mysqli_fetch_array($result, MYSQLI_ASSOC);
   $session["sessionid"]=$sessionarray["sessionid"];
   $session["conid"]=$sessionarray["conid"];
   $session["track"]=$sessionarray["trackid"];
@@ -655,7 +659,7 @@ EOD;
   $session["description_edited_book"]=$descdata["description_en-us_edited_book_bio"];
   $session["description_good_book"]=$descdata["description_en-us_good_book_bio"];
   $session["persppartinfo"]=$sessionarray["persppartinfo"];
-  $timearray=parse_mysql_time_hours($sessionarray["duration"]);
+  $timearray=parse_mysqli_time_hours($sessionarray["duration"]);
   if ($_SESSION['condurationminutes']=="TRUE") {
     $session["duration"]=" ".strval(60*$timearray["hours"]+$timearray["minutes"]);
   } else {
@@ -686,13 +690,13 @@ EOD;
 
   // Loop across the keys of the array created above.
   foreach (array_keys($tn_array) as $j) {
-    $result=mysql_query("SELECT ".$te_array[$j]." FROM ".$tn_array[$j]." where sessionid=".$sessionid,$link);
+    $result=mysqli_query($link,"SELECT ".$te_array[$j]." FROM ".$tn_array[$j]." where sessionid=".$sessionid);
     if (!$result) {
-      $message_error.=mysql_error($link);
+      $message_error.=mysqli_error($link);
       return (-3);
     }
     unset($session[$j]);
-    while ($row=mysql_fetch_array($result, MYSQL_NUM)) {
+    while ($row=mysqli_fetch_array($result, MYSQLI_NUM)) {
       $session[$j][]=$row[0];
     }
   }
@@ -721,9 +725,9 @@ function isLoggedIn() {
   }
 
   // addslashes to session username before using in a query.
-  $result=mysql_query("SELECT password FROM Participants where badgeid='".$_SESSION['badgeid']."'",$link);
+  $result=mysqli_query($link,"SELECT password FROM Participants where badgeid='".$_SESSION['badgeid']."'");
   if (!$result) {
-    $message_error.=mysql_error($link);
+    $message_error.=mysqli_error($link);
     unset($_SESSION['badgeid']);
     unset($_SESSION['password']);
 
@@ -731,7 +735,7 @@ function isLoggedIn() {
     return (-3);
   }
 
-  if (mysql_num_rows($result)!=1) {
+  if (mysqli_num_rows($result)!=1) {
     unset($_SESSION['badgeid']);
     unset($_SESSION['password']);
 
@@ -740,7 +744,7 @@ function isLoggedIn() {
     return (-1);
   }
 
-  $row=mysql_fetch_array($result, MYSQL_NUM);
+  $row=mysqli_fetch_array($result, MYSQLI_NUM);
   $db_pass = $row[0];
 
   // now we have encrypted pass from DB in
@@ -777,17 +781,17 @@ function isLoggedIn() {
 function retrieve_participant_from_db($badgeid) {
   global $participant, $link, $message, $message_error;
 
-  $result=mysql_query("SELECT pubsname, password FROM Participants where badgeid='$badgeid'",$link);
+  $result=mysqli_query($link,"SELECT pubsname, password FROM Participants where badgeid='$badgeid'");
   if (!$result) {
-    $message_error.=mysql_error($link);
+    $message_error.=mysqli_error($link);
     return (-3);
   }
-  $rows=mysql_num_rows($result);
+  $rows=mysqli_num_rows($result);
   if ($rows!=1) {
     $message_error.="Participant rows retrieved: $rows ";
     return (-2);
   }
-  $participant=mysql_fetch_array($result, MYSQL_ASSOC);
+  $participant=mysqli_fetch_array($result, MYSQLI_ASSOC);
   return (0);
 }
 
@@ -821,12 +825,12 @@ SELECT
     WHERE
         badgeid="$badgeid"
 EOD;
-    $result=mysql_query($query,$link);
+    $result=mysqli_query($link,$query);
     if (!$result) {
-        $message_error.=mysql_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
+        $message_error.=mysqli_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
         return(-1);
         };
-    $rows=mysql_num_rows($result);
+    $rows=mysqli_num_rows($result);
     if ($rows!=1) {
         $message_error.=$rows." rows returned for badgeid when 1 expected.<BR>Database Error.<BR>No further execution possible.";
         return(-1);
@@ -836,7 +840,7 @@ EOD;
         return(-1);
         };
     $participant["password"]="";
-    $congoinfo=mysql_fetch_array($result, MYSQL_ASSOC);
+    $congoinfo=mysqli_fetch_array($result, MYSQLI_ASSOC);
     return($congoinfo);
     }
 
@@ -863,12 +867,12 @@ SELECT
     conid=$conid AND
     badgeid=$badgeid
 EOD;
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
-    $message_error.=$query."<BR>\n".mysql_error($link);
+    $message_error.=$query."<BR>\n".mysqli_error($link);
     return (-3);
   }
-  $rows=mysql_num_rows($result);
+  $rows=mysqli_num_rows($result);
   if ($rows==0) {
     return (-1);
   }
@@ -876,7 +880,7 @@ EOD;
     $message_error.=$query."<BR>\n returned $rows rows.";
     return (-2);
   }
-  $partAvailarray=mysql_fetch_array($result, MYSQL_NUM);
+  $partAvailarray=mysqli_fetch_array($result, MYSQLI_NUM);
   $partAvail["badgeid"]=$partAvailarray[0];
   $partAvail["maxprog"]=$partAvailarray[1];
   $partAvail["preventconflict"]=$partAvailarray[2];
@@ -886,16 +890,16 @@ EOD;
   // Participant Availbility days.
   if ($_SESSION['connumdays']>1) {
     $query="SELECT badgeid, day, maxprog FROM ParticipantAvailabilityDays WHERE conid=\"$conid\" AND badgeid=\"$badgeid\"";
-    $result=mysql_query($query,$link);
+    $result=mysqli_query($link,$query);
     if (!$result) {
-      $message_error.=$query."<BR>\n".mysql_error($link);
+      $message_error.=$query."<BR>\n".mysqli_error($link);
       return (-3);
     }
     for ($i=1; $i<=$_SESSION['connumdays']; $i++) {
       unset($partAvail["maxprogday$i"]);
     }
-    if (mysql_num_rows($result)>0) {
-      while ($row=mysql_fetch_array($result, MYSQL_NUM)) {
+    if (mysqli_num_rows($result)>0) {
+      while ($row=mysqli_fetch_array($result, MYSQLI_NUM)) {
 	$i=$row[1];
 	$partAvail["maxprogday$i"]=$row[2];
       }
@@ -905,9 +909,9 @@ EOD;
   // Participant availibility times.
   $query="SELECT badgeid, availabilitynum, starttime, endtime FROM ParticipantAvailabilityTimes ";
   $query.="where conid=$conid AND badgeid=\"$badgeid\" order by starttime";
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
-    $message_error.=$query."<BR>\n".mysql_error($link);
+    $message_error.=$query."<BR>\n".mysqli_error($link);
     return (-3);
   }
   for ($i=1; $i<=$_SESSION['conavailabilityrows']; $i++) {
@@ -915,7 +919,7 @@ EOD;
     unset($partAvail["endtimestamp_$i"]);
   }
   $i=1;
-  while ($row=mysql_fetch_array($result, MYSQL_NUM)) {
+  while ($row=mysqli_fetch_array($result, MYSQLI_NUM)) {
     $partAvail["starttimestamp_$i"]=$row[2];
     $partAvail["endtimestamp_$i"]=$row[3];
     $i++;
@@ -930,7 +934,7 @@ function set_permission_set($badgeid) {
   global $link, $message, $message_error;
 
   // First do simple permissions
-  $_SESSION['permission_set']="";
+  $_SESSION['permission_set']=array();
   $conid=$_SESSION['conid'];
   $query= <<<EOD
 SELECT
@@ -946,19 +950,19 @@ SELECT
 EOD;
 
   // Assign result
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
 
   // error_log("set_permission_set query:  ".$query);
 
   // If result fails error out
   if (!$result) {
-    $message_error.=$query." \n ".mysql_error($link)." \n <BR>Database Error.<BR>No further execution possible.";
+    $message_error.=$query." \n ".mysqli_error($link)." \n <BR>Database Error.<BR>No further execution possible.";
     error_log("Zambia: ".$message_error);
     return(-1);
   };
 
   // If no rows, person has no permissions.
-  $rows=mysql_num_rows($result);
+  $rows=mysqli_num_rows($result);
   if ($rows==0) {
     $message_error.=$query." \n <BR> No rows returned from query.";
     error_log("Zambia: ".$message_error);
@@ -967,8 +971,8 @@ EOD;
 
   // Set the permissions
   for ($i=0; $i<$rows; $i++) {
-    $onerow=mysql_fetch_array($result, MYSQL_BOTH);
-    $_SESSION['permission_set'][]=$onerow[0];
+    $onerow=mysqli_fetch_array($result, MYSQLI_BOTH);
+    $_SESSION['permission_set'][]="$onerow[0]";
   };
 
   // Second, do <<specific>> permissions
@@ -992,17 +996,17 @@ SELECT
 EOD;
 
   // Assign result
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
 
   // If result fails error out
   if (!$result) {
-    $message_error.=$query." \n ".mysql_error($link)." \n <BR>Database Error.<BR>No further execution possible.";
+    $message_error.=$query." \n ".mysqli_error($link)." \n <BR>Database Error.<BR>No further execution possible.";
     error_log("Zambia: ".$message_error);
     return(-1);
   };
 
   // If there are zero rows, possibly note it in the error log, but don't error out, often the case.
-  $rows=mysql_num_rows($result);
+  $rows=mysqli_num_rows($result);
   if ($rows==0) {
     //error_log("Zambia: ".$query." \n <BR> No rows returned from query.");
     return(0);
@@ -1010,7 +1014,7 @@ EOD;
 
   // If there are actually rows, set them
   for ($i=0; $i<$rows; $i++) {
-    $_SESSION['permission_set_specific'][]=mysql_fetch_array($result, MYSQL_ASSOC);
+    $_SESSION['permission_set_specific'][]=mysqli_fetch_array($result, MYSQLI_ASSOC);
   };
 
   // Successful return
@@ -1022,7 +1026,7 @@ EOD;
 function db_error($title,$query,$staff) {
   global $link, $message, $message_error;
   $message_error.="Database error.<BR>\n";
-  $message_error.=mysql_error($link)."<BR>\n";
+  $message_error.=mysqli_error($link)."<BR>\n";
   $message_error.=$query."<BR>\n";
   RenderError($title,$message_error);
 }
@@ -1032,11 +1036,11 @@ function db_error($title,$query,$staff) {
 function get_idlist_from_db($table_name,$id_col_name,$desc_col_name,$desc_col_match) {
   global $link, $message, $message_error;
   // error_log("zambia - get_idlist_from_db: desc_col_match: $desc_col_match");
-  $query = "SELECT GROUP_CONCAT($id_col_name) from $table_name where ";
+  $query = "SELECT GROUP_CONCAT($id_col_name) allcolnames from $table_name where ";
   $query.= "$desc_col_name in ($desc_col_match)";
   // error_log("zambia - get_idlist_from_db: query: $query");
-  $result=mysql_query($query,$link);
-  return(mysql_result($result,0));
+  $result=mysqli_query($link,$query);
+  return(mysqli_fetch_object($result)->allcolnames);
 }
 
 /* Function unlock_participant($badgeid);
@@ -1061,7 +1065,7 @@ function unlock_participant($badgeid) {
       }
     }
     //error_log("Zambia: unlock_participants: ".$query);
-    $result=mysql_query($query,$link);
+    $result=mysqli_query($link,$query);
     if (!$result) {
       return ($query.": -1");
     } else {
@@ -1078,11 +1082,11 @@ function lock_participant($badgeid) {
   $userbadgeid=$_SESSION['badgeid'];
   $query="UPDATE Bios SET biolockedby='$userbadgeid' WHERE biolockedby IS NULL and badgeid='$badgeid'";
 
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
     return (-1);
   }
-  if (mysql_affected_rows($link) > 0) {
+  if (mysqli_affected_rows($link) > 0) {
     return (0);
   } else {
     return (-2);
@@ -1094,8 +1098,8 @@ function lock_participant($badgeid) {
 function get_sstatus() {
   global $link, $sstatus, $message, $message_error;
   $query = "SELECT statusid, may_be_scheduled, validate from SessionStatuses";
-  $result=mysql_query($query,$link);
-  while ($arow = mysql_fetch_array($result, MYSQL_ASSOC)) {
+  $result=mysqli_query($link,$query);
+  while ($arow = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
     $statusid=$arow['statusid'];
     $may_be_scheduled=($arow['may_be_scheduled']==1?1:0);
     $validate=($arow['validate']==1?1:0);
@@ -1115,8 +1119,8 @@ SELECT
     COLUMN_NAME="$field"
 EOD;
 
-  $result=mysql_query($query,$link);
-  $typearray=mysql_fetch_array($result, MYSQL_ASSOC);
+  $result=mysqli_query($link,$query);
+  $typearray=mysqli_fetch_array($result, MYSQLI_ASSOC);
   preg_match("/^\(\'(.*)\'\)$/", $typearray['Type'], $matches);
   $enum=explode("','", $matches[1]);
   return $enum;

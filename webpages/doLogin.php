@@ -31,7 +31,7 @@ if (prepare_db()===false) {
 
 // Email Address test
 if ((!isset($badgeid)) and (isset($emailaddr))) {
-  $result=mysql_query("SELECT badgeid FROM Participants WHERE email='".$emailaddr."'",$link);
+  $result=mysqli_query($link,"SELECT badgeid FROM Participants WHERE email='".$emailaddr."'");
   if (!$result) {
     $message_error.="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
     require ('login.php');
@@ -39,8 +39,8 @@ if ((!isset($badgeid)) and (isset($emailaddr))) {
   }
 
   // Badgeid set, only if unique
-  if (mysql_num_rows($result)==1) {
-    $dbobject=mysql_fetch_object($result);
+  if (mysqli_num_rows($result)==1) {
+    $dbobject=mysqli_fetch_object($result);
     $badgeid=$dbobject->badgeid;
   } else {
    $message_error.="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
@@ -50,15 +50,15 @@ if ((!isset($badgeid)) and (isset($emailaddr))) {
 }
 
 //Badgid test
-$result=mysql_query("SELECT password,password2 FROM Participants WHERE badgeid='".$badgeid."'",$link);
-if ((!$result) || (mysql_num_rows($result)!=1)) {
+$result=mysqli_query($link,"SELECT password,password2 FROM Participants WHERE badgeid='".$badgeid."'");
+if ((!$result) || (mysqli_num_rows($result)!=1)) {
   $message_error.="Incorrect BadgeID, email address or password - please be aware that BadgeID, email address and password are case sensitive and try again.";
   require ('login.php');
   exit();
 }
 
 // Password check
-$dbobject=mysql_fetch_object($result);
+$dbobject=mysqli_fetch_object($result);
 $dbpassword=$dbobject->password;
 $dbpassword2=$dbobject->password2;
 //echo $badgeid."<BR>".$dbpassword."<BR>".$password."<BR>".md5($password);
@@ -82,18 +82,18 @@ $dbpassword2=$dbobject->password2;
 //}
 
 // Get and set information on individual
-$result=mysql_query("SELECT badgename FROM CongoDump WHERE badgeid='".$badgeid."'",$link);
+$result=mysqli_query($link,"SELECT badgename FROM CongoDump WHERE badgeid='".$badgeid."'");
 if ($result) {
-  $dbobject=mysql_fetch_object($result);
+  $dbobject=mysqli_fetch_object($result);
   $badgename=$dbobject->badgename;
   $_SESSION['badgename']=$badgename;
 } else {
   $_SESSION['badgename']="";
 }
-$result=mysql_query("SELECT pubsname FROM Participants WHERE badgeid='".$badgeid."'",$link);
+$result=mysqli_query($link,"SELECT pubsname FROM Participants WHERE badgeid='".$badgeid."'");
 $pubsname="";
 if ($result) {
-  $dbobject=mysql_fetch_object($result);
+  $dbobject=mysqli_fetch_object($result);
   $pubsname=$dbobject->pubsname;
 }
 if (!($pubsname=="")) {
@@ -129,9 +129,9 @@ SELECT
   GROUP BY
     badgeid
 EOF;
-$result=mysql_query($querypresent,$link);
-if ($result and (mysql_num_rows($result)==1)) {
-  $dbobject=mysql_fetch_object($result);
+$result=mysqli_query($link,$querypresent);
+if ($result and (mysqli_num_rows($result)==1)) {
+  $dbobject=mysqli_fetch_object($result);
   $prevconpresent=$dbobject->ConName;
   $prevconrole=$dbobject->permrolename;
 }
@@ -150,9 +150,9 @@ SELECT
   GROUP BY
     badgeid
 EOF;
-$result=mysql_query($queryvend,$link);
-if ($result and (mysql_num_rows($result)==1)) {
-  $dbobject=mysql_fetch_object($result);
+$result=mysqli_query($link,$queryvend);
+if ($result and (mysqli_num_rows($result)==1)) {
+  $dbobject=mysqli_fetch_object($result);
   $prevconvend=$dbobject->ConName;
 }
 
@@ -180,9 +180,9 @@ SELECT
   GROUP BY
     badgeid
 EOF;
-$result=mysql_query($queryphoto,$link);
-if ($result and (mysql_num_rows($result)==1)) {
-  $dbobject=mysql_fetch_object($result);
+$result=mysqli_query($link,$queryphoto);
+if ($result and (mysqli_num_rows($result)==1)) {
+  $dbobject=mysqli_fetch_object($result);
   $prevconphotosub=$dbobject->ConName;
 }
 
@@ -195,9 +195,9 @@ SELECT
   WHERE
     conid=$conid
 EOF;
-$result=mysql_query($querypast,$link);
-if ($result and (mysql_num_rows($result)==1)) {
-  $dbobject=mysql_fetch_object($result);
+$result=mysqli_query($link,$querypast);
+if ($result and (mysqli_num_rows($result)==1)) {
+  $dbobject=mysqli_fetch_object($result);
   $past_p=$dbobject->IsPassed;
 }
 
@@ -212,9 +212,9 @@ SELECT
     conid=$conid AND
     phasetypename in ('Suggestions')
 EOF;
-$result=mysql_query($querybrainstorm,$link);
-if ($result and (mysql_num_rows($result)==1)) {
-  $dbobject=mysql_fetch_object($result);
+$result=mysqli_query($link,$querybrainstorm);
+if ($result and (mysqli_num_rows($result)==1)) {
+  $dbobject=mysqli_fetch_object($result);
   $brainstorm_p=$dbobject->phasestate;
 }
 
@@ -229,9 +229,9 @@ SELECT
     conid=$conid AND
     phasetypename in ('Photo Submission')
 EOF;
-$result=mysql_query($queryphotosub,$link);
-if ($result and (mysql_num_rows($result)==1)) {
-  $dbobject=mysql_fetch_object($result);
+$result=mysqli_query($link,$queryphotosub);
+if ($result and (mysqli_num_rows($result)==1)) {
+  $dbobject=mysqli_fetch_object($result);
   $photosub_p=$dbobject->phasestate;
 }
 

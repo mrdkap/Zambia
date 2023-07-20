@@ -149,52 +149,53 @@ SELECT
     sessionid=$selsessionid AND
     conid=$conid
 EOD;
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     $message_error=$query."Error querying database. Unable to continue.";
     RenderError($title,$message_error);
     exit();
     }
-if (mysql_num_rows($result)==0) {
+if (mysqli_num_rows($result)==0) {
     $message_error="Zero rows returned, this is either a removed class, or a not-yet-created one.  Please select another session above.";
     RenderError($title,$message_error);
     exit();
     }
-if (mysql_num_rows($result)!=1) {
+if (mysqli_num_rows($result)!=1) {
     $message_error=$query."returned unexpected number of rows (1 expected).";
     RenderError($title,$message_error);
     exit();
     }
-echo "<H2>$selsessionid - <A HREF=\"EditSession.php?id=".$selsessionid."\">".htmlspecialchars(mysql_result($result,0,"title"))."</A></H2>";    
+$sessioninfo=mysqli_fetch_object($result);
+echo "<H2>$selsessionid - <A HREF=\"EditSession.php?id=".$selsessionid."\">".htmlspecialchars($sessioninfo->title)."</A></H2>";    
 echo "<P>Web Program Text\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"desc_good_web"));
+echo htmlspecialchars($sessioninfo->desc_good_web);
 echo "\n";
 echo "<P>Program Book Text\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"desc_good_book"));
+echo htmlspecialchars($sessioninfo->desc_good_book);
 echo "\n";
 echo "<P>Prospective Participant Info\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"persppartinfo"));
+echo htmlspecialchars($sessioninfo->persppartinfo);
 echo "\n";
 echo "<P>Notes for Participant\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"notesforpart"));
+echo htmlspecialchars($sessioninfo->notesforpart);
 echo "\n";
 echo "<P>Suggestor\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"pubsname"));
+echo htmlspecialchars($sessioninfo->pubsname);
 echo "\n";
 echo "<P>Assigned Count\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"estatten"));
+echo htmlspecialchars($sessioninfo->estatten);
 echo "\n";
 echo "<P>Notes for Program Staff\n";
 echo "<P class=\"border1111 lrmargin lrpad\">";
-echo htmlspecialchars(mysql_result($result,0,"notesforprog"));
+echo htmlspecialchars($sessioninfo->notesforprog);
 echo "\n";
 echo "<HR>\n";
-$statusid=mysql_result($result,0,"statusid");
+$statusid=$sessioninfo->statusid;
 
 $query = <<<EOD
 SELECT
@@ -206,7 +207,7 @@ SELECT
     aidedecamp,
     R.badgeid,
     pubsname,
-    rank,
+    `rank`,
     willmoderate,
     obadgeid,
     ibadgeid,
@@ -249,7 +250,7 @@ SELECT
     psits,
     pubsname
 EOD;
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
     $message_error=$query."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message_error);
     exit();
@@ -328,7 +329,7 @@ $i=0;
 $modid=0;
 $volid=0;
 $intid=0;
-while ($bigarray[$i] = mysql_fetch_array($result, MYSQL_ASSOC)) {
+while ($bigarray[$i] = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
   if (($bigarray[$i]["moderator"]=="1") or ($bigarray[$i]["moderator"]=="Yes")) {
     $modid=$bigarray[$i]["badgeid"];
   }

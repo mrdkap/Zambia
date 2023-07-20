@@ -138,12 +138,12 @@ if ($_POST['update']=="please") {
 
 // Get the pubsname, to make things more readable
 $query="SELECT pubsname from Participants where badgeid=$selpartid";
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message_error="Badgeid does not exist in Participants, please try again:".$query;
   RenderError($title,$message_error);
   exit();
 }
-$pubsname=mysql_result($result,0);
+$pubsname=mysqli_fetch_object($result)->pubsname;
 
 // Pull all the compensation entries, if any exist for the participant for this event.
 $query=<<<EOD
@@ -159,7 +159,7 @@ SELECT
     badgeid=$selpartid
 EOD;
 
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   $message_error="<P>Error reading Compensation table.</P>\n<P>";
   $message_error.=$query;
   RenderError($title,$message_error);
@@ -167,10 +167,10 @@ if (($result=mysql_query($query,$link))===false) {
 }
 
 // build the appropriate informational arrays to be presented in the HTML
-$comprows=mysql_num_rows($result);
+$comprows=mysqli_num_rows($result);
 $max_length=70;
 for ($i=1; $i<=$comprows; $i++) {
-  $tmp_comp_array=mysql_fetch_assoc($result);
+  $tmp_comp_array=mysqli_fetch_assoc($result);
   $comp_array[$tmp_comp_array['comptypeid']]['compid']=$tmp_comp_array['compid'];
   $compid_array[]=$tmp_comp_array['compid'];
   $comp_array[$tmp_comp_array['comptypeid']]['amount']=$tmp_comp_array['compamount'];

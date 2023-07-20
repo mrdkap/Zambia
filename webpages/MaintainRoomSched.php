@@ -30,7 +30,7 @@ if (isset($_POST["selroom"])) { // room was selected by this form
 }
 
 if ($conflict!=true) {
-  $query="SELECT roomid, concat(roomname,'(',function,')') as Room FROM Rooms ORDER BY display_order";
+  $query="SELECT roomid, concat(roomname,'(',`function`,')') as Room FROM Rooms ORDER BY display_order";
 ?>
 <FORM name="selroomform" method=POST action="MaintainRoomSched.php">
   <DIV>
@@ -73,24 +73,25 @@ if ($conflict==true) {
 // Get the room's physicial characteristics, if they exist, including open and close times.
 $query = <<<EOD
 SELECT roomid, roomname, opentime1, closetime1, opentime2, closetime2, opentime3, closetime3,
-function, floor, height, dimensions, area, notes FROM Rooms WHERE roomid=$selroomid
+`function`, floor, height, dimensions, area, notes FROM Rooms WHERE roomid=$selroomid
 EOD;
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message=$query."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message);
   exit();
 }
-echo "<H2>$selroomid - ".htmlspecialchars(mysql_result($result,0,"roomname"))."</H2>";
+$roominfo=mysqli_fetch_object($result);
+echo "<H2>$selroomid - ".htmlspecialchars($roominfo->roomname)."</H2>";
 echo "<H4>Open Times</H4>\n";
 echo "<DIV class=\"border1111 lrpad lrmargin\"><P class=\"lrmargin\">";
-if (mysql_result($result,0,"opentime1")!="") {
-    echo time_description(mysql_result($result,0,"opentime1"))." through ".time_description(mysql_result($result,0,"closetime1"))."<BR>\n";
+if ($roominfo->opentime1 != "") {
+    echo time_description($roominfo->opentime1)." through ".time_description($roominfo->closetime1)."<BR>\n";
     }
-if (mysql_result($result,0,"opentime2")!="") {
-    echo time_description(mysql_result($result,0,"opentime2"))." through ".time_description(mysql_result($result,0,"closetime2"))."<BR>\n";
+if ($roominfo->opentime2 != "") {
+    echo time_description($roominfo->opentime2)." through ".time_description($roominfo->closetime2)."<BR>\n";
     }
-if (mysql_result($result,0,"opentime3")!="") {
-    echo time_description(mysql_result($result,0,"opentime3"))." through ".time_description(mysql_result($result,0,"closetime3"))."<BR>\n";
+if ($roominfo->opentime3 != "") {
+    echo time_description($roominfo->opentime3)." through ".time_description($roominfo->closetime3)."<BR>\n";
     }
 echo "</DIV>\n";
 echo "<H4>Characteristics</H4>\n";
@@ -103,14 +104,14 @@ echo "         <TH class=\"lrpad border1111\">Area</TH>\n";
 echo "         <TH class=\"lrpad border1111\">Height</TH>\n";
 echo "         </TR>\n";
 echo "      <TR>\n";
-echo "         <TD class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"function"))."</TD>\n";
-echo "         <TD class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"floor"))."</TD>\n";
-echo "         <TD class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"dimensions"))."</TD>\n";
-echo "         <TD class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"area"))."</TD>\n";
-echo "         <TD class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"height"))."</TD>\n";
+echo "         <TD class=\"lrpad border1111\">".htmlspecialchars($roominfo->function)."</TD>\n";
+echo "         <TD class=\"lrpad border1111\">".htmlspecialchars($roominfo->floor)."</TD>\n";
+echo "         <TD class=\"lrpad border1111\">".htmlspecialchars($roominfo->dimensions)."</TD>\n";
+echo "         <TD class=\"lrpad border1111\">".htmlspecialchars($roominfo->area)."</TD>\n";
+echo "         <TD class=\"lrpad border1111\">".htmlspecialchars($roominfo->height)."</TD>\n";
 echo "         </TR>\n";
 echo "      <TR>\n";
-echo "         <TD colspan=5 class=\"lrpad border1111\">".htmlspecialchars(mysql_result($result,0,"notes"))."</TD>\n";
+echo "         <TD colspan=5 class=\"lrpad border1111\">".htmlspecialchars($roominfo->notes)."</TD>\n";
 echo "         </TR>\n";
 echo "      </TABLE>\n";
 echo "<H4>Room Sets</H4>\n";
@@ -119,14 +120,14 @@ echo "<H4>Room Sets</H4>\n";
 $query = <<<EOD
 SELECT roomsetname, capacity FROM RoomSets JOIN RoomHasSet USING (roomsetid) WHERE roomid=$selroomid
 EOD;
-if (!$result=mysql_query($query,$link)) {
+if (!$result=mysqli_query($link,$query)) {
   $message=$query."<BR>Error querying database. Unable to continue.<BR>";
   RenderError($title,$message);
   exit();
 }
 
 $i=1;
-while ($bigarray[$i] = mysql_fetch_array($result, MYSQL_ASSOC)) {
+while ($bigarray[$i] = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
     $i++;
     }
 $numrows=$i;

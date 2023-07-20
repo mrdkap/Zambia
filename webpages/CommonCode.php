@@ -16,8 +16,8 @@ if ((empty($_SESSION['conid'])) and (is_numeric($conid))) {
 }
 
 //set_session_timeout();
-session_save_path("/tmp/tmp_Zambia");
-ini_set('session.gc_probability', 1);
+//session_save_path("/tmp/tmp_Zambia");
+//ini_set('session.gc_probability', 1);
 session_start();
 if (prepare_db()===false) {
   $message_error.="Unable to connect to database.<BR>No further execution possible.";
@@ -82,14 +82,15 @@ SELECT
 EOF;
 
 // Retrieve query fail if database can't be found, and if there isn't just one result
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   //require_once("logout.php");
   $message_error.="This Error retrieving data from database<BR>\n";
   $message_error.=$query;
+  $message_error.=$result;
   RenderError($title,$message_error);
   exit();
 }
-if (0==($rows=mysql_num_rows($result))) {
+if (0==($rows=mysqli_num_rows($result))) {
   $message_error.="Database query did not return any rows.<BR>\n";
   $message_error.=$query;
   RenderError($title,$message_error);
@@ -102,7 +103,7 @@ if ($rows > 1) {
   exit();
 }
 
-$ConInfo_array=mysql_fetch_assoc($result);
+$ConInfo_array=mysqli_fetch_assoc($result);
 $ConInfo_array_keys=array_keys($ConInfo_array);
 foreach ($ConInfo_array_keys as $element) {
   if ($_SESSION["$element"]=="") {$_SESSION["$element"]=$ConInfo_array["$element"];}
@@ -1008,8 +1009,8 @@ function renderbiosreport ($badgeid_list,$qno,$check_element,$numrows,$count_bad
  in case there is an error, or just no information, and a reportid, so
  the report can be edited if there is a query error in the report. */
 function queryreport ($query,$link,$title,$description,$reportid) {
-  mysql_query("SET group_concat_max_len = 9216;",$link);
-  if (($result=mysql_query($query,$link))===false) {
+  mysqli_query($link,"SET group_concat_max_len = 9216;");
+  if (($result=mysqli_query($link,$query))===false) {
     $message.="<P>Error retrieving data from database.</P>\n<P>";
     if ($reportid !=0) {
       $message.="Edit Report <A HREF=EditReport.php?selreport=$reportid>$reportid</A></P>\n<P>";
@@ -1018,7 +1019,7 @@ function queryreport ($query,$link,$title,$description,$reportid) {
     RenderError($title,$message);
     exit ();
   }
-  if (0==($rows=mysql_num_rows($result))) {
+  if (0==($rows=mysqli_num_rows($result))) {
     $header_array[0]="This report retrieved no results matching the criteria.";
     $element_array[$header_array[0]]='';
     $rows=0;
@@ -1028,7 +1029,7 @@ function queryreport ($query,$link,$title,$description,$reportid) {
     exit(); */
   }
   for ($i=1; $i<=$rows; $i++) {
-    $element_array[$i]=mysql_fetch_assoc($result);
+    $element_array[$i]=mysqli_fetch_assoc($result);
   }
   $header_array=array_keys($element_array[1]);
   return array ($rows,$header_array,$element_array);
@@ -1150,7 +1151,7 @@ SELECT
     $limittables
     $limitwhere
   ORDER BY
-    email
+    pname
 EOD;
 
   // pubsname: email (partid)
@@ -1163,7 +1164,7 @@ SELECT
     $limittables
     $limitwhere
   ORDER BY
-    pubsname
+    pname
 EOD;
 
   // badgename/pubsname: email (partid)
@@ -1455,8 +1456,8 @@ function submit_table_element ($link, $title, $table, $element_array, $value_arr
   $element_string=substr($element_string,0,-1);
   $value_string=substr($value_string,0,-1);
   $query= "INSERT INTO $table ($element_string) VALUES ($value_string)";
-  if (!mysql_query($query,$link)) {
-    if (mysql_errno($link)==1062) {
+  if (!mysqli_query($link,$query)) {
+    if (mysqli_errno($link)==1062) {
       $message_error.=$query."<BR>Error updating $table.  Record already exists.";
     } else {
       $message_error.=$query."<BR>Error updating $table.  Database not updated.";
@@ -1474,12 +1475,12 @@ function update_table_element ($link, $title, $table, $pairedvalue_array, $match
   foreach ($pairedvalue_array as $pairedvalue) {$pairedvalue_string.=$pairedvalue.",";}
   $pairedvalue_string=substr($pairedvalue_string,0,-1);
   $query="UPDATE $table set $pairedvalue_string WHERE $match_field = '$match_value'";
-  if (!mysql_query($query,$link)) {
+  if (!mysqli_query($link,$query)) {
     $message_error.=$query."<BR>Error updating $table.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
-  ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+  ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
   if ($r_matched[1]==0) {
     $message.=$query."<BR>Error updating $table.  No entries where $match_string to be updated.";
   } else {
@@ -1494,12 +1495,12 @@ function update_table_element_extended_match ($link, $title, $table, $pairedvalu
   foreach ($pairedvalue_array as $pairedvalue) {$pairedvalue_string.=$pairedvalue.",";}
   $pairedvalue_string=substr($pairedvalue_string,0,-1);
   $query="UPDATE $table set $pairedvalue_string WHERE $match_string";
-  if (!mysql_query($query,$link)) {
+  if (!mysqli_query($link,$query)) {
     $message_error.=$query."<BR>Error updating $table.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
-  ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+  ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
   if ($r_matched[1]==0) {
     $message.=$query."<BR>Error updating $table.  No entries where $match_string to be updated.";
   } else {
@@ -1512,7 +1513,7 @@ function update_table_element_extended_match ($link, $title, $table, $pairedvalu
   WARNING: Very Dangerous.  Your where string could wipe out the whole table. */
 function delete_table_element ($link, $title, $table, $match_string) {
   $query="DELETE FROM $table where $match_string";
-  if (!mysql_query($query,$link)) {
+  if (!mysqli_query($link,$query)) {
     $message_error.=$query."<BR>Error updating $table.  Database not updated.";
     RenderError($title,$message_error);
     exit;
@@ -1543,7 +1544,7 @@ function submit_participant_note ($note, $partid) {
   $query.=$_SESSION['badgeid']."','";
   $query.=mysql_real_escape_string($note)."','";
   $query.=$_SESSION['conid']."')";
-  if (!mysql_query($query,$link)) {
+  if (!mysqli_query($link,$query)) {
     $message.=$query."<BR>Error updating database with note.  Database not updated.";
     echo "<P class=\"errmsg\">".$message."\n";
     return;
@@ -1620,13 +1621,13 @@ function create_participant ($participant_arr) {
 
   // Already existing email address.
   $query = "SELECT email FROM Participants where email like \"%".$participant_arr['email']."%\"";
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
     $message_error.="Unable to reach database.<BR>\n$query<BR>\n";
     RenderError($title,$message_error);
     exit();
   }
-  if (mysql_num_rows($result) > 0) {
+  if (mysqli_num_rows($result) > 0) {
     $message_error.="There is already an entry with this email address in the system.\n";
     $message_error.="Please <A HREF\"StaffEditCreateParticipant.php?action=migrate\">Migrate</A>\n";
     $message_error.="them instead of trying to re-create them.";
@@ -1637,20 +1638,20 @@ function create_participant ($participant_arr) {
   // Get next possible badgeid.
   // WAS: "SELECT MAX(badgeid) FROM Participants WHERE badgeid>='1'";
   $query = "SELECT badgeid FROM Participants ORDER BY ABS(badgeid) DESC LIMIT 1";
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
     $message_error.="Unrecoverable error updating database.  Database not updated.<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
   }
-  if (mysql_num_rows($result)!=1) {
+  if (mysqli_num_rows($result)!=1) {
     $message_error.="Database query returned unexpected number of rows(1 expected).  Database not updated.<BR>\n";
     $message_error.=$query;
     RenderError($title,$message_error);
     exit();
   }
-  $maxbadgeid=mysql_result($result,0);
+  $maxbadgeid=mysqli_fetch_object($result)->badgeid;
   //error_log("Zambia: SubmitEditCreateParticipant.php: maxbadgeid: $maxbadgeid");
   sscanf($maxbadgeid,"%d",$x);
   $newbadgeid=sprintf("%d",$x+1); // convert to num; add 1; convert back to string
@@ -1672,12 +1673,12 @@ function create_participant ($participant_arr) {
     $query ="UPDATE Interested SET ";
     $query.="interestedtypeid=".$participant_arr['interested']." ";
     $query.="WHERE badgeid=\"".$newbadgeid."\" AND conid=".$_SESSION['conid'];
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message.=$query."<BR>Error updating Interested table.  Database not update.";
       echo "<P class=\"errmsg\">".$message."</P>\n";
       return;
     }
-    ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+    ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
       $value_array=array($_SESSION['conid'], $newbadgeid, mysql_real_escape_string(stripslashes($participant_arr['interested'])));
@@ -1741,7 +1742,7 @@ function create_participant ($participant_arr) {
     }
 
     $query=rtrim($query,',');
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message_error.=$query."<BR>Error updating UserHasPermissionRole database.  Database not updated.";
       RenderError($title,$message_error);
       exit();
@@ -1758,7 +1759,7 @@ function create_participant ($participant_arr) {
     }
 
     $query=rtrim($query,',');
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message_error.=$query."<BR>Error updating UserHasConRole database.  Database not updated.";
       RenderError($title,$message_error);
       exit();
@@ -1838,10 +1839,10 @@ function edit_participant ($participant_arr) {
     $query ="UPDATE Interested SET ";
     $query.="interestedtypeid=".$participant_arr['interested']." ";
     $query.="WHERE badgeid=\"".$participant_arr['partid']."\" AND conid=".$_SESSION['conid'];
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message.=$query."<BR>Error updating Interested table.  Database not update.";
     }
-    ereg("Rows matched: ([0-9]*)", mysql_info($link), $r_matched);
+    ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
       $value_array=array($_SESSION['conid'], $participant_arr['partid'], mysql_real_escape_string(stripslashes($participant_arr['interested'])));
@@ -2016,7 +2017,7 @@ function remove_flow_report ($flowid,$table,$title,$description) {
   $query="DELETE FROM $tablename where $tableelement=$flowid";
 
   // Execute the query and test the results
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message.="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
     $message.=$query;
     RenderError($title,$message);
@@ -2071,13 +2072,13 @@ function add_flow_report ($addreport,$addphase,$table,$group,$title,$description
   $query="SELECT $torder AS floworder FROM $tablename where $tname='$cname' AND $phasecheck ORDER BY $torder DESC LIMIT 0,1";
 
   // Execute the query, test the results and assign the array values
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message.="<P>Error retrieving data from database.</P>\n<P>";
     $message.=$query;
     RenderError($title,$message);
     exit ();
   }
-  $floworder_array[1]=mysql_fetch_assoc($result);
+  $floworder_array[1]=mysqli_fetch_assoc($result);
 
   // Increment so we don't have redundant keys
   $nextfloworder=$floworder_array[1]['floworder']+1;
@@ -2090,7 +2091,7 @@ function add_flow_report ($addreport,$addphase,$table,$group,$title,$description
   }
 
   // Execute query
-  if (!mysql_query($query,$link)) {
+  if (!mysqli_query($link,$query)) {
     $message.=$query."<BR>Error updating $tablename database.  Database not updated.";
     RenderError($title,$message);
     exit ();
@@ -2152,7 +2153,7 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
 
   // Get element to be swapped with from table, based on current element floworder and $norder
   $query="SELECT $tid FROM $tablename WHERE $torder=$norder AND $tname='$cname' AND $phasecheck LIMIT 0,1";
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message.="<P>Error retrieving data from database.</P>\n<P>";
     $message.=$query;
     RenderError($title,$message);
@@ -2163,7 +2164,7 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
   $query1="UPDATE $tablename set $torder=$norder where $tid=$flowid";
 
   // Execute the query and test the results
-  if (($result1=mysql_query($query1,$link))===false) {
+  if (($result1=mysqli_query($link,$query1))===false) {
     $message.="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
     $message.=$query;
     RenderError($title,$message);
@@ -2171,13 +2172,13 @@ function deltarank_flow_report ($flowid,$table,$direction,$title,$description) {
   }
 
   // If there is nothing to swap with, simply stop here.
-  if (1==($row=mysql_num_rows($result))) {
-    $replace_array[1]=mysql_fetch_assoc($result);
+  if (1==($row=mysqli_num_rows($result))) {
+    $replace_array[1]=mysqli_fetch_assoc($result);
     $rtid=$replace_array[1][$tid];
     $query="UPDATE $tablename set $torder=$corder where $tid=$rtid";
 
     // Execute the query and test the results;
-    if (($result=mysql_query($query,$link))===false) {
+    if (($result=mysqli_query($link,$query))===false) {
       $message.="<P>Error updating $tablename table.  Database not updated.</P>\n<P>";
       $message.=$query;
       RenderError($title,$message);
@@ -2215,61 +2216,61 @@ SELECT
   ORDER BY
     BioTypes.display_order
 EOD;
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
-    $message_error.=mysql_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
+    $message_error.=mysqli_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
     RenderError($title,$message_error);
     exit;
   };
-  while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+  while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
     $bioinfo[$row['biokey']]=$row['biotext'];
   }
 
   // Get all current possible biolang
   $query="SELECT DISTINCT(biolang) FROM Bios";
   if (isset($LanguageList)) {$query.=" WHERE biolang in $LanguageList";}
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biolang data from database.\n";
     RenderError($title,$message_error);
     exit();
   }
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $biolang_array[]=$row['biolang'];
   }
   $bioinfo['biolang_array']=$biolang_array;
 
   // Get all current possible biotypenames
   $query="SELECT DISTINCT(biotypename) FROM BioTypes WHERE biotypename not in ('web','book') ORDER BY display_order";
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
     exit();
   }
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $biotype_array[]=$row['biotypename'];
   }
   $bioinfo['biotype_array']=$biotype_array;
 
   // Get all current possible biostatenames
   $query="SELECT DISTINCT(biostatename) FROM BioStates ORDER BY display_order";
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
     exit();
   }
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $biostate_array[]=$row['biostatename'];
   }
   $bioinfo['biostate_array']=$biostate_array;
 
   // Get all current possible biodestnames
   $query="SELECT DISTINCT(biodestname) FROM BioDests ORDER BY display_order";
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
     exit();
   }
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $biodest_array[]=$row['biodestname'];
   }
   $bioinfo['biodest_array']=$biodest_array;
@@ -2310,61 +2311,61 @@ SELECT
     BD.display_order
 EOD;
 
-  $result=mysql_query($query,$link);
+  $result=mysqli_query($link,$query);
   if (!$result) {
-    $message_error.=mysql_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
+    $message_error.=mysqli_error($link)."\n<BR>Database Error.<BR>No further execution possible.";
     RenderError($title,$message_error);
     exit;
   };
-  while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+  while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
     $descinfo[$row['desckey']]=$row['descriptiontext'];
   }
 
   // Get all current possible biolang
   $query="SELECT DISTINCT(descriptionlang) FROM Descriptions";
   if (isset($LanguageList)) {$query.=" WHERE descriptionlang in $LanguageList";}
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biolang data from database.\n";
     RenderError($title,$message_error);
     exit();
   }
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $desclang_array[]=$row['descriptionlang'];
   }
   $descinfo['desclang_array']=$desclang_array;
 
   // Get all current possible biotypenames
   $query="SELECT DISTINCT(descriptiontypename) FROM DescriptionTypes ORDER BY display_order";
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
     exit();
   }
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $desctype_array[]=$row['descriptiontypename'];
   }
   $descinfo['desctype_array']=$desctype_array;
 
   // Get all current possible biostatenames
   $query="SELECT DISTINCT(biostatename) FROM BioStates ORDER BY display_order";
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
     exit();
   }
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $biostate_array[]=$row['biostatename'];
   }
   $descinfo['biostate_array']=$biostate_array;
 
   // Get all current possible biodestnames
   $query="SELECT DISTINCT(biodestname) FROM BioDests ORDER BY display_order";
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message_error.=$query."<BR>\nError retrieving biotypename data from database.\n";
     RenderError($title,$message_error);
     exit();
   }
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $biodest_array[]=$row['biodestname'];
   }
   $descinfo['biodest_array']=$biodest_array;
@@ -2403,13 +2404,13 @@ UPDATE
     biodestname in ('$biodestname')
 EOD;
 
-  if (!mysql_query($query,$link)) {
+  if (!mysqli_query($link,$query)) {
     $message_error.=$query."<BR>Error updating the $biotypename $biolang $biostatename $biodestname bio for $badgeid.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
 
-  if ((mysql_affected_rows($link) == 0) and ($biotext!="")) {
+  if ((mysqli_affected_rows($link) == 0) and ($biotext!="")) {
     // Insert query
     $query=<<<EOD
 INSERT INTO
@@ -2423,7 +2424,7 @@ INSERT INTO
      '$biotext');
 EOD;
 
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message_error.=$query."<BR>Error inserting the $biotypename $biolang $biostatename $biodestname bio for $badgeid.  Database not updated.";
       RenderError($title,$message_error);
       exit;
@@ -2465,13 +2466,13 @@ UPDATE
     biodestname in ('$biodest')
 EOD;
 
-  if (!mysql_query($query,$link)) {
+  if (!mysqli_query($link,$query)) {
     $message_error.=$query."<BR>Error updating the $desctype $desclang $biostate $biodest description for $sessionid in $conid.  Database not updated.";
     RenderError($title,$message_error);
     exit;
   }
 
-  if ((mysql_affected_rows($link) == 0) and ($desctext!="")) {
+  if ((mysqli_affected_rows($link) == 0) and ($desctext!="")) {
     // Insert query
     $query=<<<EOD
 INSERT INTO
@@ -2486,7 +2487,7 @@ INSERT INTO
      '$desctext');
 EOD;
 
-    if (!mysql_query($query,$link)) {
+    if (!mysqli_query($link,$query)) {
       $message_error.=$query."<BR>Error inserting the $desctype $desclang $biostate $biodest description for $sessionid in $conid.  Database not updated.";
       RenderError($title,$message_error);
       exit;
@@ -2705,13 +2706,13 @@ EOD;
 EOD;
   }
 
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message.=$query."<BR>Error querying database.<BR>";
     RenderError($title,$message);
     exit();
   }
 
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $session_array[$row['Sess-Con']].="    <br>\n    --\n    <br>\n    <PRE>".fix_slashes($row['comment'])."</PRE>";
   }
 
@@ -2735,13 +2736,13 @@ EOD;
 EOD;
   }
 
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message.=$query."<BR>Error querying database.<BR>";
     RenderError($title,$message);
     exit();
   }
 
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     $session_array['graph'][$row['Sess-Con']]++;
   }
 
@@ -2777,13 +2778,13 @@ SELECT
       conid=$conid
 EOD;
 
-  if (!$result=mysql_query($query,$link)) {
+  if (!$result=mysqli_query($link,$query)) {
     $message.=$query."<BR>Error querying database.<BR>";
     RenderError($title,$message);
     exit();
   }
 
-  while ($row=mysql_fetch_assoc($result)) {
+  while ($row=mysqli_fetch_assoc($result)) {
     if (($row['publimval']!="") and ($row['publimval'] > 0)) {
       $limit_array[$row['publimtype']][$row['publimdest']][$row['publimname']]=$row['publimval'];
     }
@@ -2819,13 +2820,13 @@ SELECT
     interestedtypename in ('Suggested')
 EOD;
 
-  if (!$result=mysql_query($suggested_number_query,$link)) {
-    $message_error.=$suggested_number_query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
+  if (!$result=mysqli_query($link,$suggested_number_query)) {
+    $message_error.=$suggested_number_query."<BR>".mysqli_error($link)."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message_error);
     exit();
   }
 
-  list($interested)=mysql_fetch_array($result, MYSQL_NUM);
+  list($interested)=mysqli_fetch_array($result, MYSQLI_NUM);
 
   // Get the permission role that means "PhotoSub" from the PermissionRoles table.
   $permission_role_query= <<<EOD
@@ -2837,13 +2838,13 @@ SELECT
     permrolename in ('$permission_type')
 EOD;
 
-  if (!$result=mysql_query($permission_role_query,$link)) {
-    $message_error.=$permission_role_query."<BR>".mysql_error($link)."<BR>Error querying database. Unable to continue.<BR>";
+  if (!$result=mysqli_query($link,$permission_role_query)) {
+    $message_error.=$permission_role_query."<BR>".mysqli_error($link)."<BR>Error querying database. Unable to continue.<BR>";
     RenderError($title,$message_error);
     exit();
   }
 
-  list($permroleid)=mysql_fetch_array($result, MYSQL_NUM);
+  list($permroleid)=mysqli_fetch_array($result, MYSQLI_NUM);
 
   /* Check interested table.  If they exist already, leave it well
      enough alone. They might be involved in other areas of the con,

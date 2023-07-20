@@ -151,38 +151,38 @@ for ($i=1; $i<=$presenters; $i++) {
 /* This query finds the first second that is actually scheduled
  so we don't waste grid-space and time looping through nothing.
 $query="SELECT TIME_TO_SEC(starttime) as 'beginschedule' FROM Schedule ORDER BY starttime ASC LIMIT 0,1";
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   $message="Error retrieving data from database.<BR>";
   $message.=$query;
   $message.="<BR>";
-  $message.= mysql_error();
+  $message.= mysqli_error();
   RenderError($title,$message);
   exit ();
  }
-if (0==($earliest=mysql_num_rows($result))) {
+if (0==($earliest=mysqli_num_rows($result))) {
   $message="<P>This report retrieved no results matching the criteria.</P>\n";
   RenderError($title,$message);
   exit();
  }
-$grid_start_sec=mysql_result($result,0);
+$grid_start_sec=mysqli_fetch_object($result)->beginschedule;
 
 /* This query finds the last second that is actually scheduled
  so we don't waste grid-space and time looping through nothing. 
 $query="SELECT (TIME_TO_SEC(starttime) + TIME_TO_SEC(S.duration)) as 'endschedule' FROM Schedule SCH JOIN Sessions S USING (sessionid) ORDER BY endschedule DESC LIMIT 0,1";
-if (($result=mysql_query($query,$link))===false) {
+if (($result=mysqli_query($link,$query))===false) {
   $message="Error retrieving data from database.<BR>";
   $message.=$query;
   $message.="<BR>";
-  $message.= mysql_error();
+  $message.= mysqli_error();
   RenderError($title,$message);
   exit ();
  }
-if (0==($latest=mysql_num_rows($result))) {
+if (0==($latest=mysqli_num_rows($result))) {
   $message="<P>This report retrieved no results matching the criteria.</P>\n";
   RenderError($title,$message);
   exit();
  }
-$grid_end_sec=mysql_result($result,0);
+$grid_end_sec=mysqli_fetch_object($result)->endschedule;
 
 */
 
@@ -273,15 +273,15 @@ EOD;
     conid=$conid
 EOD;
 
-  if (($result=mysql_query($query,$link))===false) {
+  if (($result=mysqli_query($link,$query))===false) {
     $message="Error retrieving data from database.<BR>";
     $message.=$query;
     $message.="<BR>";
-    $message.= mysql_error();
+    $message.= mysqli_error();
     RenderError($title,$message);
     exit ();
   }
-  if (0==($rows=mysql_num_rows($result))) {
+  if (0==($rows=mysqli_num_rows($result))) {
     $message="<P>This report retrieved no results matching the criteria.</P>\n";
     RenderError($title,$message);
     exit();
@@ -292,7 +292,7 @@ EOD;
    we need. */
   /* Still in the time-stepped loop, we create the elements of the array to
    be called forth, below, in terms of colour, border, and skipvalue. */
-  $grid_array[$time]=mysql_fetch_array($result,MYSQL_BOTH);
+  $grid_array[$time]=mysqli_fetch_array($result,MYSQLI_BOTH);
   $skiprow=0;
   $refskiprow=0;
   for ($i=1; $i<=$rooms; $i++) {

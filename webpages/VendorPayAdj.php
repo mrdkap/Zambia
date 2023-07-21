@@ -68,6 +68,26 @@ if (($_POST['submit']=="Update") and (may_I("Maint") or may_I("ConChair") or may
   }
 }
 
+// Begin the page
+topofpagereport($title,$description,$additionalinfo,$message,$message_error);
+
+// Vendor Statuses set only by ConChair, SuperVendor, or the Janitor
+if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
+
+  // Again possible for the SuperVendor to set someone up.
+  if (may_I('SuperVendor')) {
+    //Choose the individual from the database
+    select_participant($vendorid, 'VENDORCURRENT', "VendorPayAdj.php");
+  }
+
+  echo "<P><A HREF=\"".$_SESSION['return_to_page']."\">Return to report</A></P>\n";
+
+  // If there is no vendor selected, exit here.  This might want to have the vendor pulldowns instead.
+  if (empty($vendorid)) {
+    correct_footer();
+    exit();
+  }
+
 $queryPayAdj=<<<EOD
 SELECT
     vendorpayadj,
@@ -88,26 +108,6 @@ if ($payadjrows > 1) {
   $message_error="Too many rows returned: $payadjrows\n";
   RenderError($title,$message_error);
 }
-
-// Begin the page
-topofpagereport($title,$description,$additionalinfo,$message,$message_error);
-
-// Vendor Statuses set only by ConChair, SuperVendor, or the Janitor
-if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
-
-  // Again possible for the SuperVendor to set someone up.
-  if (may_I('SuperVendor')) {
-    //Choose the individual from the database
-    select_participant($vendorid, 'VENDORCURRENT', "VendorPayAdj.php");
-  }
-
-  echo "<P><A HREF=\"".$_SESSION['return_to_page']."\">Return to report</A></P>\n";
-
-  // If there is no vendor selected, exit here.  This might want to have the vendor pulldowns instead.
-  if (empty($vendorid)) {
-    correct_footer();
-    exit();
-  }
 
   echo "<br /><hr>\n";
   echo "<FORM name=\"updatepayadj\" class=\"bb\" method=POST action=\"VendorPayAdj.php\">\n";

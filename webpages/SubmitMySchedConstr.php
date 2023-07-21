@@ -119,10 +119,10 @@
 	      //availstartday, availendday: day 1 is 1st day of con, need to offset because of it.
 	      //availstarttime, availendtime: -1 is unset
 	      //format is HH:MM:SS so 00:00:00 is midnight beginning of day and 13:30:00 is 1:30pm
-	      $x=parse_mysql_time($partAvail["starttimestamp_$i"]);
+	      $x=parse_mysqli_time($partAvail["starttimestamp_$i"]);
 	      $partAvail["availstartday_$i"]=$x["day"]+1;
 	      $partAvail["availstarttime_$i"]=$x["hour"].":".$x["minute"].":00";
-	      $x=parse_mysql_time($partAvail["endtimestamp_$i"]);
+	      $x=parse_mysqli_time($partAvail["endtimestamp_$i"]);
 	      $partAvail["availendday_$i"]=$x["day"]+1;
 	      $partAvail["availendtime_$i"]=$x["hour"].":".$x["minute"].":00";
 	      $i++;

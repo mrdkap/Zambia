@@ -2297,7 +2297,7 @@ function getDescData($sessionid,$conid) {
   $query= <<<EOD
 SELECT
     concat(descriptiontypename,"_",descriptionlang,"_",biostatename,"_",biodestname,"_bio") AS desckey,
-    descriptiontext
+    descriptiontext,
     DT.display_order,
     BS.display_order,
     BD.display_order

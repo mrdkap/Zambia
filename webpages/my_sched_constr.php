@@ -19,10 +19,10 @@
         //availstartday, availendday: day 1 is 1st day of con, not day 0 so the day needs to be incremented
         //availstarttime, availendtime: -1 is unset
         //  HH:MM:SS is the format so 00:00:00 is midnight beginning of day 13:30:00 is 1:30pm
-    	$x=parse_mysql_time($partAvail["starttimestamp_$i"]);
+    	$x=parse_mysqli_time($partAvail["starttimestamp_$i"]);
     	$partAvail["availstartday_$i"]=$x["day"]+1;
     	$partAvail["availstarttime_$i"]=$x["hour"].":".$x["minute"].":00";
-    	$x=parse_mysql_time($partAvail["endtimestamp_$i"]);
+    	$x=parse_mysqli_time($partAvail["endtimestamp_$i"]);
     	$partAvail["availendday_$i"]=$x["day"]+1;
     	$partAvail["availendtime_$i"]=$x["hour"].":".$x["minute"].":00";
         $i++;

@@ -133,10 +133,10 @@ function set_session_defaults() {
     $session["notesforprog"]="";
     $session["invguest"]=false; // leave checkbox blank initially
     }
-// Function parse_mysql_time($time)
+// Function parse_mysqli_time($time)
 // Takes the string $time in "hhh:mm:ss" and return array of "day" and "hour" and "minute"
 //
-function parse_mysql_time($time) {
+function parse_mysqli_time($time) {
     $h=0+substr($time,0,strlen($time)-6);
     $result['hour']=fmod($h,24);
     $result['day']=intval($h/24);
@@ -144,10 +144,10 @@ function parse_mysql_time($time) {
     return($result);
     }
 //
-// Function parse_mysql_time_hours($time)
+// Function parse_mysqli_time_hours($time)
 // Takes the string $time in "hhh:mm:ss" and return array of "hours", "minutes", and "seconds"
 //
-function parse_mysql_time_hours($time) {
+function parse_mysqli_time_hours($time) {
     sscanf($time,"%d:%d:%d",$hours,$minutes,$seconds);
     $result['hours']=$hours;
     $result['minutes']=$minutes;
@@ -162,7 +162,7 @@ function parse_mysql_time_hours($time) {
 //
 function time_description($time) {
     global $daymap;
-    $atime=parse_mysql_time($time);
+    $atime=parse_mysqli_time($time);
     $result="";
     $result.=$daymap['short'][$atime["day"]+1]." ";
     $hour=fmod($atime["hour"],12);

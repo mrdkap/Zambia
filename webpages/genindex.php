@@ -17,7 +17,8 @@ if (!$gflowname) {
   $additionalinfo="<P>If a Div/Area Head would like any of their reports tweaked, email to ".$_SESSION['programemail']." and let us know.</P>\n";
   $query = <<<EOD
 SELECT
-    DISTINCT concat("<A HREF=genindex.php?gflowname=",gflowname,">",gflowname," Reports</A>") AS Indicies
+    DISTINCT concat("<A HREF=genindex.php?gflowname=",gflowname,">",gflowname," Reports</A>") AS Indicies,
+    gflowname
   FROM
       GroupFlow
   ORDER BY

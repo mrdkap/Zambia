@@ -11,7 +11,7 @@ function get_session_interests_from_db($badgeid) {
   $query= <<<EOD
 SELECT
     sessionid,
-    rank,
+    `rank`,
     willmoderate,
     comments
   FROM
@@ -20,7 +20,7 @@ SELECT
     badgeid='$badgeid' AND
     conid=$conid
   ORDER BY
-    IFNULL(rank,9999),
+    IFNULL(`rank`,9999),
     sessionid
 EOD;
   if (!$result=mysqli_query($link,$query)) {
@@ -185,7 +185,7 @@ function update_session_interests_in_db($badgeid,$session_interest_count) {
     $message="$deleteCount record(s) deleted.<BR>\n";
   }
   if ($noDeleteCount) {
-    $query = "REPLACE INTO ParticipantSessionInterest (badgeid, sessionid, conid, rank, willmoderate, comments, ibadgeid) VALUES ";
+    $query = "REPLACE INTO ParticipantSessionInterest (badgeid, sessionid, conid, `rank`, willmoderate, comments, ibadgeid) VALUES ";
     for ($i=1;$i<=$session_interest_count;$i++) {
       if ($session_interests[$i]['delete']) continue;
       $query.="(\"$badgeid\",{$session_interests[$i]['sessionid']},";

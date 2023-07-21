@@ -126,7 +126,7 @@ $query=<<<EOD
 SELECT
     sessionid,
     pubsname,
-    concat(if(rank!='NULL',rank,"r"),if((comments!='NULL' AND comments!=''),' *','')) AS rcom
+    concat(if(`rank`!='NULL',`rank`,"r"),if((comments!='NULL' AND comments!=''),' *','')) AS rcom
   FROM
       ParticipantSessionInterest
     JOIN Participants USING (badgeid)

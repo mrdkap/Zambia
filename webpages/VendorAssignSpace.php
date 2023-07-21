@@ -209,7 +209,7 @@ if ((may_I("Maint")) or (may_I("ConChair")) or (may_I("SuperVendor"))) {
   $querySpaceType=<<<EOD
 SELECT
     basevendorspacename AS "Booth Wanted",
-    vendorprefspacerank as Rank
+    vendorprefspacerank as Ranked
   FROM
       VendorPrefSpace
     JOIN VendorSpace USING (vendorspaceid)

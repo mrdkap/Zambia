@@ -91,7 +91,8 @@ topofpagereport($title,$description,$additionalinfo,$message,$message_error);
   <DD>A collection of useful reports.  If you want more written please
   ask someone who has the authorization to do so.</DD>
 
-  <DT><A HREF="genreport.php?reportname=personalflow
+  <DT><A HREF="genreport.php?reportname=personalflow">My Personal Flow of Reports</A></DT>
+  <DD>The list of reports marked as part of the selected personal flow.</DD>
 
   <DT><A HREF="VolunteerCheckIn.php">Time Cards</A></DT>
   <DD>Don't forget to log your time spent on working on the event.</DD>

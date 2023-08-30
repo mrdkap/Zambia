@@ -17,11 +17,11 @@ if ((isset($_POST["agendaupdate"])) and ($_POST["agendaupdate"]!="")) {
 		       htmlspecialchars_decode($_POST['meetingtime']));
     $message.=submit_table_element($link, $title, "AgendaList", $element_array, $value_array);
    } else {
-    $pairedvalue_array=array("agendanotes='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['agendanotes'])))."'",
-			     "agendaname='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['agendaname'])))."'",
-			     "permroleid='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['permroleid'])))."'",
-			     "agenda='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['agenda'])))."'",
-			     "meetingtime='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['meetingtime'])))."'");
+    $pairedvalue_array=array("agendanotes='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode($_POST['agendanotes'])))."'",
+			     "agendaname='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode($_POST['agendaname'])))."'",
+			     "permroleid='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode($_POST['permroleid'])))."'",
+			     "agenda='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode($_POST['agenda'])))."'",
+			     "meetingtime='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode($_POST['meetingtime'])))."'");
     $match_field="agendaid";
     $match_value=$_POST['agendaid'];
     $message.=update_table_element($link, $title, "AgendaList", $pairedvalue_array, $match_field, $match_value);

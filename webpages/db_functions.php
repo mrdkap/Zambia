@@ -25,8 +25,8 @@ function vendor_prepare_db() {
 function record_session_history($sessionid, $badgeid, $name, $email, $editcode, $statusid) {
   global $link, $message, $message_error;
   $conid=$_SESSION['conid'];
-  $name=mysqli_real_escape_string($name,$link);
-  $email=mysqli_real_escape_string($email,$link);
+  $name=mysqli_real_escape_string($link,$name);
+  $email=mysqli_real_escape_string($link,$email);
 
   $query = <<<EOD
 INSERT
@@ -295,7 +295,7 @@ function update_session() {
   if ($_SESSION['condurationminutes']=="TRUE") {
     $duration="duration='".conv_min2hrsmin($session["duration"],$link)."'";
   } else {
-    $duration="duration='".mysqli_real_escape_string($session["duration"],$link)."'";
+    $duration="duration='".mysqli_real_escape_string($link,$session["duration"])."'";
   }
 
   // Fix secondtitle to subtitle
@@ -317,21 +317,21 @@ function update_session() {
 			   "typeid=".$session["type"],
 			   "divisionid=".$session["divisionid"],
 			   "pubstatusid=".$session["pubstatusid"],
-			   "title='".mysqli_real_escape_string($session["title"],$link)."'",
-			   "secondtitle='".mysqli_real_escape_string($session["secondtitle"],$link)."'",
+			   "title='".mysqli_real_escape_string($link,$session["title"])."'",
+			   "secondtitle='".mysqli_real_escape_string($link,$session["secondtitle"])."'",
 			   "pocketprogtext=''",
 			   "progguiddesc=''",
-			   "persppartinfo='".mysqli_real_escape_string($session["persppartinfo"],$link)."'",
+			   "persppartinfo='".mysqli_real_escape_string($link,$session["persppartinfo"])."'",
 			   $duration,
 			   "estatten=".($session["atten"]!=""?$session["atten"]:"null"),
 			   "kidscatid=".$session["kids"],
 			   "signupreq=".($session["signup"]?"1":"0"),
 			   "invitedguest=".($session["invguest"]?"1":"0"),
 			   "roomsetid=".$session["roomset"],
-			   "notesforpart='".mysqli_real_escape_string($session["notesforpart"],$link)."'",
-			   "servicenotes='".mysqli_real_escape_string($session["servnotes"],$link)."'",
+			   "notesforpart='".mysqli_real_escape_string($link,$session["notesforpart"])."'",
+			   "servicenotes='".mysqli_real_escape_string($link,session["servnotes"])."'",
 			   "statusid=".$session["status"],
-			   "notesforprog='".mysqli_real_escape_string($session["notesforprog"],$link)."'");
+			   "notesforprog='".mysqli_real_escape_string($link,$session["notesforprog"])."'");
 
   $match_string="sessionid=".$session['sessionid']." AND conid=".$_SESSION['conid'];
 
@@ -389,7 +389,7 @@ function update_session() {
 		             	     htmlspecialchars_decode($desc_array[$i][$j][$k][$l]));
           $message.=submit_table_element($link,$title,"Descriptions",$element_array,$value_array);
         } else {
-          $pairedvalue_array=array("descriptiontext='".mysqli_real_escape_string($desc_array[$i][$j][$k][$l])."'");
+          $pairedvalue_array=array("descriptiontext='".mysqli_real_escape_string($link,$desc_array[$i][$j][$k][$l])."'");
           $match_string=$wherestring;
           $message.=update_table_element_extended_match ($link,$title,"Descriptions",$pairedvalue_array, $match_string);
         }
@@ -472,15 +472,15 @@ function insert_session() {
   $query.="divisionid=".(($temp==0)?6:$temp).", ";
   $query.="pubstatusid=".$session["pubstatusid"].',';
   $query.="languagestatusid=".$session["languagestatusid"].',';
-  $query.="title=\"".mysqli_real_escape_string($session["title"],$link).'",';
-  $query.="secondtitle=\"".mysqli_real_escape_string($session["secondtitle"],$link).'",';
+  $query.="title=\"".mysqli_real_escape_string($link,$session["title"]).'",';
+  $query.="secondtitle=\"".mysqli_real_escape_string($link,$session["secondtitle"]).'",';
   $query.="pocketprogtext='',";
   $query.="progguiddesc='',";
-  $query.="persppartinfo=\"".mysqli_real_escape_string($session["persppartinfo"],$link).'",';
+  $query.="persppartinfo=\"".mysqli_real_escape_string($link,$session["persppartinfo"]).'",';
   if ($_SESSION['condurationminutes']=="TRUE") {
     $query.="duration=\"".conv_min2hrsmin($session["duration"],$link)."\", ";
   } else {
-    $query.="duration=\"".mysqli_real_escape_string($session["duration"],$link)."\", ";
+    $query.="duration=\"".mysqli_real_escape_string($link,$session["duration"])."\", ";
   }
   $query.="estatten=".($session["atten"]!=""?$session["atten"]:"null").',';
   $query.="kidscatid=".$session["kids"].',';
@@ -488,10 +488,10 @@ function insert_session() {
   if ($session["signup"]) {$query.="1,";} else {$query.="0,";}
   $temp=$session["roomset"];
   $query.="roomsetid=".(($temp==0)?"null":$temp).", ";
-  $query.="notesforpart=\"".mysqli_real_escape_string($session["notesforpart"],$link).'",';
-  $query.="servicenotes=\"".mysqli_real_escape_string($session["servnotes"],$link).'",';
+  $query.="notesforpart=\"".mysqli_real_escape_string($link,$session["notesforpart"]).'",';
+  $query.="servicenotes=\"".mysqli_real_escape_string($link,$session["servnotes"]).'",';
   $query.="statusid=".$session["status"].',';
-  $query.="notesforprog=\"".mysqli_real_escape_string($session["notesforprog"],$link).'",';
+  $query.="notesforprog=\"".mysqli_real_escape_string($link,$session["notesforprog"]).'",';
   $query.="suggestor=\"".$_SESSION['badgeid'].'",';
   $query.="warnings=0,invitedguest="; // warnings db field not editable by form
   if ($session["invguest"]) {$query.="1";} else {$query.="0";}

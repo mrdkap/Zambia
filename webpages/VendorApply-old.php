@@ -28,7 +28,7 @@ if (($result=mysqli_query($link,$namequery)) === false) {
   $message_error.="<BR>".$namequery."Cannot find the name to go with the badgeid.";
 }
 list($tmp_pubsname)=mysqli_fetch_array($result, MYSQLI_NUM);
-$pubsname=mysqli_real_escape_string(htmlspecialchars($tmp_pubsname));
+$pubsname=mysqli_real_escape_string($link,htmlspecialchars($tmp_pubsname));
 
 /* Submit goes here */
 get_session_from_post();

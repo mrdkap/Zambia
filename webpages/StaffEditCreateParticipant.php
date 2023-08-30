@@ -125,7 +125,7 @@ if ($action=="create") { //initialize participant array
 
   //Get Participant information for updating
   $participant_arr['badgeid']=$selpartid;
-  $partid=mysqli_real_escape_string($selpartid,$link);
+  $partid=mysqli_real_escape_string($link,$selpartid);
   $query= <<<EOD
 SELECT
     badgeid,

@@ -16,9 +16,9 @@ if ((isset($_POST["emailtoupdate"])) and ($_POST["emailtoupdate"]!="")) {
 		       htmlspecialchars_decode(refrom($_POST['emailtoquery'])));
    $message.= submit_table_element($link, $title, "EmailTo", $element_array, $value_array);
    } else {
-    $pairedvalue_array=array("emailtodescription='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['emailtodescription'])))."'",
-			     "display_order='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['display_order'])))."'",
-			     "emailtoquery='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode(refrom($_POST['emailtoquery']))))."'");
+    $pairedvalue_array=array("emailtodescription='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode($_POST['emailtodescription'])))."'",
+			     "display_order='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode($_POST['display_order'])))."'",
+			     "emailtoquery='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode(refrom($_POST['emailtoquery']))))."'");
     $match_field="emailtoid";
     $match_value=$_POST['emailtoid'];
     $message.=update_table_element($link, $title, "EmailTo", $pairedvalue_array, $match_field, $match_value);

@@ -23,12 +23,12 @@ function SubmitAdminParticipants () {
 
   // Update Participants table
   if ($update_password==true) {
-    $pairedvalue_array=array("pubsname='".mysqli_real_escape_string(stripslashes($pubsname))."'",
+    $pairedvalue_array=array("pubsname='".mysqli_real_escape_string($link,stripslashes($pubsname))."'",
 			     // for 5.5
 			     // "password2='".password_hash($password, PASSWORD_DEFAULT)."'");
 			     "password='".md5($password)."'");
   } else {
-    $pairedvalue_array=array("pubsname='".mysqli_real_escape_string(stripslashes($pubsname))."'");
+    $pairedvalue_array=array("pubsname='".mysqli_real_escape_string($link,stripslashes($pubsname))."'");
   }
   $message.=update_table_element($link,"Admin Participants", "Participants", $pairedvalue_array, "badgeid", $partid);
 
@@ -45,7 +45,7 @@ function SubmitAdminParticipants () {
     ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
-      $value_array=array($_SESSION['conid'], $partid, mysqli_real_escape_string(stripslashes($interested)));
+      $value_array=array($_SESSION['conid'], $partid, mysqli_real_escape_string($link,stripslashes($interested)));
       $message.=submit_table_element($link,"Admin Participants","Interested", $element_array, $value_array);
     } elseif ($r_matched[1]>1) {
       $message.="There might be something wrong with the table, there are multiple interested elements for this year.";

@@ -26,7 +26,7 @@ if (isset($_POST['downfrom'])) {
  }
 
 if (isset($_POST['newnote'])) {
-  $note_array=array("pflownote='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST['newnote'])))."'");
+  $note_array=array("pflownote='".mysqli_real_escape_string($link,stripslashes(htmlspecialchars_decode($_POST['newnote'])))."'");
   update_table_element ($link, $title, "PersonalFlow", $note_array, "pflowid", $_POST['noteid']);
 }
 

@@ -54,7 +54,7 @@ if ($_POST['update'] == "Yes") {
     }
 
     // Set the next value in the value array
-    $pairedvalue_array[] = "$field='" . mysqli_real_escape_string(stripslashes($_POST[$field])) . "'";
+    $pairedvalue_array[] = "$field='" . mysqli_real_escape_string($link,stripslashes($_POST[$field])) . "'";
   }
   $message.=update_table_element($link, $title, "ConInfo", $pairedvalue_array, "conid", $_SESSION['conid']);
 
@@ -66,8 +66,8 @@ if ($_POST['update'] == "Yes") {
     if ($tlcname=="basefeatures") {($tlcname="basefeature");}
     if (!empty($_POST['bname'][$tname])) {
       $element_array=array($tlcname . "name", $tlcname . "desc");
-      $value_array=array(mysqli_real_escape_string(stripslashes($_POST['bname'][$tname])),
-			 mysqli_real_escape_string(stripslashes($_POST['bdesc'][$tname])));
+      $value_array=array(mysqli_real_escape_string($link,stripslashes($_POST['bname'][$tname])),
+			 mysqli_real_escape_string($link,stripslashes($_POST['bdesc'][$tname])));
       $message.=submit_table_element($link, $title, $tname, $element_array, $value_array);
     }
   }

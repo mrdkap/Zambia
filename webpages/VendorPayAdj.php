@@ -60,7 +60,7 @@ if (($_POST['submit']=="Update") and (may_I("Maint") or may_I("ConChair") or may
       // Set the match_string to the vendor and the conid
       $match_string="badgeid=".$_POST['vendorid']." AND conid=$conid";
       $set_array=array('vendorpayadj="'.$_POST['payadj'].'"',
-		       'vendorpayadjdesc="'.mysqli_real_escape_string(stripslashes($_POST['payreason'])).'"');
+		       'vendorpayadjdesc="'.mysqli_real_escape_string($link,stripslashes($_POST['payreason'])).'"');
       $message.=update_table_element_extended_match($link, $title, "VendorAnnualInfo", $set_array, $match_string);
     }
   } else {

@@ -23,7 +23,7 @@ if ($_POST['interested']!=$participant['interested']) {
   ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
   if ($r_matched[1]==0) {
     $element_array=array('conid','badgeid','interestedtypeid');
-    $value_array=array($_SESSION['conid'], $badgeid, mysqli_real_escape_string(stripslashes($_POST['interested'])));
+    $value_array=array($_SESSION['conid'], $badgeid, mysqli_real_escape_string($link,stripslashes($_POST['interested'])));
     $message.=submit_table_element($link,$title,"Interested", $element_array, $value_array);
   } elseif ($r_matched[1]>1) {
     $message_error.="There might be something wrong with the table, there are multiple interested elements for this year.";

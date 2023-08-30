@@ -32,8 +32,8 @@
             $query .="badgeid=\"".$badgeid."\", ";
 	    $query .="conid=\"".$_SESSION['conid']."\", ";
             $query .="maxprog=".$partAvail["maxprog"].", ";
-            $query .="preventconflict=\"".mysqli_real_escape_string($partAvail["preventconflict"],$link)."\", ";
-            $query .="otherconstraints=\"".mysqli_real_escape_string($partAvail["otherconstraints"],$link)."\", ";
+            $query .="preventconflict=\"".mysqli_real_escape_string($link,$partAvail["preventconflict"])."\", ";
+            $query .="otherconstraints=\"".mysqli_real_escape_string($link,$partAvail["otherconstraints"])."\", ";
             $query .="numkidsfasttrack=".$partAvail["numkidsfasttrack"];
             if (!mysqli_query($link,$query)) {
                 $message=$query."<BR>Error updating database.  Database not updated.";

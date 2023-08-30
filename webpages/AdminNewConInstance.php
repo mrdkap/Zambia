@@ -56,7 +56,7 @@ if ($_POST['create'] == "Yes") {
     }
 
     // Set the next value in the value array
-    $value_array[] = mysql_real_escape_string(stripslashes($_POST[$field]));
+    $value_array[] = mysqli_real_escape_string(stripslashes($_POST[$field]));
   }
   $message.=submit_table_element($link, $title, "ConInfo", $element_array, $value_array);
 

@@ -259,9 +259,9 @@ function SubmitMaintainRoom($ignore_conflicts) {
   $numrows=$_POST["numrows"];
   $selroomid=$_POST["selroom"];
   get_name_and_email($name, $email); // populates them from session data or db as necessary
-  $name=mysql_real_escape_string($name,$link);
-  $email=mysql_real_escape_string($email,$link);
-  $badgeid=mysql_real_escape_string($_SESSION['badgeid'],$link);
+  $name=mysqli_real_escape_string($name,$link);
+  $email=mysqli_real_escape_string($email,$link);
+  $badgeid=mysqli_real_escape_string($_SESSION['badgeid'],$link);
 
   for ($i=1; $i<=$numrows; $i++) { //***** need to update render as well to start at 1********
     if($_POST["del$i"]!=1) continue;

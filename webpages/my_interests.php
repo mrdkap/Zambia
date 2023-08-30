@@ -95,18 +95,18 @@ if ($_POST['update']=="YES") {
     $element_array=array('badgeid','conid','yespanels','nopanels','yespeople','nopeople','otherroles');
     $value_array=array($_SESSION['badgeid'],
 		       $_SESSION['conid'],
-		       mysql_real_escape_string($yespanels,$link),
-		       mysql_real_escape_string($nopanels,$link),
-		       mysql_real_escape_string($yespeople,$link),
-		       mysql_real_escape_string($nopeople,$link),
-		       mysql_real_escape_string($otherroles,$link));
+		       mysqli_real_escape_string($yespanels,$link),
+		       mysqli_real_escape_string($nopanels,$link),
+		       mysqli_real_escape_string($yespeople,$link),
+		       mysqli_real_escape_string($nopeople,$link),
+		       mysqli_real_escape_string($otherroles,$link));
     $message.=submit_table_element($link,$title,"ParticipantInterests",$element_array,$value_array);
   } else {
-    $pairedvalue_array=array("yespanels='".mysql_real_escape_string($yespanels,$link)."'",
-			      "nopanels='".mysql_real_escape_string($nopanels,$link)."'",
-			      "yespeople='".mysql_real_escape_string($yespeople,$link)."'",
-			      "nopeople='".mysql_real_escape_string($nopeople,$link)."'",
-			      "otherroles='".mysql_real_escape_string($otherroles,$link)."'");
+    $pairedvalue_array=array("yespanels='".mysqli_real_escape_string($yespanels,$link)."'",
+			      "nopanels='".mysqli_real_escape_string($nopanels,$link)."'",
+			      "yespeople='".mysqli_real_escape_string($yespeople,$link)."'",
+			      "nopeople='".mysqli_real_escape_string($nopeople,$link)."'",
+			      "otherroles='".mysqli_real_escape_string($otherroles,$link)."'");
     $match_string="badgeid='".$_SESSION['badgeid']."' AND conid='".$_SESSION['conid']."'";
     $message.=update_table_element_extended_match ($link,$title,"ParticipantInterests",$pairedvalue_array, $match_string);
   }

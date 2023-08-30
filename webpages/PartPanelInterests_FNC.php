@@ -193,7 +193,7 @@ function update_session_interests_in_db($badgeid,$session_interest_count) {
       $rank=$session_interests[$i]['rank'];
       $query.=($rank==""?"null":$rank).",";
       $query.=($session_interests[$i]['willmoderate']?1:0).",";
-      $query.="\"".mysql_real_escape_string($session_interests[$i]['comments'],$link)."\",";
+      $query.="\"".mysqli_real_escape_string($session_interests[$i]['comments'],$link)."\",";
       $query.=$_SESSION['badgeid'];
       $query.="),";
     }

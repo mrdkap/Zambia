@@ -1451,8 +1451,8 @@ function RenderSearchSession ($track,$status,$type,$sessionid) {
 
 /* Generic insert takes five variables: link, title, Table, array of elements, array of values. */
 function submit_table_element ($link, $title, $table, $element_array, $value_array) {
-  foreach ($element_array as $element) {$element_string.=mysql_real_escape_string(stripslashes($element)).",";}
-  foreach ($value_array as $value) {$value_string.="'".mysql_real_escape_string(stripslashes($value))."',";}
+  foreach ($element_array as $element) {$element_string.=mysqli_real_escape_string(stripslashes($element)).",";}
+  foreach ($value_array as $value) {$value_string.="'".mysqli_real_escape_string(stripslashes($value))."',";}
   $element_string=substr($element_string,0,-1);
   $value_string=substr($value_string,0,-1);
   $query= "INSERT INTO $table ($element_string) VALUES ($value_string)";
@@ -1542,7 +1542,7 @@ function submit_participant_note ($note, $partid) {
   $query = "INSERT INTO NotesOnParticipants (badgeid,rbadgeid,note,conid) VALUES ('";
   $query.=$partid."','";
   $query.=$_SESSION['badgeid']."','";
-  $query.=mysql_real_escape_string($note)."','";
+  $query.=mysqli_real_escape_string($note)."','";
   $query.=$_SESSION['conid']."')";
   if (!mysqli_query($link,$query)) {
     $message.=$query."<BR>Error updating database with note.  Database not updated.";
@@ -1681,7 +1681,7 @@ function create_participant ($participant_arr) {
     ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
-      $value_array=array($_SESSION['conid'], $newbadgeid, mysql_real_escape_string(stripslashes($participant_arr['interested'])));
+      $value_array=array($_SESSION['conid'], $newbadgeid, mysqli_real_escape_string(stripslashes($participant_arr['interested'])));
       $message.=submit_table_element($link,$title,"Interested", $element_array, $value_array);
     } elseif ($r_matched[1]>1) {
       $message.="There might be something wrong with the table, there are multiple interested elements for this year.";
@@ -1770,7 +1770,7 @@ function create_participant ($participant_arr) {
   $element_array = array('badgeid', 'rbadgeid', 'note','conid');
   $value_array=array($newbadgeid,
                      $_SESSION['badgeid'],
-                     mysql_real_escape_string(htmlspecialchars_decode($participant_arr['note'])),
+                     mysqli_real_escape_string(htmlspecialchars_decode($participant_arr['note'])),
 		     $_SESSION['conid']);
   $message.=submit_table_element($link, $title, "NotesOnParticipants", $element_array, $value_array);
 
@@ -1814,24 +1814,24 @@ function edit_participant ($participant_arr) {
   }
 
   // Update Participants entry.
-  $pairedvalue_array=array("bestway='".mysql_real_escape_string($participant_arr['bestway'])."'",
-			   "email='".mysql_real_escape_string($participant_arr['email'])."'",
-			   "regtype='".mysql_real_escape_string(stripslashes($participant_arr['regtype']))."'",
-			   "altcontact='".mysql_real_escape_string($participant_arr['altcontact'])."'",
-			   "prognotes='".mysql_real_escape_string(stripslashes($participant_arr['prognotes']))."'",
-			   "pubsname='".mysql_real_escape_string(stripslashes($participant_arr['pubsname']))."'");
+  $pairedvalue_array=array("bestway='".mysqli_real_escape_string($participant_arr['bestway'])."'",
+			   "email='".mysqli_real_escape_string($participant_arr['email'])."'",
+			   "regtype='".mysqli_real_escape_string(stripslashes($participant_arr['regtype']))."'",
+			   "altcontact='".mysqli_real_escape_string($participant_arr['altcontact'])."'",
+			   "prognotes='".mysqli_real_escape_string(stripslashes($participant_arr['prognotes']))."'",
+			   "pubsname='".mysqli_real_escape_string(stripslashes($participant_arr['pubsname']))."'");
   $message.=update_table_element($link, $title, "Participants", $pairedvalue_array, "badgeid", $participant_arr['partid']);
 
   // Update CongoDump entry.
-  $pairedvalue_array=array("firstname='".mysql_real_escape_string(stripslashes($participant_arr['firstname']))."'",
-			   "lastname='".mysql_real_escape_string(stripslashes($participant_arr['lastname']))."'",
-			   "badgename='".mysql_real_escape_string(stripslashes($participant_arr['badgename']))."'",
-			   "phone='".mysql_real_escape_string($participant_arr['phone'])."'",
-			   "postaddress1='".mysql_real_escape_string(stripslashes($participant_arr['postaddress1']))."'",
-			   "postaddress2='".mysql_real_escape_string(stripslashes($participant_arr['postaddress2']))."'",
-			   "postcity='".mysql_real_escape_string(stripslashes($participant_arr['postcity']))."'",
-			   "poststate='".mysql_real_escape_string($participant_arr['poststate'])."'",
-			   "postzip='".mysql_real_escape_string($participant_arr['postzip'])."'");
+  $pairedvalue_array=array("firstname='".mysqli_real_escape_string(stripslashes($participant_arr['firstname']))."'",
+			   "lastname='".mysqli_real_escape_string(stripslashes($participant_arr['lastname']))."'",
+			   "badgename='".mysqli_real_escape_string(stripslashes($participant_arr['badgename']))."'",
+			   "phone='".mysqli_real_escape_string($participant_arr['phone'])."'",
+			   "postaddress1='".mysqli_real_escape_string(stripslashes($participant_arr['postaddress1']))."'",
+			   "postaddress2='".mysqli_real_escape_string(stripslashes($participant_arr['postaddress2']))."'",
+			   "postcity='".mysqli_real_escape_string(stripslashes($participant_arr['postcity']))."'",
+			   "poststate='".mysqli_real_escape_string($participant_arr['poststate'])."'",
+			   "postzip='".mysqli_real_escape_string($participant_arr['postzip'])."'");
   $message.=update_table_element($link, $title, "CongoDump", $pairedvalue_array, "badgeid", $participant_arr['partid']);
 
   // Update Interested entry.
@@ -1845,7 +1845,7 @@ function edit_participant ($participant_arr) {
     ereg("Rows matched: ([0-9]*)", mysqli_info($link), $r_matched);
     if ($r_matched[1]==0) {
       $element_array=array('conid','badgeid','interestedtypeid');
-      $value_array=array($_SESSION['conid'], $participant_arr['partid'], mysql_real_escape_string(stripslashes($participant_arr['interested'])));
+      $value_array=array($_SESSION['conid'], $participant_arr['partid'], mysqli_real_escape_string(stripslashes($participant_arr['interested'])));
       $message.=submit_table_element($link,"Admin Participants","Interested", $element_array, $value_array);
     } elseif ($r_matched[1]>1) {
       $message.="There might be something wrong with the table, there are multiple interested elements for this year.";
@@ -1892,7 +1892,7 @@ function edit_participant ($participant_arr) {
   $element_array = array('badgeid', 'rbadgeid', 'note','conid');
   $value_array=array($participant_arr['partid'],
                      $_SESSION['badgeid'],
-                     mysql_real_escape_string(htmlspecialchars_decode($participant_arr['note'])),
+                     mysqli_real_escape_string(htmlspecialchars_decode($participant_arr['note'])),
 		     $_SESSION['conid']);
   $message.=submit_table_element($link, $title, "NotesOnParticipants", $element_array, $value_array);
 
@@ -2384,9 +2384,9 @@ function update_bio_element ($link, $title, $newbio, $badgeid, $biotypename, $bi
   global $link, $message, $message_error;
 
   // make sure it's clean
-  $biotext0=mysql_real_escape_string(iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $newbio),$link);
-  $biotext1=mysql_real_escape_string(mb_convert_encoding($newbio, 'ISO-8859-1', 'UTF-8'),$link);
-  $biotext2=mysql_real_escape_string($newbio,$link);
+  $biotext0=mysqli_real_escape_string(iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $newbio),$link);
+  $biotext1=mysqli_real_escape_string(mb_convert_encoding($newbio, 'ISO-8859-1', 'UTF-8'),$link);
+  $biotext2=mysqli_real_escape_string($newbio,$link);
   $biotext=$biotext0;
   if (empty($biotext)) {$biotext=$biotext1;}
   if (empty($biotext)) {$biotext=$biotext2;}
@@ -2445,9 +2445,9 @@ function update_desc_element ($link, $title, $newdesc, $sessionid, $conid, $desc
   global $link, $message, $message_error;
 
   // make sure it's clean
-  $desctext0=mysql_real_escape_string(iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $newdesc),$link);
-  $desctext1=mysql_real_escape_string(mb_convert_encoding($newdesc, 'ISO-8859-1', 'UTF-8'),$link);
-  $desctext2=mysql_real_escape_string($newdesc,$link);
+  $desctext0=mysqli_real_escape_string(iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $newdesc),$link);
+  $desctext1=mysqli_real_escape_string(mb_convert_encoding($newdesc, 'ISO-8859-1', 'UTF-8'),$link);
+  $desctext2=mysqli_real_escape_string($newdesc,$link);
   $desctext=$desctext0;
   if (empty($desctext)) {$desctext=$desctext1;}
   if (empty($desctext)) {$desctext=$desctext2;}

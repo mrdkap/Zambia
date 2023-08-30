@@ -42,11 +42,11 @@ if ($_POST['update']=="please") {
   if ($_POST['genconsent']=="Yes") {$genconsent_p="Yes";}
   $dvdconsent_p="No";
   if ($_POST['dvdconsent']=="Yes") {$dvdconsent_p="Yes";}
-  $pairedvalue_array=array("phototitle='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["phototitle"])))."'",
-			   "photoartist='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photoartist"])))."'",
-			   "photomodel='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photomodel"])))."'",
-			   "photoloc='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photoloc"])))."'",
-			   "photonotes='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photonotes"])))."'",
+  $pairedvalue_array=array("phototitle='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["phototitle"])))."'",
+			   "photoartist='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photoartist"])))."'",
+			   "photomodel='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photomodel"])))."'",
+			   "photoloc='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photoloc"])))."'",
+			   "photonotes='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["photonotes"])))."'",
 			   "genconsent='".$genconsent_p."'",
 			   "dvdconsent='".$dvdconsent_p."'");
   $message.=update_table_element($link, $title, "PhotoLoungePix", $pairedvalue_array, "photoid", $photoid);

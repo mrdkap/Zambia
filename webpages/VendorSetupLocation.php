@@ -131,7 +131,7 @@ if (($_POST['submit'] == "Update") AND ($locationid != "")) {
 			   'display_order');
     foreach ($element_array as $i) {
       if ($_POST[$i] != $_POST["was".$i]) {
-	$pairedvalue_array[]="$i=\"" . mysql_real_escape_string(stripslashes($_POST[$i])) . '"';
+	$pairedvalue_array[]="$i=\"" . mysqli_real_escape_string(stripslashes($_POST[$i])) . '"';
       }
     }
     $message.=update_table_element($link, $title, "Location", $pairedvalue_array, "locationid", $locationid);
@@ -143,20 +143,20 @@ if (($_POST['submit'] == "Update") AND ($locationid != "")) {
 			 'locationkey', 'locationmap', 'locationheight',
 			 'locationdimensions', 'locationarea', 'locationnotes',
 			 'display_order');
-  $value_array = array(mysql_real_escape_string(stripslashes($_POST['baselocbuildingid'])),
-		       mysql_real_escape_string(stripslashes($_POST['baselocfloorid'])),
-		       mysql_real_escape_string(stripslashes($_POST['baselocroomid'])),
-		       mysql_real_escape_string(stripslashes($_POST['baselocsubroomid'])),
-		       mysql_real_escape_string(stripslashes($_SESSION['conid'])),
-		       mysql_real_escape_string(stripslashes($_POST['divisionid'])),
-		       mysql_real_escape_string(stripslashes($_POST['trackid'])),
-		       mysql_real_escape_string(stripslashes($_POST['locationkey'])),
-		       mysql_real_escape_string(stripslashes($_POST['locationmap'])),
-		       mysql_real_escape_string(stripslashes($_POST['locationheight'])),
-		       mysql_real_escape_string(stripslashes($_POST['locationdimensions'])),
-		       mysql_real_escape_string(stripslashes($_POST['locationarea'])),
-		       mysql_real_escape_string(stripslashes($_POST['locationnotes'])),
-		       mysql_real_escape_string(stripslashes($_POST['display_order'])));
+  $value_array = array(mysqli_real_escape_string(stripslashes($_POST['baselocbuildingid'])),
+		       mysqli_real_escape_string(stripslashes($_POST['baselocfloorid'])),
+		       mysqli_real_escape_string(stripslashes($_POST['baselocroomid'])),
+		       mysqli_real_escape_string(stripslashes($_POST['baselocsubroomid'])),
+		       mysqli_real_escape_string(stripslashes($_SESSION['conid'])),
+		       mysqli_real_escape_string(stripslashes($_POST['divisionid'])),
+		       mysqli_real_escape_string(stripslashes($_POST['trackid'])),
+		       mysqli_real_escape_string(stripslashes($_POST['locationkey'])),
+		       mysqli_real_escape_string(stripslashes($_POST['locationmap'])),
+		       mysqli_real_escape_string(stripslashes($_POST['locationheight'])),
+		       mysqli_real_escape_string(stripslashes($_POST['locationdimensions'])),
+		       mysqli_real_escape_string(stripslashes($_POST['locationarea'])),
+		       mysqli_real_escape_string(stripslashes($_POST['locationnotes'])),
+		       mysqli_real_escape_string(stripslashes($_POST['display_order'])));
   $message.=submit_table_element($link, $title, "Location", $element_array, $value_array);
 }
 

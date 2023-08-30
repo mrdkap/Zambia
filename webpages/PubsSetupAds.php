@@ -175,7 +175,7 @@ for ($l=1; $l<=count($type); $l++) {
 	$wasoption=$_POST['was' . $type[$l]][$$typeid][$option_array[$j]];
 	$isoption=$typeid_option[$option_array[$j]];
 	if (((!empty($wasoption)) or (!empty($isoption))) and ($wasoption != $isoption)) {
-	  $pairedvalue_array[]="$optionname='".mysql_real_escape_string($isoption)."'";
+	  $pairedvalue_array[]="$optionname='".mysqli_real_escape_string($isoption)."'";
 	  $k++;
 	}
       }

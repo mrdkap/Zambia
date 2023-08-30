@@ -28,10 +28,10 @@ if ((isset($_POST["reportupdate"])) and ($_POST["reportupdate"]!="")) {
 		       htmlspecialchars_decode(refrom($_POST["reportquery"])));
     $message.=submit_table_element($link, $title, "Reports", $element_array, $value_array);
   } else {
-    $pairedvalue_array=array("reportdescription='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportdescription"])))."'",
-			     "reportadditionalinfo='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportadditionalinfo"])))."'",
-			     "reportrestrictions='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportrestrictions"])))."'",
-			     "reportquery='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode(refrom($_POST["reportquery"]))))."'");
+    $pairedvalue_array=array("reportdescription='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportdescription"])))."'",
+			     "reportadditionalinfo='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportadditionalinfo"])))."'",
+			     "reportrestrictions='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($_POST["reportrestrictions"])))."'",
+			     "reportquery='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode(refrom($_POST["reportquery"]))))."'");
     $match_field="reportid";
     $match_value=$_POST["selreport"];
     $message.=update_table_element($link, $title, "Reports", $pairedvalue_array, $match_field, $match_value);

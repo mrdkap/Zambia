@@ -297,15 +297,15 @@ for ($i=0; $i<$recipient_count; $i++) {
     $emailverify['body']=str_replace($subst_list,$repl_list,$email['body']);
     $query="INSERT INTO EmailQueue (emailto, emailfrom, emailcc, emailsubject, body, status) ";
     // to address
-    $query.="VALUES (\"".mysql_real_escape_string($recipientinfo[$i]['email'],$link)."\",";
+    $query.="VALUES (\"".mysqli_real_escape_string($recipientinfo[$i]['email'],$link)."\",";
     // from address
-    $query.="\"".mysql_real_escape_string($emailfrom,$link)."\",";
+    $query.="\"".mysqli_real_escape_string($emailfrom,$link)."\",";
     // cc (bcc) address
-    $query.="\"".mysql_real_escape_string($emailcc,$link)."\",";
+    $query.="\"".mysqli_real_escape_string($emailcc,$link)."\",";
     // subject
-    $query.="\"".mysql_real_escape_string($email['subject'],$link)."\",";
+    $query.="\"".mysqli_real_escape_string($email['subject'],$link)."\",";
     // body
-    $query.="\"".mysql_real_escape_string(wordwrap(preg_replace("/(?<!\\r)\\n/","\r\n",$emailverify['body']),70,"\r\n"),$link)."\",";
+    $query.="\"".mysqli_real_escape_string(wordwrap(preg_replace("/(?<!\\r)\\n/","\r\n",$emailverify['body']),70,"\r\n"),$link)."\",";
     // status 1 is unsent (queued)
     $query.="1);";
     if (!$result=mysqli_query($link,$query)) {

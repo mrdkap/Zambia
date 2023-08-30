@@ -85,10 +85,10 @@ if ($_POST['update']=="please") {
 
       // Checks to see if there was a value passed in for either.
       if ($_POST[$compid] != $_POST['was_'.$compid]) {
-	$compamount="compamount='".mysql_real_escape_string(stripslashes($_POST[$compid]))."'";
+	$compamount="compamount='".mysqli_real_escape_string(stripslashes($_POST[$compid]))."'";
       }
       if ($_POST['d_'.$compid] != $_POST['was_d_'.$compid]) {
-	$compdescription="compdescription='".mysql_real_escape_string(stripslashes($_POST['d_'.$compid]))."'";
+	$compdescription="compdescription='".mysqli_real_escape_string(stripslashes($_POST['d_'.$compid]))."'";
       }
 
       // Checks to see if either are set above, for the update.

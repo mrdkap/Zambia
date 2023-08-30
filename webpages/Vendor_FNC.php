@@ -149,7 +149,7 @@ EOD;
       $set_array[]="vendorselfcarry=$vendorselfcarry";
     }
     if ($work_arr['wasvendornotes'] != $work_arr['vendornotes']) {
-      $set_array[]="vendornotes='".mysql_real_escape_string(stripslashes(htmlspecialchars_decode($work_arr['vendornotes'])))."'";
+      $set_array[]="vendornotes='".mysqli_real_escape_string(stripslashes(htmlspecialchars_decode($work_arr['vendornotes'])))."'";
     }
     if (!empty($set_array)) {
       $match_string="conid=$conid AND badgeid=$badgeid";
@@ -530,11 +530,11 @@ function edit_vendor_update ($work_arr) {
     // pubsname is tied to the badgename for vendors, so only update
     // that if the badgename has updated
     if ($work_arr['wasbadgename'] != $work_arr['badgename']) {
-      $pairedvalue_array[]=("pubsname='".stripslashes(mysql_real_escape_string(stripslashes($work_arr['badgename']."'"))));
+      $pairedvalue_array[]=("pubsname='".stripslashes(mysqli_real_escape_string(stripslashes($work_arr['badgename']."'"))));
     }
 
     if ($work_arr['wasemail'] != $work_arr['email']) {
-      $pairedvalue_array[]=("email='".stripslashes(mysql_real_escape_string(stripslashes($work_arr['email']."'"))));
+      $pairedvalue_array[]=("email='".stripslashes(mysqli_real_escape_string(stripslashes($work_arr['email']."'"))));
     }
 
     // Password update
@@ -565,7 +565,7 @@ function edit_vendor_update ($work_arr) {
 
       // update by key
       if ($work_arr['was'.$element_array[$i]] != $work_arr[$element_array[$i]]) {
-	$pairedvalue_array[]=($element_array[$i]."='".stripslashes(mysql_real_escape_string(stripslashes($work_arr[$element_array[$i]]."'"))));
+	$pairedvalue_array[]=($element_array[$i]."='".stripslashes(mysqli_real_escape_string(stripslashes($work_arr[$element_array[$i]]."'"))));
       }
     }
 

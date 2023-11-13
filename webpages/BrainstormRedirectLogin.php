@@ -63,15 +63,16 @@ else
 }
 */
 
+
 // Command Line test
 $curlstring ="curl -d \"$post_string\" $target";
-echo "$curlstring -- backtick";
-echo `$curlstring`;
-echo "$curlstring -- shell_exec";
+// echo "$curlstring -- backtick";
+// echo `$curlstring`;
+// echo "$curlstring -- shell_exec";
 echo shell_exec($curlstring);
-echo "$curlstring -- exec";
-echo exec($curlstring);
-echo "$curlstring -- in program";
+// echo "$curlstring -- exec";
+// echo exec($curlstring);
+// echo "$curlstring -- in program";
 
 // In PHP curl execution
 

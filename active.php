@@ -376,7 +376,7 @@ if (file_exists($HeaderTemplateFile)) {
   require($HeaderTemplateFile);
  } else {
 ?>
-    <meta name="description" content="Fetish Fair Fleamarket information page">
+    <meta name="description" content="<?php echo $tmpconinfo_array['connamelong'] ?> information page">
     <meta name="keywords" content="">
     <!--[if lt IE 9]>
       <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>

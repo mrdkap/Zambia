@@ -136,7 +136,7 @@ if ($tmpappstring != "") {
 <div id="banner">
 <div id="server_connect"></div>
 
-<h1><a href="http://fetishflea.com/" target="_blank" alt="<?php echo $connamelong ?>" title="<?php echo $connamelong ?>">
+<h1><a href="<?php echo $conurl ?>" target="_blank" alt="<?php echo $connamelong ?>" title="<?php echo $connamelong ?>">
 <img id="title-small" src="../Local/logo.gif" style="width: 240px;">
 <img id="title" src="../Local/logo.gif" style="width: 200px;">
 <?php echo str_replace(" ", "&nbsp;", $conname) ?></a></h1>

@@ -119,6 +119,8 @@ EOD;
   } elseif ($action=="brainstorm") {
     $title="Proposed Session";
     $description="<P>Saving a propopsed session presumes you are going to propose another new session next.</P>";
+    $description.="<P>Replace the \"Your Name\" and \"Your email address\" with useful information please,";
+    $description.="otherwise we will have no idea who submitted the class.</P>";
     if ($type_rows == 0) {
       $message_error="<P>Sorry, we are not accepting any type of new session at this time.</P>";
       RenderError($title,$message_error);

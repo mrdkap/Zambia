@@ -66,7 +66,7 @@ if (($_POST['update']=='Yes') and ((may_I("Maint")) or (may_I("ConChair")))) {
     }
     if (($_POST['wasphasetypeid'][$key]=="indeed") and
 	($_POST['phasetypeid'][$key]!="checked")) {
-      $set_array=array("phasestate=''");
+      $set_array=array("phasestate='1'");
       $match_string="phasetypeid=".$key." AND conid=".$conid;
       $message.=update_table_element_extended_match($link, $title, "Phase", $set_array, $match_string);
     }

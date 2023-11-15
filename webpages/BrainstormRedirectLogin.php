@@ -65,11 +65,11 @@ else
 
 
 // Command Line test
-$curlstring ="curl -d \"$post_string\" $target";
+// $curlstring ="curl -d \"$post_string\" $target";
 // echo "$curlstring -- backtick";
 // echo `$curlstring`;
 // echo "$curlstring -- shell_exec";
-echo shell_exec($curlstring);
+// echo shell_exec($curlstring);
 // echo "$curlstring -- exec";
 // echo exec($curlstring);
 // echo "$curlstring -- in program";
@@ -90,16 +90,15 @@ curl_setopt($curl, CURLOPT_POSTFIELDS, $post_string);
 // Cookie Param
 //curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-// Headers?
-curl_setopt($curl, CURLOPT_HEADER, true);
+// Headers for testing
+//curl_setopt($curl, CURLOPT_HEADER, true);
 
 curl_setopt($curl, CURLINFO_HEADER_OUT, true);
 
 // Redirects?
 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
-
-// on error be verbose
+// on error be verbose for testing
 //curl_setopt($curl, CURLOPT_FAILONERROR, true);
 
 // Retrieving session ID 

@@ -94,7 +94,7 @@ if ($tmpappstring != "") {
 <html><!-- manifest="konopas.appcache" -->
 <head>
 <meta charset="utf-8">
-<link rel="stylesheet" href="../../konopas/skin/skin.css">
+<link rel="stylesheet" href="/konopas/skin/skin.css">
 <meta name="HandheldFriendly" content="true">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -497,6 +497,6 @@ if ($phase_array['Vendors Available'] == '0') {
    echo "<script src=\"../Local/$conid/community.js\"></script>\n";
 }
 ?>
-<script src="../../konopas/konopas.min.js"></script>
-<!-- <script src="../../konopas/src/konopas.min.js"></script> -->
-<!-- <script src="../../konopas/src/konopas.js"></script> -->
+<script src="/konopas/konopas.min.js"></script>
+<!-- <script src="/konopas/src/konopas.min.js"></script> -->
+<!-- <script src="/konopas/src/konopas.js"></script> -->

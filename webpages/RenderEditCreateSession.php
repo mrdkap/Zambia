@@ -187,6 +187,9 @@ EOD;
           <SPAN><LABEL for="type">Type: </LABEL><SELECT name="type">
 	    <?php populate_select_from_query($typequery, $session["type"], "SELECT", FALSE); ?>
             </SELECT>&nbsp;&nbsp;</SPAN>
+          <SPAN><LABEL for="pubchardest">Characteristics: </LABEL><SELECT name="pubchardest">
+	    <?php populate_select_from_table("PubCharacteristics", $session["pubchardest"], "SELECT", FALSE); ?>
+            </SELECT>&nbsp;&nbsp;</SPAN>
 <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
           <INPUT type="hidden" name="pubstatusid" value="<?php echo $session["pubstatusid"];?>">
 <?php } else { ?>
@@ -353,7 +356,6 @@ like), and it's limits, going down in an array.
 <?php if (($action=="propose") or ($action=="brainstorm")) { ?>
         <INPUT type="hidden" name="servdest[]" value="">
         <INPUT type="hidden" name="featdest[]" value="">
-        <INPUT type="hidden" name="pubchardest[]" value="">
 <?php } else { ?>
         <!-- Replace the below with checkbox-lists -->
         <HR class="withspace">
@@ -417,9 +419,9 @@ like), and it's limits, going down in an array.
                 </DIV>
               </TD>
               <TD style="vertical-align: top; padding-left: 1em" id="spubchar">
-                <DIV><LABEL class="dense" for="pubchardest">Publication<BR>Characteristics</LABEL></DIV>
+                <DIV><LABEL class="dense" for="pubchardest">Characteristics</LABEL></DIV>
                 <DIV style="font-size: 85%">
-                  <SELECT id="pubchardest" name="pubchardest[]" multiple><?php populate_multiselect_from_table("PubCharacteristics", $session["pubchardest"]); ?></SELECT>
+		  <?php populate_select_from_table("PubCharacteristics", $session["pubchardest"], "SELECT", FALSE); ?>
                 </DIV>
               </TD>
             </TR>
